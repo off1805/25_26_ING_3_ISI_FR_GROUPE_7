@@ -5,13 +5,12 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Data
 @Entity
-@Table(name = "retard")
-public class Retard {
+@Table(name = "suiviRetard")
+public class SuiviRetard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

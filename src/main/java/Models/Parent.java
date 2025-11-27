@@ -5,10 +5,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table (name = "professeur")
+@Table(name = "parent")
 
-public class Professeur extends Utilisateur{
+public class Parent extends Utilisateur{
 
     @OneToMany
-public SeanceCours scours;
+    public Etudiant etudiant;
 }
