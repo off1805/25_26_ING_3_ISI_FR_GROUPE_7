@@ -2,6 +2,11 @@ package Models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import lombok.Data;
+
+@Data
 @Entity
 @Table(name = "justificatif")
 public class Justificatif {
@@ -9,40 +14,26 @@ public class Justificatif {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String description;
 
-    private String pieceJointe;
-    private String commentaire;
-    private int etudiantId;
+    // nonTraite, encours, rejete
+    private String statutTraitement;
 
-    public Long getId() {
-        return id;
-    }
+    private LocalDateTime dateSoumission;
+    private LocalDateTime dateDerniereModif;
+    private LocalDateTime dateTraitement;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @ElementCollection
+    private List<String> piecesJointes;
 
-    public String getPieceJointe() {
-        return pieceJointe;
-    }
+    private String motifRejet;
 
-    public void setPieceJointe(String pieceJointe) {
-        this.pieceJointe = pieceJointe;
-    }
 
-    public String getCommentaire() {
-        return commentaire;
-    }
+    @ManyToOne
+    @JoinColumn(name = "info_presence_id")
+    private InfoPresence infoPresence;
 
-    public void setCommentaire(String commentaire) {
-        this.commentaire = commentaire;
-    }
 
-    public int getEtudiantId() {
-        return etudiantId;
-    }
-
-    public void setEtudiantId(int etudiantId) {
-        this.etudiantId = etudiantId;
-    }
 }
+
+

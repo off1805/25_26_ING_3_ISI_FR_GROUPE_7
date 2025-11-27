@@ -1,9 +1,25 @@
 package Models;
 
-import java.util.Date;
+import jakarta.persistence.*;
+import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+
+@Data
+@Entity
+@Table(name = "retard")
 public class Retard {
-    private Date dateRetard;
-    private int retardataireId;
-    private int surveillantId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ElementCollection
+    private List<Boolean> tabAbsence;
+
+    private LocalDateTime dateMiseAJour;
+
+    private LocalDate dateDebut;
+    private LocalDate dateFin;
 }
