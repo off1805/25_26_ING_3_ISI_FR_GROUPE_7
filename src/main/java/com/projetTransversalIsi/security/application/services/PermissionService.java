@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -18,8 +19,7 @@ public class PermissionService implements
     @Override
     public Set<Permission> findAllPermissionByIds(Set<String> ids){
         if(ids.isEmpty()) return Collections.emptySet();
-        return perRepo.getAllPermissionsByIds(ids)
-                .orElseThrow(()->new RuntimeException("Au moins une permission n'a pas ete trouvee"));
+        return perRepo.getAllPermissionsByIds(ids).orElse(Collections.emptySet());
     }
 
     @Override
