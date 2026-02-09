@@ -2,6 +2,7 @@ package com.projetTransversalIsi.security.application.use_cases;
 
 import com.projetTransversalIsi.security.application.services.DefaultPermissionOperation;
 import com.projetTransversalIsi.security.application.services.DefaultRoleOperation;
+import com.projetTransversalIsi.security.application.services.FindAllPermissionByIdsAccessPort;
 import com.projetTransversalIsi.security.domain.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class InitRolePermissionUCImpl implements InitRolePermissionUC{
 
     private final DefaultRoleOperation defaultRoleOp;
     private final DefaultPermissionOperation defaultPermissionOp;
+    private final FindAllPermissionByIdsAccessPort getAllPermById;
 
 
     @Override
@@ -45,6 +47,8 @@ public class InitRolePermissionUCImpl implements InitRolePermissionUC{
                                                         .filter(p->p.getRoleId()==enumRole)
                                                         .map(EnumPermission::name)
                                                         .collect(Collectors.toSet());
+//                    getAllPermById.findAllPermissionByIds(idPermissions)
+//                            .orElseThrow(() -> new RuntimeException("Au moins une permission n'a pas ete trouvee"));
                     Role role= new Role(enumRole.name());
                     role.setIdPermissions(idPermissions);
                     log.info("0");

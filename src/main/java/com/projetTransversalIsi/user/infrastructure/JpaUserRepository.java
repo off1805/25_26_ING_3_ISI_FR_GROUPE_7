@@ -8,12 +8,14 @@ import com.projetTransversalIsi.security.infrastructure.JpaPermissionEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.domain.UserRepository;
+import com.projetTransversalIsi.user.domain.exceptions.UserNotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,9 +41,18 @@ public class JpaUserRepository implements UserRepository {
         log.info(newEntity.toString());
         return  userMapper.JpaUseEntityToUser(newEntity);
     }
+
+
     @Override
     public boolean userAlreadyExists(String email){
         return jpaRepo.existsByEmail(email);
     }
+
+
+    @Override
+    public Optional<User> findById(Long id){
+        return jpaRepo.findById(id).map(userMapper::JpaUseEntityToUser);
+    }
+
 
 }
