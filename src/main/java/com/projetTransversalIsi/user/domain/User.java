@@ -17,6 +17,7 @@ public class User {
     private Long id;
     private UserStatus status;
     private String email;
+    private String password;
 
     private Role role;
     private Set<String> idPermissions;

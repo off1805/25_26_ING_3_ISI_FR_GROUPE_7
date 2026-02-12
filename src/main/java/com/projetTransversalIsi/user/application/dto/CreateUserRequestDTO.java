@@ -9,7 +9,7 @@ import java.util.Set;
 
 public record CreateUserRequestDTO(
         @NotBlank @Email String email,
-        @NotBlank @Size(min = 8) String password,
+        @NotBlank @Size(min =  8) String password,
         @NotBlank String idRole, 
         @NotEmpty Set<String> idPermissions) {
 }

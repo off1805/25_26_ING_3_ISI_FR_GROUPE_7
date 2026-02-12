@@ -9,7 +9,10 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class UserService  implements DefaultUserService {
+public class UserService  implements
+        DefaultUserService ,
+        GetPasswordByEmail,
+        GetUserByEmail{
     private final UserRepository userRepository;
 
     @Override
@@ -17,4 +20,13 @@ public class UserService  implements DefaultUserService {
        return userRepository.findById(id);
     }
 
+    @Override
+    public Optional<String> getPasswordByEmail(String email){
+        return userRepository.findPasswordMatchEmail(email);
+    }
+
+    @Override
+    public Optional<User> getByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
 }
