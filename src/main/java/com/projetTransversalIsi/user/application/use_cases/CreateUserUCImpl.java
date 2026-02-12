@@ -6,6 +6,7 @@ import com.projetTransversalIsi.profil.application.services.ProfileSelectionStra
 import com.projetTransversalIsi.profil.domain.Profile;
 import com.projetTransversalIsi.security.application.services.FindAllPermissionByIdsAccessPort;
 import com.projetTransversalIsi.security.application.services.FindRoleByIdAccessPort;
+import com.projetTransversalIsi.security.application.services.PasswordHasherAC;
 import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
 import com.projetTransversalIsi.user.application.dto.CreateUserRequestDTO;
@@ -27,6 +28,7 @@ public class CreateUserUCImpl implements CreateUserUC{
     private final ProfileSelectionStrategy profileSelectionStrategy;
     private final FindRoleByIdAccessPort getRoleById;
     private final FindAllPermissionByIdsAccessPort getAllPermById;
+    private final PasswordHasherAC passwordHasher;
 
     @Transactional
     @Override
@@ -35,10 +37,11 @@ public class CreateUserUCImpl implements CreateUserUC{
            throw new UserAlreadyExistsException(command.email());
         }
 
+        String hashPassword= passwordHasher.encode(command.password());
         Role role= getRoleById.findRoleById(command.idRole());
         Profile profile = profileSelectionStrategy.selectProfileFor(role);
         Profile newProfile= initProfile.execute(profile);
         Set<Permission> permissions= getAllPermById.findAllPermissionByIds(command.idPermissions());
-        return userRepo.save(new User(command.email(), role),command.password(),permissions,newProfile);
+        return userRepo.save(new User(command.email(), role),hashPassword,permissions,newProfile);
     }
 }

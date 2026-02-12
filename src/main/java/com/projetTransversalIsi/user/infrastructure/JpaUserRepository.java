@@ -2,6 +2,7 @@ package com.projetTransversalIsi.user.infrastructure;
 
 import com.projetTransversalIsi.profil.domain.Profile;
 import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
+import com.projetTransversalIsi.security.domain.EnumRole;
 import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
 import com.projetTransversalIsi.security.infrastructure.JpaPermissionEntity;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,5 +56,18 @@ public class JpaUserRepository implements UserRepository {
         return jpaRepo.findById(id).map(userMapper::JpaUseEntityToUser);
     }
 
+    @Override
+    public Optional<String> findPasswordMatchEmail(String email){
+        return jpaRepo.findPasswordByEmail(email);
+}
+    @Override
+    public Optional<User> findByEmail(String email){
+        return jpaRepo.findByEmail(email).map(userMapper::JpaUseEntityToUser);
+    }
+
+    @Override
+    public List<User> getAllUserOfStaff(){
+        return jpaRepo.findByRoleIdNotIn(List.of(EnumRole.ADMIN.name(),EnumRole.SUPER_ADMIN.name(),EnumRole.STUDENT.name())).stream().map(userMapper::JpaUseEntityToUser).toList();
+    }
 
 }

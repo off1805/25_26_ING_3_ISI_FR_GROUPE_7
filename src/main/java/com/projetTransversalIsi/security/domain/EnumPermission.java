@@ -8,9 +8,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum EnumPermission {
 
-    // admin
-    CREATE_PERSONNEL(EnumRole.ADMIN,"Ajouter des membres du personnel."),
-    ;
+   MANAGE_STAFF(EnumRole.ADMIN,"Creer, modifier ou supprimer un membre du personnel");
+
+
     private final EnumRole roleId;
     private final String label;
 

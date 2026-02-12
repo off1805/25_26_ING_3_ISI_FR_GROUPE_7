@@ -25,12 +25,14 @@ public class UserController {
     private final CreateUserUC createUserUC;
     private final RetrievePermissionsForUserByIdUC retrievePermissionsForUserByIdUC;
 
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<UserDetailsResponseDTO> createUser(@Valid @RequestBody CreateUserRequestDTO request){
         log.info("Requête de création d'utilisateur reçue pour l'email : {}", request.email());
         User user = createUserUC.execute(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(UserDetailsResponseDTO.fromDomain(user));
     }
+
+
 
     @GetMapping("/{id}/permissions")
     public ResponseEntity<Set<PermissionResponseDTO>> getPermissionsForUser(@PathVariable Long id){

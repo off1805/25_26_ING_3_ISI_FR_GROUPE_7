@@ -1,6 +1,7 @@
 package com.projetTransversalIsi.common.web;
 
 
+import com.projetTransversalIsi.authentification.application.exceptions.InvalidTokenException;
 import com.projetTransversalIsi.common.domain.DomainException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDomainException(DomainException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(400,ex.getMessage(),System.currentTimeMillis()));
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponse> handleTokenException(InvalidTokenException ex){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                new ErrorResponse(401,ex.getMessage(),System.currentTimeMillis())
+        );
     }
 
     @ExceptionHandler(Exception.class)
