@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>KemOSchool — Administration</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+</head>
+
+<body>
+<div class="app-shell" id="appShell">
+    <aside class="app-sidebar" id="sidebar">
+        <div class="sidebar-top">
+            <div class="sidebar-header">
+
+                <div class="sidebar-brand">
+                    <div class="brand">
+                        <div class="brand-badge">K</div>
+                        <div class="brand-name">KemOSchool</div>
+
+                    </div>
+                </div>
+                <button class="icon-btn sidebar-toggle" type="button" id="sidebarToggle" aria-label="Toggle menu">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            <div class="sidebar-section-title">MENU PRINCIPAL</div>
+
+            <nav class="sidebar-nav">
+                <a class="sidebar-link active" href="#" data-label="Utilisateurs">
+                    <i class="bi bi-people"></i>
+                    <span class="sidebar-text">Utilisateurs</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="user-mini">
+            <div class="user-mini-avatar"></div>
+            <div class="sidebar-text">
+                <div class="user-mini-name">Admin Nom</div>
+                <div class="user-mini-role">Administrateur</div>
+            </div>
+        </div>
+
+    </aside>
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+    <div class="app-main">
+
+        <header class="app-topbar">
+            <button class="icon-btn sidebar-toggle mobile-only" type="button" id="sidebarToggleMobile"
+                    aria-label="Toggle menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="topbar-title">Panneau D'Administration</div>
+
+            <div class="topbar-actions">
+                <button class="icon-btn" type="button" aria-label="Notifications">
+                    <i class="bi bi-bell"></i>
+
+                    <span class="notif-dot"></span>
+                </button>
+
+                <button class="icon-btn" type="button" aria-label="Help">
+                    <i class="bi bi-question-circle"></i>
+
+                </button>
+            </div>
+        </header>
+        <main class="app-content">
+
+            <h1 class="page-title">Gestion Des Utilisateurs</h1>
+
+            <div class="app-tabs">
+                <a class="app-tab active" href="#">Personnel</a>
+                <a class="app-tab" href="#">Etudiants</a>
+                <a class="app-tab" href="#">Paramètres</a>
+            </div>
+
+
+            <section class="panel">
+                <div class="panel-toolbar">
+                    <div class="search-wrap">
+                        <i class="bi bi-search"></i>
+
+                        <input class="search-input" type="text" placeholder="Chercher par email, nom, ou ID"/>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="icon-btn" type="button" aria-label="Filters">
+                            <i class="bi bi-sliders"></i>
+
+                        </button>
+
+                        <button class="icon-btn" type="button" aria-label="More">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+
+                        <button class="btn btn-primary btn-pill"
+                                type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#addUserModal">
+                            <i class="bi bi-person-plus-fill"></i>
+                            Ajouter User
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-borderless align-middle users-table mb-0">
+                        <thead>
+                        <tr>
+                            <th>IDENTIFIANT</th>
+                            <th>ROLE</th>
+                            <th>IDENTIFIANT</th>
+                            <th class="text-end">ACTIONS</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="row-divider">
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="icon-box">
+                                        <i class="bi bi-envelope"></i>
+                                    </div>
+                                    <div class="fw-semibold identifier">email</div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="role-pill"> ROLE</span>
+                            </td>
+
+                            <td>
+                                <span class="id-chip">USER_ID</span>
+                            </td>
+
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-3">
+
+                                    <a class="action-btn"
+                                       aria-label="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <form method="post" class="d-inline">
+                                        <button class="action-btn" type="submit" aria-label="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-muted-2">Lignes par page:</div>
+                        <button class="page-size" type="button">
+                            <span>50</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-muted-2">1 – 2 sur 2</div>
+                        <button class="pager-btn" type="button" aria-label="Previous">
+                            <i class="bi bi-chevron-left"></i></button>
+                        <button class="pager-btn" type="button" aria-label="Next">
+                            <i class="bi bi-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-rect">
+        <div class="modal-content modal-card modal-kemo">
+
+            <div class="modal-header kemo-modal-header">
+                <div class="kemo-modal-head">
+                    <div class="kemo-modal-title">Ajouter Nouveau Utilisateur</div>
+                </div>
+
+                <button type="button" class="kemo-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form method="post">
+                <div class="modal-body kemo-modal-body">
+
+                    <input type="hidden"/>
+
+                    <div class="kemo-block">
+                        <div class="kemo-label">ADDRESSE EMAIL</div>
+                        <div class="kemo-field">
+                            <i class="bi bi-envelope"></i>
+                            <input class="kemo-input" name="email" type="email"
+                                   placeholder="ex. user@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="kemo-block">
+                        <div class="kemo-label">ROLE</div>
+                        <div class="kemo-field">
+                            <i class="bi bi-shield-check"></i>
+
+                            <select class="kemo-input kemo-select" name="role" required>
+                                <option value="STUDENT">Etudiant</option>
+                                <option value="TEACHER">Enseignant</option>
+                                <option value="ADMIN">Surveillant</option>
+                                <option value="ADMIN">Assistant Pedagogique</option>
+                            </select>
+
+                            <i class="bi bi-chevron-down kemo-chevron"></i>
+                        </div>
+                    </div>
+
+                    <div class="kemo-block">
+                        <div class="kemo-label">PERMISSIONS</div>
+
+                        <div class="kemo-perms">
+                            <label class="kemo-perm">
+                                <input type="checkbox" name="permissions" value="VIEW_DATA">
+                                <span>View Data</span>
+                            </label>
+
+                            <label class="kemo-perm">
+                                <input type="checkbox" name="permissions" value="EDIT_RECORDS">
+                                <span>Edit Records</span>
+                            </label>
+
+                            <label class="kemo-perm">
+                                <input type="checkbox" name="permissions" value="DELETE_ITEMS">
+                                <span>Delete items</span>
+                            </label>
+
+                            <label class="kemo-perm">
+                                <input type="checkbox" name="permissions" value="MANAGE_USERS">
+                                <span>Manage Users</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer kemo-modal-footer">
+                    <button type="button" class="kemo-cancel" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="kemo-submit">
+                        Créer User
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script src="../static/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src="../static/js/sidebar.js"></script>
+
+
+</body>
+</html>

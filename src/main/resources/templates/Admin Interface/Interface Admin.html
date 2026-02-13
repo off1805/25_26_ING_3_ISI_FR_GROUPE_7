@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Administration</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+</head>
+
+<body>
+<div class="app-shell">
+    <aside class="app-sidebar">
+        <div class="sidebar-top">
+            <div class="brand">
+                <div class="brand-badge">K</div>
+                <div class="brand-name">KemOSchool</div>
+            </div>
+
+            <div class="sidebar-section-title">MENU PRINCIPAL</div>
+
+            <nav class="sidebar-nav">
+                <a class="sidebar-link active" href="#">
+                    <img class="icon" th:src="@{/css/icons/people.svg}" alt="">
+                    <span>Utilisateurs</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="user-mini-name">
+            Admin <span th:text="${currentUser.lastName}">Nom</span>
+        </div>
+        <div class="user-mini-role" th:text="${currentUser.role}">Administrateur</div>
+
+    </aside>
+
+    <div class="app-main">
+
+        <header class="app-topbar">
+            <div class="topbar-title">Administration Panel</div>
+
+            <div class="topbar-actions">
+                <button class="icon-btn" type="button" aria-label="Notifications">
+                    <img class="icon" th:src="@{/css/icons/bell.svg}" alt="">
+                    <span class="notif-dot"></span>
+                </button>
+
+                <button class="icon-btn" type="button" aria-label="Help">
+                    <img class="icon" th:src="@{/css/icons/question-circle.svg}" alt="">
+                </button>
+            </div>
+        </header>
+        <main class="app-content">
+
+            <h1 class="page-title">User Management</h1>
+
+            <div class="app-tabs">
+                <a class="app-tab active" href="#">Users</a>
+                <a class="app-tab" href="#">Auth Methods</a>
+                <a class="app-tab" href="#">Settings</a>
+            </div>
+
+
+            <section class="panel">
+                <div class="panel-toolbar">
+                    <div class="search-wrap">
+                        <img class="icon search-icon" th:src="@{/css/icons/search.svg}" alt="">
+                        <input class="search-input" type="text" placeholder="Search by email, name, or ID" />
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="icon-btn" type="button" aria-label="Filters">
+                            <img class="icon" th:src="@{/css/icons/sliders.svg}" alt="">
+                        </button>
+
+                        <button class="icon-btn" type="button" aria-label="More">
+                            <img class="icon" th:src="@{/css/icons/three-dots-vertical.svg}" alt="">
+                        </button>
+
+                        <button class="btn btn-primary btn-pill d-inline-flex align-items-center gap-2" type="button">
+                            <img class="icon icon-invert" th:src="@{/css/icons/person-plus.svg}" alt="">
+                            Add User
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-borderless align-middle users-table mb-0">
+                        <thead>
+                        <tr>
+                            <th>IDENTIFIANT</th>
+                            <th>ROLE</th>
+                            <th>USER ID</th>
+                            <th class="text-end">ACTIONS</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="u : ${users}" class="row-divider">
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="icon-box">
+                                        <img class="icon"
+                                             th:src="@{/css/icons/envelope.svg}" alt="">
+                                    </div>
+                                    <div class="fw-semibold identifier" th:text="${u.email}">email</div>
+                                </div>
+                            </td>
+
+                            <td>
+        <span class="role-pill"
+              th:classappend="${u.role} == 'TEACHER' ? ' role-teacher' : ' role-student'"
+              th:text="${u.role}">
+            ROLE
+        </span>
+                            </td>
+
+                            <td>
+                                <span class="id-chip" th:text="${u.userId}">USER_ID</span>
+                            </td>
+
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-3">
+
+                                    <a class="action-btn"
+                                       th:href="@{/admin/users/{id}/edit(id=${u.id})}" aria-label="Edit">
+                                        <img class="icon" th:src="@{/css/icons/pencil.svg}" alt="">
+                                    </a>
+
+                                    <form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post" class="d-inline">
+                                        <button class="action-btn" type="submit" aria-label="Delete">
+                                            <img class="icon" th:src="@{/css/icons/trash.svg}" alt="">
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-muted-2">Rows per page:</div>
+                        <button class="page-size" type="button">
+                            <span>50</span>
+                            <img class="icon" th:src="@{/css/icons/chevron-right.svg}" alt="">
+                        </button>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-muted-2">1 – 2 of 2</div>
+                        <button class="pager-btn" type="button" aria-label="Previous">
+                            <img class="icon" th:src="@{/css/icons/chevron-left.svg}" alt="">
+                        </button>
+                        <button class="pager-btn" type="button" aria-label="Next">
+                            <img class="icon" th:src="@{/css/icons/chevron-right.svg}" alt="">
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</div>
+
+<script src="../../static/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

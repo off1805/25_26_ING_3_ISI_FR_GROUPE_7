@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<aside th:fragment="app-sidebar" id="sidebar">
+    <div class="sidebar-top">
+        <div class="sidebar-header">
+
+            <div class="sidebar-brand">
+                <div class="brand">
+                    <div class="brand-badge">K</div>
+                    <div class="brand-name">KemOSchool</div>
+
+                </div>
+            </div>
+            <button class="icon-btn sidebar-toggle" type="button" id="sidebarToggle" aria-label="Toggle menu">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+        <div class="sidebar-section-title">MENU PRINCIPAL</div>
+
+        <nav class="sidebar-nav">
+            <a class="sidebar-link active" href="#" data-label="Utilisateurs">
+                <i class="bi bi-people"></i>
+                <span class="sidebar-text">Utilisateurs</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="user-mini">
+        <div class="user-mini-avatar"></div>
+        <div class="sidebar-text">
+            <div class="user-mini-name">Admin Nom</div>
+            <div class="user-mini-role">Administrateur</div>
+        </div>
+    </div>
+
+</aside>
+</body>
+</html>
