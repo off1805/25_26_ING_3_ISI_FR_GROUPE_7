@@ -4,6 +4,7 @@ package com.projetTransversalIsi.authentification.application.service.token;
 import com.projetTransversalIsi.authentification.application.exceptions.InvalidTokenException;
 import com.projetTransversalIsi.authentification.application.exceptions.KeyManagement;
 import com.projetTransversalIsi.user.domain.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -28,8 +29,9 @@ public class JwtServiceImpl implements  JwtService{
     public String generateJwtToken(User user){
         return Jwts.builder()
                 .subject(String.valueOf(user.getId()))
-                .claim("userEmail",user.getEmail())
-                .claim("role",user.getRole())
+                .claim("email",user.getEmail())
+                .claim("role",user.getRole().getName())
+                .claim("permissions",user.getIdPermissions())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis()+ jwtExpirationMs))
                 .signWith(keyManagement.loadPrivateKey())
@@ -37,16 +39,16 @@ public class JwtServiceImpl implements  JwtService{
     }
 
     @Override
-    public Long getUserIdFromJwt(String token){
+    public Claims getClaimsFromJwt(String token){
         try{
-            return Long.valueOf(
+            return
                     Jwts.parser()
                             .verifyWith(keyManagement.loadPublicKey())
                             .build()
                             .parseSignedClaims(token)
-                            .getPayload()
-                            .getSubject()
-            );
+                            .getPayload();
+
+
 
         }catch (ExpiredJwtException e){
             throw new InvalidTokenException("Token expire: "+e.getMessage());

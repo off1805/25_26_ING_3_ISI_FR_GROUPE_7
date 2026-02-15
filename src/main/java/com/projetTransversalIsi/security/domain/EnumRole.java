@@ -7,5 +7,4 @@ public enum EnumRole {
     ADMIN,
     SURVEILLANT,
     PARENT,
-    SUPER_ADMIN
 }

@@ -31,7 +31,7 @@ public class JpaUserRepository implements UserRepository {
     private  final EntityManager entityManager;
 
     @Override
-    public User save(User user, String password, Set<Permission> permission, Profile profil){
+    public User registerNewUser(User user, String password, Set<Permission> permission, Profile profil){
         JpaRoleEntity jpaRole= entityManager.getReference(JpaRoleEntity.class,user.getRole().getName());
         JpaProfileEntity jpaProfile= entityManager.getReference(JpaProfileEntity.class,profil.getId());
         Set<JpaPermissionEntity> jpaPermissions = permission.stream()
@@ -84,7 +84,7 @@ public class JpaUserRepository implements UserRepository {
 
     @Override
     public List<User> getAllUserOfStaff(){
-        return jpaRepo.findByRoleIdNotIn(List.of(EnumRole.ADMIN.name(),EnumRole.SUPER_ADMIN.name(),EnumRole.STUDENT.name())).stream().map(userMapper::JpaUseEntityToUser).toList();
+        return jpaRepo.findByRoleIdNotIn(List.of(EnumRole.ADMIN.name(),EnumRole.STUDENT.name())).stream().map(userMapper::JpaUseEntityToUser).toList();
     }
     @Override
     public List<User> findAllDeleted() {

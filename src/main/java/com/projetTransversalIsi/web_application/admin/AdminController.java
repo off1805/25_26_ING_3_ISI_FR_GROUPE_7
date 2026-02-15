@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
+@Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 
@@ -21,8 +21,7 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String dashboardView(Model model){
         Map <String,Object> users= new HashMap<>();
-        model.addAttribute("staff",getAllUserStaffUC.execute());
-        return "admin/dashboard";
+        return "index";
     }
 }
 
