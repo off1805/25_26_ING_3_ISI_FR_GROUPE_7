@@ -22,10 +22,14 @@ public interface UserMapper {
         jpaUserEn.setRole(jpaRole);
         jpaUserEn.setPermissions(perm);
         jpaUserEn.setProfile(jpaProfil);
+        jpaUserEn.setDeleted(user.isDeleted());
+        jpaUserEn.setDeletedAt(user.getDeletedAt());
         return jpaUserEn;
     }
 
     @Mapping(target="idPermissions", expression="java(mapJpaPermissionToIds(jpaUser.getPermissions()))")
+    @Mapping(target = "deleted", source = "deleted")
+    @Mapping(target = "deletedAt", source = "deletedAt")
     User JpaUseEntityToUser(JpaUserEntity jpaUser);
 
     default Set<String> mapJpaPermissionToIds(Set<JpaPermissionEntity> perm) {
