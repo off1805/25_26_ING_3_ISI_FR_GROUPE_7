@@ -1,14 +1,13 @@
 package com.projetTransversalIsi.user.domain;
 
-import com.projetTransversalIsi.profil.domain.Profile;
 import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
 import java.util.Set;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -21,13 +20,18 @@ public class User {
 
     private Role role;
     private Set<String> idPermissions;
+    private boolean deleted= false;
+    private LocalDateTime deletedAt;
 
 
-    public User(String email,Role role,UserStatus status, Long id){
+
+    public User(String email,Role role,UserStatus status, Long id,boolean deleted , LocalDateTime deletedAt){
         this.email=email;
         this.status=status;
         this.role=role;
         this.id=id;
+        this.deleted=deleted;
+        this.deletedAt=deletedAt;
     }
 
 
@@ -36,9 +40,29 @@ public class User {
         this.email=email;
         this.status=UserStatus.ACTIVE;
         this.role=role;
+        this.deleted=false;
     }
+
 
     public boolean isActive(){
         return this.status==UserStatus.ACTIVE;
     }
+
+    public void delete(){
+        if(this.deleted){
+            throw new IllegalStateException("l'utilissateur" + this.id + "est deja supprimer ");
+        }
+        this.deleted = true;
+        this.deletedAt= LocalDateTime.now();
+    }
+
+    public void restore(){
+        if(!this.deleted){
+            throw new IllegalStateException("l'utilisateur" + this.id + "n'est pas supprimer");
+        }
+        this.deleted=false;
+        this.deletedAt=null;
+    }
+
+
 }

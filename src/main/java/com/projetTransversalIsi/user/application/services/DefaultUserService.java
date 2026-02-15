@@ -10,4 +10,5 @@ public interface DefaultUserService {
 
     Optional<User> findUserById(Long id);
 
+    void deleteUser(long userId);
 }
