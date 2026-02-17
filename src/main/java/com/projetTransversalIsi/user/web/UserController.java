@@ -1,10 +1,10 @@
 package com.projetTransversalIsi.user.web;
 
 import com.projetTransversalIsi.security.domain.Permission;
-import com.projetTransversalIsi.user.application.dto.CreateUserRequestDTO;
-import com.projetTransversalIsi.user.application.dto.PermissionResponseDTO;
-import com.projetTransversalIsi.user.application.dto.UserDetailsResponseDTO;
+import com.projetTransversalIsi.user.application.dto.*;
 import com.projetTransversalIsi.user.application.use_cases.CreateUserUC;
+import com.projetTransversalIsi.user.application.use_cases.DeleteUserUC;
+import com.projetTransversalIsi.user.application.use_cases.FindUserByIdUC;
 import com.projetTransversalIsi.user.application.use_cases.RetrievePermissionsForUserByIdUC;
 import com.projetTransversalIsi.user.domain.User;
 import jakarta.validation.Valid;
@@ -22,8 +22,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
+
     private final CreateUserUC createUserUC;
     private final RetrievePermissionsForUserByIdUC retrievePermissionsForUserByIdUC;
+    private final DeleteUserUC deleteUserUC;
+    private final FindUserByIdUC findUserByIdUC;
+
 
     @PostMapping("")
     public ResponseEntity<UserDetailsResponseDTO> createUser(@Valid @RequestBody CreateUserRequestDTO request){
@@ -36,13 +40,36 @@ public class UserController {
 
     @GetMapping("/{id}/permissions")
     public ResponseEntity<Set<PermissionResponseDTO>> getPermissionsForUser(@PathVariable Long id){
-        Set<Permission> permissions= retrievePermissionsForUserByIdUC.execute(id);
+        Set<Permission> permissions = retrievePermissionsForUserByIdUC.execute(id);
         return ResponseEntity
                 .status(HttpStatus.FOUND)
-                .body( permissions.stream().map(PermissionResponseDTO::fromPermissionDomain).collect(Collectors.toSet())
-        );
-
-
+                .body(permissions.stream().map(PermissionResponseDTO::fromPermissionDomain).collect(Collectors.toSet()));
     }
+
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<DeleteUserResponseDTO> deleteUser(@PathVariable Long userId) {
+        log.info("Requête de suppression d'utilisateur reçue pour l'ID : {}", userId);
+
+
+        DeleteUserRequestDTO command = new DeleteUserRequestDTO(userId);
+        deleteUserUC.execute(command);
+
+
+        User deletedUser = findUserByIdUC.execute(userId);
+
+
+        return ResponseEntity.ok(DeleteUserResponseDTO.fromUser(deletedUser));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDetailsResponseDTO> getUserById(@PathVariable Long id) {
+        log.info("Requête de récupération d'utilisateur pour l'ID : {}", id);
+
+        User user = findUserByIdUC.execute(id);
+
+        return ResponseEntity.ok(UserDetailsResponseDTO.fromDomain(user));
+    }
+
 
 }
