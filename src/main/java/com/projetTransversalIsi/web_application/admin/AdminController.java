@@ -21,6 +21,7 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String dashboardView(Model model){
         Map <String,Object> users= new HashMap<>();
+        model.addAttribute("staff",getAllUserStaffUC.execute());
         return "index";
     }
 }
