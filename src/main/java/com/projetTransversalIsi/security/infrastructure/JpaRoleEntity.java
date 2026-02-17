@@ -17,9 +17,6 @@ public class JpaRoleEntity {
     @Id
     private String name;
 
-    @OneToMany(mappedBy = "role",fetch = FetchType.LAZY)
-    private List<JpaUserEntity> users= new ArrayList<>();
-
     @ManyToMany(mappedBy = "roles",fetch = FetchType.LAZY)
     private Set<JpaPermissionEntity> permissions = new HashSet<>();
 
