@@ -12,4 +12,12 @@ public class RefreshToken {
     private Date expiresAt;
     private boolean revoked;
 
+    public boolean isValid(){
+        return !revoked && expiresAt.after(new Date());
+    }
+
+    public void revoke(){
+        this.revoked=true;
+    }
+
 }

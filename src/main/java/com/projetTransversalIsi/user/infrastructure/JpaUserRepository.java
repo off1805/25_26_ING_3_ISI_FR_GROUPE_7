@@ -1,9 +1,7 @@
 package com.projetTransversalIsi.user.infrastructure;
 
-import com.projetTransversalIsi.profil.domain.Profile;
 import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
 import com.projetTransversalIsi.security.domain.EnumRole;
-import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.infrastructure.JpaPermissionEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
 import com.projetTransversalIsi.user.domain.User;
@@ -14,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -31,13 +28,13 @@ public class JpaUserRepository implements UserRepository {
     private  final EntityManager entityManager;
 
     @Override
-    public User registerNewUser(User user, String password, Set<Permission> permission, Profile profil){
+    public User registerNewUser(User user){
         JpaRoleEntity jpaRole= entityManager.getReference(JpaRoleEntity.class,user.getRole().getName());
-        JpaProfileEntity jpaProfile= entityManager.getReference(JpaProfileEntity.class,profil.getId());
-        Set<JpaPermissionEntity> jpaPermissions = permission.stream()
-                .map(perm -> entityManager.getReference(JpaPermissionEntity.class, perm.getName()))
-                .collect(Collectors.toSet());
-        JpaUserEntity jpaUser= userMapper.UserToJpaUserEntity(user,password,jpaRole,jpaPermissions,jpaProfile);
+        JpaProfileEntity jpaProfile = user.getProfileId() == null ? null : entityManager.getReference(JpaProfileEntity.class, user.getProfileId());
+        Set<JpaPermissionEntity> jpaPermissions = user.getPermissions() == null ? Set.of() : user.getPermissions().stream()
+                        .map(perm -> entityManager.getReference(JpaPermissionEntity.class, perm.getName()))
+                        .collect(Collectors.toSet());
+        JpaUserEntity jpaUser= userMapper.UserToJpaUserEntity(user, jpaProfile);
         JpaUserEntity newEntity= jpaRepo.save(jpaUser);
 
         log.info(newEntity.toString());
@@ -45,19 +42,11 @@ public class JpaUserRepository implements UserRepository {
     }
 
     @Override
-    public User save(User user) {
-
-        JpaUserEntity existingEntity = jpaRepo.findById(user.getId())
-                .orElseThrow(() -> new UserNotFoundException(user.getId()));
-
-
-        existingEntity.setDeleted(user.isDeleted());
-        existingEntity.setDeletedAt(user.getDeletedAt());
-
-        JpaUserEntity savedEntity = jpaRepo.save(existingEntity);
+    public void save(User user) {
+        JpaProfileEntity jpaProfile= entityManager.getReference(JpaProfileEntity.class,user.getProfileId());
+        JpaUserEntity savedEntity = jpaRepo.save(userMapper.UserToJpaUserEntity(user,jpaProfile));
         log.info("User updated: {}", savedEntity.getId());
 
-        return userMapper.JpaUseEntityToUser(savedEntity);
     }
 
 
@@ -100,11 +89,4 @@ public class JpaUserRepository implements UserRepository {
                 .map(userMapper::JpaUseEntityToUser)
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public void save(User user, String password, Set<String> idPermissions, Object profil) {
-
-    }
-
-
 }

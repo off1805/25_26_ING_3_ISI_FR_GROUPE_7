@@ -10,6 +10,7 @@ import java.util.Date;
 
 @Entity
 @Data
+@Table(name = "refresh_token")
 public class JpaRefreshTokenEntity {
     @Id
     private String token;
@@ -21,6 +22,6 @@ public class JpaRefreshTokenEntity {
     private Date createdAt;
     private Date expiresAt;
 
-    @Column(columnDefinition = "boolean default true")
+    @Column(columnDefinition = "boolean default false")
     private boolean revoked;
 }

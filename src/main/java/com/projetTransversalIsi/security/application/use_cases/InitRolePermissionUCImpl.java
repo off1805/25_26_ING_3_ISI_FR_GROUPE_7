@@ -53,9 +53,9 @@ public class InitRolePermissionUCImpl implements InitRolePermissionUC{
 //                    getAllPermById.findAllPermissionByIds(idPermissions)
 //                            .orElseThrow(() -> new RuntimeException("Au moins une permission n'a pas ete trouvee"));
                     Role role= new Role(enumRole.name());
-                    role.setIdPermissions(idPermissions);
+                    role.setPermissions(getAllPermById.findAllPermissionByIds( idPermissions));
                     log.info("0");
-                   for(int i=0;i<role.getIdPermissions().size();i++){
+                   for(int i=0;i<role.getPermissions().size();i++){
                        log.info(i+ "- "+ idPermissions.stream().toList().get(i));
                    }
 

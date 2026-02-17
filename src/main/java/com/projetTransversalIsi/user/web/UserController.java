@@ -50,15 +50,9 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public ResponseEntity<DeleteUserResponseDTO> deleteUser(@PathVariable Long userId) {
         log.info("Requête de suppression d'utilisateur reçue pour l'ID : {}", userId);
-
-
         DeleteUserRequestDTO command = new DeleteUserRequestDTO(userId);
         deleteUserUC.execute(command);
-
-
         User deletedUser = findUserByIdUC.execute(userId);
-
-
         return ResponseEntity.ok(DeleteUserResponseDTO.fromUser(deletedUser));
     }
 

@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,7 +71,7 @@ class CreateUserUCTest {
         when(profileSelectionStrategy.selectProfileFor(role)).thenReturn(selectedProfile);
         when(initProfile.execute(selectedProfile)).thenReturn(savedProfile);
         when(getAllPermById.findAllPermissionByIds(permIds)).thenReturn(Set.of(new Permission("READ", "juste ecrire un truc")));
-        when(userRepo.registerNewUser(any(User.class), eq("hashed"), anySet(), eq(savedProfile)))
+        when(userRepo.registerNewUser(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         User result = createUserUC.execute(command);
@@ -83,7 +82,7 @@ class CreateUserUCTest {
 
         // On vérifie que le repository a bien été appelé pour sauvegarder
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        verify(userRepo, times(1)).registerNewUser(userCaptor.capture(), eq("hashed"), anySet(), eq(savedProfile));
+        verify(userRepo, times(1)).registerNewUser(userCaptor.capture());
         assertEquals(email, userCaptor.getValue().getEmail());
         assertEquals(role, userCaptor.getValue().getRole());
 
@@ -101,7 +100,7 @@ class CreateUserUCTest {
         // WHEN
         assertThrows(UserAlreadyExistsException.class, () -> createUserUC.execute(command));
         verify(getRoleById, never()).findRoleById(any());
-        verify(userRepo, never()).save(any(), any(), any(), any());
+        verify(userRepo, never()).save(any(User.class));
     }
 
 }

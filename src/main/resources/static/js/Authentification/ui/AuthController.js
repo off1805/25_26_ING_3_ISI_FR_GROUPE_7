@@ -1,5 +1,6 @@
 import {LoginUC} from "../application/LoginUC.js";
 import {AuthApi} from "../infrastructure/AuthApi.js";
+import {UserCredentials} from "../domain/UserCredentials.js";
 
 
 export class AuthController{
@@ -13,7 +14,7 @@ export class AuthController{
         const password= document.getElementById('password').value;
 
         try{
-            await this.loginUC.execute(email,password);
+            await this.loginUC.execute(new UserCredentials(email,password));
             alert("Bienvenue");
         }catch (e){
             console.log("Erreur de connexion.",e.message);

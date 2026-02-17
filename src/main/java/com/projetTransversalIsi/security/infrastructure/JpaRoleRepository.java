@@ -22,12 +22,12 @@ public class JpaRoleRepository implements RoleRepository {
     @Override
     public Role save(Role role){
 
-        Set<JpaPermissionEntity> jpaPermissions = role.getIdPermissions().stream()
-                .map(permId -> entityManager.getReference(JpaPermissionEntity.class, permId))
+        Set<JpaPermissionEntity> jpaPermissions = role.getPermissions().stream()
+                .map(perm -> entityManager.getReference(JpaPermissionEntity.class, perm.getName()))
                 .collect(Collectors.toSet());
         return roleMapper.JpaRoleEntityToRole(
                 sprgDtRoleRepo.save(
-                        roleMapper.RoleToJpaRoleEntity(role,jpaPermissions)
+                        roleMapper.RoleToJpaRoleEntity(role)
                 )
         );
     }

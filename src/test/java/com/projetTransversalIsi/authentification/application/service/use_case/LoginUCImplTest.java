@@ -3,6 +3,8 @@ package com.projetTransversalIsi.authentification.application.service.use_case;
 import com.projetTransversalIsi.authentification.application.dto.LoginRequestDTO;
 import com.projetTransversalIsi.authentification.application.dto.LoginResponseDTO;
 import com.projetTransversalIsi.authentification.application.service.DefaultRefreshTokenService;
+import com.projetTransversalIsi.authentification.application.service.LoginUCImpl;
+import com.projetTransversalIsi.authentification.application.service.RegisterNewRefreshTokenUC;
 import com.projetTransversalIsi.authentification.domain.RefreshToken;
 import com.projetTransversalIsi.security.application.services.PasswordHasherAC;
 import com.projetTransversalIsi.security.domain.Role;
@@ -31,7 +33,7 @@ class LoginUCImplTest {
         PasswordHasherAC passwordHasher = mock(PasswordHasherAC.class);
         JwtService jwtService = mock(JwtService.class);
         GetUserByEmail getUserByEmail = mock(GetUserByEmail.class);
-        DefaultRefreshTokenService refreshTokenService = mock(DefaultRefreshTokenService.class);
+        RegisterNewRefreshTokenUC refreshTokenService = mock(RegisterNewRefreshTokenUC.class);
 
         LoginRequestDTO request = new LoginRequestDTO();
         request.setEmail("user@example.com");
@@ -51,10 +53,9 @@ class LoginUCImplTest {
         when(jwtService.generateJwtToken(user)).thenReturn("jwt-token");
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken("refresh-token");
-        when(refreshTokenService.registerNewRTokenForUser(user)).thenReturn(refreshToken);
+        when(refreshTokenService.execute(user)).thenReturn(refreshToken);
 
         LoginUCImpl useCase = new LoginUCImpl(
-                defaultUserService,
                 getPasswordByEmail,
                 passwordHasher,
                 jwtService,
@@ -75,7 +76,7 @@ class LoginUCImplTest {
         PasswordHasherAC passwordHasher = mock(PasswordHasherAC.class);
         JwtService jwtService = mock(JwtService.class);
         GetUserByEmail getUserByEmail = mock(GetUserByEmail.class);
-        DefaultRefreshTokenService refreshTokenService = mock(DefaultRefreshTokenService.class);
+        RegisterNewRefreshTokenUC refreshTokenService = mock(RegisterNewRefreshTokenUC.class);
 
         LoginRequestDTO request = new LoginRequestDTO();
         request.setEmail("user@example.com");
@@ -86,7 +87,6 @@ class LoginUCImplTest {
         when(passwordHasher.matches("bad", "hashed")).thenReturn(false);
 
         LoginUCImpl useCase = new LoginUCImpl(
-                defaultUserService,
                 getPasswordByEmail,
                 passwordHasher,
                 jwtService,

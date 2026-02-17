@@ -1,4 +1,4 @@
-package com.projetTransversalIsi.authentification.application.exceptions;
+package com.projetTransversalIsi.authentification.application.service.key_management;
 
 
 import org.springframework.beans.factory.annotation.Value;
