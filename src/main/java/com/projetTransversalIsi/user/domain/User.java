@@ -17,9 +17,10 @@ public class User {
     private UserStatus status;
     private String email;
     private String password;
+    private Long profileId;
 
     private Role role;
-    private Set<String> idPermissions;
+    private Set<Permission> permissions;
     private boolean deleted= false;
     private LocalDateTime deletedAt;
 
@@ -49,17 +50,11 @@ public class User {
     }
 
     public void delete(){
-        if(this.deleted){
-            throw new IllegalStateException("l'utilissateur" + this.id + "est deja supprimer ");
-        }
         this.deleted = true;
         this.deletedAt= LocalDateTime.now();
     }
 
     public void restore(){
-        if(!this.deleted){
-            throw new IllegalStateException("l'utilisateur" + this.id + "n'est pas supprimer");
-        }
         this.deleted=false;
         this.deletedAt=null;
     }

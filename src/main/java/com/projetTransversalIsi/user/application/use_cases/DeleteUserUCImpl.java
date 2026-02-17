@@ -18,16 +18,12 @@ public class DeleteUserUCImpl implements DeleteUserUC {
     @Override
     @Transactional
     public void execute(DeleteUserRequestDTO command) {
-
         User user = userRepo.findById(command.id())
                 .orElseThrow(() -> new UserNotFoundException(command.id()));
-
         if (user.isDeleted()) {
             throw new IllegalStateException("L'utilisateur " + command.id() + " est déjà supprimé");
         }
-
         user.delete();
-
-        userRepo.save(user, null, user.getIdPermissions(), null);
+        userRepo.save(user);
     }
 }

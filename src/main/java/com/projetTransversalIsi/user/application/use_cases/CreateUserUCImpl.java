@@ -42,6 +42,10 @@ public class CreateUserUCImpl implements CreateUserUC{
         Profile profile = profileSelectionStrategy.selectProfileFor(role);
         Profile newProfile= initProfile.execute(profile);
         Set<Permission> permissions= getAllPermById.findAllPermissionByIds(command.idPermissions());
-        return userRepo.registerNewUser(new User(command.email(), role),hashPassword,permissions,newProfile);
+        User user = new User(command.email(), role);
+        user.setPassword(hashPassword);
+        user.setProfileId(newProfile.getId());
+        user.setPermissions(permissions);
+        return userRepo.registerNewUser(user);
     }
 }

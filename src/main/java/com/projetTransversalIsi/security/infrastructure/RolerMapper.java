@@ -9,23 +9,9 @@ import org.mapstruct.Mapping;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",uses = {PermissionMapper.class})
 public interface RolerMapper {
-    @Mapping(target="idPermissions", expression="java(mapJpaPermissionToIds(jpaRole.getPermissions()))")
     Role JpaRoleEntityToRole(JpaRoleEntity jpaRole);
+    JpaRoleEntity RoleToJpaRoleEntity(Role role);
 
-    default JpaRoleEntity RoleToJpaRoleEntity(Role role, Set<JpaPermissionEntity> perm){
-        JpaRoleEntity jpaRoleEn= new JpaRoleEntity();
-        jpaRoleEn.setName(role.getName());
-        jpaRoleEn.setPermissions(perm);
-        return jpaRoleEn;
-
-    }
-
-    default Set<String> mapJpaPermissionToIds(Set<JpaPermissionEntity> perm) {
-        if (perm == null) return null;
-        return perm.stream()
-                .map(JpaPermissionEntity::getName)
-                .collect(Collectors.toSet());
-    }
 }

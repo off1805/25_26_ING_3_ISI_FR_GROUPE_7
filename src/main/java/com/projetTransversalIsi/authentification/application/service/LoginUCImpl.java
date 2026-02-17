@@ -1,12 +1,10 @@
-package com.projetTransversalIsi.authentification.application.service.use_case;
+package com.projetTransversalIsi.authentification.application.service;
 
 import com.projetTransversalIsi.authentification.application.dto.LoginRequestDTO;
 import com.projetTransversalIsi.authentification.application.dto.LoginResponseDTO;
-import com.projetTransversalIsi.authentification.application.service.DefaultRefreshTokenService;
 import com.projetTransversalIsi.authentification.application.service.token.JwtService;
 import com.projetTransversalIsi.authentification.domain.RefreshToken;
 import com.projetTransversalIsi.security.application.services.PasswordHasherAC;
-import com.projetTransversalIsi.user.application.services.DefaultUserService;
 import com.projetTransversalIsi.user.application.services.GetPasswordByEmail;
 import com.projetTransversalIsi.user.application.services.GetUserByEmail;
 import com.projetTransversalIsi.user.domain.User;
@@ -18,12 +16,12 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class LoginUCImpl implements LoginUC {
-    private final DefaultUserService defaultUserServ;
+
     private final GetPasswordByEmail getPasswordByEmail;
     private final PasswordHasherAC passwordHasher;
     private final JwtService jwtS;
     private final GetUserByEmail getUserByEmail;
-    private final DefaultRefreshTokenService defRToken;
+    private final RegisterNewRefreshTokenUC registerNewRefreshToken;
 
     @Override
     public LoginResponseDTO execute(LoginRequestDTO command){
@@ -38,9 +36,8 @@ public class LoginUCImpl implements LoginUC {
         );
         String token= jwtS.generateJwtToken(user);
 
-        RefreshToken rToken= defRToken.registerNewRTokenForUser(user);
+        RefreshToken rToken= registerNewRefreshToken.execute(user);
         return new LoginResponseDTO(token,rToken.getToken());
-
     }
 
 }

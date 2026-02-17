@@ -1,7 +1,8 @@
 package com.projetTransversalIsi.authentification.application.service.token;
 
 import com.projetTransversalIsi.authentification.application.exceptions.InvalidTokenException;
-import com.projetTransversalIsi.authentification.application.exceptions.KeyManagement;
+import com.projetTransversalIsi.authentification.application.service.key_management.KeyManagement;
+import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
 import com.projetTransversalIsi.user.domain.User;
 import io.jsonwebtoken.Claims;
@@ -38,7 +39,10 @@ class JwtServiceImplTest {
         user.setId(42L);
         user.setEmail("user@example.com");
         user.setRole(role);
-        user.setIdPermissions(Set.of("PERM_READ", "PERM_WRITE"));
+        user.setPermissions(Set.of(
+                new Permission("PERM_READ", "Read"),
+                new Permission("PERM_WRITE", "Write")
+        ));
 
         String token = service.generateJwtToken(user);
         assertNotNull(token);

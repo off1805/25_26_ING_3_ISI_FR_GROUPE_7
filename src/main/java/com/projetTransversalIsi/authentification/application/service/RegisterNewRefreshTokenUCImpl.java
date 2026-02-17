@@ -7,27 +7,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
-@Component
 @RequiredArgsConstructor
-public class RefreshTokenService implements DefaultRefreshTokenService {
+@Component
+public class RegisterNewRefreshTokenUCImpl implements RegisterNewRefreshTokenUC{
+
     private final RefreshTokenRepository rTokenRepo;
     private final long refreshTokenDurationMs = 7 * 24 * 60 * 60 * 1000L;
 
     @Override
-    public Optional<RefreshToken> findRefreshTokenById(String id){
-       return rTokenRepo.getRefreshTokenById(id);
-    }
-
-    @Override
-   public RefreshToken registerNewRTokenForUser(User user){
+    public RefreshToken execute(User user){
         RefreshToken refreshToken= new RefreshToken();
         refreshToken.setUserId(user.getId());
         refreshToken.setToken(UUID.randomUUID().toString());
         refreshToken.setCreatedAt(new Date());
         refreshToken.setExpiresAt(new Date(System.currentTimeMillis()+refreshTokenDurationMs));
         return rTokenRepo.saveRefreshToken(refreshToken);
-   }
+    }
+
 }
