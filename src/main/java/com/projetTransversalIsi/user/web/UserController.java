@@ -4,6 +4,7 @@ import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.user.application.dto.CreateUserRequestDTO;
 import com.projetTransversalIsi.user.application.dto.PermissionResponseDTO;
 import com.projetTransversalIsi.user.application.dto.UserDetailsResponseDTO;
+import com.projetTransversalIsi.user.application.services.UserService;
 import com.projetTransversalIsi.user.application.use_cases.CreateUserUC;
 import com.projetTransversalIsi.user.application.use_cases.RetrievePermissionsForUserByIdUC;
 import com.projetTransversalIsi.user.domain.User;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class UserController {
     private final CreateUserUC createUserUC;
     private final RetrievePermissionsForUserByIdUC retrievePermissionsForUserByIdUC;
+    private UserService userservice;
 
     @PostMapping("")
     public ResponseEntity<UserDetailsResponseDTO> createUser(@Valid @RequestBody CreateUserRequestDTO request){
@@ -43,6 +45,12 @@ public class UserController {
         );
 
 
+    }
+
+    @PatchMapping("/{id}/block")
+    public ResponseEntity<String> block(@PathVariable Long id) {
+        UserService.blockUser(id);
+        return ResponseEntity.ok("Utilisateur bloqué avec succès");
     }
 
 }

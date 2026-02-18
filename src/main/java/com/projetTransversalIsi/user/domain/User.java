@@ -21,7 +21,7 @@ public class User {
 
     private Role role;
     private Set<String> idPermissions;
-
+    private boolean blocked=false;
 
     public User(String email,Role role,UserStatus status, Long id){
         this.email=email;
@@ -41,4 +41,5 @@ public class User {
     public boolean isActive(){
         return this.status==UserStatus.ACTIVE;
     }
+
 }
