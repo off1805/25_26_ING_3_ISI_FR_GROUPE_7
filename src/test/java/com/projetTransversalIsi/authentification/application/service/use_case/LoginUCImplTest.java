@@ -26,75 +26,73 @@ import static org.mockito.Mockito.when;
 
 class LoginUCImplTest {
 
-    @Test
-    void executeReturnsTokensWhenCredentialsValid() {
-        DefaultUserService defaultUserService = mock(DefaultUserService.class);
-        GetPasswordByEmail getPasswordByEmail = mock(GetPasswordByEmail.class);
-        PasswordHasherAC passwordHasher = mock(PasswordHasherAC.class);
-        JwtService jwtService = mock(JwtService.class);
-        GetUserByEmail getUserByEmail = mock(GetUserByEmail.class);
-        RegisterNewRefreshTokenUC refreshTokenService = mock(RegisterNewRefreshTokenUC.class);
+        @Test
+        void executeReturnsTokensWhenCredentialsValid() {
+                DefaultUserService defaultUserService = mock(DefaultUserService.class);
+                GetPasswordByEmail getPasswordByEmail = mock(GetPasswordByEmail.class);
+                PasswordHasherAC passwordHasher = mock(PasswordHasherAC.class);
+                JwtService jwtService = mock(JwtService.class);
+                GetUserByEmail getUserByEmail = mock(GetUserByEmail.class);
+                RegisterNewRefreshTokenUC refreshTokenService = mock(RegisterNewRefreshTokenUC.class);
 
-        LoginRequestDTO request = new LoginRequestDTO();
-        request.setEmail("user@example.com");
-        request.setPassword("secret123");
+                LoginRequestDTO request = new LoginRequestDTO();
+                request.setEmail("user@example.com");
+                request.setPassword("secret123");
 
-        when(getPasswordByEmail.getPasswordByEmail("user@example.com"))
-                .thenReturn(Optional.of("hashed"));
-        when(passwordHasher.matches("secret123", "hashed")).thenReturn(true);
+                when(getPasswordByEmail.getPasswordByEmail("user@example.com"))
+                                .thenReturn(Optional.of("hashed"));
+                when(passwordHasher.matches("secret123", "hashed")).thenReturn(true);
 
-        Role role = new Role("ADMIN");
-        User user = new User();
-        user.setId(7L);
-        user.setEmail("user@example.com");
-        user.setRole(role);
-        when(getUserByEmail.getByEmail("user@example.com")).thenReturn(Optional.of(user));
+                Role role = new Role("ADMIN");
+                User user = new User();
+                user.setId(7L);
+                user.setEmail("user@example.com");
+                user.setRole(role);
+                when(getUserByEmail.getByEmail("user@example.com")).thenReturn(Optional.of(user));
 
-        when(jwtService.generateJwtToken(user)).thenReturn("jwt-token");
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken("refresh-token");
-        when(refreshTokenService.execute(user)).thenReturn(refreshToken);
+                when(jwtService.generateJwtToken(user)).thenReturn("jwt-token");
+                RefreshToken refreshToken = new RefreshToken();
+                refreshToken.setToken("refresh-token");
+                when(refreshTokenService.execute(user)).thenReturn(refreshToken);
 
-        LoginUCImpl useCase = new LoginUCImpl(
-                getPasswordByEmail,
-                passwordHasher,
-                jwtService,
-                getUserByEmail,
-                refreshTokenService
-        );
+                LoginUCImpl useCase = new LoginUCImpl(
+                                getPasswordByEmail,
+                                passwordHasher,
+                                jwtService,
+                                getUserByEmail,
+                                refreshTokenService);
 
-        LoginResponseDTO response = useCase.execute(request);
+                LoginResponseDTO response = useCase.execute(request);
 
-        assertEquals("jwt-token", response.getToken());
-        assertEquals("refresh-token", response.getRefreshToken());
-    }
+                assertEquals("jwt-token", response.getToken());
+                assertEquals("refresh-token", response.getRefreshToken());
+        }
 
-    @Test
-    void executeThrowsWhenPasswordInvalid() {
-        DefaultUserService defaultUserService = mock(DefaultUserService.class);
-        GetPasswordByEmail getPasswordByEmail = mock(GetPasswordByEmail.class);
-        PasswordHasherAC passwordHasher = mock(PasswordHasherAC.class);
-        JwtService jwtService = mock(JwtService.class);
-        GetUserByEmail getUserByEmail = mock(GetUserByEmail.class);
-        RegisterNewRefreshTokenUC refreshTokenService = mock(RegisterNewRefreshTokenUC.class);
+        @Test
+        void executeThrowsWhenPasswordInvalid() {
+                DefaultUserService defaultUserService = mock(DefaultUserService.class);
+                GetPasswordByEmail getPasswordByEmail = mock(GetPasswordByEmail.class);
+                PasswordHasherAC passwordHasher = mock(PasswordHasherAC.class);
+                JwtService jwtService = mock(JwtService.class);
+                GetUserByEmail getUserByEmail = mock(GetUserByEmail.class);
+                RegisterNewRefreshTokenUC refreshTokenService = mock(RegisterNewRefreshTokenUC.class);
 
-        LoginRequestDTO request = new LoginRequestDTO();
-        request.setEmail("user@example.com");
-        request.setPassword("bad");
+                LoginRequestDTO request = new LoginRequestDTO();
+                request.setEmail("user@example.com");
+                request.setPassword("bad");
 
-        when(getPasswordByEmail.getPasswordByEmail("user@example.com"))
-                .thenReturn(Optional.of("hashed"));
-        when(passwordHasher.matches("bad", "hashed")).thenReturn(false);
+                when(getPasswordByEmail.getPasswordByEmail("user@example.com"))
+                                .thenReturn(Optional.of("hashed"));
+                when(passwordHasher.matches("bad", "hashed")).thenReturn(false);
 
-        LoginUCImpl useCase = new LoginUCImpl(
-                getPasswordByEmail,
-                passwordHasher,
-                jwtService,
-                getUserByEmail,
-                refreshTokenService
-        );
+                LoginUCImpl useCase = new LoginUCImpl(
+                                getPasswordByEmail,
+                                passwordHasher,
+                                jwtService,
+                                getUserByEmail,
+                                refreshTokenService);
 
-        assertThrows(RuntimeException.class, () -> useCase.execute(request));
-        verify(getUserByEmail, never()).getByEmail("user@example.com");
-    }
+                assertThrows(RuntimeException.class, () -> useCase.execute(request));
+                verify(getUserByEmail, never()).getByEmail("user@example.com");
+        }
 }

@@ -56,7 +56,7 @@ public class InitRolePermissionUCImpl implements InitRolePermissionUC{
                     role.setPermissions(getAllPermById.findAllPermissionByIds( idPermissions));
                     log.info("0");
                    for(int i=0;i<role.getPermissions().size();i++){
-                       log.info(i+ "- "+ idPermissions.stream().toList().get(i));
+                       log.info(i+ "- "+ role.getPermissions().toArray()[i]);
                    }
 
                     defaultRoleOp.registerNewRole(role);

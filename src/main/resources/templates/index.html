@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,375 +10,376 @@
     <meta name="theme-color" content="#000000">
     <link rel="apple-touch-icon" th:href="@{/images/icon-512.png}">
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
 
     <!-- Bootstrap (local) -->
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
 </head>
 
-<body class="bg-light">
-<div class="container-fluid p-0">
-    <div class="row g-0 flex-nowrap">
-        <aside class="col-lg-3 col-xl-2 d-none d-lg-flex flex-column justify-content-between border-end min-vh-100 p-3 bg-white ">
-
-                <div class="sidebar-brand">
-                    <div class="brand">
-                        <img th:src="@{/images/logo-25.png}" alt="icone">
-                        <div class="brand-name">KemOSchool</div>
-
+<body>
+    <div class="container-fluid p-0">
+        <div class="d-flex flex-nowrap">
+            <aside
+                class="d-none d-lg-flex flex-column justify-content-between border-end min-vh-100 p-3 bg-body-secondary flex-shrink-0 "
+                style="width: 300px">
+                <div>
+                    <div class="sidebar-brand mb-3">
+                        <div class="brand d-flex flex-row gap-1 align-items-center">
+                            <img th:src="@{/images/logo-25.png}" alt="icone">
+                            <div class="brand-name">KemOSchool</div>
+                        </div>
                     </div>
+                    <div class="text-uppercase small text-secondary fw-semibold mb-2">
+                        Menu principal
+                    </div>
+                    <nav class="nav nav-pills flex-column gap-2 mb-4">
+                        <a class="nav-link active d-flex align-items-center gap-2" href="#">
+                            <i class="bi bi-people"></i>
+                            <span>Utilisateurs</span>
+                        </a>
+                    </nav>
 
                 </div>
-
-                <div class="text-uppercase small text-secondary fw-semibold mb-2">
-                    Menu principal
+                <!-- PARTIE BAS -->
+                <div class="">
+                    <hr class="mb-3" />
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="bg-body-tertiary border rounded-4" style="width:44px;height:44px;"></div>
+                        <div>
+                            <div class="fw-semibold small">Admin Nom</div>
+                            <div class="text-secondary small">Administrateur</div>
+                        </div>
+                    </div>
                 </div>
+            </aside>
+            <div class="container-fluid flex-grow-1 bg-body overflow-auto p-0 d-flex flex-column">
+                <nav class="navbar navbar-expand-lg  border-bottom sticky-top px-3">
+                    <div class="container-fluid p-0">
+                        <button class="btn btn-outline-secondary d-lg-none me-2" type="button"
+                            data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
+                            <i class="bi bi-list"></i>
+                        </button>
 
-                <nav class="nav nav-pills flex-column gap-2 mb-4">
-                    <a class="nav-link active d-flex align-items-center gap-2" href="#">
-                        <i class="bi bi-people"></i>
-                        <span>Utilisateurs</span>
-                    </a>
+                        <span class="navbar-brand fw-semibold mb-0">Panneau d’Administration</span>
+
+                        <div class="ms-auto d-flex align-items-center gap-2">
+                            <button class="btn btn-outline-secondary" type="button" aria-label="Help">
+                                <i class="bi bi-question-circle"></i>
+                            </button>
+                        </div>
+                    </div>
                 </nav>
+                <!-- MAIN CONTENT -->
+                <main class="col-12  p-3 p-md-4 ps-lg-4 d-flex justify-content-center bg-body flex-grow-1">
+                    <section class="col-12" style="max-width:1200px;">
+                        <h1 class="h4 fw-bold mb-3">Gestion des utilisateurs</h1>
 
-            </div>
-
-            <!-- PARTIE BAS -->
-            <div class="">
-
-                <hr class="mb-3" />
-
-                <div class="d-flex align-items-center gap-2">
-                    <div class="bg-body-tertiary border rounded-4" style="width:44px;height:44px;"></div>
-                    <div>
-                        <div class="fw-semibold small">Admin Nom</div>
-                        <div class="text-secondary small">Administrateur</div>
-                    </div>
-                </div>
-
-            </div>
-
-        </aside>
-
-        <div class="col-12 col-lg-9 col-xl-10 d-flex flex-column p-0 min-vh-100">
-
-    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top px-3">
-        <div class="container-fluid p-0">
-            <button class="btn btn-outline-secondary d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
-                <i class="bi bi-list"></i>
-            </button>
-
-            <span class="navbar-brand fw-semibold mb-0">Panneau d’Administration</span>
-
-            <div class="ms-auto d-flex align-items-center gap-2">
-                <button class="btn btn-outline-secondary" type="button" aria-label="Help">
-                    <i class="bi bi-question-circle"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-        <!-- MAIN CONTENT -->
-        <main class="col-12  p-3 p-md-4 ps-lg-4 d-flex justify-content-center" >
-            <section class="col-12" style="max-width:700px;">
-                <h1 class="h4 fw-bold mb-3">Gestion des utilisateurs</h1>
-
-                <!-- Tabs -->
-                <ul class="nav nav-tabs mb-3">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Personnel</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Étudiants</a>
-                    </li>
-                </ul>
-
-                <section class="card" >
-                    <div class="card-body p-4">
-
-                        <div class="d-flex gap-2 align-items-center mb-4">
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs mb-3">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#">Personnel</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Étudiants</a>
+                            </li>
+                        </ul>
+                        <div class="d-flex gap-2 align-items-center mb-4 mt-3">
                             <div class="input-group">
-                <span class="input-group-text bg-body-tertiary">
-                    <i class="bi bi-search"></i>
-                </span>
-                                <input class="form-control"
-                                       type="text"
-                                       placeholder="Chercher par email, nom, ou ID" />
+                                <span class="input-group-text bg-body-tertiary">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input class="form-control" type="text" placeholder="Chercher par email, nom, ou ID" />
                             </div>
 
                             <div class="flex-shrink-0">
-                                <button class="btn btn-primary rounded-2 px-3 d-flex align-items-center"
-                                        type="button"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#addUserModal">
+                                <button class="btn btn-primary rounded-2 px-3 d-flex align-items-center" type="button"
+                                    data-bs-toggle="modal" data-bs-target="#addUserModal">
                                     <i class="bi bi-person-plus-fill"></i>
                                     <span class="d-none d-md-block ms-2">Ajouter user</span>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="table-responsive mb-2">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                <tr class="text-uppercase small text-secondary">
-                                    <th scope="col" class="py-3">Email</th>
-                                    <th scope="col" class="py-3 d-none d-md-table-cell">Rôle</th>
-                                    <th scope="col" class="py-3 d-none d-md-table-cell">Identifiant</th>
-                                    <th scope="col" class="py-3 text-end">Actions</th>
-                                </tr>
-                                </thead>
+                        <section class="card">
 
-                                <tbody>
-                                <tr th:if="${staff == null or #lists.isEmpty(staff)}">
-                                    <td colspan="4" class="text-center text-secondary py-4">
-                                        Aucun utilisateur trouvé
-                                    </td>
-                                </tr>
+                            <div class="card-body">
 
-                                <tr th:each="u : ${staff}">
-                                    <td class="py-3">
-                                        <div class="d-flex align-items-center gap-3">
-                            <span class="bg-body-tertiary border rounded-4 d-inline-flex align-items-center justify-content-center"
-                                  style="width:36px;height:36px;">
-                                <i class="bi bi-envelope"></i>
-                            </span>
-                                            <span class="fw-semibold" th:text="${u.email}">email</span>
-                                        </div>
-                                    </td>
 
-                                    <td class="d-none d-md-table-cell">
-                        <span class="badge text-bg-secondary text-uppercase"
-                              th:text="${u.roleName}">ROLE</span>
-                                    </td>
 
-                                    <td class="d-none d-md-table-cell">
-                        <span class="badge text-bg-light border text-primary"
-                              th:text="${u.id}">USER_ID</span>
-                                    </td>
+                                <div class="table-responsive mb-2">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr class="small text-secondary">
+                                                <th scope="col" class="py-3">Email</th>
+                                                <th scope="col" class="py-3 d-none d-md-table-cell">Rôle</th>
+                                                <th scope="col" class="py-3 d-none d-md-table-cell">Identifiant</th>
+                                                <th scope="col" class="py-3 text-end">Actions</th>
+                                            </tr>
+                                        </thead>
 
-                                    <td class="text-end">
-                                        <div class="dropdown dropstart d-inline-block">
-                                            <button class="btn btn-outline-secondary btn-sm"
-                                                    type="button"
-                                                    data-bs-toggle="dropdown"
-                                                    aria-expanded="false"
-                                                    aria-label="Actions">
-                                                <i class="bi bi-three-dots-vertical"></i>
+                                        <tbody>
+                                            <tr th:if="${staff == null or #lists.isEmpty(staff)}">
+                                                <td colspan="4" class="text-center text-secondary py-4">
+                                                    Aucun utilisateur trouvé
+                                                </td>
+                                            </tr>
+
+                                            <tr th:each="u : ${staff}">
+                                                <td class="py-3">
+                                                    <div class="d-flex align-items-center gap-3">
+                                                        <span
+                                                            class="bg-body-tertiary border rounded-4 d-inline-flex align-items-center justify-content-center"
+                                                            style="width:36px;height:36px;">
+                                                            <i class="bi bi-envelope"></i>
+                                                        </span>
+                                                        <span class="fw-semibold" th:text="${u.email}">email</span>
+                                                    </div>
+                                                </td>
+
+                                                <td class="d-none d-md-table-cell">
+                                                    <span class="badge text-bg-secondary text-uppercase"
+                                                        th:text="${u.roleName}">ROLE</span>
+                                                </td>
+
+                                                <td class="d-none d-md-table-cell">
+                                                    <span class="badge text-bg-light border text-primary"
+                                                        th:text="${u.id}">USER_ID</span>
+                                                </td>
+
+                                                <td class="text-end">
+                                                    <div class="dropdown dropstart d-inline-block">
+                                                        <button class="btn btn-outline-secondary btn-sm" type="button"
+                                                            data-bs-toggle="dropdown" aria-expanded="false"
+                                                            aria-label="Actions">
+                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                        </button>
+
+                                                        <ul class="dropdown-menu shadow-sm">
+                                                            <li>
+                                                                <button
+                                                                    class="dropdown-item d-flex align-items-center gap-2"
+                                                                    type="button">
+                                                                    <i class="bi bi-pencil"></i> Modifier
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                <button
+                                                                    class="dropdown-item d-flex align-items-center gap-2 text-danger js-delete-user"
+                                                                    type="button" th:data-user-id="${u.id}">
+                                                                    <i class="bi bi-trash"></i> Supprimer
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                <button
+                                                                    class="dropdown-item d-flex align-items-center gap-2 text-warning js-block-user"
+                                                                    type="button" th:data-user-id="${u.id}">
+                                                                    <i class="bi bi-slash-circle"></i> Bloquer
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div
+                                    class="d-flex flex-column flex-md-row gap-3 align-items-md-center justify-content-between pt-3 mt-3 border-top">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-secondary fw-semibold small">Lignes par page :</span>
+                                        <select class="form-select form-select-sm w-auto">
+                                            <option selected>50</option>
+                                            <option>25</option>
+                                            <option>10</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-secondary fw-semibold small">1 – 2 sur 2</span>
+                                        <div class="btn-group" role="group" aria-label="Pagination">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button"
+                                                aria-label="Previous">
+                                                <i class="bi bi-chevron-left"></i>
                                             </button>
-
-                                            <ul class="dropdown-menu shadow-sm">
-                                                <li>
-                                                    <button class="dropdown-item d-flex align-items-center gap-2" type="button">
-                                                        <i class="bi bi-pencil"></i> Modifier
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button class="dropdown-item d-flex align-items-center gap-2 text-danger" type="button">
-                                                        <i class="bi bi-trash"></i> Supprimer
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button class="dropdown-item d-flex align-items-center gap-2 text-warning" type="button">
-                                                        <i class="bi bi-slash-circle"></i> Bloquer
-                                                    </button>
-                                                </li>
-                                            </ul>
+                                            <button class="btn btn-outline-secondary btn-sm" type="button"
+                                                aria-label="Next">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </button>
                                         </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </section>
+
+                    </section>
+
+                </main>
+
+            </div>
+        </div>
+    </div>
+    <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="sidebarOffcanvas"
+        aria-labelledby="sidebarOffcanvasLabel">
+        <div class="offcanvas-header border-bottom">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge text-bg-primary rounded-3 p-2">K</span>
+                <span class="fw-semibold text-primary" id="sidebarOffcanvasLabel">KemOSchool</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body">
+            <div class="text-uppercase small text-secondary fw-semibold mb-2" style="letter-spacing:.12em;">
+                Menu principal
+            </div>
+
+            <nav class="nav nav-pills flex-column gap-2 mb-4">
+                <a class="nav-link active d-flex align-items-center gap-2" href="#">
+                    <i class="bi bi-people"></i>
+                    <span>Utilisateurs</span>
+                </a>
+            </nav>
+
+            <hr />
+
+            <div class="d-flex align-items-center gap-2">
+                <div class="bg-body-tertiary border rounded-4" style="width:44px;height:44px;"></div>
+                <div class="min-w-0">
+                    <div class="fw-semibold small text-truncate">Admin Nom</div>
+                    <div class="text-secondary small">Administrateur</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Add user -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow">
+
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Ajouter nouveau utilisateur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="addUserForm" method="post">
+                    <div class="modal-body">
+
+                        <input type="hidden" />
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label class="form-label text-uppercase small text-secondary fw-semibold"
+                                style="letter-spacing:.10em;">
+                                Adresse email
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-body-tertiary">
+                                    <i class="bi bi-envelope"></i>
+                                </span>
+                                <input class="form-control" name="email" type="email" placeholder="ex. user@example.com"
+                                    required />
+                            </div>
                         </div>
 
-                        <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center justify-content-between pt-3 mt-3 border-top">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="text-secondary fw-semibold small">Lignes par page :</span>
-                                <select class="form-select form-select-sm w-auto">
-                                    <option selected>50</option>
-                                    <option>25</option>
-                                    <option>10</option>
+                        <!-- Role -->
+                        <div class="mb-3">
+                            <label class="form-label text-uppercase small text-secondary fw-semibold"
+                                style="letter-spacing:.10em;">
+                                Rôle
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-body-tertiary">
+                                    <i class="bi bi-shield-check"></i>
+                                </span>
+                                <select class="form-select" name="role" required>
+                                    <option value="STUDENT">Étudiant</option>
+                                    <option value="TEACHER">Enseignant</option>
+                                    <option value="ADMIN">Surveillant</option>
+                                    <option value="ASSISTANT">Assistant pédagogique</option>
                                 </select>
                             </div>
+                        </div>
 
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="text-secondary fw-semibold small">1 – 2 sur 2</span>
-                                <div class="btn-group" role="group" aria-label="Pagination">
-                                    <button class="btn btn-outline-secondary btn-sm" type="button" aria-label="Previous">
-                                        <i class="bi bi-chevron-left"></i>
-                                    </button>
-                                    <button class="btn btn-outline-secondary btn-sm" type="button" aria-label="Next">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </button>
+                        <!-- Permissions -->
+                        <div class="mb-2">
+                            <label class="form-label text-uppercase small text-secondary fw-semibold"
+                                style="letter-spacing:.10em;">
+                                Permissions
+                            </label>
+
+                            <div class="row g-2" id="permissionsContainer">
+                                <div class="col-12 col-sm-6">
+                                    <label
+                                        class="border rounded-3 p-2 d-flex align-items-center gap-2 w-100 bg-body-tertiary">
+                                        <input class="form-check-input m-0" type="checkbox" name="permissions"
+                                            value="VIEW_DATA" />
+                                        <span class="fw-semibold small">View Data</span>
+                                    </label>
+                                </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <label
+                                        class="border rounded-3 p-2 d-flex align-items-center gap-2 w-100 bg-body-tertiary">
+                                        <input class="form-check-input m-0" type="checkbox" name="permissions"
+                                            value="EDIT_RECORDS" />
+                                        <span class="fw-semibold small">Edit Records</span>
+                                    </label>
+                                </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <label
+                                        class="border rounded-3 p-2 d-flex align-items-center gap-2 w-100 bg-body-tertiary">
+                                        <input class="form-check-input m-0" type="checkbox" name="permissions"
+                                            value="DELETE_ITEMS" />
+                                        <span class="fw-semibold small">Delete items</span>
+                                    </label>
+                                </div>
+
+                                <div class="col-12 col-sm-6">
+                                    <label
+                                        class="border rounded-3 p-2 d-flex align-items-center gap-2 w-100 bg-body-tertiary">
+                                        <input class="form-check-input m-0" type="checkbox" name="permissions"
+                                            value="MANAGE_USERS" />
+                                        <span class="fw-semibold small">Manage Users</span>
+                                    </label>
                                 </div>
                             </div>
                         </div>
 
                     </div>
-                </section>
 
-            </section>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Créer user
+                        </button>
+                    </div>
+                </form>
 
-        </main>
-
-    </div>
-</div>
-</div>
-<div class="offcanvas offcanvas-start d-lg-none"
-     tabindex="-1"
-     id="sidebarOffcanvas"
-     aria-labelledby="sidebarOffcanvasLabel">
-    <div class="offcanvas-header border-bottom">
-        <div class="d-flex align-items-center gap-2">
-            <span class="badge text-bg-primary rounded-3 p-2">K</span>
-            <span class="fw-semibold text-primary" id="sidebarOffcanvasLabel">KemOSchool</span>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-
-    <div class="offcanvas-body">
-        <div class="text-uppercase small text-secondary fw-semibold mb-2" style="letter-spacing:.12em;">
-            Menu principal
-        </div>
-
-        <nav class="nav nav-pills flex-column gap-2 mb-4">
-            <a class="nav-link active d-flex align-items-center gap-2" href="#">
-                <i class="bi bi-people"></i>
-                <span>Utilisateurs</span>
-            </a>
-        </nav>
-
-        <hr />
-
-        <div class="d-flex align-items-center gap-2">
-            <div class="bg-body-tertiary border rounded-4" style="width:44px;height:44px;"></div>
-            <div class="min-w-0">
-                <div class="fw-semibold small text-truncate">Admin Nom</div>
-                <div class="text-secondary small">Administrateur</div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- MODAL: Add user -->
-<div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow">
-
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Ajouter nouveau utilisateur</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <form method="post">
-                <div class="modal-body">
-
-                    <input type="hidden" />
-
-                    <!-- Email -->
-                    <div class="mb-3">
-                        <label class="form-label text-uppercase small text-secondary fw-semibold" style="letter-spacing:.10em;">
-                            Adresse email
-                        </label>
-                        <div class="input-group">
-              <span class="input-group-text bg-body-tertiary">
-                <i class="bi bi-envelope"></i>
-              </span>
-                            <input class="form-control"
-                                   name="email"
-                                   type="email"
-                                   placeholder="ex. user@example.com"
-                                   required />
-                        </div>
-                    </div>
-
-                    <!-- Role -->
-                    <div class="mb-3">
-                        <label class="form-label text-uppercase small text-secondary fw-semibold" style="letter-spacing:.10em;">
-                            Rôle
-                        </label>
-                        <div class="input-group">
-              <span class="input-group-text bg-body-tertiary">
-                <i class="bi bi-shield-check"></i>
-              </span>
-                            <select class="form-select" name="role" required>
-                                <option value="STUDENT">Étudiant</option>
-                                <option value="TEACHER">Enseignant</option>
-                                <option value="ADMIN">Surveillant</option>
-                                <option value="ASSISTANT">Assistant pédagogique</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Permissions -->
-                    <div class="mb-2">
-                        <label class="form-label text-uppercase small text-secondary fw-semibold" style="letter-spacing:.10em;">
-                            Permissions
-                        </label>
-
-                        <div class="row g-2">
-                            <div class="col-12 col-sm-6">
-                                <label class="border rounded-3 p-2 d-flex align-items-center gap-2 w-100 bg-body-tertiary">
-                                    <input class="form-check-input m-0" type="checkbox" name="permissions" value="VIEW_DATA" />
-                                    <span class="fw-semibold small">View Data</span>
-                                </label>
-                            </div>
-
-                            <div class="col-12 col-sm-6">
-                                <label class="border rounded-3 p-2 d-flex align-items-center gap-2 w-100 bg-body-tertiary">
-                                    <input class="form-check-input m-0" type="checkbox" name="permissions" value="EDIT_RECORDS" />
-                                    <span class="fw-semibold small">Edit Records</span>
-                                </label>
-                            </div>
-
-                            <div class="col-12 col-sm-6">
-                                <label class="border rounded-3 p-2 d-flex align-items-center gap-2 w-100 bg-body-tertiary">
-                                    <input class="form-check-input m-0" type="checkbox" name="permissions" value="DELETE_ITEMS" />
-                                    <span class="fw-semibold small">Delete items</span>
-                                </label>
-                            </div>
-
-                            <div class="col-12 col-sm-6">
-                                <label class="border rounded-3 p-2 d-flex align-items-center gap-2 w-100 bg-body-tertiary">
-                                    <input class="form-check-input m-0" type="checkbox" name="permissions" value="MANAGE_USERS" />
-                                    <span class="fw-semibold small">Manage Users</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        Annuler
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        Créer user
-                    </button>
-                </div>
-            </form>
-
-        </div>
-    </div>
-</div>
-
-<script src="js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript" src="js/sidebar.js"></script>
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('Service Worker enregistré !', reg))
-                .catch(err => console.log('Erreur SW:', err));
-        });
-    }
-</script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script type="module" src="/js/User/ui/UserController.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker enregistré !', reg))
+                    .catch(err => console.log('Erreur SW:', err));
+            });
+        }
+    </script>
 
 </body>
+
 </html>

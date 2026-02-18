@@ -1,32 +1,16 @@
-
-
-export class LoginUC{
-    constructor(authApi) {
-        this.authAPi= authApi;
+export class DeleteUserUC {
+    constructor(userApi) {
+        this.userApi = userApi;
     }
 
-    async execute(userCredential){
-        if(!userCredential.email || !userCredential.password){
-            throw new Error("Email et mot de passe sont requis");
+    async execute(userId) {
+        if (!userId) {
+            throw new Error("ID de l'utilisateur requis pour la suppression");
         }
-        try{
-            const response= await this.authAPi.login(userCredential.email,userCredential.password);
-            const {token,refreshToken}=response;
-            if(!token){
-                throw  new Error('Connexion echoue: pas de token recu');
-            }
-            await TokenService.setToken(token);
-            await TokenService.setRefreshToken(refreshToken);
-            const payload= TokenService.parseToken(token);
-            console.log("Connexion reussie");
-
-            window.location.href=MapperRoleRedirectionPage(payload.role);
-
-
-        }catch (e){
-            throw new Error(e.message || "Erreur lors de la connexion.");
+        try {
+            await this.userApi.deleteUser(userId);
+        } catch (e) {
+            throw new Error(e.message || "Erreur lors de la suppression de l'utilisateur.");
         }
-
     }
-
 }
