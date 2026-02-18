@@ -6,13 +6,12 @@ import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.concurrent.Executor;
-
-
-
+@Service
 @Component
 @RequiredArgsConstructor
 public class UserService  implements
@@ -36,6 +35,23 @@ public class UserService  implements
     public Optional<User> getByEmail(String email){
         return userRepository.findByEmail(email);
     }
+
+    @Autowired
+    public void blockUser(Long userID){
+        User user = userRepository.findById(userID)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setBlocked(true);
+        userRepository.save(user);
+    }
+
+    public void unblockUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setBlocked(false);
+        userRepository.save(user);
+    }
+}
     @Override
     @Transactional
     public void deleteUser(long userId) {
