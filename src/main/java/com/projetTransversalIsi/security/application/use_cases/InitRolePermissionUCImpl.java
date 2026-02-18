@@ -4,6 +4,8 @@ import com.projetTransversalIsi.security.application.services.DefaultPermissionO
 import com.projetTransversalIsi.security.application.services.DefaultRoleOperation;
 import com.projetTransversalIsi.security.application.services.FindAllPermissionByIdsAccessPort;
 import com.projetTransversalIsi.security.domain.*;
+import com.projetTransversalIsi.user.application.dto.CreateUserRequestDTO;
+import com.projetTransversalIsi.user.application.use_cases.CreateUserUC;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,8 @@ public class InitRolePermissionUCImpl implements InitRolePermissionUC{
     private final DefaultRoleOperation defaultRoleOp;
     private final DefaultPermissionOperation defaultPermissionOp;
     private final FindAllPermissionByIdsAccessPort getAllPermById;
+    private final CreateUserUC createUser;
+
 
 
     @Override
@@ -28,7 +32,6 @@ public class InitRolePermissionUCImpl implements InitRolePermissionUC{
     public void execute(){
 
             log.info("Vérification et initialisation de la base de données...");
-
             // 1. Création des Permissions par défaut
             if (defaultPermissionOp.count() == 0) {
                 for(EnumPermission enumPerm: EnumPermission.values()){
@@ -50,22 +53,18 @@ public class InitRolePermissionUCImpl implements InitRolePermissionUC{
 //                    getAllPermById.findAllPermissionByIds(idPermissions)
 //                            .orElseThrow(() -> new RuntimeException("Au moins une permission n'a pas ete trouvee"));
                     Role role= new Role(enumRole.name());
-                    role.setIdPermissions(idPermissions);
+                    role.setPermissions(getAllPermById.findAllPermissionByIds( idPermissions));
                     log.info("0");
-                   for(int i=0;i<role.getIdPermissions().size();i++){
-                       log.info(i+ "- "+ idPermissions.stream().toList().get(i));
+                   for(int i=0;i<role.getPermissions().size();i++){
+                       log.info(i+ "- "+ role.getPermissions().toArray()[i]);
                    }
 
                     defaultRoleOp.registerNewRole(role);
                 }
 
                 log.info("Rôles par défaut créés.");
+                createUser.execute(new CreateUserRequestDTO("admin@gmail.com","admin123","ADMIN",Set.of("MANAGE_STAFF")));
             }
-
             log.info("Initialisation terminée.");
-
-
     }
-
-
 }

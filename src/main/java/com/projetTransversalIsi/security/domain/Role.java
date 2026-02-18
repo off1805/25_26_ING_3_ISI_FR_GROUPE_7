@@ -7,5 +7,5 @@ import java.util.Set;
 @Data
 public class Role {
     private final String name;
-    private Set<String> idPermissions= new HashSet<>();
+    private Set<Permission> permissions= new HashSet<>();
 }

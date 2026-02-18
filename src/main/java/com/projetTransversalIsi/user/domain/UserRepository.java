@@ -1,15 +1,13 @@
 package com.projetTransversalIsi.user.domain;
 
-import com.projetTransversalIsi.profil.domain.Profile;
-import com.projetTransversalIsi.security.domain.Permission;
-import com.projetTransversalIsi.security.domain.Role;
-
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.Set;
+import java.util.List;
 
 public interface UserRepository {
-    User save(User user, String password, Set<Permission> permission, Profile profil);
+    User registerNewUser(User user);
+
+    void save(User user);
 
     boolean userAlreadyExists(String email);
 
@@ -20,7 +18,6 @@ public interface UserRepository {
     Optional<String> findPasswordMatchEmail(String email);
 
     List<User> getAllUserOfStaff();
-
-
-    void save(User user);
+    List<User> findAllDeleted();
+    List<User> findDeletedSince(LocalDateTime since);
 }

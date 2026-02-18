@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>login</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+</head>
+<body style="height: 100vh;">
+<main class="container-fluid h-100 bg-body-secondary">
+    <div class="row h-100">
+        <div class="col   h-100">
+            <section class="container-fluid  h-100 d-flex align-items-center justify-content-center flex-column"
+                     style="max-width: 400px;">
+
+                <h3 class="text-center mb-3">Connectez vous</h3>
+                <form class="mb-4  w-100 needs-validation" id="loginForm">
+                    <input type="email" class="form-control mb-3 rounded-2" placeholder="Email" id="email" required>
+
+                    <input type="password" class="form-control mb-3 rounded-2" placeholder="Mot de passe"
+                           id="password" required pattern="^.{8,}$">
+
+                    <div class="invalid-feedback mb-3 mt-3" id="otherError">
+
+                    </div>
+                    <input type="submit" class="btn btn-primary w-100 rounded-2" style="height: 50px;" >Se connecter</input>
+                </form>
+
+            </section>
+        </div>
+    </div>
+</main>
+<script type="module" th:src="@{/js/Authentification/ui/AuthController.js}"></script>
+</body>
+</html>

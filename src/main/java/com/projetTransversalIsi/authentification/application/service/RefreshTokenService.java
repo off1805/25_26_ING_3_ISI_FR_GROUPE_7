@@ -3,31 +3,37 @@ package com.projetTransversalIsi.authentification.application.service;
 import com.projetTransversalIsi.authentification.domain.RefreshToken;
 import com.projetTransversalIsi.authentification.domain.RefreshTokenRepository;
 import com.projetTransversalIsi.user.domain.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-@Component
-@RequiredArgsConstructor
-public class RefreshTokenService implements DefaultRefreshTokenService {
-    private final RefreshTokenRepository rTokenRepo;
-    private final long refreshTokenDurationMs = 7 * 24 * 60 * 60 * 1000L;
+@Service
+public class RefreshTokenService {
 
-    @Override
-    public Optional<RefreshToken> findRefreshTokenById(String id){
-       return rTokenRepo.getRefreshTokenById(id);
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    // Default expiration: 24 hours (can be adjusted as needed)
+    private static final long REFRESH_TOKEN_DURATION_MS = 24 * 60 * 60 * 1000L;
+
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    @Override
-   public RefreshToken registerNewRTokenForUser(User user){
-        RefreshToken refreshToken= new RefreshToken();
+    public RefreshToken registerNewRTokenForUser(User user) {
+        RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUserId(user.getId());
         refreshToken.setToken(UUID.randomUUID().toString());
+        refreshToken.setRevoked(false);
         refreshToken.setCreatedAt(new Date());
-        refreshToken.setExpiresAt(new Date(System.currentTimeMillis()+refreshTokenDurationMs));
-        return rTokenRepo.saveRefreshToken(refreshToken);
-   }
+        refreshToken.setExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_DURATION_MS));
+
+        return refreshTokenRepository.saveRefreshToken(refreshToken);
+    }
+
+    public Optional<RefreshToken> findRefreshTokenById(String token) {
+        return refreshTokenRepository.getRefreshTokenById(token);
+    }
 }
