@@ -10,9 +10,13 @@ public interface UserRepository {
     void save(User user);
 
     boolean userAlreadyExists(String email);
+
     Optional<User> findById(Long id);
+
     Optional<User> findByEmail(String email);
+
     Optional<String> findPasswordMatchEmail(String email);
+
     List<User> getAllUserOfStaff();
     List<User> findAllDeleted();
     List<User> findDeletedSince(LocalDateTime since);

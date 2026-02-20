@@ -13,6 +13,7 @@
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    private Long ide;
+//    private boolean blocked=false;
 //    //cle primaire de la table utilisateur
 //    protected int id;
 //    protected boolean etatCompte;
@@ -26,5 +27,5 @@
 //    protected Date dateNaissance;
 //    protected int numTel;
 //    protected Date dateCreation;
-//
+//    private boolean blocked=false;
 //}
