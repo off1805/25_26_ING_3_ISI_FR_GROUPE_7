@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.web_application.admin;
 
-import com.projetTransversalIsi.user.application.use_cases.GetAllUserStaffUC;
+import com.projetTransversalIsi.user.services.interfaces.GetAllUserStaffUC;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +22,7 @@ public class AdminController {
     public String dashboardView(Model model){
         Map <String,Object> users= new HashMap<>();
         model.addAttribute("staff",getAllUserStaffUC.execute());
-        return "index";
+        return "common/index";
     }
 }
 

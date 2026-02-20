@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/* 1. Indiquer à Tailwind de scanner tes fichiers HTML Thymeleaf */
+@source "../templates/**/*.html";
+
+/* 2. Scanner les fichiers JS de Preline pour extraire les classes dynamiques */
+/* Note : Ajuste le nombre de ../ selon la profondeur de ton fichier CSS */
+@source "../../../../../node_modules/preline/dist/*.js";
+
+/* 3. Importer les variantes CSS de Preline */
+@import "../../../../../node_modules/preline/variants.css";
+
+/* 4. Plugins (Formulaires) */
+
+
+/* 5. Tes thèmes personnalisés */
+@import "../../../../../node_modules/preline/css/themes/theme.css";
+
+/* 6. Le plugin JS de Preline pour Tailwind v4 */

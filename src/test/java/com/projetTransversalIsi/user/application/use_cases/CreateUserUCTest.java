@@ -1,12 +1,12 @@
 package com.projetTransversalIsi.user.application.use_cases;
 
 
-import com.projetTransversalIsi.profil.application.services.InitProfile;
-import com.projetTransversalIsi.profil.application.services.ProfileSelectionStrategy;
+import com.projetTransversalIsi.profil.services.InitProfile;
+import com.projetTransversalIsi.profil.services.ProfileSelectionStrategy;
 import com.projetTransversalIsi.profil.domain.Profile;
-import com.projetTransversalIsi.security.application.services.FindAllPermissionByIdsAccessPort;
-import com.projetTransversalIsi.security.application.services.FindRoleByIdAccessPort;
-import com.projetTransversalIsi.security.application.services.PasswordHasherAC;
+import com.projetTransversalIsi.security.services.FindAllPermissionByIdsAccessPort;
+import com.projetTransversalIsi.security.services.FindRoleByIdAccessPort;
+import com.projetTransversalIsi.security.services.PasswordHasherAC;
 import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
 import com.projetTransversalIsi.user.application.dto.CreateUserRequestDTO;

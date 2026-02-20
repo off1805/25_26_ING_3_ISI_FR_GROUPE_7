@@ -6,7 +6,7 @@ import com.projetTransversalIsi.authentification.application.service.DefaultRefr
 import com.projetTransversalIsi.authentification.application.service.LoginUCImpl;
 import com.projetTransversalIsi.authentification.application.service.RegisterNewRefreshTokenUC;
 import com.projetTransversalIsi.authentification.domain.RefreshToken;
-import com.projetTransversalIsi.security.application.services.PasswordHasherAC;
+import com.projetTransversalIsi.security.services.PasswordHasherAC;
 import com.projetTransversalIsi.security.domain.Role;
 import com.projetTransversalIsi.authentification.application.service.token.JwtService;
 import com.projetTransversalIsi.user.application.services.DefaultUserService;
