@@ -1,7 +1,7 @@
 package com.projetTransversalIsi.security.web;
 
 import com.projetTransversalIsi.security.application.use_cases.FindPermissionsByRoleUC;
-import com.projetTransversalIsi.user.application.dto.PermissionResponseDTO;
+import com.projetTransversalIsi.user.dto.PermissionResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

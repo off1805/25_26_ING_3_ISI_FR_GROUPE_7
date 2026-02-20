@@ -4,6 +4,7 @@ import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
 import java.util.Set;
 
+import com.projetTransversalIsi.user.domain.enums.UserStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

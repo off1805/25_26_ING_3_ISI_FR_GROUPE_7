@@ -3,7 +3,7 @@ package com.projetTransversalIsi.user.infrastructure;
 import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaPermissionEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
-import com.projetTransversalIsi.user.domain.UserStatus;
+import com.projetTransversalIsi.user.domain.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
