@@ -2,8 +2,9 @@ package com.projetTransversalIsi.classe.application.usecase;
 
 
 import com.projetTransversalIsi.classe.application.dto.CreateClassRequestDTO;
-import com.projetTransversalIsi.classe.domain.classe;
-import com.projetTransversalIsi.classe.domain.classeRepository;
+import com.projetTransversalIsi.classe.application.usecase.CreateClassUC;
+
+import com.projetTransversalIsi.classe.domain.Classe;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,15 +13,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CreateClassUCImpl implements CreateClassUC {
 
-    private final classeRepository classerepo;
-    private final FindUserByIdsAccessPort getStudentsByIds;
+
 
     @Transactional
     @Override
-    public classe execute(CreateClassRequestDTO command) {
+    public Classe execute(CreateClassRequestDTO command) {
         return null;
     }
 
-    Set<>
 
 }

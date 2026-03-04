@@ -1,19 +1,107 @@
 @import "tailwindcss";
-
-/* 1. Indiquer à Tailwind de scanner tes fichiers HTML Thymeleaf */
-@source "../templates/**/*.html";
-
-/* 2. Scanner les fichiers JS de Preline pour extraire les classes dynamiques */
-/* Note : Ajuste le nombre de ../ selon la profondeur de ton fichier CSS */
-@source "../../../../../node_modules/preline/dist/*.js";
-
-/* 3. Importer les variantes CSS de Preline */
-@import "../../../../../node_modules/preline/variants.css";
-
-/* 4. Plugins (Formulaires) */
-
-
-/* 5. Tes thèmes personnalisés */
 @import "../../../../../node_modules/preline/css/themes/theme.css";
+@import "../../../../../node_modules/preline/css/themes/bubblegum.css";
+@import "../../../../../node_modules/preline/css/themes/retro.css";
+@import "../../../../../node_modules/preline/css/themes/kemoschool.css";
 
-/* 6. Le plugin JS de Preline pour Tailwind v4 */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+
+
+
+ /* 1. Scanner les templates Thymeleaf */
+ @source "../templates/**/*.html";
+
+ /* 2. Scanner les fichiers JS de Preline */
+ @source "../../../../../node_modules/preline/dist/*.js";
+
+ /* 3. Variantes CSS de Preline */
+ @import "../../../../../node_modules/preline/variants.css";
+
+ /* 4. Thème Preline (définit les variables --card, --muted, --layer, etc.) */
+ @import "../../../../../node_modules/preline/css/themes/theme.css";
+
+ @theme {
+
+   /* ── CARD ──────────────────────────────────────────── */
+   --color-card:              var(--card);
+   --color-card-line:         var(--card-line);
+
+   /* ── LAYER ─────────────────────────────────────────── */
+   --color-layer:             var(--layer);
+   --color-layer-line:        var(--layer-line);
+   --color-layer-foreground:  var(--layer-foreground);
+   --color-layer-hover:       var(--layer-hover);
+   --color-layer-focus:       var(--layer-focus);
+
+   /* ── MUTED ─────────────────────────────────────────── */
+   --color-muted:             var(--muted);
+   --color-muted-hover:       var(--muted-hover);
+   --color-muted-focus:       var(--muted-focus);
+   --color-muted-foreground:  var(--muted-foreground);
+   --color-muted-foreground-2: var(--muted-foreground-2);
+
+   /* ── NAVBAR ────────────────────────────────────────── */
+   --color-navbar:            var(--navbar);
+   --color-navbar-line:       var(--navbar-line);
+
+   /* ── SIDEBAR ───────────────────────────────────────── */
+   --color-sidebar:               var(--sidebar);
+   --color-sidebar-line:          var(--sidebar-line);
+   --color-sidebar-nav-foreground: var(--sidebar-nav-foreground);
+   --color-sidebar-nav-active:    var(--sidebar-nav-active);
+   --color-sidebar-nav-hover:     var(--sidebar-nav-hover);
+   --color-sidebar-nav-focus:     var(--sidebar-nav-focus);
+
+   /* ── SCROLLBAR ─────────────────────────────────────── */
+   --color-scrollbar-track:   var(--scrollbar-track);
+   --color-scrollbar-thumb:   var(--scrollbar-thumb);
+
+    --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+
+ }
+
+ @layer utilities {
+   .bg-card {
+     background-color: #ffffff;
+   }
+   .border-card-line {
+     border-color: #e5e7eb;
+   }
+   .bg-muted\/20 {
+     background-color: rgb(249 250 251 / 0.2);
+   }
+   .bg-muted\/30 {
+     background-color: rgb(249 250 251 / 0.3);
+   }
+   .divide-card-line > * + * {
+     border-color: #e5e7eb;
+   }
+    .md\:table-cell {
+       @media (width >= 48rem) { display: table-cell; }
+     }
+     .lg\:table-cell {
+       @media (width >= 64rem) { display: table-cell; }
+     }
+     .md\:hidden {
+       @media (width >= 48rem) { display: none; }
+     }
+
+     /* Modal opacity manquante */
+     .hs-overlay-open\:opacity-100.open,
+     .open .hs-overlay-open\:opacity-100 {
+       opacity: 1 !important;
+     }
+     .hs-overlay-open\:duration-300.open,
+     .open .hs-overlay-open\:duration-300 {
+       transition-duration: 300ms !important;
+     }
+
+     /* Pointer events pour modal */
+     .hs-overlay.open {
+       pointer-events: auto !important;
+     }
+     .hs-overlay.open .pointer-events-auto {
+       pointer-events: auto !important;
+     }
+ }

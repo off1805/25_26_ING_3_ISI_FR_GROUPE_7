@@ -9,7 +9,7 @@ import com.projetTransversalIsi.security.services.FindRoleByIdAccessPort;
 import com.projetTransversalIsi.security.services.PasswordHasherAC;
 import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
-import com.projetTransversalIsi.user.application.dto.CreateUserRequestDTO;
+import com.projetTransversalIsi.user.dto.CreateUserRequestDTO;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.domain.UserRepository;
 import com.projetTransversalIsi.user.domain.exceptions.UserAlreadyExistsException;
@@ -49,8 +49,8 @@ class CreateUserUCTest {
     @Mock
     private PasswordHasherAC passwordHasher;
 
-    @InjectMocks
-    private CreateUserUCImpl createUserUC;
+   // @InjectMocks
+   // private CreateUserUCImpl createUserUC;
 
     @Test
     @DisplayName("Devrait creer un utilisateur avec succes")
