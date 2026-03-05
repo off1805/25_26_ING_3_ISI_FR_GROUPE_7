@@ -33,7 +33,7 @@ public class AdminController {
     @GetMapping("/subjects")
     public String subjectsView(Model model){
         model.addAttribute("staff", getAllUserStaffUC.execute());
-        return "AdminInterface/AdminSubject";
+        return "AdminInterface/AdminSubjects";
     }
 }
 
