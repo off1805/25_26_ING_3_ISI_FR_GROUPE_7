@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KemOSchool — Cycles & Filières</title>
+    <title>KemOSchool — Gestion école</title>
 
     <link rel="stylesheet" th:href="@{/css/output.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -13,7 +13,7 @@
 
 <body class="h-screen">
 <section class="flex flex-row bg-sidebar-nav-hover h-full">
-    <section th:replace="~{AdminInterface/AdminSidebar :: admin-sidebar}"></section>
+    <section th:replace="~{AdminInterface/AdminSidebar :: admin-sidebar('school')}"></section>
     <!-- ========== MAIN CONTENT ========== -->
     <section class="flex-1 flex flex-col overflow-hidden">
 
@@ -93,7 +93,7 @@
             <!-- Page header -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h2 class="text-2xl font-bold text-layer-foreground">Cycles & Filières</h2>
+                    <h2 class="text-2xl font-bold text-layer-foreground">Cycles - Niveaux - Filières - Spécialisations</h2>
                     <p class="text-sm text-muted-foreground-2 mt-0.5">Configurez les structures académiques et les affiliations départementales</p>
                 </div>
                 <button type="button"
