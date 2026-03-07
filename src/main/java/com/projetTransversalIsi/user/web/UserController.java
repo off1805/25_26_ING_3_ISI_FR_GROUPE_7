@@ -30,7 +30,10 @@ public class UserController {
 
     private final CreateUserUC createUserUC;
     private final RetrievePermissionsForUserByIdUC retrievePermissionsForUserByIdUC;
-    private UserService userservice;
+
+    // CORRECTION ICI : Ajout de 'final' et renommage en userService (camelCase)
+    private final UserService userService;
+
     private final DeleteUserUC deleteUserUC;
     private final FindUserByIdUC findUserByIdUC;
     private final ModifyUserStatusUC modifyUserStatusUC;
@@ -63,15 +66,13 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDetailsResponseDTO> getUserById(@PathVariable Long id) {
         log.info("Requête de récupération d'utilisateur pour l'ID : {}", id);
-
         User user = findUserByIdUC.execute(id);
-
         return ResponseEntity.ok(UserDetailsResponseDTO.fromDomain(user));
     }
 
     @PutMapping("/{id}/status")
     public ResponseEntity<UserDetailsResponseDTO> modifyStatus(@PathVariable Long id,
-            @RequestBody @Valid ModifyUserStatusDTO statusDTO) {
+                                                               @RequestBody @Valid ModifyUserStatusDTO statusDTO) {
         log.info("Requête de modification de statut pour l'utilisateur ID : {} vers {}", id, statusDTO.status());
         User user = modifyUserStatusUC.execute(id, statusDTO);
         return ResponseEntity.ok(UserDetailsResponseDTO.fromDomain(user));
@@ -79,9 +80,9 @@ public class UserController {
 
     @PatchMapping("/{id}/block")
     public ResponseEntity<String> block(@PathVariable Long id) {
-        UserService.blockUser(id);
+        // CORRECTION ICI : Appel sur l'instance (minuscule)
+        userService.blockUser(id);
         return ResponseEntity.ok("Utilisateur bloqué avec succès");
     }
 
-}
 }

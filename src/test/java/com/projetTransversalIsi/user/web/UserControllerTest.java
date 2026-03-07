@@ -3,7 +3,6 @@ package com.projetTransversalIsi.user.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projetTransversalIsi.security.domain.Role;
 import com.projetTransversalIsi.user.application.dto.CreateUserRequestDTO;
-import com.projetTransversalIsi.user.application.use_cases.CreateUserUC;
 import com.projetTransversalIsi.user.application.use_cases.RetrievePermissionsForUserByIdUC;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.projet_transversal_isi.ProjetTransversalIsiApplication;
