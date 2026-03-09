@@ -1,10 +1,9 @@
-package com.projetTransversalIsi.user.mapper;
+package com.projetTransversalIsi.user.infrastructure;
 
 import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
 import com.projetTransversalIsi.security.infrastructure.PermissionMapper;
 import com.projetTransversalIsi.security.infrastructure.RolerMapper;
 import com.projetTransversalIsi.user.domain.User;
-import com.projetTransversalIsi.user.infrastructure.JpaUserEntity;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
