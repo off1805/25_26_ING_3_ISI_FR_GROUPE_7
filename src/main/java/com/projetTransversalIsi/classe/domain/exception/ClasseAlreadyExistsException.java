@@ -4,6 +4,6 @@ import com.projetTransversalIsi.common.domain.DomainException;
 
 public class ClasseAlreadyExistsException extends DomainException {
     public ClasseAlreadyExistsException(String nom) {
-        super("La classe <" + nom + "> existe déjà.");
+        super("This class already exists" + nom );
     }
 }
