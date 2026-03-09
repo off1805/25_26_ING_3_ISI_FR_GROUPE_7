@@ -1,6 +1,7 @@
 package com.projetTransversalIsi.cours.infrastructure;
 
-import com.projetTransversalIsi.classe.domain.classeRepository;
 
-public class JpaCoursRepository implements classeRepository {
+import com.projetTransversalIsi.cours.domain.coursRepository;
+
+public class JpaCoursRepository implements coursRepository {
 }
