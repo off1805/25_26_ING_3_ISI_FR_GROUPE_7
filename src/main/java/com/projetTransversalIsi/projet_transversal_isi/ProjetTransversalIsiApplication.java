@@ -21,3 +21,15 @@ public class ProjetTransversalIsiApplication {
     }
 
 }
+
+/*
+
+Rouge : Le fichier est créé localement mais n'a pas encore été ajouté à l'index Git (Untracked). Git ne le surveille pas encore.
+
+Vert : Le fichier est ajouté (Staged) et prêt à être "committé".
+
+Blanc (ou Gris selon le thème) : Le fichier est déjà suivi par Git et n'a subi aucune modification par rapport à la version du serveur. C'est le cas des fichiers de ton collègue que tu viens de récupérer via le pull.
+
+Bleu : Le fichier est déjà suivi par Git mais tu l'as modifié localement.
+
+*/
