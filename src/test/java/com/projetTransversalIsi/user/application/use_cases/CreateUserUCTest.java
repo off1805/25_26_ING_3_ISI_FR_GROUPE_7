@@ -11,7 +11,7 @@ import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
 import com.projetTransversalIsi.user.dto.CreateUserRequestDTO;
 import com.projetTransversalIsi.user.domain.User;
-import com.projetTransversalIsi.user.domain.UserRepository;
+import com.projetTransversalIsi.user.domain.CycleRepository;
 import com.projetTransversalIsi.user.domain.exceptions.UserAlreadyExistsException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CreateUserUCTest {
     @Mock
-    private UserRepository userRepo;
+    private CycleRepository userRepo;
 
     @Mock
     private InitProfile initProfile;
