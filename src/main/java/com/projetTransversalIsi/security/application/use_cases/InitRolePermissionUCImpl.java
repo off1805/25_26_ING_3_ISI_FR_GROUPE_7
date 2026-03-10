@@ -63,7 +63,7 @@ public class InitRolePermissionUCImpl implements InitRolePermissionUC{
                 }
 
                 log.info("Rôles par défaut créés.");
-                createUser.execute(new CreateUserRequestDTO("admin@gmail.com","admin123","ADMIN",Set.of("MANAGE_STAFF")));
+                createUser.execute(new CreateUserRequestDTO("admin@gmail.com","ADMIN",Set.of("MANAGE_STAFF")));
             }
             log.info("Initialisation terminée.");
     }

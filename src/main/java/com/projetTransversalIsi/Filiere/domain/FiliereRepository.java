@@ -16,6 +16,7 @@ public interface FiliereRepository {
     List<Filiere> findAllActive();
     List<Filiere> findAllDeleted();
 
+    List<Filiere> search(String code,String name);
 
     Optional<Filiere> findByCode(String code);
     List<Filiere> searchByNom(String nom);

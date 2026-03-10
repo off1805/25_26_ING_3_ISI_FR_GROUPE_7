@@ -89,4 +89,9 @@ public class JpaUserRepository implements UserRepository {
                 .map(userMapper::JpaUseEntityToUser)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<User> search(String userStatus, String email, String role, boolean deleted){
+        return jpaRepo.search(userStatus,email,role,deleted).stream().map(userMapper::JpaUseEntityToUser).collect(Collectors.toList());
+    }
 }

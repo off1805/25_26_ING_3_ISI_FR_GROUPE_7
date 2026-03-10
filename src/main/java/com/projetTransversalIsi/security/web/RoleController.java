@@ -20,7 +20,7 @@ public class RoleController {
     private final FindPermissionsByRoleUC findPermissionsByRoleUC;
 
     @GetMapping("/{roleName}/permissions")
-    public ResponseEntity<Set<PermissionResponseDTO>> getPermissionsByRole(@PathVariable String roleName) {
+    public ResponseEntity<Set<PermissionResponseDTO>> getPermissionsByRole(@PathVariable("roleName") String roleName) {
         return ResponseEntity.ok(
                 findPermissionsByRoleUC.execute(roleName).stream()
                         .map(PermissionResponseDTO::fromPermissionDomain)

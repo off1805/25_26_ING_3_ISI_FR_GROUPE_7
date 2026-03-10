@@ -4,6 +4,7 @@ export class CreateUserUC {
     }
 
     async execute(userData) {
+
         if (!userData || !userData.email) {
             throw new Error("L'email de l'utilisateur est requis.");
         }
@@ -11,7 +12,6 @@ export class CreateUserUC {
         // Ensure format matches CreateUserRequestDTO
         const payload = {
             email: userData.email,
-            password: userData.password || "Pass1234@School", // Stronger default password
             idRole: userData.idRole,
             idPermissions: Array.isArray(userData.idPermissions)
                 ? userData.idPermissions
