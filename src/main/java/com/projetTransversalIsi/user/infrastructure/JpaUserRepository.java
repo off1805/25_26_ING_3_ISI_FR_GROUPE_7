@@ -6,7 +6,6 @@ import com.projetTransversalIsi.security.infrastructure.JpaPermissionEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.domain.UserRepository;
-import com.projetTransversalIsi.user.domain.exceptions.UserNotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

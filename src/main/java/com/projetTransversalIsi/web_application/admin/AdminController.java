@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.web_application.admin;
 
-import com.projetTransversalIsi.user.application.use_cases.GetAllUserStaffUC;
+import com.projetTransversalIsi.user.services.interfaces.GetAllUserStaffUC;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +18,22 @@ import java.util.Map;
 
 public class AdminController {
     private final GetAllUserStaffUC getAllUserStaffUC;
-    @GetMapping("/dashboard")
-    public String dashboardView(Model model){
+    @GetMapping("/school")
+    public String schoolView(Model model){
         Map <String,Object> users= new HashMap<>();
         model.addAttribute("staff",getAllUserStaffUC.execute());
-        return "index";
+        return "AdminInterface/AdminCycles";
+    }
+    @GetMapping("/users")
+    public String usersView(Model model){
+        model.addAttribute("staff", getAllUserStaffUC.execute());
+        return "AdminInterface/AdminUser";
+    }
+
+    @GetMapping("/subjects")
+    public String subjectsView(Model model){
+        model.addAttribute("staff", getAllUserStaffUC.execute());
+        return "AdminInterface/AdminSubjects";
     }
 }
 

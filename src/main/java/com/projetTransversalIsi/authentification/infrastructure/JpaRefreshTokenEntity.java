@@ -1,6 +1,5 @@
 package com.projetTransversalIsi.authentification.infrastructure;
 
-import com.projetTransversalIsi.user.domain.UserStatus;
 import com.projetTransversalIsi.user.infrastructure.JpaUserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;

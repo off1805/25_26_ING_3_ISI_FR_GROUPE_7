@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.security.application.services;
 
+import com.projetTransversalIsi.security.services.PasswordHasherBCrypt;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

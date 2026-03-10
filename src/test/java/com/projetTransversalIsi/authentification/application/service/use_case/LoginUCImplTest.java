@@ -2,11 +2,11 @@ package com.projetTransversalIsi.authentification.application.service.use_case;
 
 import com.projetTransversalIsi.authentification.application.dto.LoginRequestDTO;
 import com.projetTransversalIsi.authentification.application.dto.LoginResponseDTO;
-import com.projetTransversalIsi.authentification.application.service.DefaultRefreshTokenService;
+//import com.projetTransversalIsi.authentification.application.service.DefaultRefreshTokenService;
 import com.projetTransversalIsi.authentification.application.service.LoginUCImpl;
 import com.projetTransversalIsi.authentification.application.service.RegisterNewRefreshTokenUC;
 import com.projetTransversalIsi.authentification.domain.RefreshToken;
-import com.projetTransversalIsi.security.application.services.PasswordHasherAC;
+import com.projetTransversalIsi.security.services.PasswordHasherAC;
 import com.projetTransversalIsi.security.domain.Role;
 import com.projetTransversalIsi.authentification.application.service.token.JwtService;
 import com.projetTransversalIsi.user.application.services.DefaultUserService;

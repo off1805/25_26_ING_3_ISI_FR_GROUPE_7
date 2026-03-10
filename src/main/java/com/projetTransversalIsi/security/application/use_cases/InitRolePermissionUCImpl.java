@@ -1,11 +1,11 @@
 package com.projetTransversalIsi.security.application.use_cases;
 
-import com.projetTransversalIsi.security.application.services.DefaultPermissionOperation;
-import com.projetTransversalIsi.security.application.services.DefaultRoleOperation;
-import com.projetTransversalIsi.security.application.services.FindAllPermissionByIdsAccessPort;
+import com.projetTransversalIsi.security.services.DefaultPermissionOperation;
+import com.projetTransversalIsi.security.services.DefaultRoleOperation;
+import com.projetTransversalIsi.security.services.FindAllPermissionByIdsAccessPort;
 import com.projetTransversalIsi.security.domain.*;
-import com.projetTransversalIsi.user.application.dto.CreateUserRequestDTO;
-import com.projetTransversalIsi.user.application.use_cases.CreateUserUC;
+import com.projetTransversalIsi.user.dto.CreateUserRequestDTO;
+import com.projetTransversalIsi.user.services.interfaces.CreateUserUC;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

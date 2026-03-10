@@ -4,9 +4,9 @@ import com.projetTransversalIsi.authentification.application.dto.LoginRequestDTO
 import com.projetTransversalIsi.authentification.application.dto.LoginResponseDTO;
 import com.projetTransversalIsi.authentification.application.service.token.JwtService;
 import com.projetTransversalIsi.authentification.domain.RefreshToken;
-import com.projetTransversalIsi.security.application.services.PasswordHasherAC;
-import com.projetTransversalIsi.user.application.services.GetPasswordByEmail;
-import com.projetTransversalIsi.user.application.services.GetUserByEmail;
+import com.projetTransversalIsi.security.services.PasswordHasherAC;
+import com.projetTransversalIsi.user.services.interfaces.GetPasswordByEmail;
+import com.projetTransversalIsi.user.services.interfaces.GetUserByEmail;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.domain.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;

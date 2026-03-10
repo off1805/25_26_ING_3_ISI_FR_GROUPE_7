@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.security.application.use_cases;
 
-import com.projetTransversalIsi.security.application.services.FindRoleByIdAccessPort;
+import com.projetTransversalIsi.security.services.FindRoleByIdAccessPort;
 import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
 import lombok.RequiredArgsConstructor;

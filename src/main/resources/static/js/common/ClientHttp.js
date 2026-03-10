@@ -80,7 +80,7 @@ class HttpClient {
      * Cette méthode permet de rafraîchir le token d'authentification.
      * @returns {Promise<boolean>}
      */
-    async refreshToken() {
+    async _refreshToken() {
         const refreshToken = await TokenService.getRefreshToken();
 
         if (!refreshToken) {

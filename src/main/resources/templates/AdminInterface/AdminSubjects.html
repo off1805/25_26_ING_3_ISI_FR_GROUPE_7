@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Gestion des Matières</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+</head>
+
+<body class="h-screen">
+<section class="flex flex-row bg-gray-100 h-full">
+
+    <!-- SIDEBAR -->
+    <section th:replace="~{AdminInterface/AdminSidebar :: admin-sidebar('subjects')}"></section>
+
+    <!-- MAIN -->
+    <section class="flex-1 flex flex-col overflow-hidden">
+
+        <!-- NAVBAR -->
+        <header class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar relative w-full flex justify-between items-center px-4 md:px-6 lg:px-8 mx-auto border border-b border-navbar-line">
+            <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></svg>
+                <span>Admin</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6"/></svg>
+                <span class="font-medium text-layer-foreground">Gestion des Matières</span>
+            </nav>
+            <div class="flex items-center gap-x-1 lg:gap-x-2 ms-auto py-1 lg:ps-6 lg:order-3 lg:col-span-3">
+                <div class="relative hidden md:block">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg>
+                    <input type="text" placeholder="Recherche globale..." class="pl-9 pr-4 py-1.5 text-sm bg-layer border border-layer-line rounded-lg w-56 focus:outline-none focus:ring-1 text-layer-foreground placeholder:text-muted-foreground-2"/>
+                </div>
+                <button type="button" class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8 bg-gray-100">
+
+            <!-- Page header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-layer-foreground">Gestion des matières</h2>
+                    <p class="text-sm text-muted-foreground-2 mt-0.5">Catalogue académique · hiérarchie des cours</p>
+                </div>
+                <!-- View toggle -->
+                <div class="flex items-center gap-1 p-1 bg-card border border-card-line rounded-xl shadow-sm">
+                    <button id="btn-view-cards" onclick="switchView('cards')"
+                            class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-primary text-white transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                        Cards
+                    </button>
+                    <button id="btn-view-table" onclick="switchView('table')"
+                            class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-muted-foreground-2 hover:bg-muted transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+                        Tableau
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── FORM CARD ───────────────────────────────────────────────────── -->
+            <div class="bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden mb-8">
+                <div class="px-6 py-4 border-b border-card-line flex items-center gap-3">
+                    <div class="size-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-layer-foreground">Ajouter une nouvelle matière</h3>
+                        <p class="text-xs text-muted-foreground-2">Renseignez la hiérarchie académique puis les informations</p>
+                    </div>
+                </div>
+                <div class="p-6 space-y-5">
+                    <!-- Hierarchy dropdowns -->
+                    <div>
+                        <p class="text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-3">Hiérarchie académique</p>
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-semibold text-layer-foreground">Cycle</label>
+                                <select class="w-full py-2 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+                                    <option value="">Sélectionner</option>
+                                    <option>Ingénieur</option>
+                                    <option>Licence</option>
+                                    <option>Master</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-semibold text-layer-foreground">Niveau</label>
+                                <select class="w-full py-2 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+                                    <option value="">Sélectionner</option>
+                                    <option>ING 1</option>
+                                    <option>ING 2</option>
+                                    <option>ING 3</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-semibold text-layer-foreground">Filière</label>
+                                <select class="w-full py-2 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+                                    <option value="">Sélectionner</option>
+                                    <option>ISI</option>
+                                    <option>GI</option>
+                                    <option>TC</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-semibold text-layer-foreground">Spécialisation</label>
+                                <select class="w-full py-2 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+                                    <option value="">Sélectionner</option>
+                                    <option>IL</option>
+                                    <option>MSI</option>
+                                    <option>BD</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Code + Name + Submit -->
+                    <div>
+                        <p class="text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-3">Informations de la matière</p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="sm:w-36 space-y-1.5">
+                                <label class="text-xs font-semibold text-layer-foreground">Code</label>
+                                <input type="text" placeholder="MATH-101" class="w-full py-2 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors font-mono"/>
+                            </div>
+                            <div class="flex-1 space-y-1.5">
+                                <label class="text-xs font-semibold text-layer-foreground">Nom de la matière</label>
+                                <input type="text" placeholder="Ex: Algèbre Linéaire" class="w-full py-2 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"/>
+                            </div>
+                            <div class="sm:w-auto space-y-1.5">
+                                <label class="text-xs font-semibold text-transparent select-none">·</label>
+                                <button type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-x-2 py-2 px-5 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary/90 focus:outline-none shadow-sm transition-all active:scale-95">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+                                    Créer la matière
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── LIST HEADER ────────────────────────────────────────────────── -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+                <div>
+                    <h3 class="font-bold text-base text-layer-foreground">Matières existantes</h3>
+                    <p class="text-xs text-muted-foreground-2 mt-0.5">24 matières · 21 actives · 3 en attente</p>
+                </div>
+                <div class="relative sm:w-60">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg>
+                    <input type="text" placeholder="Rechercher…" class="pl-9 pr-4 py-2 w-full text-sm bg-card border border-card-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors shadow-sm"/>
+                </div>
+            </div>
+
+            <!-- ── CARDS VIEW ──────────────────────────────────────────────────── -->
+            <div id="view-cards">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+
+                    <!-- Card macro: repeated pattern with different colors -->
+                    <!-- Card 1 -->
+                    <div class="group bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all">
+                        <div class="h-1.5 bg-gradient-to-r from-primary to-primary/30"></div>
+                        <div class="p-5">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-primary/10 text-primary font-mono">MATH-101</span>
+                                </div>
+                                <div class="hs-dropdown relative inline-flex">
+                                    <button class="hs-dropdown-toggle size-7 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted opacity-0 group-hover:opacity-100 transition-all focus:outline-none" aria-haspopup="menu" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                    </button>
+                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1" role="menu">
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                            Modifier
+                                        </button>
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                            Supprimer
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-base text-layer-foreground mb-1">Algèbre Linéaire</h4>
+                            <p class="text-xs text-muted-foreground-2 mb-4">Modifiée le 12/10/2023</p>
+                            <div class="flex flex-wrap items-center gap-1 pt-3 border-t border-card-line">
+                                <span class="px-2 py-0.5 rounded-md bg-primary/10 text-xs font-semibold text-primary">ING</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">ING 1</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">ISI</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">IL</span>
+                            </div>
+                        </div>
+                        <div class="px-5 py-2.5 bg-green-500/5 border-t border-green-500/10 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5 text-xs font-bold text-green-600"><span class="size-1.5 rounded-full bg-green-500"></span>Actif</span>
+                            <span class="text-xs text-muted-foreground-2">12 étudiants</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 - blue -->
+                    <div class="group bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all">
+                        <div class="h-1.5 bg-gradient-to-r from-blue-500 to-blue-300"></div>
+                        <div class="p-5">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="size-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-blue-500"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-blue-500/10 text-blue-500 font-mono">PHY-204</span>
+                                </div>
+                                <div class="hs-dropdown relative inline-flex">
+                                    <button class="hs-dropdown-toggle size-7 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted opacity-0 group-hover:opacity-100 transition-all focus:outline-none" aria-haspopup="menu" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                    </button>
+                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1" role="menu">
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">Modifier</button>
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">Supprimer</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-base text-layer-foreground mb-1">Physique Quantique</h4>
+                            <p class="text-xs text-muted-foreground-2 mb-4">Modifiée le 05/10/2023</p>
+                            <div class="flex flex-wrap items-center gap-1 pt-3 border-t border-card-line">
+                                <span class="px-2 py-0.5 rounded-md bg-blue-500/10 text-xs font-semibold text-blue-500">LIC</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">L3</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">ISI</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">Optique</span>
+                            </div>
+                        </div>
+                        <div class="px-5 py-2.5 bg-green-500/5 border-t border-green-500/10 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5 text-xs font-bold text-green-600"><span class="size-1.5 rounded-full bg-green-500"></span>Actif</span>
+                            <span class="text-xs text-muted-foreground-2">8 étudiants</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 - orange -->
+                    <div class="group bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all">
+                        <div class="h-1.5 bg-gradient-to-r from-orange-500 to-orange-300"></div>
+                        <div class="p-5">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="size-10 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-orange-500"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-orange-500/10 text-orange-500 font-mono">CS-302</span>
+                                </div>
+                                <div class="hs-dropdown relative inline-flex">
+                                    <button class="hs-dropdown-toggle size-7 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted opacity-0 group-hover:opacity-100 transition-all focus:outline-none" aria-haspopup="menu" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                    </button>
+                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1" role="menu">
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">Modifier</button>
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">Supprimer</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-base text-layer-foreground mb-1">Architecture des Ordinateurs</h4>
+                            <p class="text-xs text-muted-foreground-2 mb-4">Modifiée le 28/09/2023</p>
+                            <div class="flex flex-wrap items-center gap-1 pt-3 border-t border-card-line">
+                                <span class="px-2 py-0.5 rounded-md bg-orange-500/10 text-xs font-semibold text-orange-500">MASTER</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">M1</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">ISI</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">Systèmes</span>
+                            </div>
+                        </div>
+                        <div class="px-5 py-2.5 bg-orange-500/5 border-t border-orange-500/10 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5 text-xs font-bold text-orange-500"><span class="size-1.5 rounded-full bg-orange-500"></span>En attente</span>
+                            <span class="text-xs text-muted-foreground-2">5 étudiants</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 - green -->
+                    <div class="group bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all">
+                        <div class="h-1.5 bg-gradient-to-r from-green-500 to-green-300"></div>
+                        <div class="p-5">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="size-10 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-green-600"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-green-500/10 text-green-600 font-mono">BD-401</span>
+                                </div>
+                                <div class="hs-dropdown relative inline-flex">
+                                    <button class="hs-dropdown-toggle size-7 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted opacity-0 group-hover:opacity-100 transition-all focus:outline-none" aria-haspopup="menu" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                    </button>
+                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1" role="menu">
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">Modifier</button>
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">Supprimer</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-base text-layer-foreground mb-1">Base de Données Avancées</h4>
+                            <p class="text-xs text-muted-foreground-2 mb-4">Modifiée le 15/09/2023</p>
+                            <div class="flex flex-wrap items-center gap-1 pt-3 border-t border-card-line">
+                                <span class="px-2 py-0.5 rounded-md bg-primary/10 text-xs font-semibold text-primary">ING</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">ING 2</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">ISI</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">MSI</span>
+                            </div>
+                        </div>
+                        <div class="px-5 py-2.5 bg-green-500/5 border-t border-green-500/10 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5 text-xs font-bold text-green-600"><span class="size-1.5 rounded-full bg-green-500"></span>Actif</span>
+                            <span class="text-xs text-muted-foreground-2">20 étudiants</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 - pink -->
+                    <div class="group bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all">
+                        <div class="h-1.5 bg-gradient-to-r from-pink-500 to-pink-300"></div>
+                        <div class="p-5">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="size-10 rounded-xl bg-pink-500/10 flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-pink-500"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-pink-500/10 text-pink-500 font-mono">FR-090</span>
+                                </div>
+                                <div class="hs-dropdown relative inline-flex">
+                                    <button class="hs-dropdown-toggle size-7 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted opacity-0 group-hover:opacity-100 transition-all focus:outline-none" aria-haspopup="menu" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                    </button>
+                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1" role="menu">
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">Modifier</button>
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">Supprimer</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-base text-layer-foreground mb-1">Littérature Classique</h4>
+                            <p class="text-xs text-muted-foreground-2 mb-4">Modifiée le 15/09/2023</p>
+                            <div class="flex flex-wrap items-center gap-1 pt-3 border-t border-card-line">
+                                <span class="px-2 py-0.5 rounded-md bg-blue-500/10 text-xs font-semibold text-blue-500">LIC</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">Terminal</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">Lettres</span>
+                            </div>
+                        </div>
+                        <div class="px-5 py-2.5 bg-green-500/5 border-t border-green-500/10 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5 text-xs font-bold text-green-600"><span class="size-1.5 rounded-full bg-green-500"></span>Actif</span>
+                            <span class="text-xs text-muted-foreground-2">15 étudiants</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 - teal -->
+                    <div class="group bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all">
+                        <div class="h-1.5 bg-gradient-to-r from-teal-500 to-teal-300"></div>
+                        <div class="p-5">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="size-10 rounded-xl bg-teal-500/10 flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-teal-600"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4"/><path d="M5 16v-4h14v4"/></svg>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-teal-500/10 text-teal-600 font-mono">NET-210</span>
+                                </div>
+                                <div class="hs-dropdown relative inline-flex">
+                                    <button class="hs-dropdown-toggle size-7 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted opacity-0 group-hover:opacity-100 transition-all focus:outline-none" aria-haspopup="menu" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                    </button>
+                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1" role="menu">
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">Modifier</button>
+                                        <button class="flex items-center gap-x-2 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">Supprimer</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-base text-layer-foreground mb-1">Réseaux Informatiques</h4>
+                            <p class="text-xs text-muted-foreground-2 mb-4">Modifiée le 02/09/2023</p>
+                            <div class="flex flex-wrap items-center gap-1 pt-3 border-t border-card-line">
+                                <span class="px-2 py-0.5 rounded-md bg-primary/10 text-xs font-semibold text-primary">ING</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">ING 3</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">ISI</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2">IL</span>
+                            </div>
+                        </div>
+                        <div class="px-5 py-2.5 bg-green-500/5 border-t border-green-500/10 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5 text-xs font-bold text-green-600"><span class="size-1.5 rounded-full bg-green-500"></span>Actif</span>
+                            <span class="text-xs text-muted-foreground-2">18 étudiants</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-muted-foreground-2">Affichage de <span class="font-semibold text-layer-foreground">6</span> sur <span class="font-semibold text-layer-foreground">24</span> matières</p>
+                    <div class="flex items-center gap-1">
+                        <button class="size-8 flex items-center justify-center rounded-lg border border-card-line bg-card text-muted-foreground-2 disabled:opacity-40 disabled:pointer-events-none" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                        </button>
+                        <button class="size-8 flex items-center justify-center rounded-lg bg-primary text-white text-xs font-bold">1</button>
+                        <button class="size-8 flex items-center justify-center rounded-lg border border-card-line bg-card text-muted-foreground-2 hover:bg-muted text-xs font-medium transition-colors">2</button>
+                        <button class="size-8 flex items-center justify-center rounded-lg border border-card-line bg-card text-muted-foreground-2 hover:bg-muted text-xs font-medium transition-colors">3</button>
+                        <button class="size-8 flex items-center justify-center rounded-lg border border-card-line bg-card text-muted-foreground-2 hover:bg-muted transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TABLE VIEW ───────────────────────────────────────────────────── -->
+            <div id="view-table" class="hidden">
+                <div class="bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                            <tr class="border-b border-card-line bg-muted/30">
+                                <th class="px-6 py-3 text-xs font-bold text-muted-foreground-2 uppercase tracking-widest">Code</th>
+                                <th class="px-6 py-3 text-xs font-bold text-muted-foreground-2 uppercase tracking-widest">Matière</th>
+                                <th class="px-6 py-3 text-xs font-bold text-muted-foreground-2 uppercase tracking-widest hidden md:table-cell">Hiérarchie</th>
+                                <th class="px-6 py-3 text-xs font-bold text-muted-foreground-2 uppercase tracking-widest">Statut</th>
+                                <th class="px-6 py-3 text-xs font-bold text-muted-foreground-2 uppercase tracking-widest text-right">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody class="divide-y divide-card-line">
+
+                            <!-- Empty state -->
+                            <tr th:if="${subjects == null or #lists.isEmpty(subjects)}">
+                                <td colspan="5" class="px-6 py-16 text-center">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground-2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                                        </div>
+                                        <p class="text-sm font-semibold text-layer-foreground">Aucune matière trouvée</p>
+                                        <p class="text-xs text-muted-foreground-2">Utilisez le formulaire ci-dessus pour en ajouter une</p>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Thymeleaf rows -->
+                            <tr class="hover:bg-muted/20 transition-colors group" th:each="s : ${subjects}">
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary font-mono" th:text="${s.code}">CODE</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="size-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                            <span class="text-xs font-black text-primary" th:text="${#strings.toUpperCase(#strings.substring(s.name,0,1))}">M</span>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-layer-foreground" th:text="${s.name}">Nom</p>
+                                            <p class="text-xs text-muted-foreground-2">Modifiée récemment</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 hidden md:table-cell">
+                                    <div class="flex flex-wrap items-center gap-1">
+                                        <span class="px-2 py-0.5 rounded-md bg-primary/10 text-xs font-semibold text-primary" th:text="${s.cycle}">Cycle</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                        <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2" th:text="${s.niveau}">Niveau</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2/50"><path d="M9 6l6 6l-6 6"/></svg>
+                                        <span class="px-2 py-0.5 rounded-md bg-muted text-xs font-medium text-muted-foreground-2" th:text="${s.filiere}">Filière</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-green-500/10 text-green-600">
+                                        <span class="size-1.5 rounded-full bg-green-500"></span>Actif
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="hs-dropdown relative inline-flex">
+                                        <button type="button" class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors opacity-0 group-hover:opacity-100 focus:outline-none" aria-haspopup="menu" aria-expanded="false">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                        </button>
+                                        <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1" role="menu">
+                                            <button type="button" class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                                Modifier
+                                            </button>
+                                            <button type="button" class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                                Supprimer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-4 border-t border-card-line flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <p class="text-xs text-muted-foreground-2">Affichage de <span class="font-semibold text-layer-foreground">4</span> sur <span class="font-semibold text-layer-foreground">24</span> matières</p>
+                        <div class="flex items-center gap-1">
+                            <button class="size-8 flex items-center justify-center rounded-lg border border-card-line text-muted-foreground-2 disabled:opacity-40" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                            </button>
+                            <button class="size-8 flex items-center justify-center rounded-lg bg-primary text-white text-xs font-bold">1</button>
+                            <button class="size-8 flex items-center justify-center rounded-lg border border-card-line text-muted-foreground-2 hover:bg-muted text-xs font-medium transition-colors">2</button>
+                            <button class="size-8 flex items-center justify-center rounded-lg border border-card-line text-muted-foreground-2 hover:bg-muted transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</section>
+
+<script>
+    function switchView(mode) {
+        const isCards = mode === 'cards';
+        document.getElementById('view-cards').classList.toggle('hidden', !isCards);
+        document.getElementById('view-table').classList.toggle('hidden', isCards);
+        const activeClass = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-primary text-white transition-all';
+        const inactiveClass = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-muted-foreground-2 hover:bg-muted transition-all';
+        document.getElementById('btn-view-cards').className = isCards ? activeClass : inactiveClass;
+        document.getElementById('btn-view-table').className = isCards ? inactiveClass : activeClass;
+    }
+</script>
+<script th:src="@{/js/preline.js}"></script>
+
+</body>
+</html>

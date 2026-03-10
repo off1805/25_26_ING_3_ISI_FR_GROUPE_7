@@ -5,7 +5,7 @@ import com.projetTransversalIsi.authentification.application.dto.RefreshRequestD
 import com.projetTransversalIsi.authentification.application.service.token.JwtService;
 import com.projetTransversalIsi.authentification.domain.RefreshToken;
 import com.projetTransversalIsi.authentification.domain.RefreshTokenRepository;
-import com.projetTransversalIsi.user.application.use_cases.FindUserByIdUC;
+import com.projetTransversalIsi.user.services.interfaces.FindUserByIdUC;
 import com.projetTransversalIsi.user.domain.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
