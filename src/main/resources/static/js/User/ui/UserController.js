@@ -1,8 +1,11 @@
 
+import { GlobalErrorHandler } from "../../common/GlobalErrorHandler.js";
 import { CreateUserUC } from "../application/CreateUserUC.js";
 import { DeleteUserUC } from "../application/DeleteUserUC.js";
 import { ModifyUserStatusUC } from "../application/ModifyUserStatusUC.js";
 import { UserApi } from "../infrastructure/UserApi.js";
+import { userRowTable } from "./userRowTable.js";
+import { GlobalEventNotifier } from "../../common/GlobalEventNotifier.js";
 
 export class UserController {
     constructor(userApi, createUserUC, deleteUserUC, modifyUserStatusUC) {
@@ -16,6 +19,7 @@ export class UserController {
 
     init() {
         const addUserForm = document.querySelector('form[method="post"]');
+
         if (addUserForm) {
             addUserForm.addEventListener('submit', (e) => this.handleCreateUser(e));
 
@@ -34,13 +38,15 @@ export class UserController {
             }
         }
 
-        document.querySelectorAll('.js-delete-user').forEach(btn => {
+        document.querySelectorAll('.btn-delete-user').forEach(btn => {
             btn.addEventListener('click', (e) => this.handleDeleteUser(e));
         });
 
-        document.querySelectorAll('.js-block-user').forEach(btn => {
+        document.querySelectorAll('.btn-block-user').forEach(btn => {
             btn.addEventListener('click', (e) => this.handleBlockUser(e));
         });
+
+
     }
 
     async handleCreateUser(event) {
@@ -53,7 +59,6 @@ export class UserController {
 
         const userData = {
             email: formData.get('email'),
-            password: "Pass1234@School",
             idRole: formData.get('role'),
             idPermissions: checkedPermissions.length > 0 ? checkedPermissions : this.currentPermissions.map(p => p.id)
         };
@@ -64,19 +69,50 @@ export class UserController {
         }
 
         try {
-            await this.createUserUC.execute(userData);
-            alert("Utilisateur créé avec succès !");
-            window.location.reload();
+            const newUser = await this.createUserUC.execute(userData);
+            HSOverlay.close('#hs-modal-add-user');
+            GlobalEventNotifier.eventWellDone("Utilisateur créé avec succès !");
+            this._addUserRow(newUser);
+
+
+
         } catch (e) {
-            alert("Erreur lors de la création : " + e.message);
-            console.error(e);
+            GlobalErrorHandler.handle(e);
         }
+    }
+
+    _addUserRow(user) {
+
+
+
+        const tableBody = document.getElementById('table-body');
+
+        const statusClass = user.status === 'ACTIVE' ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-500';
+        const role = user.roleName === 'TEACHER' ? 'Enseignant' : (user.roleName === 'SURVEILLANT' ? 'Surveillant' : (user.roleName === 'AP' ? 'Ap' : 'Autre'));
+        const roleClass = user.roleName === 'TEACHER' ? 'bg-blue-400/10 text-blue-500' : (user.roleName === 'SURVEILLANT' ? 'bg-indigo-400/10 text-indigo-500' : (user.roleName === 'AP' ? 'bg-orange-400/10 text-orange-500' : 'bg-muted text-muted-foreground-2'));
+        const status = user.status === 'ACTIVE' ? 'Actif' : 'bloque';
+        const row = userRowTable(user.email, role, status, user.id, roleClass, statusClass);
+        tableBody.appendChild(row);
+        window.HSStaticMethods.autoInit();
+    }
+
+    _removeUserRow(id) {
+        const table = document.getElementById("table-body");
+        let childrenArray = [...table.children];
+        console.log(childrenArray);
+
+        const target = childrenArray.find((m) =>
+            m.dataset.userId === `${id}`
+        );
+
+        target.remove();
+
     }
 
     async handleDeleteUser(event) {
         if (confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) {
             const button = event.currentTarget;
-            const userId = button.getAttribute('data-user-id');
+            const userId = button.dataset.userId;
 
             if (!userId) {
                 alert("Erreur: ID utilisateur introuvable.");
@@ -85,8 +121,8 @@ export class UserController {
 
             try {
                 await this.deleteUserUC.execute(userId);
-                alert("Utilisateur supprimé avec succès !");
-                window.location.reload();
+                alert(`Utilisateur supprimé avec succès ! + ${userId}`);
+                this._removeUserRow(userId);
             } catch (e) {
                 alert("Erreur lors de la suppression : " + e.message);
                 console.error(e);
@@ -127,11 +163,40 @@ export class UserController {
         }
     }
 
+    _createPermissionsBadge(permissionName) {
+        const span = document.createElement('span');
+        span.id = `badge-${permissionName}`;
+        span.className = 'inline-flex items-center gap-x-1.5 py-1.5 ps-3 pe-2 me-3 mb-2 rounded-full text-xs  font-medium lowercase  bg-primary-50 text-primary-800 dark:bg-primary-400/20 dark:text-primary-400 border border-primary-100 dark:border-primary-500/20 ';
+
+        const badge = `
+       
+        ${permissionName}
+       
+            
+            <button type="button" class="remove-btn shrink-0 size-4 inline-flex items-center justify-center rounded-full hover:bg-primary-200 focus:outline-hidden focus:bg-primary-200 dark:hover:bg-primary-900 dark:focus:bg-primary-900">
+                <span class="sr-only">Remove badge</span>
+                <svg class="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+           
+        `;
+        span.innerHTML = badge;
+        return span;
+
+
+        view.appendChild(span);
+
+
+    }
+
     updatePermissionsUI(permissions) {
         const container = document.getElementById('permissionsContainer');
+        const view = document.getElementById('permissions-view');
+
+
         if (!container) return;
 
         container.innerHTML = ''; // Clear existing
+        view.innerHTML = '';
 
         if (!permissions || permissions.length === 0) {
             container.innerHTML = '<div class="col-12 text-secondary small">Aucune permission pour ce rôle.</div>';
@@ -140,13 +205,43 @@ export class UserController {
 
         permissions.forEach(p => {
             const div = document.createElement('div');
-            div.className = 'col-12 col-sm-6';
+            div.className = 'flex gap-x-3 py-2 px-3 rounded-lg hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus';
             div.innerHTML = `
-                <label class="border rounded-3 p-2 d-flex align-items-center gap-2 w-100 bg-body-tertiary cursor-pointer">
-                    <input class="form-check-input m-0" type="checkbox" name="permissions" value="${p.id}" checked />
-                    <span class="fw-semibold small">${p.label || p.id}</span>
-                </label>
+               
+                                    <input id="hs-dropdown-item-checkbox-${p.id}" name="hs-dropdown-item-checkbox-${p.id}"
+                                        type="checkbox"
+                                        class="mt-0.5 shrink-0 size-4 bg-transparent border-line-3 rounded-sm shadow-2xs text-primary focus:ring-0 focus:ring-offset-0 checked:bg-primary-checked checked:border-primary-checked disabled:opacity-50 disabled:pointer-events-none"
+                                        aria-describedby="hs-dropdown-item-checkbox-${p.id}-description" checked>
+                                    <label for="hs-dropdown-item-checkbox-${p.id}" value="${p.id}">
+                                        <span class="block text-sm font-semibold text-foreground">${p.id}</span>
+                                        <span id="hs-dropdown-item-checkbox-${p.id}-description"
+                                            class="block text-sm text-muted-foreground-2">${p.label}.
+                                            </span>
+                                    </label>
+                            
             `;
+            const badge = this._createPermissionsBadge(p.id);
+            badge.querySelector('.remove-btn').addEventListener('click', () => {
+                if (view.children.length > 1) {
+                    badge.remove();
+                    div.querySelector('input').checked = false;
+                }
+
+
+            });
+            div.querySelector('input').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    view.appendChild(badge);
+                } else {
+                    if (view.children.length > 1) {
+                        badge.remove();
+                    } else {
+                        e.target.checked = true;
+                    }
+                }
+            });
+            view.appendChild(badge);
+
             container.appendChild(div);
         });
     }

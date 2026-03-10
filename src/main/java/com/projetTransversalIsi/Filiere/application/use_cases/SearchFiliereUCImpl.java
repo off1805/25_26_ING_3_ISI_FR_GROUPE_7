@@ -18,29 +18,30 @@ public class SearchFiliereUCImpl implements SearchFiliereUC {
     public List<Filiere> execute(SearchFiliereRequestDTO criteria) {
 
         List<Filiere> resultats;
+        return filiereRepo.search(criteria.code(),criteria.nom());
 
-
-        if (criteria.code() != null && !criteria.code().isEmpty()) {
-            return filiereRepo.findByCode(criteria.code())
-                    .map(List::of)
-                    .orElse(List.of());
-        }
-
-
-        if (criteria.nom() != null && !criteria.nom().isEmpty()) {
-            resultats = filiereRepo.searchByNom(criteria.nom());
-        } else {
-
-            resultats = filiereRepo.findAll();
-        }
-
-
-        if (!criteria.includeDeleted()) {
-            resultats = resultats.stream()
-                    .filter(f -> !f.isDeleted())
-                    .collect(Collectors.toList());
-        }
-
-        return resultats;
+//
+//        if (criteria.code() != null && !criteria.code().isEmpty()) {
+//            return filiereRepo.findByCode(criteria.code())
+//                    .map(List::of)
+//                    .orElse(List.of());
+//        }
+//
+//
+//        if (criteria.nom() != null && !criteria.nom().isEmpty()) {
+//            resultats = filiereRepo.searchByNom(criteria.nom());
+//        } else {
+//
+//            resultats = filiereRepo.findAll();
+//        }
+//
+//
+//        if (!criteria.includeDeleted()) {
+//            resultats = resultats.stream()
+//                    .filter(f -> !f.isDeleted())
+//                    .collect(Collectors.toList());
+//        }
+//
+//        return resultats;
     }
 }

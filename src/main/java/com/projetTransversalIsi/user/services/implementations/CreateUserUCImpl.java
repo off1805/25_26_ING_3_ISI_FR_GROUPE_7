@@ -38,7 +38,7 @@ public class CreateUserUCImpl implements CreateUserUC {
            throw new UserAlreadyExistsException(command.email());
         }
 
-        String hashPassword= passwordHasher.encode(command.password());
+        String hashPassword= passwordHasher.encode("password");
         Role role= getRoleById.findRoleById(command.idRole());
         Profile profile = profileSelectionStrategy.selectProfileFor(role);
         Profile newProfile= initProfile.execute(profile);

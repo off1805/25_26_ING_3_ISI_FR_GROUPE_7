@@ -1,5 +1,7 @@
 package com.projetTransversalIsi.user.domain;
 
+import com.projetTransversalIsi.user.domain.enums.UserStatus;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.List;
@@ -18,6 +20,9 @@ public interface UserRepository {
     Optional<String> findPasswordMatchEmail(String email);
 
     List<User> getAllUserOfStaff();
+
+    List<User> search(String userStatus, String email, String role, boolean deleted);
+
     List<User> findAllDeleted();
     List<User> findDeletedSince(LocalDateTime since);
 }

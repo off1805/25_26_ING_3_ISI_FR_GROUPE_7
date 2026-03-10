@@ -49,6 +49,11 @@ public class JpaFiliereRepository implements FiliereRepository {
     }
 
     @Override
+    public List<Filiere> search(String code,String name) {
+        return jpaRepo.search(code,name).stream().map(mapper::toDomain).collect(Collectors.toList());
+    }
+
+    @Override
     public List<Filiere> findAllActive() {
         return jpaRepo.findByDeletedFalse().stream()
                 .map(mapper::toDomain)

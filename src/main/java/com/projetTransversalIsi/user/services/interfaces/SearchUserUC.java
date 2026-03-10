@@ -1,7 +1,6 @@
 package com.projetTransversalIsi.user.services.interfaces;
 
 import com.projetTransversalIsi.user.domain.User;
-import com.projetTransversalIsi.user.domain.enums.UserStatus;
 
 import java.util.List;
 
