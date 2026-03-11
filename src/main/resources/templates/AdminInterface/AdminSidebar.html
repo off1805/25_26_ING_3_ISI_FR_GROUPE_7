@@ -125,12 +125,12 @@ bg-sidebar border-e border-sidebar-line" role="dialog" tabindex="-1" aria-label=
                     </li>
 
                     <li>
-                        <a th:href="@{/admin/subjects}" th:classappend="${activePage == 'subjects'} ?
+                        <a th:href="@{/admin/classes}" th:classappend="${activePage == 'classes'} ?
      'bg-primary text-white hover:bg-primary/90' :
      'text-sidebar-nav-foreground hover:bg-sidebar-nav-hover focus:bg-sidebar-nav-focus'" class="group   w-full flex items-center gap-x-3 py-2 px-2.5 text-sm font-medium
           rounded-xl focus:outline-none transition-colors
           hs-overlay-minified:justify-center hs-overlay-minified:w-fit">
-                            <span th:classappend="${activePage == 'subjects'} ?
+                            <span th:classappend="${activePage == 'classes'} ?
             'bg-white/20' : 'bg-muted group-hover:bg-primary/10'"
                                 class="size-8 rounded-lg flex items-center justify-center shrink-0 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -140,7 +140,7 @@ bg-sidebar border-e border-sidebar-line" role="dialog" tabindex="-1" aria-label=
                                     <path d="M7 2v18" />
                                 </svg>
                             </span>
-                            <span class="hs-overlay-minified:hidden">Matières</span>
+                            <span class="hs-overlay-minified:hidden">Classes</span>
                         </a>
                     </li>
 
