@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "../../../../../node_modules/preline/css/themes/theme.css";
 @import "../../../../../node_modules/preline/css/themes/bubblegum.css";
-@import "../../../../../node_modules/preline/css/themes/retro.css";
+@import "../../../../../src/main/resources/static/css/kemoschool.css";
 @custom-variant dark (&:where(.dark, .dark *));
 
 

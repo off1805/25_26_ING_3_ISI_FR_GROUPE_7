@@ -18,7 +18,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class InitRolePermissionUCImpl implements InitRolePermissionUC{
+public class
+
+
+
+
+
+InitRolePermissionUCImpl implements InitRolePermissionUC{
 
     private final DefaultRoleOperation defaultRoleOp;
     private final DefaultPermissionOperation defaultPermissionOp;
