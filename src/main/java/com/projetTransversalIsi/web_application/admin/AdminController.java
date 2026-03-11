@@ -30,10 +30,10 @@ public class AdminController {
         return "AdminInterface/AdminUser";
     }
 
-    @GetMapping("/subjects")
-    public String subjectsView(Model model){
+    @GetMapping("/classes")
+    public String classesView(Model model){
         model.addAttribute("staff", getAllUserStaffUC.execute());
-        return "AdminInterface/AdminSubjects";
+        return "AdminInterface/AdminClasses";
     }
 }
 
