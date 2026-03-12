@@ -3,9 +3,11 @@ package com.projetTransversalIsi.user.infrastructure;
 import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaPermissionEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
-import com.projetTransversalIsi.user.domain.UserStatus;
+import com.projetTransversalIsi.user.domain.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 import java.util.Set;
 
 
@@ -16,7 +18,7 @@ public class JpaUserEntity {
 
     @Override
     public String toString(){
-        return id+" status: "+status+" permissions: "+permissions;
+        return id+" status: "+status+" permissions: "+permissions +"deleted :"+deleted;
     }
 
     @Id
@@ -55,4 +57,10 @@ public class JpaUserEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "profile_id",referencedColumnName = "id")
     private JpaProfileEntity profile = null;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

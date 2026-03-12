@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Gestion des utilisateurs</title>
+    <link rel="manifest" th:href="@{/manifest.json}">
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" th:href="@{/images/icon-512.png}">
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+</head>
+
+<body class="h-screen">
+    <section class="flex flex-row  h-full">
+
+        <!-- SIDEBAR -->
+        <section th:replace="~{AdminInterface/AdminSidebar :: admin-sidebar('users')}"></section>
+
+        <!-- MAIN -->
+        <section class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- NAVBAR -->
+            <header
+                class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar relative w-full flex justify-between items-center px-4 md:px-6 lg:px-8 mx-auto  border-b border-navbar-line">
+                <div class="lg:hidden">
+                    <button type="button"
+                        class="hs-collapse-toggle size-9.5 flex justify-center items-center text-sm font-semibold rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
+                        aria-haspopup="dialog" aria-expanded="false"
+                        aria-controls="hs-sidebar-content-push-to-mini-sidebar"
+                        data-hs-overlay="#hs-sidebar-content-push-to-mini-sidebar">
+                        <svg class="hs-collapse-open:hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" x2="21" y1="6" y2="6" />
+                            <line x1="3" x2="21" y1="12" y2="12" />
+                            <line x1="3" x2="21" y1="18" y2="18" />
+                        </svg>
+                        <svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+                        <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                    </svg>
+                    <span>Admin</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 6l6 6l-6 6" />
+                    </svg>
+                    <span class="font-medium text-layer-foreground">Gestion Utilisateurs</span>
+                </nav>
+                <div class="flex items-center gap-x-1 lg:gap-x-2 ms-auto py-1 lg:ps-6 lg:order-3 lg:col-span-3">
+                    <div class="relative hidden md:block">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.34-4.34" />
+                        </svg>
+                        <input type="text" placeholder="Recherche globale..."
+                            class="pl-9 pr-4 py-1.5 text-sm bg-layer border border-layer-line rounded-lg w-56 focus:outline-none focus:ring-1 text-layer-foreground placeholder:text-muted-foreground-2" />
+                    </div>
+                    <button type="button"
+                        class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
+                        <span class="sr-only">Notifications</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+                            <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- PAGE CONTENT -->
+            <div class="flex-1 overflow-y-auto py-6 px-4 lg:p-8 bg-background-1">
+
+                <!-- Page header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 sm:mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-layer-foreground">Gestion des utilisateurs</h2>
+                        <p class="text-sm text-muted-foreground-2 mt-0.5">Gérez le personnel, les enseignants et les
+                            étudiants</p>
+                    </div>
+                    <button type="button"
+                        class="fixed bottom-15 right-5 sm:static inline-flex items-center justify-center gap-x-2 p-4 sm:py-2.5 sm:px-5 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary/90 focus:outline-none shadow-sm transition-all active:scale-95"
+                        aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-modal-add-user"
+                        data-hs-overlay="#hs-modal-add-user">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <line x1="19" x2="19" y1="8" y2="14" />
+                            <line x1="22" x2="16" y1="11" y2="11" />
+                        </svg>
+                        <span class="hidden sm:block"> Ajouter utilisateur</span>
+
+                    </button>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex gap-1 p-1 bg-muted rounded-xl w-fit mb-7" role="tablist" data-hs-tabs-vertical="false">
+                    <button type="button"
+                        class="hs-tab-active:bg-layer hs-tab-active:dark:bg-surface hs-tab-active:text-primary   px-5 py-2 text-sm font-semibold rounded-xl text-muted-foreground-2 hover:bg-layer/60  transition-all active"
+                        id="tab-users" aria-selected="true" data-hs-tab="#panel-users" aria-controls="panel-users">
+                        Personnel
+                    </button>
+                    <button type="button"
+                        class="hs-tab-active:bg-layer hs-tab-active:dark:bg-surface hs-tab-active:text-primary  px-5 py-2 text-sm font-semibold rounded-xl text-muted-foreground-2 hover:bg-layer/60 transition-all"
+                        id="tab-auth" aria-selected="false" data-hs-tab="#panel-auth" aria-controls="panel-auth">
+                        Étudiants
+                    </button>
+                </div>
+
+                <!-- Panels -->
+                <div>
+
+                    <!-- PANEL Personnel -->
+                    <div id="panel-users" role="tabpanel" aria-labelledby="tab-users">
+
+                        <div class="bg-layer rounded-xl border border-card-line  overflow-hidden">
+
+                            <!-- Card header -->
+                            <div
+                                class="  px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3 border-b border-card-line">
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-base text-layer-foreground">Personnel</h3>
+                                    <p class="text-xs text-muted-foreground-2 mt-0.5">Enseignants, assistants
+                                        pédagogiques et surveillants</p>
+                                </div>
+                                <!-- Search -->
+                                <div class="relative sm:w-64">
+                                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <path d="m21 21-4.34-4.34" />
+                                    </svg>
+                                    <input type="text" placeholder="Rechercher…"
+                                        class="pl-9 pr-4 py-2 w-full text-sm bg-layer border border-layer-line rounded-lg text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
+                                </div>
+                                <!-- Refresh -->
+
+
+                            </div>
+
+                            <!-- Table -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-card-line">
+                                            <th class="  px-6 py-3 text-sm  text-muted-foreground-2/60 ">
+                                                Utilisateur</th>
+                                            <th class="  px-6 py-3 text-sm  text-muted-foreground-2/60  ">
+                                                <!-- Dropdown -->
+                                                <div class="hs-dropdown [--auto-close:inside] relative inline-flex">
+                                                    <button id="hs-dropdown-role" type="button"
+                                                        class="hs-dropdown-toggle inline-flex items-center gap-x-2   hover:text-foreground focus:outline-hidden  disabled:opacity-50 disabled:pointer-events-none"
+                                                        aria-haspopup="menu" aria-expanded="false"
+                                                        aria-label="Dropdown">
+                                                        Role
+                                                        <svg class="hs-dropdown-open:rotate-180 size-4"
+                                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <path d="m6 9 6 6 6-6" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-42 bg-dropdown border border-card-line shadow-md rounded-lg  after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
+                                                        role="menu" aria-orientation="vertical"
+                                                        aria-labelledby="hs-dropdown-role">
+                                                        <div class="p-1 space-y-0.5">
+                                                            <label
+                                                                class="flex items-center justify-between gap-x-3.5 py-2  px-6 rounded-lg text-sm text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus">
+                                                                <input type="radio" name="role" value="ALL"
+                                                                    class="peer hidden" checked>
+                                                                <span
+                                                                    class="text-foreground text-xs font-medium">Tout</span>
+
+                                                                <i class="ti ti-check peer-checked:block hidden"></i>
+
+
+                                                            </label>
+
+                                                            <label
+                                                                class="flex items-center justify-between gap-x-3.5 py-2  px-6 rounded-lg text-sm text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus">
+                                                                <input type="radio" name="role" value="ACTIVEt"
+                                                                    class="peer hidden">
+                                                                <span
+                                                                    class="text-foreground text-xs font-medium">Professeur</span>
+
+                                                                <i class="ti ti-check peer-checked:block hidden"></i>
+
+
+                                                            </label>
+
+
+                                                            <label
+                                                                class="flex items-center justify-between gap-x-3.5 py-2  px-6 rounded-lg text-sm text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus">
+                                                                <input type="radio" name="role" value="ACTIVE"
+                                                                    class="peer hidden">
+                                                                <span
+                                                                    class="text-foreground text-xs font-medium">Surveillant</span>
+
+                                                                <i class="ti ti-check peer-checked:block hidden"></i>
+
+
+                                                            </label>
+
+
+                                                            <label
+                                                                class="flex items-center justify-between gap-x-3.5 py-2  px-6 rounded-lg text-sm text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus">
+                                                                <input type="radio" name="role" value="INACTIVE"
+                                                                    class="peer hidden">
+                                                                <span
+                                                                    class="text-foreground text-xs font-medium">AP</span>
+
+                                                                <i class="ti ti-check peer-checked:block hidden"></i>
+
+
+                                                            </label>
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </th>
+                                            <th class="  px-6 py-3 text-sm  text-muted-foreground-2/60  ">
+                                                <div class="hs-dropdown [--auto-close:inside] relative inline-flex">
+                                                    <button id="hs-dropdown-status" type="button"
+                                                        class="hs-dropdown-toggle inline-flex items-center gap-x-2   hover:text-foreground focus:outline-hidden  disabled:opacity-50 disabled:pointer-events-none"
+                                                        aria-haspopup="menu" aria-expanded="false"
+                                                        aria-label="Dropdown">
+                                                        Statut
+                                                        <svg class="hs-dropdown-open:rotate-180 size-4"
+                                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <path d="m6 9 6 6 6-6" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-42 bg-dropdown border border-card-line shadow-md rounded-lg after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
+                                                        role="menu" aria-orientation="vertical"
+                                                        aria-labelledby="hs-dropdown-status">
+                                                        <div class="p-1 space-y-0.5">
+                                                            <label
+                                                                class="flex items-center justify-between gap-x-3.5 py-2  px-6 rounded-lg text-sm text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus">
+                                                                <input type="radio" name="status" value="ALL"
+                                                                    class="peer hidden" checked>
+                                                                <span
+                                                                    class="text-foreground text-xs font-medium">Tout</span>
+
+                                                                <i class="ti ti-check peer-checked:block hidden"></i>
+
+
+                                                            </label>
+
+                                                            <label
+                                                                class="flex items-center justify-between gap-x-3.5 py-2  px-6 rounded-lg text-sm text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus">
+                                                                <input type="radio" name="status" value="ACTIVEt"
+                                                                    class="peer hidden">
+                                                                <span
+                                                                    class="text-foreground text-xs font-medium">Actif</span>
+
+                                                                <i class="ti ti-check peer-checked:block hidden"></i>
+
+
+                                                            </label>
+
+
+                                                            <label
+                                                                class="flex items-center justify-between gap-x-3.5 py-2  px-6 rounded-lg text-sm text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus">
+                                                                <input type="radio" name="status" value="ACTIVE"
+                                                                    class="peer hidden">
+                                                                <span
+                                                                    class="text-foreground text-xs font-medium">Bloque</span>
+
+                                                                <i class="ti ti-check peer-checked:block hidden"></i>
+
+
+                                                            </label>
+
+
+
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th
+                                                class="  px-6 py-3 text-sm  text-muted-foreground-2/60   hidden lg:table-cell">
+                                                User ID</th>
+                                            <th class="  px-6 py-3 text-xs  text-muted-foreground-2/60   text-right">
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-card-line" id="table-body">
+
+                                        <!-- Empty state -->
+                                        <tr th:if="${staff == null or #lists.isEmpty(staff)}">
+                                            <td colspan="4" class="  px-6 py-16 text-center">
+                                                <div class="flex flex-col items-center gap-3">
+                                                    <div
+                                                        class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.25" stroke-linecap="round"
+                                                            stroke-linejoin="round" class="text-muted-foreground-2">
+                                                            <path d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                                            <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                                            <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                                                        </svg>
+                                                    </div>
+                                                    <p class="text-sm font-semibold text-layer-foreground">Aucun
+                                                        utilisateur trouvé</p>
+                                                    <p class="text-xs text-muted-foreground-2">Ajoutez votre premier
+                                                        utilisateur pour commencer</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Data rows -->
+                                        <tr class="hover:bg-muted/20 transition-colors group" th:each="u : ${staff}"
+                                            th:data-user-id="${u.id}">
+                                            <!-- Utilisateur -->
+                                            <td class="  px-6  py-2">
+
+
+                                                <span th:text="${u.email}" class="text-sm  text-layer-foreground">
+                                                    email@example.com
+                                                </span>
+
+
+                                            </td>
+                                            <!-- Rôle -->
+                                            <td class="  px-6  py-2">
+                                                <span
+                                                    class="inline-flex items-center  px-6 py-1 rounded-lg font-medium text-xs "
+                                                    th:classappend="${u.roleName == 'TEACHER'} ? 'bg-blue-400/10 text-blue-500' : (${u.roleName == 'SURVEILLANT'} ? 'bg-indigo-400/10 text-indigo-500' : (${u.roleName == 'AP'} ? 'bg-orange-400/10 text-orange-500' : 'bg-muted text-muted-foreground-2'))"
+                                                    th:text="${u.roleName == 'TEACHER'} ? 'Enseignant' : (${u.roleName == 'SURVEILLANT'} ? 'Surveillant' : (${u.roleName == 'AP'} ? 'Ap' : 'Autre'))">ROLE</span>
+                                            </td>
+                                            <!--Statut-->
+                                            <td class="  px-6  py-2">
+                                                <span
+                                                    class="inline-flex items-center  px-6 py-1 rounded-lg font-semibold text-xs "
+                                                    th:classappend="${u.status.name() == 'ACTIVE'} ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-500'"
+                                                    th:text="${u.status.name() == 'ACTIVE' ? 'Actif' : 'bloque'}">STATUT</span>
+                                            </td>
+                                            <!-- User ID -->
+                                            <td class="  px-6  py-2 hidden lg:table-cell">
+                                                <span class="inline-flex items-center text-foreground text-xs  "
+                                                    th:text="${u.id}">ID</span>
+                                            </td>
+                                            <!-- Actions -->
+                                            <td class="  px-6  py-2 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors focus:outline-none"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.5" stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            class="icon icon-tabler icons-tabler-outline icon-tabler-dots">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                            <path d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                            <path d="M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                            <path d="M18 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-dropdown border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button type="button"
+                                                            class="flex items-center  w-full text-sm   rounded-lg transition-colors flex items-center gap-x-3 py-2 px-3  text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus"
+                                                            th:data-user-id="${u.id}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button type="button"
+                                                            class="btn-delete-user flex items-center  w-full text-sm   rounded-lg transition-colors flex items-center gap-x-3 py-2 px-3  text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus"
+                                                            th:data-user-id="${u.id}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div
+                                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4   px-6 py-4 border-t border-card-line">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-semibold text-muted-foreground-2">Lignes par page :</span>
+                                    <select
+                                        class="py-1 px-2 text-sm bg-layer border border-layer-line rounded-lg text-layer-foreground focus:outline-none focus:ring-1 focus:ring-primary">
+                                        <option selected>50</option>
+                                        <option>25</option>
+                                        <option>10</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs text-muted-foreground-2 font-semibold">1 – 2 sur 2</span>
+                                    <div class="flex items-center gap-1">
+                                        <button type="button"
+                                            class="size-8 flex items-center justify-center rounded-lg bg-layer border border-layer-line text-muted-foreground-2 hover:bg-muted-hover hover:text-layer-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                                            disabled>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="m15 18-6-6 6-6" />
+                                            </svg>
+                                        </button>
+                                        <button type="button"
+                                            class="size-8 flex items-center justify-center rounded-lg bg-layer border border-layer-line text-muted-foreground-2 hover:bg-muted-hover hover:text-layer-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                                            disabled>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="m9 18 6-6-6-6" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PANEL Étudiants -->
+                    <div id="panel-auth" class="hidden" role="tabpanel" aria-labelledby="tab-auth">
+                        <div class="bg-card rounded-2xl border border-card-line shadow-sm p-10 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"
+                                        stroke-linejoin="round" class="text-muted-foreground-2">
+                                        <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                        <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-semibold text-layer-foreground">Étudiants — à venir</p>
+                                <p class="text-xs text-muted-foreground-2">Cette section sera disponible prochainement
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- MODAL AJOUTER UTILISATEUR -->
+    <div id="hs-modal-add-user"
+        class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
+        role="dialog" tabindex="-1" aria-labelledby="hs-modal-add-user-label">
+        <div
+            class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+            <div
+                class="pointer-events-auto relative flex flex-col bg-overlay shadow-2xl rounded-2xl overflow-hidden py-4 px-7 ">
+
+                <div class="absolute top-2 end-2">
+                    <button type="button"
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-surface text-surface-foreground hover:bg-surface-hover focus:outline-hidden focus:bg-surface-focus disabled:opacity-50 disabled:pointer-events-none"
+                        aria-label="Close" data-hs-overlay="#hs-modal-add-user">
+                        <span class="sr-only">Close</span>
+                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+
+                <div class="mt-10">
+                    <h3 id="hs-modal-add-user-label" class="text-lg font-bold text-layer-foreground">Ajouter un
+                        utilisateur</h3>
+                    <p class="text-sm text-muted-foreground-2 mt-0.5">Remplissez les informations du nouveau compte
+                    </p>
+                </div>
+
+
+                <form id="addUserForm" method="post" class=" mt-5 space-y-3">
+                    <div class="space-y-1.5">
+                        <label for="user-email" class="block text-sm font-medium text-layer-foreground">Adresse
+                            email</label>
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect width="20" height="16" x="2" y="4" rx="2" />
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                            </svg>
+                            <input type="email" id="user-email" name="email" placeholder="ex. user@example.com" required
+                                class="pl-9 pr-4 py-2.5 block w-full border border-layer-line rounded-lg text-sm text-layer-foreground bg-layer placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label for="user-role" class="block text-sm font-medium text-layer-foreground">Rôle</label>
+                        <!-- Select -->
+                        <select id="user-role" data-hs-select='{
+                            "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                            "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 ps-4 pe-9 flex text-nowrap w-full cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-lg text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                            "dropdownClasses": "mt-2 z-50 w-full max-h-72 h-fit p-1 space-y-0.5 bg-select border border-dropdown-divider rounded-lg shadow-2xs overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                            "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                            "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http:.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                            "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                            }' class="hidden" name="role" required>
+
+                            <option value="STUDENT" selected>Étudiant</option>
+                            <option value="TEACHER">Enseignant</option>
+                            <option value="ADMIN">Surveillant</option>
+                            <option value="AP">Assistant pédagogique</option>
+                        </select>
+                        <!-- End Select -->
+
+                    </div>
+                    <!-- Dropdown -->
+                    <div class="flex justify-between items-center">
+                        <label class="block text-sm font-medium text-layer-foreground">Permissions</label>
+                        <div class="hs-dropdown [--auto-close:inside] relative inline-flex [--placement:bottom-right]"
+                            data-hs-dropdown-auto-close="inside">
+                            <button id="hs-dropdown-item-checkbox" type="button"
+                                class="hs-dropdown-toggle p-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground  hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
+                                aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-menu-3">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M10 6h10" />
+                                    <path d="M4 12h16" />
+                                    <path d="M7 12h13" />
+                                    <path d="M4 18h10" />
+                                </svg>
+                            </button>
+
+                            <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden w-auto bg-dropdown border border-dropdown-divider rounded-lg shadow-2xs mt-2 max-h-64 overflow-y-auto"
+                                role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-item-checkbox">
+                                <div class="p-1 space-y-0.5" id="permissionsContainer">
+                                    <div
+                                        class="flex gap-x-3 py-2 px-3 rounded-lg hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus">
+                                        <input id="hs-dropdown-item-checkbox-delete"
+                                            name="hs-dropdown-item-checkbox-delete" type="checkbox"
+                                            class="mt-0.5 shrink-0 size-4 bg-transparent border-line-3 rounded-sm shadow-2xs text-primary focus:ring-0 focus:ring-offset-0 checked:bg-primary-checked checked:border-primary-checked disabled:opacity-50 disabled:pointer-events-none"
+                                            aria-describedby="hs-dropdown-item-checkbox-delete-description" checked>
+                                        <label for="hs-dropdown-item-checkbox-delete">
+                                            <span class="block text-sm font-semibold text-foreground">Delete</span>
+                                            <span id="hs-dropdown-item-checkbox-delete-description"
+                                                class="block text-sm text-muted-foreground-2">Notify me when this action
+                                                happens.</span>
+                                        </label>
+                                    </div>
+                                    <div class="flex gap-x-3 py-2 px-3 rounded-lg hover:bg-dropdown-item-hover">
+                                        <input id="hs-dropdown-item-checkbox-archive"
+                                            name="hs-dropdown-item-checkbox-archive" type="checkbox"
+                                            class="mt-0.5 shrink-0 size-4 bg-transparent border-line-3 rounded-sm shadow-2xs text-primary focus:ring-0 focus:ring-offset-0 checked:bg-primary-checked checked:border-primary-checked disabled:opacity-50 disabled:pointer-events-none"
+                                            aria-describedby="hs-dropdown-item-checkbox-archive-description">
+                                        <label for="hs-dropdown-item-checkbox-archive">
+                                            <span class="block text-sm font-semibold text-foreground">Archive</span>
+                                            <span id="hs-dropdown-item-checkbox-archive-description"
+                                                class="block text-sm text-muted-foreground-2">Notify me when this action
+                                                happens.</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- End Dropdown -->
+                    <div id="permissions-view" class="max-h-64  overflow-y-auto"></div>
+                    <div class="mt-8 flex items-center justify-end gap-x-3 ">
+                        <button type="button"
+                            class="py-2 px-5 text-sm font-semibold text-layer-foreground hover:bg-muted rounded-lg transition-colors focus:outline-none"
+                            data-hs-overlay="#hs-modal-add-user">Annuler</button>
+                        <button type="submit"
+                            class="py-2 px-7 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-lg shadow-sm transition-all active:scale-95 focus:outline-none">Créer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/other/toastify.js}"></script>
+    <script th:src="@{/js/preline.js}"></script>
+    <script type="module" th:src="@{/js/User/ui/UserController.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+        });
+        window.addEventListener('load', () => {
+            if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+        });
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.log('Erreur SW:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

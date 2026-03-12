@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@import "../../../../../node_modules/preline/css/themes/theme.css";
+@import "../../../../../node_modules/preline/css/themes/bubblegum.css";
+@import "../../../../../src/main/resources/static/css/kemoschool.css";
+@custom-variant dark (&:where(.dark, .dark *));
+
+
+
+
+
+
+/* 1. Scanner les templates Thymeleaf */
+@source "../templates/**/*.html";
+@source "js/**/*.js";
+
+
+
+/* 2. Scanner les fichiers JS de Preline */
+@source "../../../../../node_modules/preline/dist/*.js";
+
+/* 3. Variantes CSS de Preline */
+@import "../../../../../node_modules/preline/variants.css";
+
+/* 4. Thème Preline (définit les variables --card, --muted, --layer, etc.) */
+@import "../../../../../node_modules/preline/css/themes/theme.css";
+@import "./kemoschool.css";
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+

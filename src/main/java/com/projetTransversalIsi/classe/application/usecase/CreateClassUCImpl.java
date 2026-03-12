@@ -1,35 +1,32 @@
 package com.projetTransversalIsi.classe.application.usecase;
 
 import com.projetTransversalIsi.classe.application.dto.CreateClassRequestDTO;
-import com.projetTransversalIsi.classe.domain.classe;
-import com.projetTransversalIsi.classe.domain.classeRepository;
-import com.projetTransversalIsi.classe.domain.exception.ClasseAlreadyExistsException;
+import com.projetTransversalIsi.classe.domain.Classe;
+import com.projetTransversalIsi.classe.domain.ClasseRepository;
+import com.projetTransversalIsi.specialite.application.use_cases.FindSpecialiteByIdUC;
+import com.projetTransversalIsi.specialite.domain.Specialite;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 public class CreateClassUCImpl implements CreateClassUC {
 
-    private final classeRepository classerepo;
+    private final ClasseRepository classerepo;
+    private final FindSpecialiteByIdUC findSpecialiteByIdUC;
 
-    @SneakyThrows
     @Transactional
     @Override
-    public classe execute(CreateClassRequestDTO command) {
+    public Classe execute(CreateClassRequestDTO command) {
+        Specialite specialite = findSpecialiteByIdUC.execute(command.specialiteId());
+        
+        Classe classe = new Classe(
+                command.code().toUpperCase(),
+                command.description(),
+                specialite
+        );
 
-        if(classerepo.classeAlreadyExists(command.Classname())) {
-           throw new Throwable(command.Classname());
-        }
-
-        classe newClasse = new classe();
-        newClasse.setNom(command.Classname());
-        newClasse.setEffectif(0);  // Pour l'instant, 0 étudiants
-
-        return classerepo.save(newClasse, Set.of());  // Set vide pour les étudiants
+        return classerepo.save(classe);
     }
 }

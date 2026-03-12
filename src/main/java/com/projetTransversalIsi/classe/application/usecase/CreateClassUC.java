@@ -2,8 +2,8 @@ package com.projetTransversalIsi.classe.application.usecase;
 
 
 import com.projetTransversalIsi.classe.application.dto.CreateClassRequestDTO;
-import com.projetTransversalIsi.classe.domain.classe;
+import com.projetTransversalIsi.classe.domain.Classe;
 
 public interface CreateClassUC {
-    classe execute(CreateClassRequestDTO command);
+    Classe execute(CreateClassRequestDTO command);
 }

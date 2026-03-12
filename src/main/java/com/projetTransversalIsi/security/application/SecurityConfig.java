@@ -30,7 +30,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         auth->auth
+                                .requestMatchers("/sw.js","/manifest.json","/images/**").permitAll()
+
                                 .requestMatchers("/**").permitAll()
+
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>KemOSchool — Emploi du temps</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-gray-100">
+
+<!-- ══════════════════════════════════════════════════════
+     MAIN VIEW
+══════════════════════════════════════════════════════ -->
+<div id="view-main" class="flex h-screen overflow-hidden">
+
+    <section th:replace="~{APInterface/APSidebar :: ap-sidebar('schedule')}"></section>
+
+    <section class="flex-1 flex flex-col overflow-hidden min-w-0">
+
+        <!-- NAVBAR -->
+        <header class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar w-full items-center px-4 md:px-6 lg:px-8 border-b border-navbar-line">
+            <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/><path d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/></svg>
+                <span>AP Panel</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6l-6 6"/></svg>
+                <span class="font-medium text-layer-foreground">Emplois du temps</span>
+            </nav>
+            <div class="flex items-center gap-x-2 ms-auto py-1">
+                <button type="button" class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-layer-foreground">Emplois du temps</h2>
+                <p class="text-sm text-muted-foreground-2 mt-0.5">Créez et gérez les emplois du temps par classe</p>
+            </div>
+
+            <div id="schedules-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+                <!-- Add new card -->
+                <div class="bg-card rounded-2xl shadow-sm p-4 flex flex-col items-center justify-center min-h-44 gap-3 cursor-pointer group hover:border-primary/40 hover:shadow-md border-2 border-dashed border-card-line transition-all"
+                     onclick="openClassModal()">
+                    <div class="size-9 rounded-full border-2 border-dashed border-primary/25 group-hover:border-primary/60 flex items-center justify-center text-primary/30 group-hover:text-primary transition-all bg-primary/5 group-hover:bg-primary/10">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-sm font-bold text-muted-foreground-2 group-hover:text-primary transition-colors">Nouvel emploi du temps</p>
+                        <p class="text-xs text-muted-foreground-2 mt-0.5">Cliquez pour commencer</p>
+                    </div>
+                </div>
+
+                <!-- Sample card (Thymeleaf: th:each="sched : ${schedules}") -->
+                <div class="bg-card rounded-2xl shadow-sm p-4 flex flex-col gap-3 hover:shadow-md transition-shadow duration-200">
+                    <div class="flex items-start justify-between">
+                        <div class="size-9 rounded-xl bg-primary/15 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                        </div>
+                        <button onclick="enterEditMode('Licence 3 — Informatique')"
+                                class="size-6 flex items-center justify-center rounded-md text-muted-foreground-2 hover:bg-muted transition-colors" title="Modifier">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-1.5 py-0.5 rounded-md bg-primary/10 text-xs font-bold text-primary font-mono">L3 Info</span>
+                        </div>
+                        <p class="text-sm font-bold text-layer-foreground mb-1">Emploi du temps</p>
+                        <p class="text-xs text-muted-foreground-2 leading-relaxed">Licence 3 — Informatique</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs text-muted-foreground-2 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                        <span>09/03/2026 — 13/03/2026</span>
+                    </div>
+                    <button onclick="enterEditMode('Licence 3 — Informatique')"
+                            class="w-full py-2 rounded-xl bg-muted text-xs font-semibold text-layer-foreground hover:bg-primary/10 hover:text-primary transition-colors">
+                        Modifier l'emploi du temps
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<script>
+    function enterEditMode(className) {
+        // Redirect to standalone edit page with class name as parameter
+        window.location.href = '/APInterface/EditSchedule.html?class=' + encodeURIComponent(className);
+    }
+    
+    function openClassModal() {
+        const m = document.getElementById('modal-class');
+        if (m) {
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            
+            const CLASSES = [
+                'Licence 1 — Info','Licence 2 — Info','Licence 3 — Info',
+                'Master 1 — SIR','Master 1 — IA','Master 2 — IA',
+                'BTS 1 — Dev','BTS 2 — Réseaux',
+            ];
+            
+            const list = document.getElementById('class-list-modal');
+            list.innerHTML = CLASSES.map(c => `
+                <button onclick="selectClass('${c}')"
+                        class="text-left px-3 py-2.5 rounded-xl border border-card-line bg-layer hover:border-primary/40 hover:bg-primary/5 text-sm font-medium text-layer-foreground transition-all">
+                    ${c}
+                </button>`).join('');
+        }
+    }
+
+    function closeClassModal() {
+        const m = document.getElementById('modal-class');
+        if (m) {
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+    }
+
+    function selectClass(c) {
+        closeClassModal();
+        enterEditMode(c);
+    }
+</script>
+
+<script th:src="@{/js/preline.js}"></script>
+</body>
+</html>

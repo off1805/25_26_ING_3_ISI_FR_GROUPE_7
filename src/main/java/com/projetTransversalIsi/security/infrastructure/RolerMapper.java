@@ -1,31 +1,27 @@
 package com.projetTransversalIsi.security.infrastructure;
 
 
+import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
 import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
+import com.projetTransversalIsi.user.domain.User;
+import com.projetTransversalIsi.user.infrastructure.JpaUserEntity;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",uses = {PermissionMapper.class})
 public interface RolerMapper {
-    @Mapping(target="idPermissions", expression="java(mapJpaPermissionToIds(jpaRole.getPermissions()))")
+
     Role JpaRoleEntityToRole(JpaRoleEntity jpaRole);
 
-    default JpaRoleEntity RoleToJpaRoleEntity(Role role, Set<JpaPermissionEntity> perm){
-        JpaRoleEntity jpaRoleEn= new JpaRoleEntity();
-        jpaRoleEn.setName(role.getName());
-        jpaRoleEn.setPermissions(perm);
-        return jpaRoleEn;
+    @Mapping(target = "permissions",expression = "java(jpaPerm)")
+    JpaRoleEntity RoleToJpaRoleEntity(Role role,@Context Set<JpaPermissionEntity> jpaPerm);
 
-    }
 
-    default Set<String> mapJpaPermissionToIds(Set<JpaPermissionEntity> perm) {
-        if (perm == null) return null;
-        return perm.stream()
-                .map(JpaPermissionEntity::getName)
-                .collect(Collectors.toSet());
-    }
+
+
 }

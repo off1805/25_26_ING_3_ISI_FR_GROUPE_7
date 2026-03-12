@@ -1,6 +1,5 @@
 package com.projetTransversalIsi.authentification.infrastructure;
 
-import com.projetTransversalIsi.user.domain.UserStatus;
 import com.projetTransversalIsi.user.infrastructure.JpaUserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
@@ -10,6 +9,7 @@ import java.util.Date;
 
 @Entity
 @Data
+@Table(name = "refresh_token")
 public class JpaRefreshTokenEntity {
     @Id
     private String token;
@@ -21,6 +21,6 @@ public class JpaRefreshTokenEntity {
     private Date createdAt;
     private Date expiresAt;
 
-    @Column(columnDefinition = "boolean default true")
+    @Column(columnDefinition = "boolean default false")
     private boolean revoked;
 }

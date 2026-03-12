@@ -1,0 +1,1894 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Gestion école</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+
+
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+</head>
+
+<body class="h-screen">
+    <section class="flex flex-row bg-sidebar-nav-hover h-full">
+        <section th:replace="~{AdminInterface/AdminSidebar :: admin-sidebar('school')}"></section>
+        <!-- ========== MAIN CONTENT ========== -->
+        <section class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- NAVBAR -->
+            <header
+                class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar relative w-full flex justify-between items-center px-4 md:px-6 lg:px-8 mx-auto border border-b border-navbar-line">
+
+                <!-- Mobile hamburger -->
+                <div class="lg:hidden">
+                    <button type="button"
+                        class="hs-collapse-toggle size-9.5 flex justify-center items-center text-sm font-semibold rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
+                        aria-haspopup="dialog" aria-expanded="false"
+                        aria-controls="hs-sidebar-content-push-to-mini-sidebar"
+                        data-hs-overlay="#hs-sidebar-content-push-to-mini-sidebar">
+                        <svg class="hs-collapse-open:hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" x2="21" y1="6" y2="6" />
+                            <line x1="3" x2="21" y1="12" y2="12" />
+                            <line x1="3" x2="21" y1="18" y2="18" />
+                        </svg>
+                        <svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Breadcrumb -->
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-home">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+                        <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                    </svg>
+                    <span>Admin</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 6l6 6l-6 6" />
+                    </svg>
+                    <span class="font-medium text-layer-foreground">Gestion Académique</span>
+                </nav>
+
+                <!-- Right actions -->
+                <div class="flex items-center gap-x-1 lg:gap-x-2 ms-auto py-1 lg:ps-6 lg:order-3 lg:col-span-3">
+                    <!-- Search -->
+                    <div class="relative hidden md:block">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.34-4.34" />
+                        </svg>
+                        <input type="text" placeholder="Recherche globale..."
+                            class="pl-9 pr-4 py-1.5 text-sm bg-layer border border-layer-line rounded-lg w-56 focus:outline-none focus:ring-1 text-layer-foreground placeholder:text-muted-foreground-2" />
+                    </div>
+
+                    <!-- Notifications -->
+                    <button type="button"
+                        class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
+                        <span class="sr-only">Notifications</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-bell">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+                            <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                        </svg>
+                    </button>
+                </div>
+
+            </header>
+
+            <!-- PAGE CONTENT -->
+            <div class="flex-1 overflow-y-auto p-6 lg:p-8 bg-background-1">
+
+                <!-- Page header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-layer-foreground">Cycles - Niveaux - Filières -
+                            Spécialisations</h2>
+                        <p class="text-sm text-muted-foreground-2 mt-0.5">Configurez les structures académiques et les
+                            affiliations départementales</p>
+                    </div>
+                    <button type="button" aria-haspopup="dialog" aria-expanded="false"
+                        aria-controls="hs-modal-create-entity" data-hs-overlay="#hs-modal-create-entity"
+                        class="inline-flex items-center gap-x-2 py-2.5 px-5 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary/90 focus:outline-none shadow-sm transition-all active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14m-7-7h14" />
+                        </svg>
+                        Créer nouveau
+                    </button>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex gap-1 p-1 bg-muted rounded-xl w-fit mb-7" role="tablist" data-hs-tabs-vertical="false">
+                    <button type="button"
+                        class="hs-tab-active:bg-layer hs-tab-active:text-primary hs-tab-active:shadow-sm px-5 py-2 text-sm font-semibold rounded-lg text-muted-foreground-2 hover:bg-layer/60 transition-all active"
+                        id="tab-cycles" aria-selected="true" data-hs-tab="#panel-cycles" aria-controls="panel-cycles">
+                        Cycles
+                    </button>
+                    <button type="button"
+                        class="hs-tab-active:bg-layer hs-tab-active:text-primary hs-tab-active:shadow-sm px-5 py-2 text-sm font-semibold rounded-lg text-muted-foreground-2 hover:bg-layer/60 transition-all"
+                        id="tab-niveaux" aria-selected="false" data-hs-tab="#panel-niveaux"
+                        aria-controls="panel-niveaux">
+                        Niveaux
+                    </button>
+                    <button type="button"
+                        class="hs-tab-active:bg-layer hs-tab-active:text-primary hs-tab-active:shadow-sm px-5 py-2 text-sm font-semibold rounded-lg text-muted-foreground-2 hover:bg-layer/60 transition-all"
+                        id="tab-filieres" aria-selected="false" data-hs-tab="#panel-filieres"
+                        aria-controls="panel-filieres">
+                        Filières
+                    </button>
+                    <button type="button"
+                        class="hs-tab-active:bg-layer hs-tab-active:text-primary hs-tab-active:shadow-sm px-5 py-2 text-sm font-semibold rounded-lg text-muted-foreground-2 hover:bg-layer/60 transition-all"
+                        id="tab-spécialisation" aria-selected="false" data-hs-tab="#panel-spécialisation"
+                        aria-controls="panel-spécialisation">
+                        Spécialisation
+                    </button>
+                </div>
+
+                <!-- Tab panels -->
+                <div>
+
+                    <!-- PANEL: Cycles (active) -->
+                    <div id="panel-cycles" role="tabpanel" aria-labelledby="tab-cycles">
+
+
+                        <div class="bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden mb-8">
+
+                            <!-- Card Header -->
+                            <div class="px-6 py-4 flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-base text-layer-foreground">Cycles actifs</h3>
+                                    <p class="text-xs text-muted-foreground-2 mt-0.5">Structures de formation
+                                        disponibles</p>
+                                </div>
+
+                            </div>
+
+                            <!-- Table -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-y border-card-line">
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Cycle</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Description</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Durée</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Statut</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest text-right">
+                                                Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-card-line">
+
+                                        <!-- Row: Ingénieur -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <!-- Avatar coloré -->
+                                                    <div
+                                                        class="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.75" stroke-linecap="round"
+                                                            stroke-linejoin="round" class="text-primary">
+                                                            <path
+                                                                d="M8 4m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
+                                                            <path d="M4 8v10a2 2 0 0 0 2 2h10" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-layer-foreground">Ingénieur</p>
+                                                        <p class="text-xs text-muted-foreground-2">CY-001</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm text-muted-foreground-2 max-w-xs">
+                                                Engineering cycle for master-equivalent degrees
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary">
+                                                    5 ans
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="size-1.5 rounded-full bg-green-500"></span>
+                                                    <span class="text-xs font-semibold text-green-600">Actif</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button" class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg
+                                           text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground
+                                           transition-colors" aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden
+                                        min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Row: Licence -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.75" stroke-linecap="round"
+                                                            stroke-linejoin="round" class="text-blue-500">
+                                                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                                            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-layer-foreground">Licence</p>
+                                                        <p class="text-xs text-muted-foreground-2">CY-002</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm text-muted-foreground-2 max-w-xs">
+                                                Undergraduate bachelor cycle
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500/10 text-blue-500">
+                                                    3 ans
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="size-1.5 rounded-full bg-green-500"></span>
+                                                    <span class="text-xs font-semibold text-green-600">Actif</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button" class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg
+                                           text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground
+                                           transition-colors" aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden
+                                        min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Row: Master -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.75" stroke-linecap="round"
+                                                            stroke-linejoin="round" class="text-orange-500">
+                                                            <path
+                                                                d="M12 2l3.09 6.26L22 9.27l-5 4.87l1.18 6.88L12 17.77l-6.18 3.25L7 14.14L2 9.27l6.91-1.01L12 2z" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-layer-foreground">Master</p>
+                                                        <p class="text-xs text-muted-foreground-2">CY-003</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm text-muted-foreground-2 max-w-xs">
+                                                Postgraduate research or professional master
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-orange-500/10 text-orange-500">
+                                                    2 ans
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="size-1.5 rounded-full bg-green-500"></span>
+                                                    <span class="text-xs font-semibold text-green-600">Actif</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button" class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg
+                                           text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground
+                                           transition-colors" aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden
+                                        min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- PANEL: Niveaux -->
+                    <div id="panel-niveaux" role="tabpanel" aria-labelledby="tab-niveaux" class="hidden">
+
+                        <div class="bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden mb-8">
+
+                            <!-- Card Header -->
+                            <div class="px-6 py-4 flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-base text-layer-foreground">Niveaux académiques</h3>
+                                    <p class="text-xs text-muted-foreground-2 mt-0.5">Années d'étude rattachées aux
+                                        cycles</p>
+                                </div>
+                                <div class="relative">
+                                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground-2"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <path d="m21 21-4.34-4.34" />
+                                    </svg>
+                                    <input type="text" placeholder="Rechercher niveau..." class="pl-8 pr-3 py-1.5 text-xs bg-layer border border-layer-line rounded-lg w-44
+                              focus:outline-none focus:ring-1 focus:ring-primary
+                              text-layer-foreground placeholder:text-muted-foreground-2" />
+                                </div>
+                            </div>
+
+                            <!-- Table -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-y border-card-line">
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Niveau</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Nom complet</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Cycle parent</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Ordre</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Statut</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest text-right">
+                                                Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-card-line">
+
+                                        <!-- ING 1 -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                                        <span class="text-xs font-black text-primary">I1</span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-primary">ING 1</p>
+                                                        <p class="text-xs text-muted-foreground-2">NV-001</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">Première
+                                                année Ingénieur</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary">
+                                                    Ingénieur
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center justify-center size-6 rounded-full bg-muted text-xs font-bold text-layer-foreground">1</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="size-1.5 rounded-full bg-green-500"></span>
+                                                    <span class="text-xs font-semibold text-green-600">Actif</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- ING 2 -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                                        <span class="text-xs font-black text-primary">I2</span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-primary">ING 2</p>
+                                                        <p class="text-xs text-muted-foreground-2">NV-002</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">Deuxième
+                                                année Ingénieur</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary">Ingénieur</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center justify-center size-6 rounded-full bg-muted text-xs font-bold text-layer-foreground">2</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5"><span
+                                                        class="size-1.5 rounded-full bg-green-500"></span><span
+                                                        class="text-xs font-semibold text-green-600">Actif</span></div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>Modifier</button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>Supprimer</button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- ING 3 -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                                        <span class="text-xs font-black text-primary">I3</span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-primary">ING 3</p>
+                                                        <p class="text-xs text-muted-foreground-2">NV-003</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">Troisième
+                                                année Ingénieur</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary">Ingénieur</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center justify-center size-6 rounded-full bg-muted text-xs font-bold text-layer-foreground">3</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5"><span
+                                                        class="size-1.5 rounded-full bg-green-500"></span><span
+                                                        class="text-xs font-semibold text-green-600">Actif</span></div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>Modifier</button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>Supprimer</button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- L1 -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                                                        <span class="text-xs font-black text-blue-500">L1</span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-blue-500">L1</p>
+                                                        <p class="text-xs text-muted-foreground-2">NV-004</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">Première
+                                                année Licence</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500/10 text-blue-500">Licence</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center justify-center size-6 rounded-full bg-muted text-xs font-bold text-layer-foreground">1</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5"><span
+                                                        class="size-1.5 rounded-full bg-green-500"></span><span
+                                                        class="text-xs font-semibold text-green-600">Actif</span></div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>Modifier</button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>Supprimer</button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- L2 -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                                                        <span class="text-xs font-black text-blue-500">L2</span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-blue-500">L2</p>
+                                                        <p class="text-xs text-muted-foreground-2">NV-005</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">Deuxième
+                                                année Licence</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500/10 text-blue-500">Licence</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center justify-center size-6 rounded-full bg-muted text-xs font-bold text-layer-foreground">2</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5"><span
+                                                        class="size-1.5 rounded-full bg-green-500"></span><span
+                                                        class="text-xs font-semibold text-green-600">Actif</span></div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>Modifier</button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>Supprimer</button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- L3 -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                                                        <span class="text-xs font-black text-blue-500">L3</span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-blue-500">L3</p>
+                                                        <p class="text-xs text-muted-foreground-2">NV-006</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">Troisième
+                                                année Licence</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500/10 text-blue-500">Licence</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center justify-center size-6 rounded-full bg-muted text-xs font-bold text-layer-foreground">3</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5"><span
+                                                        class="size-1.5 rounded-full bg-green-500"></span><span
+                                                        class="text-xs font-semibold text-green-600">Actif</span></div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>Modifier</button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>Supprimer</button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- M1 -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
+                                                        <span class="text-xs font-black text-orange-500">M1</span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-orange-500">M1</p>
+                                                        <p class="text-xs text-muted-foreground-2">NV-007</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">Première
+                                                année Master</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-orange-500/10 text-orange-500">Master</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center justify-center size-6 rounded-full bg-muted text-xs font-bold text-layer-foreground">1</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5"><span
+                                                        class="size-1.5 rounded-full bg-green-500"></span><span
+                                                        class="text-xs font-semibold text-green-600">Actif</span></div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>Modifier</button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>Supprimer</button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- M2 -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
+                                                        <span class="text-xs font-black text-orange-500">M2</span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-orange-500">M2</p>
+                                                        <p class="text-xs text-muted-foreground-2">NV-008</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">Deuxième
+                                                année Master</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-orange-500/10 text-orange-500">Master</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center justify-center size-6 rounded-full bg-muted text-xs font-bold text-layer-foreground">2</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5"><span
+                                                        class="size-1.5 rounded-full bg-green-500"></span><span
+                                                        class="text-xs font-semibold text-green-600">Actif</span></div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>Modifier</button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"><svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>Supprimer</button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Academic Majors (Filières) card -->
+                    <div id="panel-filieres" role="tabpanel" aria-labelledby="tab-filieres" class="hidden">
+
+                        <div class="bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden mb-8">
+
+                            <!-- Card Header -->
+                            <div class="px-6 py-4 flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-base text-layer-foreground">Filières académiques</h3>
+                                    <p class="text-xs text-muted-foreground-2 mt-0.5">Parcours de formation rattachés
+                                        aux cycles</p>
+                                </div>
+                                <!-- Search -->
+                                <div class="relative">
+                                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground-2"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <path d="m21 21-4.34-4.34" />
+                                    </svg>
+                                    <input type="text" placeholder="Rechercher filière..." class="pl-8 pr-3 py-1.5 text-xs bg-layer border border-layer-line rounded-lg w-44
+                              focus:outline-none focus:ring-1 focus:ring-primary
+                              text-layer-foreground placeholder:text-muted-foreground-2" />
+                                </div>
+                            </div>
+
+                            <!-- Table -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-y border-card-line">
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Filière</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Nom complet</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Cycle parent</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Statut</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest text-right">
+                                                Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-card-line">
+
+                                        <!-- ISI -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.75" stroke-linecap="round"
+                                                            stroke-linejoin="round" class="text-primary">
+                                                            <path
+                                                                d="M3 15m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                                            <path
+                                                                d="M15 15m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                                            <path
+                                                                d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                                            <path d="M6 15v-1a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v1" />
+                                                            <path d="M12 9l0 3" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-primary">ISI</p>
+                                                        <p class="text-xs text-muted-foreground-2">FL-001</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">
+                                                Ingénierie des Systèmes d'Information
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary">
+                                                    Ingénieur
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="size-1.5 rounded-full bg-green-500"></span>
+                                                    <span class="text-xs font-semibold text-green-600">Actif</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg
+                                           text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- SRT -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.75" stroke-linecap="round"
+                                                            stroke-linejoin="round" class="text-blue-500">
+                                                            <path d="M12 18.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13z" />
+                                                            <path
+                                                                d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-blue-500">SRT</p>
+                                                        <p class="text-xs text-muted-foreground-2">FL-002</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">
+                                                Systèmes, Réseaux et Télécoms
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary">
+                                                    Ingénieur
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="size-1.5 rounded-full bg-green-500"></span>
+                                                    <span class="text-xs font-semibold text-green-600">Actif</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg
+                                           text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- GE -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.75" stroke-linecap="round"
+                                                            stroke-linejoin="round" class="text-orange-500">
+                                                            <path d="M13 10h7l-9 13v-9H4l9-13v9z" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-orange-500">GE</p>
+                                                        <p class="text-xs text-muted-foreground-2">FL-003</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">
+                                                Génie Électrique
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-500/10 text-blue-500">
+                                                    Licence
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="size-1.5 rounded-full bg-green-500"></span>
+                                                    <span class="text-xs font-semibold text-green-600">Actif</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg
+                                           text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- GC -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.75" stroke-linecap="round"
+                                                            stroke-linejoin="round" class="text-green-600">
+                                                            <path d="M3 21l18 0" />
+                                                            <path d="M9 8l1 0" />
+                                                            <path d="M9 12l1 0" />
+                                                            <path d="M9 16l1 0" />
+                                                            <path d="M14 8l1 0" />
+                                                            <path d="M14 12l1 0" />
+                                                            <path d="M14 16l1 0" />
+                                                            <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-green-600">GC</p>
+                                                        <p class="text-xs text-muted-foreground-2">FL-004</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">
+                                                Génie Civil
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary">
+                                                    Ingénieur
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="size-1.5 rounded-full bg-green-500"></span>
+                                                    <span class="text-xs font-semibold text-green-600">Actif</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg
+                                           text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Specializations card -->
+                    <div id="panel-spécialisation" role="tabpanel" aria-labelledby="tab-spécialisation" class="hidden">
+
+                        <div class="bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden mb-8">
+
+                            <!-- Card Header -->
+                            <div class="px-6 py-4 flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-base text-layer-foreground">Spécialités académiques</h3>
+                                    <p class="text-xs text-muted-foreground-2 mt-0.5">Spécialisations rattachées aux
+                                        filières</p>
+                                </div>
+                                <!-- Search -->
+                                <div class="relative">
+                                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground-2"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <path d="m21 21-4.34-4.34" />
+                                    </svg>
+                                    <input type="text" placeholder="Rechercher spécialité..." class="pl-8 pr-3 py-1.5 text-xs bg-layer border border-layer-line rounded-lg w-48
+                              focus:outline-none focus:ring-1 focus:ring-primary
+                              text-layer-foreground placeholder:text-muted-foreground-2" />
+                                </div>
+                            </div>
+
+                            <!-- Table -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-y border-card-line">
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Spécialité</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Nom complet</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Filière parente</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                Statut</th>
+                                            <th
+                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest text-right">
+                                                Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-card-line">
+
+                                        <!-- IL -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.75" stroke-linecap="round"
+                                                            stroke-linejoin="round" class="text-primary">
+                                                            <path d="M7 8l-4 4l4 4" />
+                                                            <path d="M17 8l4 4l-4 4" />
+                                                            <path d="M14 4l-4 16" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-primary">IL</p>
+                                                        <p class="text-xs text-muted-foreground-2">SP-001</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">
+                                                Ingénierie Logicielle
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary">
+                                                    ISI
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="size-1.5 rounded-full bg-green-500"></span>
+                                                    <span class="text-xs font-semibold text-green-600">Actif</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg
+                                           text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- MSI -->
+                                        <tr class="hover:bg-muted/20 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="size-9 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="1.75" stroke-linecap="round"
+                                                            stroke-linejoin="round" class="text-blue-500">
+                                                            <path
+                                                                d="M3 3m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+                                                            <path d="M9 12l2 2l4 -4" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-blue-500">MSI</p>
+                                                        <p class="text-xs text-muted-foreground-2">SP-002</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-layer-foreground">
+                                                Management des Systèmes d'Information
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary">
+                                                    ISI
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="size-1.5 rounded-full bg-green-500"></span>
+                                                    <span class="text-xs font-semibold text-green-600">Actif</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button type="button"
+                                                        class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg
+                                           text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                        aria-haspopup="menu" aria-expanded="false">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="5" r="1" />
+                                                            <circle cx="12" cy="12" r="1" />
+                                                            <circle cx="12" cy="19" r="1" />
+                                                        </svg>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                        role="menu">
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                <path
+                                                                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                            Modifier
+                                                        </button>
+                                                        <button
+                                                            class="flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            </svg>
+                                                            Supprimer
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- END PANEL Cycles -->
+
+                </div>
+                <!-- END tab panels -->
+
+            </div>
+            <!-- END PAGE CONTENT -->
+
+        </section>
+        <!-- ========== END MAIN ========== -->
+
+    </section>
+    <div id="hs-modal-create-entity"
+        class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
+        role="dialog" tabindex="-1" aria-labelledby="hs-modal-create-entity-label">
+
+        <!-- Backdrop -->
+        <div
+            class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+
+            <div
+                class="pointer-events-auto flex flex-col bg-card border border-card-line shadow-2xl rounded-2xl overflow-hidden">
+
+                <!-- Header -->
+                <div class="flex justify-between items-center px-7 py-5 border-b border-card-line">
+                    <h3 id="hs-modal-create-entity-label" class="text-lg font-bold text-layer-foreground">
+                        Créer une nouvelle entité académique
+                    </h3>
+                    <button type="button"
+                        class="size-8 flex justify-center items-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors focus:outline-none"
+                        aria-label="Fermer" data-hs-overlay="#hs-modal-create-entity">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Body / Form -->
+                <form id="form-create-entity" class="px-7 py-6 space-y-5">
+
+                    <!-- Select Type -->
+                    <div class="space-y-1.5">
+                        <label for="entity-type" class="block text-sm font-semibold text-layer-foreground">
+                            Type d'entité
+                        </label>
+                        <select id="entity-type" name="entity-type" onchange="toggleModalFields(this.value)"
+                            class="py-2.5 px-3 block w-full border border-layer-line rounded-lg text-sm text-layer-foreground bg-layer focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+                            <option value="cycle">Cycle</option>
+                            <option value="niveau">Niveau</option>
+                            <option value="filiere">Filière</option>
+                            <option value="specialization">Spécialisation</option>
+                        </select>
+                    </div>
+
+                    <!-- Name -->
+                    <div class="space-y-1.5">
+                        <label for="entity-name" class="block text-sm font-semibold text-layer-foreground">
+                            Nom
+                        </label>
+                        <input type="text" id="entity-name" name="entity-name"
+                            placeholder="ex: Ingénieur, ISI, Ingénierie Logicielle…"
+                            class="py-2.5 px-3 block w-full border border-layer-line rounded-lg text-sm text-layer-foreground bg-layer placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
+                    </div>
+
+                    <!-- Description -->
+                    <div class="space-y-1.5">
+                        <label for="entity-description" class="block text-sm font-semibold text-layer-foreground">
+                            Description
+                        </label>
+                        <textarea id="entity-description" name="entity-description" rows="3"
+                            placeholder="Fournissez une brève description de l'entité académique…"
+                            class="py-2.5 px-3 block w-full border border-layer-line rounded-lg text-sm text-layer-foreground bg-layer placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors resize-none"></textarea>
+                    </div>
+
+                    <!-- Parent Cycle — affiché pour Filière et Spécialisation -->
+                    <div id="field-parent-cycle" class="space-y-1.5 hidden">
+                        <label for="parent-cycle" class="block text-sm font-semibold text-layer-foreground">
+                            Cycle parent
+                        </label>
+                        <select id="parent-cycle" name="parent-cycle"
+                            class="py-2.5 px-3 block w-full border border-layer-line rounded-lg text-sm text-layer-foreground bg-layer focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+                            <option value="">Sélectionner un cycle…</option>
+                            <option value="cy-001">Ingénieur</option>
+                            <option value="cy-002">Licence</option>
+                            <option value="cy-003">Master</option>
+                        </select>
+                        <p class="text-xs text-muted-foreground-2 mt-0.5">Les filières doivent être associées à un cycle
+                            existant.</p>
+                    </div>
+                    <!-- Parent Niveau — affiché pour Filière et Spécialisation -->
+                    <div id="field-parent-niveau" class="space-y-1.5 hidden">
+                        <label for="parent-niveau" class="block text-sm font-semibold text-layer-foreground">
+                            Niveau parent
+                        </label>
+                        <select id="parent-niveau" name="parent-niveau"
+                            class="py-2.5 px-3 block w-full border border-layer-line rounded-lg text-sm text-layer-foreground bg-layer focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+                            <option value="">Sélectionner un niveau…</option>
+                            <option value="l1">Niveau 1</option>
+                            <option value="l2">Niveau 2</option>
+                            <option value="l3">Niveau 3</option>
+                        </select>
+                        <p class="text-xs text-muted-foreground-2 mt-0.5">Les filières doivent être associées à un
+                            niveau existant.</p>
+                    </div>
+
+                    <!-- Parent Major — affiché uniquement pour Spécialisation -->
+                    <div id="field-parent-major" class="space-y-1.5 hidden">
+                        <label for="parent-major" class="block text-sm font-semibold text-layer-foreground">
+                            Filière parente
+                        </label>
+                        <select id="parent-major" name="parent-major"
+                            class="py-2.5 px-3 block w-full border border-layer-line rounded-lg text-sm text-layer-foreground bg-layer focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+                            <option value="">Sélectionner une filière…</option>
+                            <option value="isi">ISI — Ingénierie des Systèmes d'Information</option>
+                            <option value="srt">SRT — Systèmes, Réseaux et Télécoms</option>
+                            <option value="ge">GE — Génie Électrique</option>
+                            <option value="gc">GC — Génie Civil</option>
+                        </select>
+                        <p class="text-xs text-muted-foreground-2 mt-0.5">Les spécialisations doivent être rattachées à
+                            une filière.</p>
+                    </div>
+
+                    <!-- Footer actions -->
+                    <div class="pt-3 flex items-center justify-end gap-x-3 border-t border-card-line">
+                        <button type="button"
+                            class="py-2 px-5 text-sm font-semibold text-layer-foreground hover:bg-muted rounded-lg transition-colors focus:outline-none"
+                            data-hs-overlay="#hs-modal-create-entity">
+                            Annuler
+                        </button>
+                        <button type="submit"
+                            class="py-2 px-7 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-lg shadow-sm transition-all active:scale-95 focus:outline-none">
+                            Créer
+                        </button>
+                    </div>
+
+                </form>
+                <!-- End Body -->
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function toggleModalFields(value) {
+            const fieldCycle = document.getElementById('field-parent-cycle');
+            const fieldNiveau = document.getElementById('field-parent-niveau');
+            const fieldMajor = document.getElementById('field-parent-major');
+
+            // Reset tout
+            fieldCycle.classList.add('hidden');
+            fieldNiveau.classList.add('hidden');
+            fieldMajor.classList.add('hidden');
+
+            if (value === 'niveau') {
+                // Niveau → besoin d'un Cycle parent
+                fieldCycle.classList.remove('hidden');
+            } else if (value === 'filiere') {
+                // Filière → besoin d'un Cycle + Niveau parent
+                fieldCycle.classList.remove('hidden');
+                fieldNiveau.classList.remove('hidden');
+            } else if (value === 'specialization') {
+                // Spécialisation → toute la chaîne
+                fieldCycle.classList.remove('hidden');
+                fieldNiveau.classList.remove('hidden');
+                fieldMajor.classList.remove('hidden');
+            }
+            // Cycle → aucun parent nécessaire
+        }
+
+        // Soumission du formulaire (UI seulement — à brancher sur ton endpoint Thymeleaf)
+        document.getElementById('form-create-entity').addEventListener('submit', function (e) {
+            e.preventDefault();
+            // TODO: remplacer par un appel fetch / th:action selon ton backend
+            console.log('Entité créée !');
+        });
+    </script>
+    <script th:src="@{/js/preline.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof HSStaticMethods !== 'undefined') {
+                HSStaticMethods.autoInit();
+                console.log("Preline initialisé avec succès !");
+            } else {
+                console.error("Erreur : Le fichier preline.js n'est pas chargé correctement.");
+            }
+        });
+
+        window.addEventListener('load', () => {
+            if (typeof HSStaticMethods !== 'undefined') {
+                HSStaticMethods.autoInit();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

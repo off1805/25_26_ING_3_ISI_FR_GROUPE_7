@@ -1,14 +1,19 @@
 package com.projetTransversalIsi.classe.application.dto;
 
+import com.projetTransversalIsi.classe.domain.Classe;
 
-import com.projetTransversalIsi.classe.domain.classe;
-
-public record ClasseResponseDTO(Long id, String nom, int effectif) {
-    public static ClasseResponseDTO fromDomain(classe classe) {
+public record ClasseResponseDTO(
+        Long id,
+        String code,
+        String description,
+        Long specialiteId
+) {
+    public static ClasseResponseDTO fromDomain(Classe classe) {
         return new ClasseResponseDTO(
                 classe.getId(),
-                classe.getNom(),
-                classe.getEffectif()
+                classe.getCode(),
+                classe.getDescription(),
+                classe.getSpecialite() != null ? classe.getSpecialite().getId() : null
         );
     }
 }

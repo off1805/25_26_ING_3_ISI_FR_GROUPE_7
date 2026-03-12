@@ -1,45 +1,63 @@
 package com.projetTransversalIsi.classe.infrastructure;
 
-import com.projetTransversalIsi.classe.domain.classe;
-import com.projetTransversalIsi.classe.domain.classeRepository;
-import com.projetTransversalIsi.user.domain.User;
+import com.projetTransversalIsi.classe.domain.Classe;
+import com.projetTransversalIsi.classe.domain.ClasseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class JpaClasseRepository implements classeRepository {
+public class JpaClasseRepository implements ClasseRepository {
 
     private final SpringdataClasseRepository jpaRepo;
+    private final ClasseMapper mapper;
 
     @Override
-    public classe save(classe classe, Set<User> students) {
-      
-        JpaClasseEntity entity = new JpaClasseEntity();
-        entity.setId(classe.getId());
-        entity.setNom(classe.getNom());
-        entity.setEffectif(classe.getEffectif());
-        
-    
-        JpaClasseEntity savedEntity = jpaRepo.save(entity);
-        
-        log.info("Classe sauvegardée");
-        
-     
-        classe result = new classe();
-        result.setId(savedEntity.getId());
-        result.setNom(savedEntity.getNom());
-        result.setEffectif(savedEntity.getEffectif());
-        
-        return result;
+    public Classe save(Classe classe) {
+        JpaClasseEntity entity = mapper.toEntity(classe);
+        JpaClasseEntity saved = jpaRepo.save(entity);
+        log.info("Classe sauvegardée : id={}, code={}", saved.getId(), saved.getCode());
+        return mapper.toDomain(saved);
     }
 
     @Override
-    public boolean classeAlreadyExists(String nom) {
-        return jpaRepo.existsByNom(nom);
+    public Optional<Classe> findById(Long id) {
+        return jpaRepo.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<Classe> findByCode(String code) {
+        return jpaRepo.findByCode(code).map(mapper::toDomain);
+    }
+
+    @Override
+    public List<Classe> findAll() {
+        return jpaRepo.findAll().stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Classe> findBySpecialiteId(Long specialiteId) {
+        return jpaRepo.findBySpecialiteId(specialiteId).stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        jpaRepo.deleteById(id);
+        log.info("Classe supprimée : id={}", id);
+    }
+
+    @Override
+    public boolean existsByCode(String code) {
+        return jpaRepo.existsByCode(code);
     }
 }

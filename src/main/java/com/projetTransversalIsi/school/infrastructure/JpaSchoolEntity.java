@@ -22,4 +22,6 @@ public class JpaSchoolEntity {
     @Column(nullable = false)
     private double rayon;
 
+    private String name;
+
 }
