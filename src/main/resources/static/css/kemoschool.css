@@ -5,6 +5,7 @@
 
 :root[data-theme="theme-kemoschool"],
 [data-theme="theme-kemoschool"] {
+  --background:#fafafa;
   --background-1: #FAF9FF;
   --background-2: #F5F3FF;
   --foreground: #4C1D95;

@@ -1,5 +1,6 @@
 export function userRowTable(userEmail, userRole, userStatus, userId, userRoleClass, userStatusClass) {
     const row = document.createElement("tr");
+    row.setAttribute("data-user-id", userId);
     row.className = "hover:bg-muted/20 transition-colors group";
 
     const content = `
@@ -67,7 +68,7 @@ export function userRowTable(userEmail, userRole, userStatus, userId, userRoleCl
                                                             Modifier
                                                         </button>
                                                         <button type="button"
-                                                            class="flex items-center  w-full text-sm   rounded-lg transition-colors flex items-center gap-x-3 py-2 px-3  text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus"
+                                                            class="btn-delete-user flex items-center  w-full text-sm   rounded-lg transition-colors flex items-center gap-x-3 py-2 px-3  text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus"
                                                             data-user-id="${userId}">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="14"
                                                                 height="14" viewBox="0 0 24 24" fill="none"

@@ -1,7 +1,10 @@
 package com.projetTransversalIsi.specialite.infrastructure;
 
+import com.projetTransversalIsi.Niveau.infrastructure.JpaNiveauEntity;
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -21,22 +24,15 @@ public class JpaSpecialiteEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    /**
-     * Code de la branche (filière) à laquelle cette spécialité appartient.
-     * Ex : "RESEAU", "GENIE_LOGICIEL"
-     */
-    @Column(name = "branche_code", nullable = false)
-    private String brancheCode;
-
-    /**
-     * Niveau d'études minimum pour accéder à cette spécialité.
-     * Ex : 4 pour 4e année ingénieur.
-     */
-    @Column(name = "niveau_minimum", nullable = false)
-    private int niveauMinimum;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "niveau_id", nullable = false)
+    private JpaNiveauEntity niveau;
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @OneToMany(mappedBy = "specialite", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<com.projetTransversalIsi.classe.infrastructure.JpaClasseEntity> classes = new ArrayList<>();
 
     @PrePersist
     public void applyDefaults() {
@@ -45,9 +41,6 @@ public class JpaSpecialiteEntity {
         }
         if (code != null) {
             code = code.toUpperCase();
-        }
-        if (brancheCode != null) {
-            brancheCode = brancheCode.toUpperCase();
         }
     }
 }

@@ -14,6 +14,9 @@ public record CreateFiliereRequestDTO(
         @Size(min = 3, max = 100, message = "Le nom doit faire entre 3 et 100 caractères")
         String nom,
 
-        String description) {
+        String description,
+
+        @NotNull(message = "L'ID du cycle est obligatoire")
+        Long cycleId) {
 
 }

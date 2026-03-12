@@ -1,0 +1,57 @@
+package com.projetTransversalIsi.ue.infrastructure;
+
+import com.projetTransversalIsi.ue.domain.Ue;
+import com.projetTransversalIsi.ue.domain.UeRepository;
+import com.projetTransversalIsi.ue.application.dto.UeFiltreDto;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Slf4j
+@Repository
+@RequiredArgsConstructor
+public class JpaUeRepository implements UeRepository {
+
+    private final SpringDataUeRepository springDataUeRepository;
+    private final UeMapper ueMapper;
+
+    @Override
+    public boolean ueAlreadyExists(String code) {
+        return springDataUeRepository.existsByCode(code);
+    }
+
+    @Override
+    public Ue save(Ue ue) {
+        JpaUeEntity entity = ueMapper.ueToJpaUeEntity(ue);
+        JpaUeEntity saved = springDataUeRepository.save(entity);
+        log.info("UE saved with id: {}", saved.getId());
+        return ueMapper.jpaUeEntityToUe(saved);
+    }
+
+    @Override
+    public Optional<Ue> findById(Long id) {
+        return springDataUeRepository.findById(id).map(ueMapper::jpaUeEntityToUe);
+    }
+
+    @Override
+    public void delete(Ue ue) {
+        JpaUeEntity entity = ueMapper.ueToJpaUeEntity(ue);
+        springDataUeRepository.save(entity);
+        log.info("UE soft-deleted with id: {}", ue.getId());
+    }
+
+    @Override
+    public Page<Ue> findAll(UeFiltreDto command, Pageable pageable) {
+        Specification<JpaUeEntity> spec = Specification
+                .where(UeSpec.hasLibelle(command.getLibelle()))
+                .and(UeSpec.hasCode(command.getCode()))
+                .and(UeSpec.isDeleted(command.getDeleted()));
+
+        return springDataUeRepository.findAll(spec, pageable).map(ueMapper::jpaUeEntityToUe);
+    }
+}

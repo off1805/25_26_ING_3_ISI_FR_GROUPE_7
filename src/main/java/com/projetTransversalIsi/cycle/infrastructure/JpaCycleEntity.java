@@ -1,10 +1,13 @@
 package com.projetTransversalIsi.cycle.infrastructure;
 
+import com.projetTransversalIsi.Filiere.infrastructure.JpaFiliereEntity;
 import com.projetTransversalIsi.cycle.domain.CycleStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -43,4 +46,7 @@ public class JpaCycleEntity {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "cycle")
+    private List<JpaFiliereEntity> filieres = new ArrayList<>();
 }

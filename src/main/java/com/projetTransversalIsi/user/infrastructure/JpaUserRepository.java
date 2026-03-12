@@ -6,9 +6,13 @@ import com.projetTransversalIsi.security.infrastructure.JpaPermissionEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.domain.UserRepository;
+import com.projetTransversalIsi.user.dto.UserFiltreDto;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -92,5 +96,15 @@ public class JpaUserRepository implements UserRepository {
     @Override
     public List<User> search(String userStatus, String email, String role, boolean deleted){
         return jpaRepo.search(userStatus,email,role,deleted).stream().map(userMapper::JpaUseEntityToUser).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<User> findAll(UserFiltreDto command, Pageable page){
+        Specification<JpaUserEntity> spec= Specification
+                .where(JpaUserSpec.hasStatus(command.getStatus()))
+                .and(JpaUserSpec.hasAnyRole(command.getRole()))
+                .and(JpaUserSpec.isDeleted(command.getDeleted()))
+                .and(JpaUserSpec.hasEmailLike(command.getEmail()));
+        return jpaRepo.findAll(spec,page).map(userMapper::JpaUseEntityToUser);
     }
 }

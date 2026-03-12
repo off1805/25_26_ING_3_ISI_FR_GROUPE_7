@@ -8,6 +8,5 @@ public record CreateSpecialiteRequestDTO(
         @NotBlank String code,
         @NotBlank String libelle,
         String description,
-        @NotBlank String brancheCode,
-        @NotNull @Min(1) int niveauMinimum
+        @NotNull Long niveauId
 ) {}
