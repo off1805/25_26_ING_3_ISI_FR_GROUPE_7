@@ -6,7 +6,6 @@ import com.projetTransversalIsi.Filiere.domain.FiliereRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -17,7 +16,6 @@ public class SearchFiliereUCImpl implements SearchFiliereUC {
     @Override
     public List<Filiere> execute(SearchFiliereRequestDTO criteria) {
 
-        List<Filiere> resultats;
         return filiereRepo.search(criteria.code(),criteria.nom());
 
 //

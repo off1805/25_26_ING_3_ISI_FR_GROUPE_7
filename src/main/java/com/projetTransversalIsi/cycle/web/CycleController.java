@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/cycles")
+@RequestMapping("/api/cycle")
 @RequiredArgsConstructor
 @Slf4j
 public class CycleController {

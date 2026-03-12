@@ -5,6 +5,7 @@ import com.projetTransversalIsi.security.domain.EnumRole;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SpringDataUserRepository extends JpaRepository<JpaUserEntity, Long> {
+public interface SpringDataUserRepository extends JpaRepository<JpaUserEntity, Long>, JpaSpecificationExecutor<JpaUserEntity> {
      boolean existsByEmail(String email);
      Optional<JpaUserEntity> findByEmail(String email);
 

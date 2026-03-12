@@ -4,6 +4,8 @@ import com.projetTransversalIsi.specialite.application.dto.UpdateSpecialiteReque
 import com.projetTransversalIsi.specialite.domain.Specialite;
 import com.projetTransversalIsi.specialite.domain.SpecialiteRepository;
 import com.projetTransversalIsi.specialite.domain.exceptions.SpecialiteNotFoundException;
+import com.projetTransversalIsi.Niveau.application.use_cases.FindNiveauByIdUC;
+import com.projetTransversalIsi.Niveau.domain.Niveau;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 public class UpdateSpecialiteUCImpl implements UpdateSpecialiteUC {
 
     private final SpecialiteRepository specialiteRepository;
+    private final FindNiveauByIdUC findNiveauByIdUC;
 
     @Transactional
     @Override
@@ -20,10 +23,11 @@ public class UpdateSpecialiteUCImpl implements UpdateSpecialiteUC {
         Specialite specialite = specialiteRepository.findById(id)
                 .orElseThrow(() -> new SpecialiteNotFoundException(id));
 
+        Niveau niveau = findNiveauByIdUC.execute(command.niveauId());
+
         specialite.setLibelle(command.libelle());
         specialite.setDescription(command.description());
-        specialite.setBrancheCode(command.brancheCode().toUpperCase());
-        specialite.setNiveauMinimum(command.niveauMinimum());
+        specialite.setNiveau(niveau);
 
         return specialiteRepository.save(specialite);
     }

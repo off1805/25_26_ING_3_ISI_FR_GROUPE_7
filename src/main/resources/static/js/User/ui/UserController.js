@@ -6,13 +6,15 @@ import { ModifyUserStatusUC } from "../application/ModifyUserStatusUC.js";
 import { UserApi } from "../infrastructure/UserApi.js";
 import { userRowTable } from "./userRowTable.js";
 import { GlobalEventNotifier } from "../../common/GlobalEventNotifier.js";
+import { RetrieveUserUC } from "../application/RetrieveUserUC.js";
 
 export class UserController {
-    constructor(userApi, createUserUC, deleteUserUC, modifyUserStatusUC) {
+    constructor(userApi, createUserUC, deleteUserUC, modifyUserStatusUC, retrieveUserUc) {
         this.userApi = userApi;
         this.createUserUC = createUserUC;
         this.deleteUserUC = deleteUserUC;
         this.modifyUserStatusUC = modifyUserStatusUC;
+        this.retrieveUserUc = retrieveUserUc;
         this.currentPermissions = []; // Store fetched permissions
         this.init();
     }
@@ -38,12 +40,27 @@ export class UserController {
             }
         }
 
-        document.querySelectorAll('.btn-delete-user').forEach(btn => {
-            btn.addEventListener('click', (e) => this.handleDeleteUser(e));
+        document.getElementById('table-body').addEventListener('click', (e) => {
+            if (e.target.closest('.btn-delete-user')) {
+                this.handleDeleteUser({ currentTarget: e.target.closest('.btn-delete-user') });
+            }
+            if (e.target.closest('.btn-block-user')) {
+                this.handleBlockUser({ currentTarget: e.target.closest('.btn-block-user') });
+            }
         });
 
-        document.querySelectorAll('.btn-block-user').forEach(btn => {
-            btn.addEventListener('click', (e) => this.handleBlockUser(e));
+        let input = document.getElementById("search-by-email-on-personnel");
+        if(!input){
+            console.log("element not present yet on DOM.");
+        }
+        input.addEventListener('keydown', async (e) => {
+            if (e.key === 'Enter') { // touche Entrée
+                e.preventDefault();
+                const query = input.value.trim();
+                await this._reloadView()
+                console.log('Recherche lancée pour:', query);
+                // appel API ou filtrage
+            }
         });
 
 
@@ -79,6 +96,24 @@ export class UserController {
         } catch (e) {
             GlobalErrorHandler.handle(e);
         }
+    }
+
+    async _reloadView() {
+        let pageUser = await this.retrieveUserUc.execute(this._getFilter());
+        console.log(pageUser);
+        const tableBody = document.getElementById('table-body');
+        tableBody.innerHTML = '';
+        pageUser.content.forEach(user => this._addUserRow(user));
+
+
+    }
+
+    _getFilter() {
+        const searchBar = document.getElementById("search-by-email-on-personnel");
+        if (!searchBar) return;
+        let emailForm = searchBar.value;
+        let filter = { email: emailForm, role: ["ADMIN", "AP", "SURVEILLANT"] };
+        return filter;
     }
 
     _addUserRow(user) {
@@ -252,4 +287,5 @@ const userApi = new UserApi();
 const createUserUC = new CreateUserUC(userApi);
 const deleteUserUC = new DeleteUserUC(userApi);
 const modifyUserStatusUC = new ModifyUserStatusUC(userApi);
-new UserController(userApi, createUserUC, deleteUserUC, modifyUserStatusUC);
+const retrieveUserUc = new RetrieveUserUC(userApi);
+new UserController(userApi, createUserUC, deleteUserUC, modifyUserStatusUC, retrieveUserUc);

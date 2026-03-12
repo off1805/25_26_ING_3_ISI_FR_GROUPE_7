@@ -1,6 +1,9 @@
 package com.projetTransversalIsi.user.domain;
 
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
+import com.projetTransversalIsi.user.dto.UserFiltreDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -13,6 +16,7 @@ public interface UserRepository {
 
     boolean userAlreadyExists(String email);
 
+    Page<User> findAll(UserFiltreDto command, Pageable page);
     Optional<User> findById(Long id);
 
     Optional<User> findByEmail(String email);

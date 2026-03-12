@@ -56,15 +56,8 @@ public class JpaSpecialiteRepository implements SpecialiteRepository {
     }
 
     @Override
-    public List<Specialite> findByBrancheCode(String brancheCode) {
-        return jpaRepo.findByBrancheCode(brancheCode).stream()
-                .map(specialiteMapper::jpaEntityToSpecialite)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Specialite> findByBrancheCodeAndNiveauMinimumLessThanEqual(String brancheCode, int niveau) {
-        return jpaRepo.findByBrancheCodeAndNiveauMinimumLessThanEqual(brancheCode, niveau).stream()
+    public List<Specialite> findByNiveauId(Long niveauId) {
+        return jpaRepo.findByNiveauId(niveauId).stream()
                 .map(specialiteMapper::jpaEntityToSpecialite)
                 .collect(Collectors.toList());
     }

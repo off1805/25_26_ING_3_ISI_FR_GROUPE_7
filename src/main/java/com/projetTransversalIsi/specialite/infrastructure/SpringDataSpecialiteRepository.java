@@ -15,7 +15,5 @@ public interface SpringDataSpecialiteRepository extends JpaRepository<JpaSpecial
 
     List<JpaSpecialiteEntity> findByActiveTrue();
 
-    List<JpaSpecialiteEntity> findByBrancheCode(String brancheCode);
-
-    List<JpaSpecialiteEntity> findByBrancheCodeAndNiveauMinimumLessThanEqual(String brancheCode, int niveauMinimum);
+    List<JpaSpecialiteEntity> findByNiveauId(Long niveauId);
 }

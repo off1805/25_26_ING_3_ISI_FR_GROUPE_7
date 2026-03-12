@@ -1,14 +1,15 @@
 package com.projetTransversalIsi.user.controller;
 
-import com.projetTransversalIsi.Filiere.application.dto.FiliereResponseDTO;
-import com.projetTransversalIsi.Filiere.application.dto.SearchFiliereRequestDTO;
 import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.user.dto.*;
-import com.projetTransversalIsi.user.services.interfaces.*;
+import com.projetTransversalIsi.user.services.*;
 import com.projetTransversalIsi.user.domain.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -73,13 +74,11 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDetailsResponseDTO>> searchFilieres(
-            @RequestParam(required = false) String userStatus,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String role,
-            @RequestParam(defaultValue = "false") boolean includeDeleted) {
-        List<User> resultats = searchUserUC.execute(userStatus,email,role,includeDeleted);
-        return ResponseEntity.ok(resultats.stream().map(UserDetailsResponseDTO::fromDomain).collect(Collectors.toList()));
+    public ResponseEntity<Page<UserDetailsResponseDTO>> searchFilieres(
+            @ModelAttribute UserFiltreDto command,
+            @PageableDefault(size=10) Pageable page) {
+        Page<User> resultats = searchUserUC.execute(command,page);
+        return ResponseEntity.ok(resultats.map(UserDetailsResponseDTO::fromDomain));
     }
 
 }

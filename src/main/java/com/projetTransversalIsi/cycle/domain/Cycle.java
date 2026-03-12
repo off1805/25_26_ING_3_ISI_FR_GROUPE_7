@@ -1,10 +1,13 @@
 package com.projetTransversalIsi.cycle.domain;
 
+import com.projetTransversalIsi.Filiere.domain.Filiere;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,13 +15,14 @@ import java.time.LocalDateTime;
 public class Cycle {
 
     private Long id;
-    private String name;           // ex: "Master", "Licence", "Ingénieur", "Doctorat"
-    private String code;           // ex: "MSC", "LIC", "ING", "DOC"
-    private int durationYears;     // durée en années (3, 5, ...)
+    private String name;
+    private String code;
+    private int durationYears;
     private String description;
     private CycleStatus status;
     private boolean deleted = false;
     private LocalDateTime deletedAt;
+    private List<Filiere> filieres = new ArrayList<>();
 
     public Cycle(String name, String code, int durationYears, String description) {
         this.name = name;
@@ -62,4 +66,5 @@ public class Cycle {
     public void activate() {
         this.status = CycleStatus.ACTIVE;
     }
+
 }

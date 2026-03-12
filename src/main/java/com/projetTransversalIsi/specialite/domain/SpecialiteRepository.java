@@ -17,9 +17,7 @@ public interface SpecialiteRepository {
 
     List<Specialite> findAllActive();
 
-    List<Specialite> findByBrancheCode(String brancheCode);
-
-    List<Specialite> findByBrancheCodeAndNiveauMinimumLessThanEqual(String brancheCode, int niveau);
+    List<Specialite> findByNiveauId(Long niveauId);
 
     void deleteById(Long id);
 }
