@@ -1,8 +1,12 @@
 package com.projetTransversalIsi.Filiere.infrastructure;
 
+import com.projetTransversalIsi.Niveau.infrastructure.JpaNiveauEntity;
+import com.projetTransversalIsi.cycle.infrastructure.JpaCycleEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -27,4 +31,11 @@ public class JpaFiliereEntity {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "cycle_id", nullable = false)
+    private JpaCycleEntity cycle;
+
+    @OneToMany(mappedBy = "filiere", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JpaNiveauEntity> niveaux = new ArrayList<>();
 }

@@ -9,7 +9,9 @@ public record FiliereResponseDTO(
         String nom,
         String description,
         boolean deleted,
-        LocalDateTime deletedAt
+        LocalDateTime deletedAt,
+        Long cycleId,
+        String cycleName
 ) {
     public static FiliereResponseDTO fromDomain(Filiere filiere) {
         return new FiliereResponseDTO(
@@ -18,7 +20,9 @@ public record FiliereResponseDTO(
                 filiere.getNom(),
                 filiere.getDescription(),
                 filiere.isDeleted(),
-                filiere.getDeletedAt()
+                filiere.getDeletedAt(),
+                filiere.getCycle() != null ? filiere.getCycle().getId() : null,
+                filiere.getCycle() != null ? filiere.getCycle().getName() : null
         );
     }
 }

@@ -7,6 +7,5 @@ import jakarta.validation.constraints.NotNull;
 public record UpdateSpecialiteRequestDTO(
         @NotBlank String libelle,
         String description,
-        @NotBlank String brancheCode,
-        @NotNull @Min(1) int niveauMinimum
+        @NotNull Long niveauId
 ) {}

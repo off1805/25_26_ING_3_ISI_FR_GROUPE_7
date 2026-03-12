@@ -25,7 +25,7 @@ public class SpecialiteController {
     private final CreateSpecialiteUC createSpecialiteUC;
     private final FindSpecialiteByIdUC findSpecialiteByIdUC;
     private final GetAllSpecialitesUC getAllSpecialitesUC;
-    private final GetSpecialitesByBrancheUC getSpecialitesByBrancheUC;
+    private final GetSpecialitesByNiveauUC getSpecialitesByNiveauUC;
     private final UpdateSpecialiteUC updateSpecialiteUC;
     private final DeleteSpecialiteUC deleteSpecialiteUC;
     private final ToggleSpecialiteStatusUC toggleSpecialiteStatusUC;
@@ -68,18 +68,14 @@ public class SpecialiteController {
     }
 
     /**
-     * GET /api/specialites/branche/{brancheCode}?niveau=4
-     * Récupère les spécialités d'une branche, filtrées optionnellement par niveau.
-     *
-     * Exemple : GET /api/specialites/branche/RESEAU?niveau=4
-     *  → retourne TELECOM et CYBERSECURITE si niveauMinimum <= 4
+     * GET /api/specialites/niveau/{niveauId}
+     * Récupère les spécialités d'un niveau donné.
      */
-    @GetMapping("/branche/{brancheCode}")
-    public ResponseEntity<List<SpecialiteResponseDTO>> getSpecialitesByBranche(
-            @PathVariable String brancheCode,
-            @RequestParam(required = false) Integer niveau) {
-        log.info("Requête de spécialités pour la branche={}, niveau={}", brancheCode, niveau);
-        List<SpecialiteResponseDTO> result = getSpecialitesByBrancheUC.execute(brancheCode, niveau)
+    @GetMapping("/niveau/{niveauId}")
+    public ResponseEntity<List<SpecialiteResponseDTO>> getSpecialitesByNiveau(
+            @PathVariable Long niveauId) {
+        log.info("Requête de spécialités pour le niveau={}", niveauId);
+        List<SpecialiteResponseDTO> result = getSpecialitesByNiveauUC.execute(niveauId)
                 .stream()
                 .map(SpecialiteResponseDTO::fromDomain)
                 .collect(Collectors.toList());

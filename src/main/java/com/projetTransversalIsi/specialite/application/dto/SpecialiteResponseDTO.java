@@ -1,15 +1,19 @@
 package com.projetTransversalIsi.specialite.application.dto;
 
 import com.projetTransversalIsi.specialite.domain.Specialite;
+import com.projetTransversalIsi.classe.application.dto.ClasseResponseDTO;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public record SpecialiteResponseDTO(
         Long id,
         String code,
         String libelle,
         String description,
-        String brancheCode,
-        int niveauMinimum,
-        boolean active
+        Long niveauId,
+        String niveauDescription,
+        boolean active,
+        List<ClasseResponseDTO> classes
 ) {
     public static SpecialiteResponseDTO fromDomain(Specialite specialite) {
         return new SpecialiteResponseDTO(
@@ -17,9 +21,13 @@ public record SpecialiteResponseDTO(
                 specialite.getCode(),
                 specialite.getLibelle(),
                 specialite.getDescription(),
-                specialite.getBrancheCode(),
-                specialite.getNiveauMinimum(),
-                specialite.isActive()
+                specialite.getNiveau() != null ? specialite.getNiveau().getId() : null,
+                specialite.getNiveau() != null ? specialite.getNiveau().getDescription() : null,
+                specialite.isActive(),
+                specialite.getClasses() != null ?
+                    specialite.getClasses().stream()
+                        .map(ClasseResponseDTO::fromDomain)
+                        .collect(Collectors.toList()) : List.of()
         );
     }
 }

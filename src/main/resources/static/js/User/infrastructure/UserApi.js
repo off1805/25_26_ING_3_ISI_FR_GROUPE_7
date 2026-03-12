@@ -19,7 +19,8 @@ export class UserApi {
         return api.get(`/api/roles/${roleName}/permissions`);
     }
     async retrieveUsers(filtre) {
-        return api.get('api/users', { params: filtre });
+       
+        return api.get('/api/users' + filtre);
     }
 
 }

@@ -5,7 +5,7 @@ import com.projetTransversalIsi.security.services.DefaultRoleOperation;
 import com.projetTransversalIsi.security.services.FindAllPermissionByIdsAccessPort;
 import com.projetTransversalIsi.security.domain.*;
 import com.projetTransversalIsi.user.dto.CreateUserRequestDTO;
-import com.projetTransversalIsi.user.services.interfaces.CreateUserUC;
+import com.projetTransversalIsi.user.services.CreateUserUC;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
