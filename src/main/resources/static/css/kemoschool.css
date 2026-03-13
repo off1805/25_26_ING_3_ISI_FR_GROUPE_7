@@ -263,24 +263,23 @@
 }
 
 /* ===================== DARK MODE ===================== */
-
 [data-theme="theme-kemoschool"].dark {
-  --background:   #1E1B2E;
-  --background-1: #16131F;
-  --background-2: #16131F;
-  --foreground:   #E9D5FF;
+  --background:   #1a1a1a;
+  --background-1: #111111;
+  --background-2: #111111;
+  --foreground:   #e5e5e5;
 
-  --inverse: #0D0B14;
+  --inverse: #050505;
 
-  --border:        #3B2F6E;
-  --border-line-1: #3B2F6E;
-  --border-line-2: #3B2F6E;
-  --border-line-3: #4C3B8A;
-  --border-line-4: #5B4BA0;
-  --border-line-5: #7C3AED;
-  --border-line-6: #8B5CF6;
-  --border-line-7: #A78BFA;
-  --border-line-8: #C4B5FD;
+  --border:        #333333;
+  --border-line-1: #333333;
+  --border-line-2: #333333;
+  --border-line-3: #404040;
+  --border-line-4: #525252;
+  --border-line-5: #737373;
+  --border-line-6: #a3a3a3;
+  --border-line-7: #d4d4d4;
+  --border-line-8: #e5e5e5;
 
   --primary:        #8B5CF6;
   --primary-hover:  #7C3AED;
@@ -288,149 +287,142 @@
   --primary-active: #7C3AED;
   --primary-checked:#8B5CF6;
 
-  --secondary:        #E9D5FF;
-  --secondary-hover:  #DDD6FE;
-  --secondary-focus:  #DDD6FE;
-  --secondary-active: #DDD6FE;
+  --secondary:        #ffffff;
+  --secondary-hover:  #f5f5f5;
+  --secondary-focus:  #f5f5f5;
+  --secondary-active: #f5f5f5;
 
-  --layer:            #1E1B2E;
-  --layer-line:       #3B2F6E;
-  --layer-foreground: #E9D5FF;
-  --layer-hover:      #2A2545;
-  --layer-focus:      #2A2545;
-  --layer-active:     #2A2545;
+  --layer:            #1a1a1a;
+  --layer-line:       #333333;
+  --layer-foreground: #ffffff;
+  --layer-hover:      #262626;
+  --layer-focus:      #262626;
+  --layer-active:     #262626;
 
-  --surface:          #2A2545;
-  --surface-1:        #342F55;
-  --surface-2:        #3F3965;
-  --surface-3:        #342F55;
-  --surface-4:        #3F3965;
-  --surface-5:        #4C3B8A;
-  --surface-foreground: #DDD6FE;
-  --surface-hover:    #342F55;
-  --surface-focus:    #342F55;
-  --surface-active:   #342F55;
+  --surface:          #262626;
+  --surface-1:        #333333;
+  --surface-2:        #404040;
+  --surface-3:        #333333;
+  --surface-4:        #404040;
+  --surface-5:        #525252;
+  --surface-foreground: #e5e5e5;
+  --surface-hover:    #333333;
+  --surface-focus:    #333333;
+  --surface-active:   #333333;
 
-  --muted:              #1E1B2E;
-  --muted-foreground:   #6B5FA0;
-  --muted-foreground-1: #8B76C0;
-  --muted-foreground-2: #A78BFA;
-  --muted-hover:        #2A2545;
-  --muted-focus:        #2A2545;
-  --muted-active:       #2A2545;
+  --muted:              #1a1a1a;
+  --muted-foreground:   #737373;
+  --muted-foreground-1: #a3a3a3;
+  --muted-foreground-2: #d4d4d4;
+  --muted-hover:        #262626;
+  --muted-focus:        #262626;
+  --muted-active:       #262626;
 
-  /* Navbar dark */
-  --navbar:                     #1E1B2E;
-  --navbar-line:                #3B2F6E;
-  --navbar-divider:             #3B2F6E;
-  --navbar-nav-foreground:      #DDD6FE;
-  --navbar-nav-hover:           #2A2545;
-  --navbar-nav-focus:           #2A2545;
-  --navbar-nav-active:          #2A2545;
-  --navbar-nav-list-divider:    #3B2F6E;
+  --navbar:                     #1a1a1a;
+  --navbar-line:                #333333;
+  --navbar-divider:             #333333;
+  --navbar-nav-foreground:      #e5e5e5;
+  --navbar-nav-hover:           #262626;
+  --navbar-nav-focus:           #262626;
+  --navbar-nav-active:          #262626;
+  --navbar-nav-list-divider:    #333333;
   --navbar-inverse:             #000000;
 
-  --navbar-1:                   #16131F;
-  --navbar-1-line:              #3B2F6E;
-  --navbar-1-divider:           #3B2F6E;
-  --navbar-1-nav-foreground:    #DDD6FE;
-  --navbar-1-nav-hover:         #2A2545;
-  --navbar-1-nav-focus:         #2A2545;
-  --navbar-1-nav-active:        #2A2545;
-  --navbar-1-nav-list-divider:  #3B2F6E;
+  --navbar-1:                   #111111;
+  --navbar-1-line:              #333333;
+  --navbar-1-divider:           #333333;
+  --navbar-1-nav-foreground:    #e5e5e5;
+  --navbar-1-nav-hover:         #262626;
+  --navbar-1-nav-focus:         #262626;
+  --navbar-1-nav-active:        #262626;
+  --navbar-1-nav-list-divider:  #333333;
 
-  --navbar-2:                   #16131F;
-  --navbar-2-divider:           #3B2F6E;
-  --navbar-2-nav-foreground:    #DDD6FE;
-  --navbar-2-nav-hover:         #1E1B2E;
-  --navbar-2-nav-focus:         #1E1B2E;
-  --navbar-2-nav-active:        #1E1B2E;
-  --navbar-2-nav-list-divider:  #1E1B2E;
+  --navbar-2:                   #111111;
+  --navbar-2-divider:           #333333;
+  --navbar-2-nav-foreground:    #e5e5e5;
+  --navbar-2-nav-hover:         #1a1a1a;
+  --navbar-2-nav-focus:         #1a1a1a;
+  --navbar-2-nav-active:        #1a1a1a;
+  --navbar-2-nav-list-divider:  #1a1a1a;
 
-  /* Sidebar dark */
-  --sidebar:                    #1E1B2E;
-  --sidebar-line:               #3B2F6E;
-  --sidebar-divider:            #3B2F6E;
-  --sidebar-nav-foreground:     #DDD6FE;
-  --sidebar-nav-hover:          #2A2545;
-  --sidebar-nav-focus:          #2A2545;
-  --sidebar-nav-active:         #2A2545;
-  --sidebar-nav-list-divider:   #3B2F6E;
+  --sidebar:                    #1a1a1a;
+  --sidebar-line:               #333333;
+  --sidebar-divider:            #333333;
+  --sidebar-nav-foreground:     #e5e5e5;
+  --sidebar-nav-hover:          #262626;
+  --sidebar-nav-focus:          #262626;
+  --sidebar-nav-active:         #262626;
+  --sidebar-nav-list-divider:   #333333;
   --sidebar-inverse:            #000000;
 
-  --sidebar-1:                    #16131F;
-  --sidebar-1-line:               #3B2F6E;
-  --sidebar-1-divider:            #3B2F6E;
-  --sidebar-1-nav-foreground:     #DDD6FE;
-  --sidebar-1-nav-hover:          #2A2545;
-  --sidebar-1-nav-focus:          #2A2545;
-  --sidebar-1-nav-active:         #2A2545;
-  --sidebar-1-nav-list-divider:   #3B2F6E;
+  --sidebar-1:                    #111111;
+  --sidebar-1-line:               #333333;
+  --sidebar-1-divider:            #333333;
+  --sidebar-1-nav-foreground:     #e5e5e5;
+  --sidebar-1-nav-hover:          #262626;
+  --sidebar-1-nav-focus:          #262626;
+  --sidebar-1-nav-active:         #262626;
+  --sidebar-1-nav-list-divider:   #333333;
 
-  --sidebar-2:                    #16131F;
-  --sidebar-2-divider:            #2A2545;
-  --sidebar-2-nav-foreground:     #DDD6FE;
-  --sidebar-2-nav-hover:          #1E1B2E;
-  --sidebar-2-nav-focus:          #1E1B2E;
-  --sidebar-2-nav-active:         #1E1B2E;
-  --sidebar-2-nav-list-divider:   #1E1B2E;
+  --sidebar-2:                    #111111;
+  --sidebar-2-divider:            #262626;
+  --sidebar-2-nav-foreground:     #e5e5e5;
+  --sidebar-2-nav-hover:          #1a1a1a;
+  --sidebar-2-nav-focus:          #1a1a1a;
+  --sidebar-2-nav-active:         #1a1a1a;
+  --sidebar-2-nav-list-divider:   #1a1a1a;
 
-  /* Card dark */
-  --card:         #1E1B2E;
-  --card-line:    #3B2F6E;
-  --card-divider: #3B2F6E;
-  --card-header:  #3B2F6E;
-  --card-footer:  #3B2F6E;
+  --card:         #1a1a1a;
+  --card-line:    #333333;
+  --card-divider: #333333;
+  --card-header:  #333333;
+  --card-footer:  #333333;
   --card-inverse: #000000;
 
-  /* Dropdown dark */
-  --dropdown:               #16131F;
-  --dropdown-1:             #0D0B14;
-  --dropdown-divider:       #2A2545;
-  --dropdown-header:        #2A2545;
-  --dropdown-footer:        #2A2545;
-  --dropdown-item-foreground: #DDD6FE;
-  --dropdown-item-hover:    #1E1B2E;
-  --dropdown-item-focus:    #1E1B2E;
-  --dropdown-item-active:   #1E1B2E;
+  --dropdown:               #111111;
+  --dropdown-1:             #050505;
+  --dropdown-divider:       #262626;
+  --dropdown-header:        #262626;
+  --dropdown-footer:        #262626;
+  --dropdown-item-foreground: #e5e5e5;
+  --dropdown-item-hover:    #1a1a1a;
+  --dropdown-item-focus:    #1a1a1a;
+  --dropdown-item-active:   #1a1a1a;
   --dropdown-inverse:       #000000;
 
-  /* Select dark */
-  --select:               #16131F;
-  --select-1:             #0D0B14;
-  --select-item-foreground: #DDD6FE;
-  --select-item-hover:    #1E1B2E;
-  --select-item-focus:    #1E1B2E;
-  --select-item-active:   #1E1B2E;
+  --select:               #111111;
+  --select-1:             #050505;
+  --select-item-foreground: #e5e5e5;
+  --select-item-hover:    #1a1a1a;
+  --select-item-focus:    #1a1a1a;
+  --select-item-active:   #1a1a1a;
   --select-inverse:       #000000;
 
-  /* Overlay dark */
-  --overlay:          #1E1B2E;
-  --overlay-divider:  #3B2F6E;
-  --overlay-header:   #3B2F6E;
-  --overlay-footer:   #3B2F6E;
+  --overlay:          #1a1a1a;
+  --overlay-divider:  #333333;
+  --overlay-header:   #333333;
+  --overlay-footer:   #333333;
   --overlay-inverse:  #000000;
 
-  --popover:      #16131F;
-  --popover-line: #3B2F6E;
+  --popover:      #111111;
+  --popover-line: #333333;
 
-  --tooltip:            #E9D5FF;
-  --tooltip-foreground: #1E1B2E;
+  --tooltip:            #ffffff;
+  --tooltip-foreground: #1a1a1a;
 
-  --table-line: #3B2F6E;
+  --table-line: #333333;
 
-  --footer:         #1E1B2E;
-  --footer-line:    #3B2F6E;
+  --footer:         #1a1a1a;
+  --footer-line:    #333333;
   --footer-inverse: #000000;
 
-  --scrollbar-track:         #2A2545;
-  --scrollbar-thumb:         #6D28D9;
-  --scrollbar-track-inverse: #6D28D9;
-  --scrollbar-thumb-inverse: #2A2545;
+  --scrollbar-track:         #262626;
+  --scrollbar-thumb:         #525252;
+  --scrollbar-track-inverse: #525252;
+  --scrollbar-thumb-inverse: #262626;
 
-  /* Charts dark */
   --chart-primary: #8B5CF6;
-  --chart-8:       #2A2545;
-  --chart-9:       #4C3B8A;
-  --chart-10:      #2A2545;
+  --chart-8:       #262626;
+  --chart-9:       #404040;
+  --chart-10:      #262626;
 }
