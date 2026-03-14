@@ -4,10 +4,7 @@ import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
 import java.util.Set;
 
-<<<<<<< Updated upstream
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
-=======
->>>>>>> Stashed changes
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,11 +20,7 @@ public class User {
     private String password;
     private Long profileId;
     private Role role;
-<<<<<<< Updated upstream
     private Set<Permission> permissions;
-=======
-    private Set<String> idPermissions;
->>>>>>> Stashed changes
     private boolean deleted= false;
     private LocalDateTime deletedAt;
 
@@ -57,23 +50,11 @@ public class User {
     }
 
     public void delete(){
-<<<<<<< Updated upstream
-=======
-        if(this.deleted){
-            throw new IllegalStateException("l'utilissateur" + this.id + "est deja supprimer ");
-        }
->>>>>>> Stashed changes
         this.deleted = true;
         this.deletedAt= LocalDateTime.now();
     }
 
     public void restore(){
-<<<<<<< Updated upstream
-=======
-        if(!this.deleted){
-            throw new IllegalStateException("l'utilisateur" + this.id + "n'est pas supprimer");
-        }
->>>>>>> Stashed changes
         this.deleted=false;
         this.deletedAt=null;
     }
