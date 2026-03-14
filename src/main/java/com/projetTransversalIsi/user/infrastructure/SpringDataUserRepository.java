@@ -5,20 +5,14 @@ import com.projetTransversalIsi.security.domain.EnumRole;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
-<<<<<<< Updated upstream
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-=======
->>>>>>> Stashed changes
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-<<<<<<< Updated upstream
 import java.util.List;
 import java.util.Optional;
 
-=======
->>>>>>> Stashed changes
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,15 +20,12 @@ import java.util.Optional;
 @Repository
 public interface SpringDataUserRepository extends JpaRepository<JpaUserEntity, Long>, JpaSpecificationExecutor<JpaUserEntity> {
      boolean existsByEmail(String email);
-<<<<<<< Updated upstream
      Optional<JpaUserEntity> findByEmail(String email);
 
      @Query("SELECT u.password FROM JpaUserEntity u WHERE u.email= :email")
      Optional<String> findPasswordByEmail(@Param("email") String email);
      @Query("SELECT u FROM JpaUserEntity u WHERE u.role.name NOT IN :roles")
      List<JpaUserEntity> findByRoleIdNotIn(@Param("roles")List<String> roles);
-=======
->>>>>>> Stashed changes
 
     Optional<JpaUserEntity> findByIdAndDeletedFalse(Long id);
     List<JpaUserEntity> findByDeletedFalse();
@@ -44,7 +35,6 @@ public interface SpringDataUserRepository extends JpaRepository<JpaUserEntity, L
 
     @Query("SELECT u FROM JpaUserEntity u WHERE u.deleted = true AND u.deletedAt >= :since")
     List<JpaUserEntity> findDeletedSince(@Param("since") LocalDateTime since);
-<<<<<<< Updated upstream
 
     @Query("SELECT f FROM JpaUserEntity f WHERE " +
             "(:status IS NULL OR f.status = :status ) AND " +
@@ -53,7 +43,5 @@ public interface SpringDataUserRepository extends JpaRepository<JpaUserEntity, L
             "( f.deleted = :deleted)")
     List<JpaUserEntity> search(@Param("status") String userStatus, @Param("email") String email,@Param("role") String role, @Param("deleted") boolean deleted);
 
-=======
->>>>>>> Stashed changes
 }
 
