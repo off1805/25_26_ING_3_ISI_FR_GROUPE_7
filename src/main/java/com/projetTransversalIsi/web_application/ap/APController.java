@@ -22,4 +22,11 @@ public class APController {
         model.addAttribute("apName", "AP Name");
         return "APInterface/APSchedule";
     }
+
+    @GetMapping("/schedule/edit")
+    public String editScheduleView(Model model) {
+        model.addAttribute("activePage", "schedule");
+        model.addAttribute("apName", "AP Name");
+        return "APInterface/EditSchedule";
+    }
 }
