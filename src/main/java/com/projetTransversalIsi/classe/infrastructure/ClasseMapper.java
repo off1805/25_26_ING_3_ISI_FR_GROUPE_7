@@ -13,7 +13,7 @@ public interface ClasseMapper {
     @Mapping(target = "specialite", source = "specialite", qualifiedByName = "jpaToDomainSimple")
     Classe toDomain(JpaClasseEntity entity);
 
-    @Mapping(target = "specialite", source = "specialite")
+    @Mapping(target = "specialite", source = "specialite", qualifiedByName = "domainToJpaSimple")
     JpaClasseEntity toEntity(Classe domain);
 
     @Named("jpaToDomainSimple")
@@ -22,8 +22,17 @@ public interface ClasseMapper {
         Specialite domain = new Specialite();
         domain.setId(entity.getId());
         domain.setCode(entity.getCode());
+        domain.setLibelle(entity.getLibelle());
         domain.setDescription(entity.getDescription());
         domain.setActive(entity.isActive());
         return domain;
+    }
+
+    @Named("domainToJpaSimple")
+    default JpaSpecialiteEntity domainToJpaSimple(Specialite domain) {
+        if (domain == null) return null;
+        JpaSpecialiteEntity entity = new JpaSpecialiteEntity();
+        entity.setId(domain.getId());
+        return entity;
     }
 }
