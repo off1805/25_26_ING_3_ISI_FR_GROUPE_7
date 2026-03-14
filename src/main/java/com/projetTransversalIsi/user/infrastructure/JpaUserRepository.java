@@ -1,7 +1,11 @@
 package com.projetTransversalIsi.user.infrastructure;
 
 import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
+<<<<<<< Updated upstream
 import com.projetTransversalIsi.security.domain.EnumRole;
+=======
+import com.projetTransversalIsi.security.domain.Permission;
+>>>>>>> Stashed changes
 import com.projetTransversalIsi.security.infrastructure.JpaPermissionEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
 import com.projetTransversalIsi.user.domain.User;
@@ -45,11 +49,27 @@ public class JpaUserRepository implements UserRepository {
     }
 
     @Override
+<<<<<<< Updated upstream
     public void save(User user) {
         JpaProfileEntity jpaProfile= entityManager.getReference(JpaProfileEntity.class,user.getProfileId());
         JpaUserEntity savedEntity = jpaRepo.save(userMapper.UserToJpaUserEntity(user,jpaProfile));
         log.info("User updated: {}", savedEntity.getId());
 
+=======
+    public User save(User user) {
+
+        JpaUserEntity existingEntity = jpaRepo.findById(user.getId())
+                .orElseThrow(() -> new UserNotFoundException(user.getId()));
+
+
+        existingEntity.setDeleted(user.isDeleted());
+        existingEntity.setDeletedAt(user.getDeletedAt());
+
+        JpaUserEntity savedEntity = jpaRepo.save(existingEntity);
+        log.info("User updated: {}", savedEntity.getId());
+
+        return userMapper.JpaUseEntityToUser(savedEntity);
+>>>>>>> Stashed changes
     }
 
 
@@ -66,6 +86,7 @@ public class JpaUserRepository implements UserRepository {
     }
 
     @Override
+<<<<<<< Updated upstream
     public Optional<String> findPasswordMatchEmail(String email){
         return jpaRepo.findPasswordByEmail(email);
 }
@@ -79,6 +100,8 @@ public class JpaUserRepository implements UserRepository {
         return jpaRepo.findByRoleIdNotIn(List.of(EnumRole.ADMIN.name(),EnumRole.STUDENT.name())).stream().map(userMapper::JpaUseEntityToUser).toList();
     }
     @Override
+=======
+>>>>>>> Stashed changes
     public List<User> findAllDeleted() {
         return jpaRepo.findByDeletedTrue().stream()
                 .map(userMapper::JpaUseEntityToUser)
@@ -94,6 +117,7 @@ public class JpaUserRepository implements UserRepository {
     }
 
     @Override
+<<<<<<< Updated upstream
     public List<User> search(String userStatus, String email, String role, boolean deleted){
         return jpaRepo.search(userStatus,email,role,deleted).stream().map(userMapper::JpaUseEntityToUser).collect(Collectors.toList());
     }
@@ -107,4 +131,11 @@ public class JpaUserRepository implements UserRepository {
                 .and(JpaUserSpec.hasEmailLike(command.getEmail()));
         return jpaRepo.findAll(spec,page).map(userMapper::JpaUseEntityToUser);
     }
+=======
+    public void save(User user, String password, Set<String> idPermissions, Object profil) {
+
+    }
+
+
+>>>>>>> Stashed changes
 }
