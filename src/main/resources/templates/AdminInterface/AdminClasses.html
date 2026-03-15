@@ -158,18 +158,18 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
                 <div>
                     <h3 class="font-bold text-base text-layer-foreground">Classes existantes</h3>
-                    <p class="text-xs text-muted-foreground-2 mt-0.5">12 classes · 10 actives · 2 en attente</p>
+                    <p class="text-xs text-muted-foreground-2 mt-0.5"><span id="classes-count">0</span> classes</p>
                 </div>
                 <div class="relative sm:w-60">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg>
-                    <input type="text" placeholder="Rechercher une classe…" class="pl-9 pr-4 py-2 w-full text-sm bg-card border border-card-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors shadow-sm"/>
+                    <input type="text" id="search-classes" placeholder="Rechercher une classe…" class="pl-9 pr-4 py-2 w-full text-sm bg-card border border-card-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors shadow-sm"/>
                 </div>
             </div>
 
             <!-- ── CARDS VIEW ──────────────────────────────────────────────────── -->
             <!-- ── CARDS VIEW — style image de référence ───────────────────────── -->
             <div id="view-cards">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-6">
+                <div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-6">
 
                     <!-- ING 1 · ISI · IL -->
                     <div class="bg-card rounded-2xl shadow-sm p-4 flex flex-col gap-3 hover:shadow-md transition-shadow duration-200">
@@ -387,7 +387,7 @@
                                 <th class="px-6 py-3 text-xs font-bold text-muted-foreground-2 uppercase tracking-widest text-right">Actions</th>
                             </tr>
                             </thead>
-                            <tbody class="divide-y divide-card-line">
+                            <tbody id="table-body" class="divide-y divide-card-line">
 
                             <!-- Empty state -->
                             <tr th:if="${classes == null or #lists.isEmpty(classes)}">

@@ -11,8 +11,10 @@ public interface FiliereMapper {
     @Mapping(target = "deleted", source = "deleted")
     @Mapping(target = "deletedAt", source = "deletedAt")
     @Mapping(target = "cycle", source = "cycle")
+    @Mapping(target = "niveaux", ignore = true)
     Filiere toDomain(JpaFiliereEntity entity);
 
     @Mapping(target = "cycle", source = "cycle")
+    @Mapping(target = "niveaux", ignore = true)
     JpaFiliereEntity toEntity(Filiere filiere);
 }

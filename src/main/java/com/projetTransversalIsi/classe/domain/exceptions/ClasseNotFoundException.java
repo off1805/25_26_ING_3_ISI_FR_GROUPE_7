@@ -1,6 +1,8 @@
 package com.projetTransversalIsi.classe.domain.exceptions;
 
-public class ClasseNotFoundException extends RuntimeException {
+import com.projetTransversalIsi.common.domain.DomainException;
+
+public class ClasseNotFoundException extends DomainException {
     public ClasseNotFoundException(Long id) {
         super("Classe non trouvée avec l'id : " + id);
     }
