@@ -30,10 +30,7 @@ public class SpecialiteController {
     private final DeleteSpecialiteUC deleteSpecialiteUC;
     private final ToggleSpecialiteStatusUC toggleSpecialiteStatusUC;
 
-    /**
-     * POST /api/specialites
-     * J'ai testé
-     */
+
     @PostMapping
     public ResponseEntity<SpecialiteResponseDTO> createSpecialite(
             @Valid @RequestBody CreateSpecialiteRequestDTO request) {
@@ -43,10 +40,7 @@ public class SpecialiteController {
                 .body(SpecialiteResponseDTO.fromDomain(specialite));
     }
 
-    /**
-     * GET /api/specialites/{id}
-     * Récupère une spécialité par son identifiant.
-     */
+
     @GetMapping("/{id}")
     public ResponseEntity<SpecialiteResponseDTO> getSpecialiteById(@PathVariable Long id) {
         log.info("Requête de récupération de la spécialité id={}", id);
@@ -54,10 +48,7 @@ public class SpecialiteController {
         return ResponseEntity.ok(SpecialiteResponseDTO.fromDomain(specialite));
     }
 
-    /**
-     * GET /api/specialites
-     * Récupère toutes les spécialités actives.
-     */
+
     @GetMapping
     public ResponseEntity<List<SpecialiteResponseDTO>> getAllSpecialites() {
         log.info("Requête de récupération de toutes les spécialités actives");

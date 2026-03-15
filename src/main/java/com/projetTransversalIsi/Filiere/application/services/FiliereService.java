@@ -18,6 +18,7 @@ public class FiliereService implements DefaultFiliereService {
     private final DeleteFiliereUC deleteFiliereUC;
     private final FindFiliereByIdUC findFiliereByIdUC;
     private final SearchFiliereUC searchFiliereUC;
+    private final FindFilieresByCycleIdUC findFilieresByCycleIdUC;
 
     @Override
     @Transactional
@@ -48,6 +49,13 @@ public class FiliereService implements DefaultFiliereService {
     @Override
     public List<FiliereResponseDTO> searchFilieres(SearchFiliereRequestDTO criteria) {
         return searchFiliereUC.execute(criteria).stream()
+                .map(FiliereResponseDTO::fromDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FiliereResponseDTO> getFilieresByCycleId(Long cycleId) {
+        return findFilieresByCycleIdUC.execute(cycleId).stream()
                 .map(FiliereResponseDTO::fromDomain)
                 .collect(Collectors.toList());
     }

@@ -61,6 +61,17 @@ export function cycleRowTable(cycle) {
                 <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-dropdown border border-card-line shadow-lg rounded-xl z-20 p-1"
                     role="menu">
                     <button type="button"
+                        class="btn-edit-cycle flex items-center w-full text-sm rounded-lg transition-colors gap-x-3 py-2 px-3 text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus"
+                        data-cycle-id="${cycle.id}" 
+                        data-hs-overlay="#hs-modal-edit-cycle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        Modifier
+                    </button>
+                    <button type="button"
                         class="btn-toggle-cycle-status flex items-center w-full text-sm rounded-lg transition-colors gap-x-3 py-2 px-3 text-dropdown-item-foreground hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus"
                         data-cycle-id="${cycle.id}" data-cycle-status="${cycle.status}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"

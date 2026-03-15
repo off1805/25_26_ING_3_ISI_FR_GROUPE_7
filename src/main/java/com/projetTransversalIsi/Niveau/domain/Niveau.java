@@ -1,13 +1,10 @@
 package com.projetTransversalIsi.Niveau.domain;
 
 import com.projetTransversalIsi.Filiere.domain.Filiere;
-import com.projetTransversalIsi.specialite.domain.Specialite;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +17,6 @@ public class Niveau {
     private boolean deleted = false;
     private LocalDateTime deletedAt;
     private Filiere filiere;
-    private List<Specialite> specialites = new ArrayList<>();
 
     public Niveau(int ordre, String description, Filiere filiere) {
         this.ordre = ordre;

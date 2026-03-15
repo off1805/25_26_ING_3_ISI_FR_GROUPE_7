@@ -3,26 +3,26 @@ import api from '../../common/ClientHttp.js';
 export class CycleApi {
 
     async createCycle(cycleData) {
-        return api.post("/api/cycles", cycleData);
+        return api.post("/api/cycle", cycleData);
     }
 
     async getAllCycles() {
-        return api.get("/api/cycles");
+        return api.get("/api/cycle");
     }
 
     async getCycleById(id) {
-        return api.get(`/api/cycles/${id}`);
+        return api.get(`/api/cycle/${id}`);
     }
 
     async updateCycle(id, cycleData) {
-        return api.put(`/api/cycles/${id}`, cycleData);
+        return api.put(`/api/cycle/${id}`, cycleData);
     }
 
     async updateCycleStatus(id, status) {
-        return api.put(`/api/cycles/${id}/status`, { status });
+        return api.put(`/api/cycle/${id}/status`, { status });
     }
 
     async deleteCycle(id) {
-        return api.delete(`/api/cycles/${id}`);
+        return api.delete(`/api/cycle/${id}`);
     }
 }

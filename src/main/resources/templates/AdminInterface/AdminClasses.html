@@ -21,17 +21,35 @@
 
         <!-- NAVBAR -->
         <header class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar relative w-full flex justify-between items-center px-4 md:px-6 lg:px-8 mx-auto border border-b border-navbar-line">
-            <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></svg>
-                <span>Admin</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6"/></svg>
-                <span class="font-medium text-layer-foreground">Gestion des Classes</span>
-            </nav>
+            <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1"
+                 aria-label="Breadcrumb" data-admin-breadcrumb-target="navbar"></nav>
             <div class="flex items-center gap-x-1 lg:gap-x-2 ms-auto py-1 lg:ps-6 lg:order-3 lg:col-span-3">
                 <div class="relative hidden md:block">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg>
                     <input type="text" placeholder="Recherche globale..." class="pl-9 pr-4 py-1.5 text-sm bg-layer border border-layer-line rounded-lg w-56 focus:outline-none focus:ring-1 text-layer-foreground placeholder:text-muted-foreground-2"/>
                 </div>
+                <button type="button" data-theme-toggle
+                    class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
+                    <span class="sr-only" data-theme-toggle-label>Passer en theme sombre</span>
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                    </svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18"
+                        height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4" />
+                        <path d="M12 2v2" />
+                        <path d="M12 20v2" />
+                        <path d="M4.93 4.93l1.41 1.41" />
+                        <path d="M17.66 17.66l1.41 1.41" />
+                        <path d="M2 12h2" />
+                        <path d="M20 12h2" />
+                        <path d="M6.34 17.66l-1.41 1.41" />
+                        <path d="M19.07 4.93l-1.41 1.41" />
+                    </svg>
+                </button>
                 <button type="button" class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg>
                 </button>
@@ -40,6 +58,8 @@
 
         <!-- PAGE CONTENT -->
         <div class="flex-1 overflow-y-auto p-6 lg:p-8 bg-background-1">
+            <nav class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-base text-muted-foreground mb-5"
+                 aria-label="Breadcrumb" data-admin-breadcrumb-target="page"></nav>
 
             <!-- Page header -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -486,6 +506,8 @@
     }
 </script>
 <script th:src="@{/js/preline.js}"></script>
+<script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+<script type="module" th:src="@{/js/common/adminBreadcrumbs.js}"></script>
 
 </body>
 </html>

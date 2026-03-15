@@ -1,13 +1,10 @@
 package com.projetTransversalIsi.Filiere.domain;
 
-import com.projetTransversalIsi.Niveau.domain.Niveau;
 import com.projetTransversalIsi.cycle.domain.Cycle;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -22,7 +19,6 @@ public class Filiere {
     private boolean deleted = false;
     private LocalDateTime deletedAt;
     private Cycle cycle;
-    private List<Niveau> niveaux = new ArrayList<>();
 
     public Filiere(String code, String nom, String description) {
         this.code = code.toUpperCase();

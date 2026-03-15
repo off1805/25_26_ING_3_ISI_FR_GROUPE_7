@@ -17,7 +17,7 @@ class UeMapperTest {
 
     @Test
     void shouldMapUeToJpaUeEntity() {
-        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", null, null, false);
+        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", "#ffffff", null, null, false);
         JpaUeEntity entity = ueMapper.ueToJpaUeEntity(ue);
 
         assertEquals(ue.getId(), entity.getId());
@@ -26,6 +26,7 @@ class UeMapperTest {
         assertEquals(ue.getCredit(), entity.getCredit());
         assertEquals(ue.getVolumeHoraireTotal(), entity.getVolumeHoraireTotal());
         assertEquals(ue.getDescription(), entity.getDescription());
+        assertEquals(ue.getCouleur(), entity.getCouleur());
     }
 
     @Test
@@ -37,6 +38,7 @@ class UeMapperTest {
         entity.setCredit(6);
         entity.setVolumeHoraireTotal(60);
         entity.setDescription("Description");
+        entity.setCouleur("#ffffff");
 
         Ue ue = ueMapper.jpaUeEntityToUe(entity);
 
@@ -46,11 +48,12 @@ class UeMapperTest {
         assertEquals(entity.getCredit(), ue.getCredit());
         assertEquals(entity.getVolumeHoraireTotal(), ue.getVolumeHoraireTotal());
         assertEquals(entity.getDescription(), ue.getDescription());
+        assertEquals(entity.getCouleur(), ue.getCouleur());
     }
 
     @Test
     void shouldMapCreateUeRequestDTOToUe() {
-        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description");
+        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description", "#ffffff");
         Ue ue = ueMapper.toDomain(request);
 
         assertNull(ue.getId());
@@ -59,12 +62,13 @@ class UeMapperTest {
         assertEquals(request.credit(), ue.getCredit());
         assertEquals(request.volumeHoraireTotal(), ue.getVolumeHoraireTotal());
         assertEquals(request.description(), ue.getDescription());
+        assertEquals(request.couleur(), ue.getCouleur());
     }
 
     @Test
     void shouldUpdateUeFromUpdateUeRequestDTO() {
-        UpdateUeRequestDTO request = new UpdateUeRequestDTO("Maths Updated", "MATH101", 8, 80, "Description Updated");
-        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", null, null, false);
+        UpdateUeRequestDTO request = new UpdateUeRequestDTO("Maths Updated", "MATH101", 8, 80, "Description Updated", "#ff0000");
+        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", "#ffffff", null, null, false);
         
         ueMapper.updateFromDTO(request, ue);
 
@@ -74,11 +78,12 @@ class UeMapperTest {
         assertEquals(request.credit(), ue.getCredit());
         assertEquals(request.volumeHoraireTotal(), ue.getVolumeHoraireTotal());
         assertEquals(request.description(), ue.getDescription());
+        assertEquals(request.couleur(), ue.getCouleur());
     }
 
     @Test
     void shouldMapUeToUeResponseDTO() {
-        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", null, null, false);
+        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", "#ffffff", null, null, false);
         UeResponseDTO response = ueMapper.toResponseDTO(ue);
 
         assertEquals(ue.getId(), response.id());
@@ -87,6 +92,7 @@ class UeMapperTest {
         assertEquals(ue.getCredit(), response.credit());
         assertEquals(ue.getVolumeHoraireTotal(), response.volumeHoraireTotal());
         assertEquals(ue.getDescription(), response.description());
+        assertEquals(ue.getCouleur(), response.couleur());
     }
 
     @Test
@@ -98,6 +104,7 @@ class UeMapperTest {
         entity.setCredit(6);
         entity.setVolumeHoraireTotal(60);
         entity.setDescription("Description");
+        entity.setCouleur("#ffffff");
 
         UeResponseDTO response = ueMapper.toResponseDTO(entity);
 
@@ -107,6 +114,7 @@ class UeMapperTest {
         assertEquals(entity.getCredit(), response.credit());
         assertEquals(entity.getVolumeHoraireTotal(), response.volumeHoraireTotal());
         assertEquals(entity.getDescription(), response.description());
+        assertEquals(entity.getCouleur(), response.couleur());
     }
 
     @Test
@@ -124,17 +132,18 @@ class UeMapperTest {
 
     @Test
     void shouldMapCreateUeRequestDTOToJpaUeEntity() {
-        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description");
+        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description", "#ffffff");
         JpaUeEntity entity = ueMapper.toEntity(request);
 
         assertNull(entity.getId());
         assertEquals(request.libelle(), entity.getLibelle());
         assertEquals(request.code(), entity.getCode());
+        assertEquals(request.couleur(), entity.getCouleur());
     }
 
     @Test
     void shouldUpdateJpaUeEntityFromUpdateUeRequestDTO() {
-        UpdateUeRequestDTO request = new UpdateUeRequestDTO("Maths Updated", "MATH101", 8, 80, "Description Updated");
+        UpdateUeRequestDTO request = new UpdateUeRequestDTO("Maths Updated", "MATH101", 8, 80, "Description Updated", "#ff0000");
         JpaUeEntity entity = new JpaUeEntity();
         entity.setId(1L);
 
@@ -142,23 +151,26 @@ class UeMapperTest {
 
         assertEquals(1L, entity.getId());
         assertEquals(request.libelle(), entity.getLibelle());
+        assertEquals(request.couleur(), entity.getCouleur());
     }
 
     @Test
     void shouldMapUeResponseDTOToUe() {
-        UeResponseDTO response = new UeResponseDTO(1L, "Maths", "MATH101", 6, 60, "Description");
+        UeResponseDTO response = new UeResponseDTO(1L, "Maths", "MATH101", 6, 60, "Description", "#ffffff");
         Ue ue = ueMapper.responseDTOToUe(response);
 
         assertEquals(response.id(), ue.getId());
         assertEquals(response.libelle(), ue.getLibelle());
+        assertEquals(response.couleur(), ue.getCouleur());
     }
 
     @Test
     void shouldMapUeResponseDTOToJpaUeEntity() {
-        UeResponseDTO response = new UeResponseDTO(1L, "Maths", "MATH101", 6, 60, "Description");
+        UeResponseDTO response = new UeResponseDTO(1L, "Maths", "MATH101", 6, 60, "Description", "#ffffff");
         JpaUeEntity entity = ueMapper.responseDTOToJpaUeEntity(response);
 
         assertEquals(response.id(), entity.getId());
         assertEquals(response.libelle(), entity.getLibelle());
+        assertEquals(response.couleur(), entity.getCouleur());
     }
 }

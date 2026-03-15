@@ -10,4 +10,5 @@ public interface DefaultFiliereService {
     void deleteFiliere(Long id);
     FiliereResponseDTO getFiliereById(Long id);
     List<FiliereResponseDTO> searchFilieres(SearchFiliereRequestDTO criteria);
+    List<FiliereResponseDTO> getFilieresByCycleId(Long cycleId);
 }

@@ -22,4 +22,5 @@ public interface FiliereRepository {
     List<Filiere> searchByNom(String nom);
     boolean existsByCode(String code);
     boolean existsActiveByCode(String code);
+    List<Filiere> findByCycleId(Long cycleId);
 }

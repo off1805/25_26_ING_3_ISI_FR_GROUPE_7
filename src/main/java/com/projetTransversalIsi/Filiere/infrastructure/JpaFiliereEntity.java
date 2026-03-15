@@ -36,6 +36,6 @@ public class JpaFiliereEntity {
     @JoinColumn(name = "cycle_id", nullable = false)
     private JpaCycleEntity cycle;
 
-    @OneToMany(mappedBy = "filiere", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "filiere")
     private List<JpaNiveauEntity> niveaux = new ArrayList<>();
 }

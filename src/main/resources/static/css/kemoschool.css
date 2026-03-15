@@ -5,10 +5,17 @@
 
 :root[data-theme="theme-kemoschool"],
 [data-theme="theme-kemoschool"] {
-  --background:#fafafa;
+
+   --background-1: var(--color-gray-50);
+  --background-2: var(--color-gray-100);
+  --background-plain: var(--color-white);
+  --foreground: var(--color-gray-800);
+  --foreground-inverse: var(--color-white);
+
+  /* --background:#fafafa;
   --background-1: #FAF9FF;
   --background-2: #F5F3FF;
-  --foreground: #4C1D95;
+  --foreground: #4C1D95; */
 
   --inverse: #3B0764;
 
