@@ -9,4 +9,5 @@ public interface DefaultNiveauService {
     void deleteNiveau(Long id);
     NiveauResponseDTO getNiveauById(Long id);
     List<NiveauResponseDTO> searchNiveaux(SearchNiveauRequestDTO request);
+    List<NiveauResponseDTO> getNiveauxByFiliereId(Long filiereId);
 }

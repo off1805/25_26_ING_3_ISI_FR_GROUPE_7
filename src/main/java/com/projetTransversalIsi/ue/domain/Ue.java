@@ -16,6 +16,7 @@ public class Ue {
     private int credit;
     private int volumeHoraireTotal;
     private String description;
+    private String couleur = "#ffffff";
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
     private Boolean isDeleted = false;

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" class="dark" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Niveau (AP)</title>
+
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+</head>
+
+<body class="h-screen" th:attr="data-ap-page-bc=${apPageBreadcrumb}">
+    <section class="flex flex-row bg-sidebar-nav-hover h-full">
+
+        <!-- SIDEBAR -->
+        <section th:replace="~{APInterface/APSidebar :: ap-sidebar('subjects', ${filiere != null ? filiere.id : null})}"></section>
+
+        <!-- MAIN -->
+        <section class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- NAVBAR -->
+            <header
+                class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar relative w-full flex justify-between items-center px-4 md:px-6 lg:px-8 mx-auto border border-b border-navbar-line">
+
+                <!-- Mobile hamburger -->
+                <div class="lg:hidden">
+                    <button type="button"
+                        class="hs-collapse-toggle size-9.5 flex justify-center items-center text-sm font-semibold rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
+                        aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-ap-sidebar"
+                        data-hs-overlay="#hs-ap-sidebar">
+                        <svg class="hs-collapse-open:hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" x2="21" y1="6" y2="6" />
+                            <line x1="3" x2="21" y1="12" y2="12" />
+                            <line x1="3" x2="21" y1="18" y2="18" />
+                        </svg>
+                        <svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1"
+                    aria-label="Breadcrumb" data-ap-breadcrumb-target="navbar"></nav>
+
+                <div class="flex items-center gap-x-1 lg:gap-x-2 ms-auto py-1 lg:ps-6 lg:order-3 lg:col-span-3">
+                    <div class="relative hidden md:block">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.34-4.34" />
+                        </svg>
+                        <input type="text" placeholder="Recherche..."
+                            class="pl-9 pr-4 py-1.5 text-sm bg-layer border border-layer-line rounded-lg w-56 focus:outline-none focus:ring-1 text-layer-foreground placeholder:text-muted-foreground-2" />
+                    </div>
+                    <button type="button" data-theme-toggle
+                        class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
+                        <span class="sr-only" data-theme-toggle-label>Passer en theme sombre</span>
+                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                        </svg>
+                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18"
+                            height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                            <path d="M4.93 4.93l1.41 1.41" />
+                            <path d="M17.66 17.66l1.41 1.41" />
+                            <path d="M2 12h2" />
+                            <path d="M20 12h2" />
+                            <path d="M6.34 17.66l-1.41 1.41" />
+                            <path d="M19.07 4.93l-1.41 1.41" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- PAGE CONTENT -->
+            <div class="flex-1 overflow-y-auto p-6 lg:p-8 bg-background-1">
+                <nav class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-base text-muted-foreground mb-5"
+                    aria-label="Breadcrumb" data-ap-breadcrumb-target="page"></nav>
+                <div class="flex flex-col lg:flex-row gap-6">
+
+                    <!-- Specialites List -->
+                    <div class="py-4 flex-col flex flex-1">
+                        <div class="mb-4">
+                            <h3 class="font-bold text-base text-layer-foreground">Specialites</h3>
+                            <p class="text-xs text-muted-foreground-2 mt-0.5">
+                                Specialites rattachees au <span th:text="${'Niveau ' + niveau.ordre}">Niveau</span>
+                            </p>
+                        </div>
+
+                        <ul class="w-full flex flex-col justify-end text-start -space-y-px">
+                            <li th:each="specialite : ${specialites}"
+                                class="flex items-center gap-x-2 p-3 text-sm bg-layer border border-layer-line text-layer-foreground first:rounded-t-lg first:mt-0 last:rounded-b-lg">
+                                <div class="w-full flex justify-between items-center truncate">
+                                    <div class="flex items-center gap-x-3">
+                                        <div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                            <span class="text-primary font-bold text-xs" th:text="${specialite.code}">CODE</span>
+                                        </div>
+                                        <div class="truncate">
+                                            <a th:href="@{/ap/specialite/{id}(id=${specialite.id})}"
+                                                class="font-bold text-primary hover:underline"
+                                                th:text="${specialite.libelle}">Specialite</a>
+                                            <span class="text-muted-foreground-2 block text-xs"
+                                                th:text="${specialite.description}">Description...</span>
+                                        </div>
+                                    </div>
+                                    <svg class="shrink-0 size-4 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 6l6 6l-6 6" />
+                                    </svg>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Niveau Details Card -->
+                    <div class="space-y-6 w-xs">
+                        <div class="bg-card rounded-xl border border-card-line">
+                            <div class="relative h-20 bg-gradient-to-r from-emerald-400 via-emerald-600 to-emerald-700 rounded-t-xl pt-6">
+                                <div class="left-6 absolute -bottom-6 h-16 w-16 flex justify-center items-center rounded-full bg-layer border border-card-line">
+                                    <h3 class="font-bold text-layer-foreground" th:text="${'N' + niveau.ordre}">N1</h3>
+                                </div>
+                            </div>
+                            <div class="space-y-3 px-6 mt-8">
+                                <h2 class="text-lg text-foreground font-bold" th:text="${'Niveau ' + niveau.ordre}">Niveau</h2>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-muted-foreground-2">Filiere</span>
+                                    <span class="text-sm font-medium text-layer-foreground" th:text="${filiere.nom}">Filiere</span>
+                                </div>
+                                <p class="text-muted-foreground-1 leading-relaxed text-sm" th:text="${niveau.description}">
+                                    Description...
+                                </p>
+                            </div>
+                            <div class="border-t border-t-card-line py-3 mt-5 flex justify-end px-6">
+                                <a th:href="@{/ap/filiere/{id}(id=${filiere.id})}"
+                                    class="px-4 py-1.5 border text-secondary border-card-line rounded-lg hover:bg-layer-hover text-sm">
+                                    Retour filiere
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    </section>
+
+    <script th:src="@{/js/preline.js}"></script>
+    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script type="module" th:src="@{/js/common/apBreadcrumbs.js}"></script>
+</body>
+
+</html>

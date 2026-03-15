@@ -1,5 +1,7 @@
 package com.projetTransversalIsi.classe.infrastructure;
 
+import com.projetTransversalIsi.Filiere.infrastructure.FiliereMapper;
+import com.projetTransversalIsi.Niveau.infrastructure.NiveauMapper;
 import com.projetTransversalIsi.classe.domain.Classe;
 import com.projetTransversalIsi.specialite.domain.Specialite;
 import com.projetTransversalIsi.specialite.infrastructure.JpaSpecialiteEntity;
@@ -7,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {FiliereMapper.class})
 public interface ClasseMapper {
 
     @Mapping(target = "specialite", source = "specialite", qualifiedByName = "jpaToDomainSimple")

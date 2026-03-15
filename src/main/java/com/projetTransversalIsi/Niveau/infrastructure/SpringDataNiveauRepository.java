@@ -13,4 +13,5 @@ public interface SpringDataNiveauRepository extends JpaRepository<JpaNiveauEntit
 
     boolean existsByOrdreAndFiliereId(int ordre, Long filiereId);
     boolean existsByOrdreAndFiliereIdAndDeletedFalse(int ordre, Long filiereId);
+    List<JpaNiveauEntity> findByFiliereIdAndDeletedFalse(Long filiereId);
 }

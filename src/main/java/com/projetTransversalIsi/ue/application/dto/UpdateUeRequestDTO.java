@@ -9,5 +9,6 @@ public record UpdateUeRequestDTO(
         @NotBlank String code,
         @NotNull @Min(1) int credit,
         @NotNull @Min(1) int volumeHoraireTotal,
-        String description) {
+        String description,
+        String couleur) {
 }

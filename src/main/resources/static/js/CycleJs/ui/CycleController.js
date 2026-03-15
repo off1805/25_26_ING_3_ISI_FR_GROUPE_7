@@ -34,6 +34,7 @@ const SELECTORS = {
 
     // Boutons dans le tableau (ajoutés dynamiquement — voir cycleRowTable.js)
     btnDeleteCycle: '.btn-delete-cycle',
+    btnEditCycle: '.btn-edit-cycle',
     btnToggleCycleStatus: '.btn-toggle-cycle-status',
 
     // Attributs data portés par les boutons
@@ -127,6 +128,12 @@ export class CycleController {
         if (!tableBody) return;
 
         tableBody.addEventListener('click', (e) => {
+            const editBtn = e.target.closest(SELECTORS.btnEditCycle);
+            if (editBtn) {
+                this._handleOpenEditModal(editBtn);
+                return;
+            }
+
             const deleteBtn = e.target.closest(SELECTORS.btnDeleteCycle);
             if (deleteBtn) {
                 this._handleDeleteCycle(deleteBtn);
@@ -138,6 +145,23 @@ export class CycleController {
                 this._handleToggleStatus(toggleBtn);
             }
         });
+    }
+
+    async _handleOpenEditModal(button) {
+        const id = button.dataset[SELECTORS.dataAttributes.cycleId];
+        try {
+            const cycle = await this.cycleApi.getCycleById(id);
+            const form = document.querySelector(SELECTORS.updateForm);
+            if (!form) return;
+
+            form.dataset.cycleId = id;
+            form.querySelector(SELECTORS.updateFormFields.name).value = cycle.name || '';
+            form.querySelector(SELECTORS.updateFormFields.code).value = cycle.code || '';
+            form.querySelector(SELECTORS.updateFormFields.durationYears).value = cycle.durationYears || '';
+            form.querySelector(SELECTORS.updateFormFields.description).value = cycle.description || '';
+        } catch (e) {
+            GlobalErrorHandler.handle(e);
+        }
     }
 
     async _handleDeleteCycle(button) {

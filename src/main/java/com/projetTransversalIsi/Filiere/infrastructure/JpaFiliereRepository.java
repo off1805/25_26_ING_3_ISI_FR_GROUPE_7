@@ -2,7 +2,6 @@ package com.projetTransversalIsi.Filiere.infrastructure;
 
 import com.projetTransversalIsi.Filiere.domain.Filiere;
 import com.projetTransversalIsi.Filiere.domain.FiliereRepository;
-import com.projetTransversalIsi.Filiere.domain.exceptions.FiliereNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -87,5 +86,12 @@ public class JpaFiliereRepository implements FiliereRepository {
     @Override
     public boolean existsActiveByCode(String code) {
         return jpaRepo.existsByCodeAndDeletedFalse(code);
+    }
+
+    @Override
+    public List<Filiere> findByCycleId(Long cycleId) {
+        return jpaRepo.findByCycleIdAndDeletedFalse(cycleId).stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 }

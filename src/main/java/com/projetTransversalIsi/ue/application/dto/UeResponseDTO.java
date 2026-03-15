@@ -8,5 +8,6 @@ public record UeResponseDTO(
         String code,
         int credit,
         int volumeHoraireTotal,
-        String description) {
+        String description,
+        String couleur) {
 }

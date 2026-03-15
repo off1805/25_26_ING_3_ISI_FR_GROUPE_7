@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" class="dark" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Filières & Niveaux</title>
+
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+</head>
+
+<body class="h-screen" th:attr="data-admin-page-bc=${adminPageBreadcrumb}">
+    <section class="flex flex-row bg-sidebar-nav-hover h-full">
+        <section th:replace="~{AdminInterface/AdminSidebar :: admin-sidebar('school')}"></section>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <section class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- NAVBAR -->
+            <header
+                class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar relative w-full flex justify-between items-center px-4 md:px-6 lg:px-8 mx-auto border border-b border-navbar-line">
+
+                <!-- Mobile hamburger -->
+                <div class="lg:hidden">
+                    <button type="button"
+                        class="hs-collapse-toggle size-9.5 flex justify-center items-center text-sm font-semibold rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
+                        aria-haspopup="dialog" aria-expanded="false"
+                        aria-controls="hs-sidebar-content-push-to-mini-sidebar"
+                        data-hs-overlay="#hs-sidebar-content-push-to-mini-sidebar">
+                        <svg class="hs-collapse-open:hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" x2="21" y1="6" y2="6" />
+                            <line x1="3" x2="21" y1="12" y2="12" />
+                            <line x1="3" x2="21" y1="18" y2="18" />
+                        </svg>
+                        <svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Breadcrumb -->
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1"
+                    aria-label="Breadcrumb" data-admin-breadcrumb-target="navbar"></nav>
+
+                <!-- Right actions -->
+                <div class="flex items-center gap-x-1 lg:gap-x-2 ms-auto py-1 lg:ps-6 lg:order-3 lg:col-span-3">
+                    <!-- Search -->
+                    <div class="relative hidden md:block">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.34-4.34" />
+                        </svg>
+                        <input type="text" placeholder="Recherche globale..."
+                            class="pl-9 pr-4 py-1.5 text-sm bg-layer border border-layer-line rounded-lg w-56 focus:outline-none focus:ring-1 text-layer-foreground placeholder:text-muted-foreground-2" />
+                    </div>
+
+                    <button type="button" data-theme-toggle
+                        class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
+                        <span class="sr-only" data-theme-toggle-label>Passer en theme sombre</span>
+                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                        </svg>
+                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18"
+                            height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                            <path d="M4.93 4.93l1.41 1.41" />
+                            <path d="M17.66 17.66l1.41 1.41" />
+                            <path d="M2 12h2" />
+                            <path d="M20 12h2" />
+                            <path d="M6.34 17.66l-1.41 1.41" />
+                            <path d="M19.07 4.93l-1.41 1.41" />
+                        </svg>
+                    </button>
+
+                    <!-- Notifications -->
+                    <button type="button"
+                        class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
+                        <span class="sr-only">Notifications</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-bell">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+                            <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- PAGE CONTENT -->
+            <div class="flex-1 overflow-y-auto p-6 lg:p-8 bg-background-1">
+                <nav class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-base text-muted-foreground mb-5"
+                    aria-label="Breadcrumb" data-admin-breadcrumb-target="page"></nav>
+
+                <div class="flex flex-col lg:flex-row gap-6">
+
+                    <!-- Niveaux List -->
+                    <div class="py-4 flex-col flex flex-1">
+                        <div class="mb-4 flex items-center justify-between ">
+                            <div>
+                                <h3 class="font-bold text-base text-layer-foreground">Niveaux d'études</h3>
+                            </div>
+                            <button type="button"
+                                class="inline-flex items-center gap-x-2 py-2 px-3 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all"
+                                data-hs-overlay="#hs-modal-add-niveau">
+                                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                Ajouter un niveau
+                            </button>
+                        </div>
+
+                        <ul id="niveau-list-container" class="w-full flex flex-col justify-end text-start -space-y-px">
+                            <li
+                                class="flex items-center gap-x-2 p-3 text-sm bg-layer border border-layer-line text-layer-foreground first:rounded-t-lg first:mt-0 last:rounded-b-lg">
+                                <div class="w-full flex justify-between items-center truncate">
+                                    <span class="text-sm text-muted-foreground-2 mt-0.5 bg-layer-1">Niveaux rattachés à
+                                        la filière
+                                        <span th:text="${filiere.nom}">Default</span> </span>
+                                </div>
+                            </li>
+                            <li th:each="niveau : ${niveaux}"
+                                class="flex items-center gap-x-2 p-3 text-sm bg-layer border border-layer-line text-layer-foreground last:rounded-b-lg"
+                                th:data-niveau-id="${niveau.id}">
+                                <div class="w-full flex justify-between items-center truncate">
+                                    <div class="flex items-center gap-x-3">
+                                        <div
+                                            class="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                            <span class="text-primary font-bold" th:text="${niveau.ordre}">1</span>
+                                        </div>
+                                        <div class="truncate">
+                                            <a th:href="@{'/admin/niveaux/' + ${niveau.id}}"
+                                                class="font-bold text-primary hover:underline"
+                                                th:text="${'Niveau ' + niveau.ordre}">Niveau 1</a>
+                                            <span class="text-muted-foreground-2 block text-xs"
+                                                th:text="${niveau.description}">Description...</span>
+                                        </div>
+                                    </div>
+                                    <div class="hs-dropdown relative inline-flex">
+                                        <button type="button"
+                                            class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="5" r="1" />
+                                                <circle cx="12" cy="12" r="1" />
+                                                <circle cx="12" cy="19" r="1" />
+                                            </svg>
+                                        </button>
+                                        <div
+                                            class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1">
+                                            <button type="button"
+                                                class="btn-delete-niveau flex items-center gap-x-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                th:data-niveau-id="${niveau.id}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="3 6 5 6 21 6" />
+                                                    <path
+                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                </svg>
+                                                Supprimer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Filière Details Card -->
+                    <div class="space-y-6 w-xs  ">
+                        <div class="bg-card rounded-xl border border-card-line">
+                            <div
+                                class="relative h-20 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-700 rounded-t-xl pt-6">
+                                <div
+                                    class="left-6 absolute -bottom-6 h-16 w-16 flex justify-center items-center rounded-full bg-layer border border-card-line">
+                                    <h3 class="font-bold text-layer-foreground" th:text="${filiere.code}">ISI</h3>
+                                </div>
+                            </div>
+                            <div class="space-y-3 px-6 mt-8">
+                                <h2 class="text-lg text-foreground font-bold" th:text="${filiere.nom}">Filière Nom</h2>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-muted-foreground-2">Cycle</span>
+                                    <span class="text-sm font-medium text-layer-foreground"
+                                        th:text="${filiere.cycleName}">Cycle Name</span>
+                                </div>
+                                <p class="text-muted-foreground-1 leading-relaxed text-sm"
+                                    th:text="${filiere.description}">
+                                    Description...
+                                </p>
+                            </div>
+                            <div class="border-t border-t-card-line py-3 mt-5 flex justify-end px-6">
+                                <button
+                                    class="px-4 py-1.5 border text-secondary border-card-line rounded-lg hover:bg-layer-hover text-sm">Modifier</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- END PAGE CONTENT -->
+
+        </section>
+
+        <!-- Modal Ajout Niveau -->
+        <div id="hs-modal-add-niveau"
+            class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none"
+            role="dialog" tabindex="-1">
+            <div
+                class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+                <div class="flex flex-col bg-layer border border-layer-line shadow-sm rounded-xl pointer-events-auto">
+                    <div class="flex justify-between items-center py-3 px-4 border-b border-layer-line">
+                        <h3 class="font-bold text-layer-foreground">Ajouter un niveau</h3>
+                        <button type="button"
+                            class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-layer-hover text-layer-foreground hover:bg-layer-focus focus:outline-none focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
+                            data-hs-overlay="#hs-modal-add-niveau">
+                            <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 6 6 18" />
+                                <path d="m6 6 12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form data-form="create-niveau">
+                        <div class="p-4 space-y-4">
+                            <input type="hidden" name="filiereId" th:value="${filiere.id}">
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-layer-foreground">Ordre (Ex: 1, 2,
+                                    3)</label>
+                                <input type="number" name="ordre"
+                                    class="py-3 px-4 block w-full bg-layer border border-layer-line rounded-lg text-sm focus:border-primary focus:ring-primary"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-layer-foreground">Description</label>
+                                <textarea name="description"
+                                    class="py-3 px-4 block w-full bg-layer border border-layer-line rounded-lg text-sm focus:border-primary focus:ring-primary"
+                                    rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t border-layer-line">
+                            <button type="button"
+                                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-layer-line bg-layer text-layer-foreground shadow-sm hover:bg-layer-hover focus:outline-none focus:bg-layer-hover"
+                                data-hs-overlay="#hs-modal-add-niveau">Annuler</button>
+                            <button type="submit"
+                                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary text-white hover:bg-primary-hover focus:outline-none focus:bg-primary-hover">Créer
+                                le niveau</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <script th:src="@{/js/other/toastify.js}"></script>
+    <script th:src="@{/js/preline.js}"></script>
+    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script type="module" th:src="@{/js/common/adminBreadcrumbs.js}"></script>
+    <script type="module" th:src="@{/js/NiveauJs/ui/NiveauController.js}"></script>
+
+</body>
+
+</html>

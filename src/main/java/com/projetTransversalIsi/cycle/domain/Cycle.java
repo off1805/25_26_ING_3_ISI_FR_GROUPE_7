@@ -22,7 +22,6 @@ public class Cycle {
     private CycleStatus status;
     private boolean deleted = false;
     private LocalDateTime deletedAt;
-    private List<Filiere> filieres = new ArrayList<>();
 
     public Cycle(String name, String code, int durationYears, String description) {
         this.name = name;
