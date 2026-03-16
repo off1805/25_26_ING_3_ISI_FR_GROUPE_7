@@ -29,6 +29,9 @@ public class JpaUeEntity {
     private int volumeHoraireTotal;
 
     private String description;
+    
+    @Column(nullable = false, columnDefinition = "varchar(255) default '#ffffff'")
+    private String couleur = "#ffffff";
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

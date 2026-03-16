@@ -17,6 +17,7 @@ public class NiveauService implements DefaultNiveauService {
     private final DeleteNiveauUC deleteNiveauUC;
     private final FindNiveauByIdUC findNiveauByIdUC;
     private final SearchNiveauxUC searchNiveauxUC;
+    private final FindNiveauxByFiliereIdUC findNiveauxByFiliereIdUC;
 
     @Override
     public NiveauResponseDTO createNiveau(CreateNiveauRequestDTO request) {
@@ -44,6 +45,13 @@ public class NiveauService implements DefaultNiveauService {
     @Override
     public List<NiveauResponseDTO> searchNiveaux(SearchNiveauRequestDTO request) {
         return searchNiveauxUC.execute(request).stream()
+                .map(NiveauResponseDTO::fromDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NiveauResponseDTO> getNiveauxByFiliereId(Long filiereId) {
+        return findNiveauxByFiliereIdUC.execute(filiereId).stream()
                 .map(NiveauResponseDTO::fromDomain)
                 .collect(Collectors.toList());
     }

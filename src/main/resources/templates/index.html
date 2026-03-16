@@ -187,6 +187,29 @@
                             class="pl-9 pr-4 py-1.5 text-sm bg-layer border border-layer-line rounded-lg w-56 focus:outline-none focus:ring-1 text-layer-foreground placeholder:text-muted-foreground-2" />
                     </div>
 
+                    <button type="button" data-theme-toggle
+                        class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
+                        <span class="sr-only" data-theme-toggle-label>Passer en theme sombre</span>
+                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                        </svg>
+                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18"
+                            height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                            <path d="M4.93 4.93l1.41 1.41" />
+                            <path d="M17.66 17.66l1.41 1.41" />
+                            <path d="M2 12h2" />
+                            <path d="M20 12h2" />
+                            <path d="M6.34 17.66l-1.41 1.41" />
+                            <path d="M19.07 4.93l-1.41 1.41" />
+                        </svg>
+                    </button>
+
                     <!-- Notifications -->
                     <button type="button"
                         class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
@@ -653,6 +676,7 @@
    
 
     <script type="module" th:src="@{/js/User/ui/UserController.js}"></script>
+    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof HSStaticMethods !== 'undefined') {

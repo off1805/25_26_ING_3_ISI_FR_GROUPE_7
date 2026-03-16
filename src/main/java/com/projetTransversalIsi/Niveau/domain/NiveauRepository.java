@@ -12,4 +12,5 @@ public interface NiveauRepository {
     Optional<Niveau> findActiveById(Long id);
     boolean existsByOrdreAndFiliereId(int ordre, Long filiereId);
     boolean existsByOrdreAndFiliereIdAndDeletedFalse(int ordre, Long filiereId);
+    List<Niveau> findByFiliereId(Long filiereId);
 }

@@ -66,4 +66,11 @@ public class JpaNiveauRepository implements NiveauRepository {
     public boolean existsByOrdreAndFiliereIdAndDeletedFalse(int ordre, Long filiereId) {
         return jpaRepo.existsByOrdreAndFiliereIdAndDeletedFalse(ordre, filiereId);
     }
+
+    @Override
+    public List<Niveau> findByFiliereId(Long filiereId) {
+        return jpaRepo.findByFiliereIdAndDeletedFalse(filiereId).stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }

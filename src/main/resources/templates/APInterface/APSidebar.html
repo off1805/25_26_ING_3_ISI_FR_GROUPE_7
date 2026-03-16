@@ -1,10 +1,10 @@
 <!-- ========== AP SIDEBAR ========== -->
-<section id="hs-ap-sidebar" th:fragment="ap-sidebar(activePage)" xmlns:th="http://www.thymeleaf.org"
+<section id="hs-ap-sidebar" th:fragment="ap-sidebar(activePage, subjectsFiliereId)" xmlns:th="http://www.thymeleaf.org"
          class="hs-overlay [--auto-close:lg] hs-overlay-minified:w-fit lg:translate-x-0 lg:end-auto lg:bottom-0
          w-64 hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform
          h-full hidden lg:flex lg:flex-col z-60
          bg-sidebar border-e border-sidebar-line"
-         role="dialog" tabindex="-1" aria-label="Sidebar">
+         role="dialog" tabindex="-1" aria-label="Sidebar" data-ap-sidebar>
 
     <!-- Minify toggle button -->
     <div class="hidden lg:block">
@@ -67,7 +67,8 @@
 
                     <!-- Matières -->
                     <li>
-                        <a th:href="@{/ap/subjects}"
+                        <a th:href="${subjectsFiliereId != null} ? @{/ap/filiere/{id}(id=${subjectsFiliereId})} : @{/ap/filiere/1}"
+                           th:attr="aria-current=${activePage == 'subjects'} ? 'page' : null"
                            th:classappend="${activePage == 'subjects'} ?
      'bg-primary text-white hover:bg-primary/90' :
      'text-sidebar-nav-foreground hover:bg-sidebar-nav-hover focus:bg-sidebar-nav-focus'"
@@ -89,6 +90,7 @@
                     <!-- Emploi du temps -->
                     <li>
                         <a th:href="@{/ap/schedule}"
+                           th:attr="aria-current=${activePage == 'schedule'} ? 'page' : null"
                            th:classappend="${activePage == 'schedule'} ?
      'bg-primary text-white hover:bg-primary/90' :
      'text-sidebar-nav-foreground hover:bg-sidebar-nav-hover focus:bg-sidebar-nav-focus'"

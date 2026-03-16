@@ -16,7 +16,7 @@
 ══════════════════════════════════════════════════════ -->
 <div id="view-main" class="flex h-screen overflow-hidden">
 
-    <section th:replace="~{APInterface/APSidebar :: ap-sidebar('schedule')}"></section>
+    <section th:replace="~{APInterface/APSidebar :: ap-sidebar('schedule', null)}"></section>
 
     <section class="flex-1 flex flex-col overflow-hidden min-w-0">
 
@@ -29,6 +29,28 @@
                 <span class="font-medium text-layer-foreground">Emplois du temps</span>
             </nav>
             <div class="flex items-center gap-x-2 ms-auto py-1">
+                <button type="button" data-theme-toggle
+                    class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                    <span class="sr-only" data-theme-toggle-label>Passer en theme sombre</span>
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                    </svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18"
+                        height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4" />
+                        <path d="M12 2v2" />
+                        <path d="M12 20v2" />
+                        <path d="M4.93 4.93l1.41 1.41" />
+                        <path d="M17.66 17.66l1.41 1.41" />
+                        <path d="M2 12h2" />
+                        <path d="M20 12h2" />
+                        <path d="M6.34 17.66l-1.41 1.41" />
+                        <path d="M19.07 4.93l-1.41 1.41" />
+                    </svg>
+                </button>
                 <button type="button" class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg>
                 </button>
@@ -56,7 +78,7 @@
                     </div>
                 </div>
 
-                <!-- Sample card (Thymeleaf: th:each="sched : ${schedules}") -->
+                <!-- Sample card -->
                 <div class="bg-card rounded-2xl shadow-sm p-4 flex flex-col gap-3 hover:shadow-md transition-shadow duration-200">
                     <div class="flex items-start justify-between">
                         <div class="size-9 rounded-xl bg-primary/15 flex items-center justify-center">
@@ -89,128 +111,6 @@
     </section>
 </div>
 
-
-<!-- ══════════════════════════════════════════════════════
-     EDIT MODE
-══════════════════════════════════════════════════════ -->
-<div id="view-edit" class="hidden flex-col h-screen overflow-hidden">
-
-    <!-- EDIT NAVBAR -->
-    <header class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar w-full items-center px-4 md:px-6 lg:px-8 border-b border-navbar-line z-20">
-        <div class="flex items-center gap-3 py-1">
-            <button onclick="exitEditMode()"
-                    class="flex items-center gap-1.5 text-sm font-medium text-muted-foreground-2 hover:text-layer-foreground transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     width="16" height="16"
-                     viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor"
-                     stroke-width="2"
-                     stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <path d="M19 12H5"/>
-                    <path d="M12 19l-7-7 7-7"/>
-                </svg>
-            </button>
-            <div class="hidden lg:flex items-center gap-2 text-sm">
-                <span class="flex items-center gap-1.5 font-bold text-primary">
-                    <span class="size-2 rounded-full bg-primary animate-pulse inline-block"></span>
-                    Mode Édition
-                </span>
-                <span class="text-muted-foreground-2">·</span>
-                <span id="edit-class-label" class="text-layer-foreground font-medium"></span>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-2 ms-auto py-1">
-            <button onclick="undoLast()" title="Annuler dernière action"
-                    class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-muted-foreground-2 hover:text-layer-foreground hover:bg-muted transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
-            </button>
-
-            <button onclick="prevWeek()" class="size-9 flex items-center justify-center rounded-xl border border-card-line bg-layer text-muted-foreground-2 hover:bg-muted transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <span id="week-label" class="text-xs font-semibold text-layer-foreground min-w-28 text-center select-none"></span>
-            <button onclick="nextWeek()" class="size-9 flex items-center justify-center rounded-xl border border-card-line bg-layer text-muted-foreground-2 hover:bg-muted transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-
-            <div class="flex items-center gap-1 bg-layer border border-layer-line rounded-xl px-2.5 py-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                <input type="date" id="date-start" class="text-xs font-medium text-layer-foreground bg-transparent border-none outline-none cursor-pointer"/>
-                <span class="text-xs text-muted-foreground-2">—</span>
-                <input type="date" id="date-end" class="text-xs font-medium text-layer-foreground bg-transparent border-none outline-none cursor-pointer"/>
-            </div>
-
-            <button onclick="exportPDF()"
-                    class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-layer border border-layer-line text-xs font-semibold text-layer-foreground hover:bg-muted transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" x2="12" y1="12" y2="18"/><line x1="9" x2="15" y1="15" y2="15"/></svg>
-                PDF
-            </button>
-
-            <button onclick="saveSchedule()"
-                    class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-
-            </button>
-
-            <button type="button" class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg>
-            </button>
-        </div>
-    </header>
-
-    <!-- EDIT BODY -->
-    <div class="flex flex-1 overflow-hidden bg-background-1">
-
-        <!-- LEFT PANEL -->
-        <div class="w-56 min-w-[224px] flex flex-col h-full border-r border-card-line bg-background-1 overflow-y-auto" style="scrollbar-width:thin">
-            <div class="flex flex-col gap-3 p-3 ">
-
-                <!-- Matières -->
-                <div class="bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden">
-                    <div class="px-4 pt-3 pb-2.5 border-b border-card-line">
-                        <p class="text-sm font-bold text-layer-foreground">Matières</p>
-                        <p class="text-xs text-muted-foreground-2 mt-0.5">Développez pour glisser un enseignant</p>
-                    </div>
-                    <div id="subject-list" class="p-2 space-y-0.5"></div>
-                </div>
-
-                <!-- Évènements -->
-                <div class="bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden">
-                    <div class="px-4 pt-3 pb-2.5 border-b border-card-line flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-bold text-layer-foreground">Évènements</p>
-                            <p class="text-xs text-muted-foreground-2 mt-0.5">Glissez sur le planning</p>
-                        </div>
-                        <button onclick="openAddEventModal()"
-                                class="size-6 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary flex items-center justify-center transition-colors shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                        </button>
-                    </div>
-                    <div id="event-list" class="p-2 space-y-0.5"></div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- SCHEDULE -->
-        <div class="flex-1 overflow-hidden p-3">
-            <div class="h-full bg-card rounded-2xl border border-card-line shadow-sm overflow-hidden flex flex-col" id="schedule-card">
-                <div id="day-headers" class="flex-none grid border-b border-card-line bg-muted/30"
-                     style="grid-template-columns: 44px repeat(6,1fr)">
-                    <div class="py-2 text-xs text-center text-muted-foreground-2 font-bold border-r border-card-line">h</div>
-                </div>
-                <div class="flex-1 relative overflow-hidden" id="schedule-wrapper">
-                    <div id="schedule-body" class="absolute inset-0 grid" style="grid-template-columns: 44px repeat(6,1fr)"></div>
-                    <div id="blocks-layer" class="absolute inset-0 pointer-events-none" style="left:44px"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <!-- ══ MODAL: Sélection de classe ══ -->
 <div id="modal-class" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
     <div class="bg-card rounded-2xl border border-card-line shadow-2xl w-full max-w-md mx-4 overflow-hidden animate-in">
@@ -229,458 +129,66 @@
     </div>
 </div>
 
+<script type="module">
+    import { CLASSES } from '/js/APInterface/editScheduleUtils.js';
 
-<!-- ══ MODAL: Ajouter évènement ══ -->
-<div id="modal-event" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
-    <div class="bg-card rounded-2xl border border-card-line shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
-        <div class="px-6 py-5 border-b border-card-line flex items-center justify-between">
-            <h3 class="font-bold text-base text-layer-foreground">Nouvel évènement</h3>
-            <button onclick="closeAddEventModal()" class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-        </div>
-        <div class="p-6 space-y-4">
-            <div class="space-y-1.5">
-                <label class="text-xs font-semibold text-layer-foreground">Nom de l'évènement</label>
-                <input id="new-event-name" type="text" placeholder="ex. Jury, Délibération…"
-                       class="w-full py-2.5 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"/>
-            </div>
-            <div class="flex justify-end gap-2 pt-1">
-                <button onclick="closeAddEventModal()" class="px-4 py-2 rounded-xl text-sm font-semibold text-muted-foreground-2 bg-muted hover:bg-muted-hover transition-colors">Annuler</button>
-                <button onclick="confirmAddEvent()" class="px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary/90 transition-colors">Ajouter</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- ══ COLOR PICKER POPOVER ══ -->
-<div id="color-popover" class="fixed z-50 hidden bg-card border border-card-line rounded-2xl shadow-xl p-3.5" style="min-width:160px">
-    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-wider mb-2.5">Couleur du bloc</p>
-    <div id="color-popover-grid" class="grid grid-cols-4 gap-2"></div>
-</div>
-
-
-<!-- ══ TOAST ══ -->
-<div id="toast" class="fixed bottom-6 right-6 z-50 hidden transition-all">
-    <div class="flex items-center gap-3 bg-layer border border-card-line shadow-xl rounded-2xl px-4 py-3">
-        <div class="size-8 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <p id="toast-msg" class="text-sm font-semibold text-layer-foreground"></p>
-    </div>
-</div>
-
-
-<script>
-    // ═══════════════════════════════════════
-    //  DATA
-    // ═══════════════════════════════════════
-    const HOURS = [7,8,9,10,11,12,13,14,15,16,17,18];
-    const DAY_COUNT = 6;
-
-    const PALETTE = [
-        {id:'violet',bg:'#ede9fe',border:'#7c3aed',text:'#4c1d95'},
-        {id:'blue',  bg:'#dbeafe',border:'#3b82f6',text:'#1e3a8a'},
-        {id:'green', bg:'#d1fae5',border:'#10b981',text:'#065f46'},
-        {id:'orange',bg:'#ffedd5',border:'#f97316',text:'#9a3412'},
-        {id:'pink',  bg:'#fce7f3',border:'#ec4899',text:'#831843'},
-        {id:'teal',  bg:'#ccfbf1',border:'#14b8a6',text:'#134e4a'},
-        {id:'yellow',bg:'#fef9c3',border:'#eab308',text:'#713f12'},
-        {id:'red',   bg:'#fee2e2',border:'#ef4444',text:'#7f1d1d'},
-    ];
-
-    const SUBJECTS = [
-        {id:1,name:'Algorithmique',       code:'INF301',defaultColor:'violet',teachers:[{id:1,name:'Dr. Kamga Paul',initials:'KP'},{id:2,name:'Prof. Nkemeni Alice',initials:'NA'}]},
-        {id:2,name:'Structures de données',code:'INF302',defaultColor:'blue',  teachers:[{id:3,name:'Dr. Fouda Martin',initials:'FM'},{id:4,name:'Mme. Biya Sandra',initials:'BS'}]},
-        {id:3,name:'Bases de données',    code:'INF401',defaultColor:'green', teachers:[{id:5,name:'Prof. Ela Roger',initials:'ER'},{id:6,name:'Dr. Mbarga Celine',initials:'MC'}]},
-        {id:4,name:'Réseaux info.',        code:'RSX201',defaultColor:'orange',teachers:[{id:7,name:'Dr. Abanda Serge',initials:'AS'},{id:8,name:'M. Njoya Victor',initials:'NV'}]},
-        {id:5,name:'POO',                  code:'INF303',defaultColor:'pink',  teachers:[{id:9,name:'Mme. Ngono Estelle',initials:'NE'},{id:10,name:'Dr. Beyala Jules',initials:'BJ'}]},
-        {id:6,name:'Génie logiciel',       code:'INF501',defaultColor:'teal',  teachers:[{id:11,name:'Prof. Mbouda Henri',initials:'MH'},{id:12,name:'Dr. Ngo Bum Claire',initials:'NC'}]},
-    ];
-
-    const ICON_SVG = {
-        pause:`<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
-        perso:`<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
-        event:`<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
-    };
-
-    let EVENTS = [
-        {id:'e1',name:'Pause',          iconKey:'pause',defaultColor:'yellow'},
-        {id:'e2',name:'Temps personnel',iconKey:'perso',defaultColor:'blue'},
-    ];
-
-    const CLASSES = [
-        'Licence 1 — Info','Licence 2 — Info','Licence 3 — Info',
-        'Master 1 — SIR','Master 1 — IA','Master 2 — IA',
-        'BTS 1 — Dev','BTS 2 — Réseaux',
-    ];
-
-    const selectedColors = {};
-    SUBJECTS.forEach(s => selectedColors[`s${s.id}`] = s.defaultColor);
-    EVENTS.forEach(e => selectedColors[e.id] = e.defaultColor);
-
-    // ═══════════════════════════════════════
-    //  VIEW SWITCH
-    // ═══════════════════════════════════════
-    function enterEditMode(className) {
-        document.getElementById('view-main').style.display = 'none';
-        const edit = document.getElementById('view-edit');
-        edit.style.display = 'flex';
-        document.getElementById('edit-class-label').textContent = className || '';
-        renderPanel();
-        requestAnimationFrame(() => requestAnimationFrame(renderWeek));
-    }
-    function exitEditMode() {
-        document.getElementById('view-edit').style.display = 'none';
-        document.getElementById('view-main').style.display = 'flex';
-    }
-
-    // ═══════════════════════════════════════
-    //  MODALS
-    // ═══════════════════════════════════════
-    function openClassModal() {
-        const list = document.getElementById('class-list-modal');
-        list.innerHTML = CLASSES.map(c => `
-            <button onclick="selectClass('${c}')"
-                    class="text-left px-3 py-2.5 rounded-xl border border-card-line bg-layer hover:border-primary/40 hover:bg-primary/5 text-sm font-medium text-layer-foreground transition-all">
-                ${c}
-            </button>`).join('');
-        showModal('modal-class');
-    }
-    const closeClassModal = () => hideModal('modal-class');
-    function selectClass(c) { closeClassModal(); enterEditMode(c); }
-
-    function openAddEventModal() {
-        document.getElementById('new-event-name').value = '';
-        showModal('modal-event');
-        setTimeout(() => document.getElementById('new-event-name').focus(), 60);
-    }
-    const closeAddEventModal = () => hideModal('modal-event');
-    function confirmAddEvent() {
-        const name = document.getElementById('new-event-name').value.trim();
-        if (!name) return;
-        const id = 'e' + Date.now();
-        EVENTS.push({id, name, iconKey:'event', defaultColor:'violet'});
-        selectedColors[id] = 'violet';
-        closeAddEventModal();
-        renderPanel();
-        showToast('Évènement ajouté');
-    }
-
-    function showModal(id) {
-        const m = document.getElementById(id);
-        m.classList.remove('hidden');
-        m.classList.add('flex');
-    }
-    function hideModal(id) {
-        const m = document.getElementById(id);
-        m.classList.add('hidden');
-        m.classList.remove('flex');
-    }
-
-    // ═══════════════════════════════════════
-    //  COLOR PICKER POPOVER
-    // ═══════════════════════════════════════
-    let popoverKey = null;
-
-    function openColorPicker(key, anchorEl, e) {
-        e.stopPropagation();
-        const pop = document.getElementById('color-popover');
-        if (popoverKey === key && !pop.classList.contains('hidden')) {
-            pop.classList.add('hidden'); popoverKey = null; return;
+    class APScheduleController {
+        constructor() {
+            this.init();
         }
-        popoverKey = key;
 
-        document.getElementById('color-popover-grid').innerHTML = PALETTE.map(p => `
-            <button onclick="setColor('${key}','${p.id}',this)"
-                    title="${p.id}"
-                    class="size-8 rounded-xl border-2 hover:scale-110 transition-all ${selectedColors[key]===p.id?'ring-2 ring-offset-1 ring-primary shadow-sm':''}"
-                    style="background:${p.bg};border-color:${p.border}"></button>`).join('');
-
-        const rect = anchorEl.getBoundingClientRect();
-        pop.style.top  = `${rect.bottom + 8}px`;
-        pop.style.left = `${Math.min(rect.left - 60, window.innerWidth - 172)}px`;
-        pop.classList.remove('hidden');
-    }
-
-    function setColor(key, colorId, btn) {
-        selectedColors[key] = colorId;
-        btn.closest('#color-popover-grid').querySelectorAll('button')
-           .forEach(b => b.classList.remove('ring-2','ring-offset-1','ring-primary','shadow-sm'));
-        btn.classList.add('ring-2','ring-offset-1','ring-primary','shadow-sm');
-        const col = PALETTE.find(p => p.id === colorId);
-        const sw = document.getElementById(`swatch-${key}`);
-        if (sw) { sw.style.background = col.bg; sw.style.borderColor = col.border; }
-    }
-
-    document.addEventListener('click', e => {
-        const pop = document.getElementById('color-popover');
-        if (!pop.classList.contains('hidden') && !pop.contains(e.target)) {
-            pop.classList.add('hidden'); popoverKey = null;
+        init() {
+            // Bind global actions to window for inline onclicks
+            window.openClassModal = () => this.openClassModal();
+            window.closeClassModal = () => this.hideModal('modal-class');
+            window.selectClass = (c) => this.selectClass(c);
+            window.enterEditMode = (className) => this.enterEditMode(className);
         }
-    });
 
-    // ═══════════════════════════════════════
-    //  PANEL
-    // ═══════════════════════════════════════
-    let openPanelId = null;
-
-    function toggleItem(cid) {
-        const el = document.getElementById(cid);
-        if (!el) return;
-        const isOpen = !el.classList.contains('hidden');
-        if (openPanelId && openPanelId !== cid) {
-            const prev = document.getElementById(openPanelId);
-            if (prev) prev.classList.add('hidden');
-            const ch = document.querySelector(`[data-chev="${openPanelId}"]`);
-            if (ch) ch.style.transform = '';
-        }
-        el.classList.toggle('hidden', isOpen);
-        const ch = document.querySelector(`[data-chev="${cid}"]`);
-        if (ch) ch.style.transform = isOpen ? '' : 'rotate(90deg)';
-        openPanelId = isOpen ? null : cid;
-    }
-
-    function renderPanel() {
-        document.getElementById('subject-list').innerHTML = SUBJECTS.map(s => {
-            const col = PALETTE.find(p => p.id === (selectedColors[`s${s.id}`] || s.defaultColor));
-            return `<div>
-                <div class="flex items-center gap-2.5 px-2.5 py-2.5 cursor-pointer rounded-xl hover:bg-muted/60 transition-colors select-none" onclick="toggleItem('sub-${s.id}')">
-                    <div class="size-7 rounded-lg flex items-center justify-center shrink-0" style="background:${col.bg}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${col.border}" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-bold text-layer-foreground truncate">${s.name}</p>
-                        <p class="text-[10px] text-muted-foreground-2">${s.code}</p>
-                    </div>
-                    <button id="swatch-s${s.id}" onclick="openColorPicker('s${s.id}',this,event)"
-                            class="size-4 rounded-full border-2 shrink-0 hover:scale-110 transition-transform"
-                            style="background:${col.bg};border-color:${col.border}"></button>
-                    <svg data-chev="sub-${s.id}" xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-muted-foreground-2 shrink-0 transition-transform"><path d="M9 18l6-6-6-6"/></svg>
-                </div>
-                <div id="sub-${s.id}" class="hidden px-2 pb-2 space-y-1">
-                    ${s.teachers.map(t=>`
-                    <div class="flex items-center gap-2 px-2.5 py-2 rounded-xl bg-layer border border-card-line cursor-grab hover:shadow-sm transition-all"
-                         draggable="true" data-type="teacher" data-subject-name="${s.name}" data-teacher-name="${t.name}" data-item-key="s${s.id}"
-                         ondragstart="onDragStart(event,this)" ondragend="onDragEnd(this)">
-                        <div class="size-6 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold" style="background:${col.bg};color:${col.border}">${t.initials}</div>
-                        <span class="text-xs font-semibold text-layer-foreground truncate flex-1">${t.name}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><circle cx="8" cy="12" r="1"/><circle cx="16" cy="12" r="1"/></svg>
-                    </div>`).join('')}
-                </div>
-            </div>`;
-        }).join('');
-
-        document.getElementById('event-list').innerHTML = EVENTS.map(ev => {
-            const col = PALETTE.find(p => p.id === (selectedColors[ev.id] || ev.defaultColor));
-            return `<div>
-                <div class="flex items-center gap-2.5 px-2.5 py-2.5 cursor-pointer rounded-xl hover:bg-muted/60 transition-colors select-none" onclick="toggleItem('ev-${ev.id}')">
-                    <div class="size-7 rounded-lg flex items-center justify-center shrink-0" style="background:${col.bg};color:${col.border}">
-                        ${ICON_SVG[ev.iconKey]||ICON_SVG.event}
-                    </div>
-                    <p class="flex-1 text-xs font-semibold text-layer-foreground truncate">${ev.name}</p>
-                    <button id="swatch-${ev.id}" onclick="openColorPicker('${ev.id}',this,event)"
-                            class="size-4 rounded-full border-2 shrink-0 hover:scale-110 transition-transform"
-                            style="background:${col.bg};border-color:${col.border}"></button>
-                    <svg data-chev="ev-${ev.id}" xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-muted-foreground-2 shrink-0 transition-transform"><path d="M9 18l6-6-6-6"/></svg>
-                </div>
-                <div id="ev-${ev.id}" class="hidden px-2 pb-2">
-                    <div draggable="true" data-type="event" data-event-name="${ev.name}" data-item-key="${ev.id}"
-                         class="flex items-center gap-2 px-2.5 py-2 rounded-xl bg-layer border border-card-line cursor-grab hover:shadow-sm transition-all"
-                         ondragstart="onDragStart(event,this)" ondragend="onDragEnd(this)">
-                        <div class="size-6 rounded-lg flex items-center justify-center shrink-0" style="background:${col.bg};color:${col.border}">${ICON_SVG[ev.iconKey]||ICON_SVG.event}</div>
-                        <span class="text-xs font-semibold text-layer-foreground flex-1">${ev.name}</span>
-                        <span class="text-[10px] text-muted-foreground-2">↓</span>
-                    </div>
-                </div>
-            </div>`;
-        }).join('');
-    }
-
-    // ═══════════════════════════════════════
-    //  WEEK
-    // ═══════════════════════════════════════
-    let weekOffset=0, slotH=40, undoStack=[];
-
-    function getMonday(off=0) {
-        const d=new Date(), day=d.getDay(), m=new Date(d);
-        m.setDate(d.getDate()-day+(day===0?-6:1)+off*7);
-        m.setHours(0,0,0,0); return m;
-    }
-    const fmtISO   = d => d.toISOString().split('T')[0];
-    const fmtShort = d => d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
-
-    function renderWeek() {
-        const mon = getMonday(weekOffset);
-        const days = Array.from({length:DAY_COUNT},(_,i)=>{ const d=new Date(mon); d.setDate(mon.getDate()+i); return d; });
-        document.getElementById('date-start').value = fmtISO(days[0]);
-        document.getElementById('date-end').value   = fmtISO(days[5]);
-        document.getElementById('week-label').textContent = `${fmtShort(days[0])} – ${fmtShort(days[5])}`;
-
-        const h = document.getElementById('day-headers');
-        h.style.gridTemplateColumns = `44px repeat(${DAY_COUNT},1fr)`;
-        h.innerHTML = `<div class="py-2 text-xs text-center text-muted-foreground-2 font-bold border-r border-card-line">h</div>`;
-        days.forEach(d => {
-            const name  = d.toLocaleDateString('fr-FR',{weekday:'short'}).slice(0,3).toUpperCase();
-            const today = d.toDateString()===new Date().toDateString();
-            h.innerHTML += `<div class="py-1.5 text-center border-l border-card-line">
-                <p class="text-[10px] font-bold text-muted-foreground-2">${name}</p>
-                <p class="text-sm font-extrabold ${today?'text-primary':'text-layer-foreground'}">${d.getDate()}</p>
-            </div>`;
-        });
-        recalcSlotH(); buildGrid();
-    }
-    function recalcSlotH() {
-        slotH = Math.floor((document.getElementById('schedule-wrapper').offsetHeight||480)/HOURS.length);
-    }
-    function buildGrid() {
-        const body = document.getElementById('schedule-body');
-        body.style.gridTemplateColumns = `44px repeat(${DAY_COUNT},1fr)`;
-        let html='';
-        HOURS.forEach((hr,hi)=>{
-            const last=hi===HOURS.length-1;
-            html+=`<div style="height:${slotH}px;grid-column:1;grid-row:${hi+1}" class="flex items-center justify-center border-b ${last?'border-transparent':'border-card-line'} border-r border-card-line bg-card">
-                      <span class="text-xs font-mono font-semibold text-muted-foreground-2">${String(hr).padStart(2,'0')}h</span>
-                   </div>`;
-            for(let di=0;di<DAY_COUNT;di++) {
-                html+=`<div style="height:${slotH}px;grid-column:${di+2};grid-row:${hi+1}"
-                            class="border-b ${last?'border-transparent':'border-card-line'} border-l border-card-line bg-card transition-colors"
-                            data-hi="${hi}" data-di="${di}"
-                            ondragover="onSlotDragOver(event,this)"
-                            ondragleave="onSlotDragLeave(this)"
-                            ondrop="onSlotDrop(event,this)"></div>`;
+        openClassModal() {
+            const list = document.getElementById('class-list-modal');
+            if (list) {
+                list.innerHTML = CLASSES.map(c => `
+                    <button onclick="selectClass('${c}')"
+                            class="text-left px-3 py-2.5 rounded-xl border border-card-line bg-layer hover:border-primary/40 hover:bg-primary/5 text-sm font-medium text-layer-foreground transition-all">
+                        ${c}
+                    </button>`).join('');
             }
-        });
-        body.innerHTML = html;
-        document.getElementById('blocks-layer').innerHTML = '';
-        undoStack = [];
-    }
-    const prevWeek=()=>{ weekOffset--; renderWeek(); };
-    const nextWeek=()=>{ weekOffset++; renderWeek(); };
-    document.getElementById('date-start').addEventListener('change',e=>{
-        weekOffset=Math.round((new Date(e.target.value)-getMonday(0))/(7*86400000));
-        renderWeek();
-    });
-
-    // ═══════════════════════════════════════
-    //  DRAG & DROP
-    // ═══════════════════════════════════════
-    let activeDragData=null;
-    function onDragStart(e,el) {
-        activeDragData={type:el.dataset.type,subjectName:el.dataset.subjectName||'',teacherName:el.dataset.teacherName||'',eventName:el.dataset.eventName||'',itemKey:el.dataset.itemKey,fromBlock:false};
-        e.dataTransfer.effectAllowed='copy'; el.style.opacity='.4';
-    }
-    function onDragEnd(el){ el.style.opacity=''; }
-    function onSlotDragOver(e,el){ e.preventDefault(); el.style.background='rgba(124,58,237,.07)'; }
-    function onSlotDragLeave(el){ el.style.background=''; }
-    function onSlotDrop(e,el) {
-        e.preventDefault(); el.style.background='';
-        const hi=parseInt(el.dataset.hi), di=parseInt(el.dataset.di);
-        if(activeDragData?.fromBlock) {
-            const cw=colW();
-            activeDragData.blockEl.style.left=`${di*cw}px`;
-            activeDragData.blockEl.style.top=`${hi*slotH}px`;
-            activeDragData=null; return;
+            this.showModal('modal-class');
         }
-        if(!activeDragData) return;
-        undoStack.push(placeBlock(hi,di,activeDragData));
-        activeDragData=null;
-    }
-    const colW=()=>(document.getElementById('schedule-wrapper').offsetWidth-44)/DAY_COUNT;
 
-    // ═══════════════════════════════════════
-    //  PLACE BLOCK
-    // ═══════════════════════════════════════
-    function placeBlock(hi,di,data) {
-        const cw=colW();
-        const colorId=selectedColors[data.itemKey]||'violet';
-        const col=PALETTE.find(p=>p.id===colorId);
-        const label1=data.type==='teacher'?data.subjectName:data.eventName;
-        const label2=data.type==='teacher'?data.teacherName:null;
+        selectClass(c) {
+            this.hideModal('modal-class');
+            this.enterEditMode(c);
+        }
 
-        const block=document.createElement('div');
-        block.style.cssText=`position:absolute;left:${di*cw}px;top:${hi*slotH}px;width:${cw-2}px;height:${2*slotH-2}px;
-            background:${col.bg};border-top:1.5px solid ${col.border};border-right:1.5px solid ${col.border};
-            border-bottom:1.5px solid ${col.border};border-left:4px solid ${col.border};
-            color:${col.text};border-radius:9px;padding:7px 9px;pointer-events:all;overflow:hidden;
-            z-index:10;box-shadow:0 2px 10px rgba(0,0,0,.08);cursor:grab;user-select:none;`;
-        block.innerHTML=`
-            <p style="font-weight:700;line-height:1.3;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px">${label1}</p>
-            ${label2?`<p style="font-size:11px;opacity:.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${label2}</p>`:''}
-            <div data-r="n" style="position:absolute;top:0;left:0;right:0;height:5px;cursor:n-resize;border-radius:9px 9px 0 0;background:rgba(0,0,0,.05)"></div>
-            <div data-r="s" style="position:absolute;bottom:0;left:0;right:0;height:5px;cursor:s-resize;border-radius:0 0 9px 9px;background:rgba(0,0,0,.05)"></div>
-            <div data-r="e" style="position:absolute;top:5px;right:0;bottom:5px;width:5px;cursor:e-resize;background:rgba(0,0,0,.05)"></div>
-            <div data-r="w" style="position:absolute;top:5px;left:0;bottom:5px;width:5px;cursor:w-resize;background:rgba(0,0,0,.05)"></div>`;
+        enterEditMode(className) {
+            const url = new URL('/ap/schedule/edit', window.location.origin);
+            if (className) url.searchParams.set('class', className);
+            window.location.href = url.toString();
+        }
 
-        block.setAttribute('draggable','true');
-        block.addEventListener('dragstart',e=>{ if(e.target.dataset.r){e.preventDefault();return;} activeDragData={fromBlock:true,blockEl:block}; e.dataTransfer.effectAllowed='move'; setTimeout(()=>block.style.opacity='.35',0); });
-        block.addEventListener('dragend',()=>block.style.opacity='1');
-        block.addEventListener('dblclick',()=>{ block.remove(); undoStack=undoStack.filter(b=>b!==block); });
+        showModal(id) {
+            const m = document.getElementById(id);
+            if (!m) return;
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
 
-        // Resize
-        block.querySelector('[data-r="n"]').addEventListener('mousedown',e=>{ e.stopPropagation(); e.preventDefault();
-            const sy=e.clientY,st=parseFloat(block.style.top),sh=block.offsetHeight;
-            const mv=ev=>{ const d=Math.round((ev.clientY-sy)/slotH)*slotH; block.style.top=Math.max(0,st+d)+'px'; block.style.height=Math.max(slotH,sh-d-2)+'px'; };
-            const up=()=>{removeEventListener('mousemove',mv);removeEventListener('mouseup',up);}; addEventListener('mousemove',mv); addEventListener('mouseup',up); });
-
-        block.querySelector('[data-r="s"]').addEventListener('mousedown',e=>{ e.stopPropagation(); e.preventDefault();
-            const sy=e.clientY,sh=block.offsetHeight;
-            const mv=ev=>{ block.style.height=Math.max(slotH,Math.round((sh+ev.clientY-sy)/slotH)*slotH-2)+'px'; };
-            const up=()=>{removeEventListener('mousemove',mv);removeEventListener('mouseup',up);}; addEventListener('mousemove',mv); addEventListener('mouseup',up); });
-
-        block.querySelector('[data-r="e"]').addEventListener('mousedown',e=>{ e.stopPropagation(); e.preventDefault();
-            const sx=e.clientX,sw=block.offsetWidth,cw2=colW();
-            const mv=ev=>{ block.style.width=Math.max(cw2-2,Math.round((sw+ev.clientX-sx)/cw2)*cw2-2)+'px'; };
-            const up=()=>{removeEventListener('mousemove',mv);removeEventListener('mouseup',up);}; addEventListener('mousemove',mv); addEventListener('mouseup',up); });
-
-        block.querySelector('[data-r="w"]').addEventListener('mousedown',e=>{ e.stopPropagation(); e.preventDefault();
-            const sx=e.clientX,sl=parseFloat(block.style.left),sw=block.offsetWidth,cw2=colW();
-            const mv=ev=>{ const d=Math.round((ev.clientX-sx)/cw2)*cw2; block.style.left=Math.max(0,sl+d)+'px'; block.style.width=Math.max(cw2-2,sw-d)+'px'; };
-            const up=()=>{removeEventListener('mousemove',mv);removeEventListener('mouseup',up);}; addEventListener('mousemove',mv); addEventListener('mouseup',up); });
-
-        document.getElementById('blocks-layer').appendChild(block);
-        return block;
+        hideModal(id) {
+            const m = document.getElementById(id);
+            if (!m) return;
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
     }
 
-    // ═══════════════════════════════════════
-    //  ACTIONS
-    // ═══════════════════════════════════════
-    function undoLast(){ if(undoStack.length) undoStack.pop().remove(); }
-
-    function saveSchedule(){ showToast('Emploi du temps sauvegardé'); }
-
-    async function exportPDF(){
-        const el=document.getElementById('schedule-card');
-        try {
-            showToast('Génération du PDF…');
-            // Temporarily show blocks-layer for capture
-            const bl=document.getElementById('blocks-layer');
-            const oldPE=bl.style.pointerEvents; bl.style.pointerEvents='all';
-            const canvas=await html2canvas(el,{scale:2,useCORS:true,logging:false,allowTaint:true});
-            bl.style.pointerEvents=oldPE;
-            const {jsPDF}=window.jspdf;
-            const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-            const pw=pdf.internal.pageSize.getWidth(), ph=pdf.internal.pageSize.getHeight();
-            const iw=canvas.width, ih=canvas.height;
-            const ratio=Math.min(pw/iw*100, ph/ih*100)/100;
-            pdf.addImage(canvas.toDataURL('image/png'),'PNG',0,0,iw*ratio,ih*ratio);
-            pdf.save('emploi-du-temps.pdf');
-            showToast('PDF exporté avec succès');
-        } catch(err){ console.error(err); showToast('Erreur lors de l\'export'); }
-    }
-
-    let toastTimer;
-    function showToast(msg){
-        const t=document.getElementById('toast');
-        document.getElementById('toast-msg').textContent=msg;
-        t.classList.remove('hidden'); clearTimeout(toastTimer);
-        toastTimer=setTimeout(()=>t.classList.add('hidden'),2800);
-    }
-
-    window.addEventListener('resize',()=>{ recalcSlotH(); buildGrid(); });
+    document.addEventListener('DOMContentLoaded', () => {
+        new APScheduleController();
+    });
 </script>
 
 <script th:src="@{/js/preline.js}"></script>
+<script type="module" th:src="@{/js/common/themeToggle.js}"></script>
 </body>
 </html>

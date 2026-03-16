@@ -64,7 +64,7 @@ bg-sidebar border-e border-sidebar-line" role="dialog" tabindex="-1" aria-label=
         <!-- End Header -->
 
         <!-- Body -->
-        <nav class="flex-1 overflow-y-auto px-3 pb-3
+        <nav data-admin-sidebar class="flex-1 overflow-y-auto px-3 pb-3
                     [&::-webkit-scrollbar]:w-1.5
                     [&::-webkit-scrollbar-track]:bg-transparent
                     [&::-webkit-scrollbar-thumb]:rounded-full
@@ -79,7 +79,9 @@ bg-sidebar border-e border-sidebar-line" role="dialog" tabindex="-1" aria-label=
                 <ul class="space-y-0.5">
 
                     <li>
-                        <a th:href="@{/admin/users}" th:classappend="${activePage == 'users'} ?
+                        <a data-admin-bc-label="Utilisateurs"
+                           th:attr="aria-current=${activePage == 'users'} ? 'page' : null"
+                           th:href="@{/admin/users}" th:classappend="${activePage == 'users'} ?
      'bg-primary text-white hover:bg-primary/90' :
      'text-sidebar-nav-foreground hover:bg-sidebar-nav-hover focus:bg-sidebar-nav-focus'" class="group   w-full flex items-center gap-x-3 py-2 px-2.5 text-sm font-medium
           rounded-xl focus:outline-none transition-colors
@@ -107,7 +109,9 @@ bg-sidebar border-e border-sidebar-line" role="dialog" tabindex="-1" aria-label=
                     </li>
 
                     <li>
-                        <a th:href="@{/admin/school}" th:classappend="${activePage == 'school'} ?
+                        <a data-admin-bc-label="Cycles"
+                           th:attr="aria-current=${activePage == 'school'} ? 'page' : null"
+                           th:href="@{/admin/school}" th:classappend="${activePage == 'school'} ?
      'bg-primary text-white hover:bg-primary/90' :
      'text-sidebar-nav-foreground hover:bg-sidebar-nav-hover focus:bg-sidebar-nav-focus'" class="group   w-full flex items-center gap-x-3 py-2 px-2.5 text-sm font-medium
           rounded-xl focus:outline-none transition-colors
@@ -131,7 +135,9 @@ bg-sidebar border-e border-sidebar-line" role="dialog" tabindex="-1" aria-label=
                     </li>
 
                     <li>
-                        <a th:href="@{/admin/classes}" th:classappend="${activePage == 'classes'} ?
+                        <a data-admin-bc-label="Classes"
+                           th:attr="aria-current=${activePage == 'classes'} ? 'page' : null"
+                           th:href="@{/admin/classes}" th:classappend="${activePage == 'classes'} ?
      'bg-primary text-white hover:bg-primary/90' :
      'text-sidebar-nav-foreground hover:bg-sidebar-nav-hover focus:bg-sidebar-nav-focus'" class="group   w-full flex items-center gap-x-3 py-2 px-2.5 text-sm font-medium
           rounded-xl focus:outline-none transition-colors

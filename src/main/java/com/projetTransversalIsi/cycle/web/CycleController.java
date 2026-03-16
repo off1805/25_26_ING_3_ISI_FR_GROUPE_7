@@ -43,14 +43,14 @@ public class CycleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CycleResponseDTO> getCycleById(@PathVariable Long id) {
+    public ResponseEntity<CycleResponseDTO> getCycleById(@PathVariable("id") Long id) {
         log.info("Requête de récupération du cycle ID : {}", id);
         Cycle cycle = findCycleByIdUC.execute(id);
         return ResponseEntity.ok(CycleResponseDTO.fromDomain(cycle));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CycleResponseDTO> updateCycle(@PathVariable Long id,
+    public ResponseEntity<CycleResponseDTO> updateCycle(@PathVariable("id") Long id,
                                                          @Valid @RequestBody UpdateCycleRequestDTO request) {
         log.info("Requête de mise à jour du cycle ID : {}", id);
         Cycle cycle = updateCycleUC.execute(id, request);
@@ -58,7 +58,7 @@ public class CycleController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<CycleResponseDTO> modifyStatus(@PathVariable Long id,
+    public ResponseEntity<CycleResponseDTO> modifyStatus(@PathVariable("id") Long id,
                                                           @Valid @RequestBody ModifyCycleStatusDTO statusDTO) {
         log.info("Requête de modification de statut du cycle ID : {} vers {}", id, statusDTO.status());
         Cycle cycle = modifyCycleStatusUC.execute(id, statusDTO);
@@ -66,7 +66,7 @@ public class CycleController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<DeleteCycleResponseDTO> deleteCycle(@PathVariable Long id) {
+    public ResponseEntity<DeleteCycleResponseDTO> deleteCycle(@PathVariable("id") Long id) {
         log.info("Requête de suppression du cycle ID : {}", id);
         DeleteCycleRequestDTO command = new DeleteCycleRequestDTO(id);
         deleteCycleUC.execute(command);

@@ -22,6 +22,8 @@ public interface SpringDataFiliereRepository extends JpaRepository<JpaFiliereEnt
     List<JpaFiliereEntity> findByDeletedTrue();
     boolean existsByCodeAndDeletedFalse(String code);
 
+    List<JpaFiliereEntity> findByCycleIdAndDeletedFalse(Long cycleId);
+
     @Query("SELECT f FROM JpaFiliereEntity f WHERE " +
             "(:code IS NULL OR f.code LIKE %:code%) AND " +
             "(:nom IS NULL OR f.nom LIKE %:nom%)")

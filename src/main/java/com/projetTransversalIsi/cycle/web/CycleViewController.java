@@ -1,22 +1,23 @@
 package com.projetTransversalIsi.cycle.web;
 
+import com.projetTransversalIsi.cycle.application.use_cases.GetAllCyclesUC;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Controller
 @RequestMapping("/cycles")
+@RequiredArgsConstructor
 public class CycleViewController {
+
+    private final GetAllCyclesUC getAllCyclesUC;
 
     @GetMapping("/list")
     public String cycleList(Model model) {
-        Map<String, Object> cycles = new HashMap<>();
-        model.addAllAttributes(cycles);
-        return "cycles/list";
+        model.addAttribute("cycles", getAllCyclesUC.execute());
+        return "AdminInterface/AdminCycles";
     }
 
     @GetMapping("/new")
