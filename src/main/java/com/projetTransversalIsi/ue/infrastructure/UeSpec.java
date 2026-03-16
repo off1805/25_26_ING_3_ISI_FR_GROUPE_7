@@ -30,4 +30,12 @@ public class UeSpec {
             return cb.equal(root.get("isDeleted"), deleted);
         };
     }
+
+    public static Specification<JpaUeEntity> hasSpecialiteId(Long specialiteId) {
+        return (root, query, cb) -> {
+            if (specialiteId == null)
+                return null;
+            return cb.equal(root.get("specialiteId"), specialiteId);
+        };
+    }
 }

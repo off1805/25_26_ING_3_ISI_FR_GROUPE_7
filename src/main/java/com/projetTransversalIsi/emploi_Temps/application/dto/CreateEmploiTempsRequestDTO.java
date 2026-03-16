@@ -1,14 +1,10 @@
 package com.projetTransversalIsi.emploi_Temps.application.dto;
 
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record CreateEmploiTempsRequestDTO(
-
-        @NotBlank(message = "Le libellé est obligatoire")
-        String libelle,
 
         @NotNull(message = "La date de début est obligatoire")
         LocalDate dateDebut,
@@ -18,9 +14,6 @@ public record CreateEmploiTempsRequestDTO(
 
         Integer semaine,
 
-        @NotNull(message = "L'ID de la filière est obligatoire")
-        Long filiereId,
-
-        @NotNull(message = "L'ID du niveau est obligatoire")
-        Long niveauId
+        @NotNull(message = "La classe est obligatoire")
+        Long classeId
 ) {}

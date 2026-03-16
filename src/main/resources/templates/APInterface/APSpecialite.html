@@ -89,16 +89,16 @@
             </header>
 
             <!-- PAGE CONTENT -->
-            <div class="flex-1 overflow-y-auto p-6 lg:p-8 bg-background-1">
-                <nav class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-base text-muted-foreground mb-5"
+            <div class="flex-1 overflow-y-auto p-6  bg-background-1">
+                <nav class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-muted-foreground mb-5"
                     aria-label="Breadcrumb" data-ap-breadcrumb-target="page"></nav>
                 <div class="flex flex-col lg:flex-row gap-6">
 
                     <!-- Classes List -->
                     <div class="py-4 flex-col flex flex-1">
                         <div class="mb-4">
-                            <h3 class="font-bold text-base text-layer-foreground">Classes</h3>
-                            <p class="text-xs text-muted-foreground-2 mt-0.5">
+                            <h3 class="font-semibold text-xl text-layer-foreground">Classes</h3>
+                            <p class="text-sm text-muted-foreground-2 mt-0.5">
                                 Classes rattachées à la spécialité
                                 <span th:text="${specialite != null ? specialite.libelle : ''}"></span>
                             </p>
@@ -117,8 +117,8 @@
                                 <div class="w-full flex justify-between items-center truncate">
                                     <div class="flex items-center gap-x-3 min-w-0">
                                         <div
-                                            class="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                            <span class="text-primary font-bold text-[11px]" th:text="${classe.code}">C</span>
+                                            class="size-8 rounded-lg text-primary bg-primary/10 flex items-center justify-center shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chalkboard-teacher"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 19h-3a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v11a1 1 0 0 1 -1 1" /><path d="M12 14a2 2 0 1 0 4.001 -.001a2 2 0 0 0 -4.001 .001" /><path d="M17 19a2 2 0 0 0 -2 -2h-2a2 2 0 0 0 -2 2" /></svg>
                                         </div>
                                         <div class="truncate min-w-0">
                                             <div class="font-bold text-layer-foreground truncate" th:text="${classe.code}">
@@ -133,64 +133,154 @@
                                 </div>
                             </li>
                         </ul>
-
-                        <!-- UE Table -->
-                        <div class="mt-6 bg-card rounded-2xl border border-card-line overflow-hidden">
-                            <div class="px-6 py-4 border-b border-card-line">
-                                <h3 class="font-bold text-base text-layer-foreground">Unités d'enseignement (UE)</h3>
-                                <p class="text-xs text-muted-foreground-2 mt-0.5">
-                                    Catalogue des UEs
+                        <div class="flex justify-between items-center mt-8">
+                            <div class="">
+                                <h3 class="font-semibold text-xl text-layer-foreground">Unités d'enseignement (UE)</h3>
+                                <p class="text-sm text-muted-foreground-2 mt-0.5">
+                                    UEs rattachées à cette spécialité
                                 </p>
                             </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
-                                    <thead>
-                                        <tr class="border-y border-card-line">
-                                            <th
-                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
-                                                UE</th>
-                                            <th
-                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
-                                                Code</th>
-                                            <th
-                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
-                                                Credits</th>
-                                            <th
-                                                class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
-                                                Description</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-card-line">
-                                        <tr th:if="${ues == null || #lists.isEmpty(ues)}">
-                                            <td class="px-6 py-4 text-sm text-muted-foreground-2" colspan="4">
-                                                Aucune UE disponible.
-                                            </td>
-                                        </tr>
+                            <button type="button"
+                                    class="inline-flex items-center gap-x-2 py-2 px-3 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary-hover focus:outline-none transition-all"
+                                    data-hs-overlay="#hs-modal-add-ue">
+                                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
+                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                Ajouter une UE
+                            </button>
 
-                                        <tr th:each="ue : ${ues}" class="hover:bg-muted/40 transition-colors">
-                                            <td class="px-6 py-4">
-                                                <div class="min-w-0">
-                                                    <p class="text-sm font-semibold text-layer-foreground truncate"
-                                                        th:text="${ue.libelle}">Libelle UE</p>
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <span
-                                                    class="inline-flex items-center px-2 py-1 rounded-lg bg-muted text-xs font-bold text-layer-foreground font-mono"
-                                                    th:text="${ue.code}">UE101</span>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <span class="text-sm font-semibold text-layer-foreground"
-                                                    th:text="${ue.credit}">3</span>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <p class="text-sm text-muted-foreground-2 line-clamp-2"
-                                                    th:text="${ue.description}">Description...</p>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        </div>
+
+
+                        <!-- UE Table -->
+                        <div class="mt-6 bg-layer rounded-xl border border-card-line overflow-hidden py-4">
+                            <!-- Tab Nav -->
+                            <div class="border-b border-line-2 px-6">
+                                <nav id="hs-tabs" class="flex  gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                                    <button type="button" class="hs-tab-active:font-semibold hs-tab-active:text-primary-active hs-tab-active:after:bg-primary-active relative py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-muted-foreground-1 after:absolute after:-bottom-px after:inset-x-0 after:w-full after:h-0.5 after:bg-transparent hover:text-primary-hover focus:outline-hidden focus:text-primary-focus disabled:opacity-50 disabled:pointer-events-none active" id="tabs-with-underline-item-1" aria-selected="true" data-hs-tab="#tabs-with-underline-1" aria-controls="tabs-with-underline-1" role="tab">
+                                        Semestre 1
+                                    </button>
+                                    <button type="button" class="hs-tab-active:font-semibold hs-tab-active:text-primary-active hs-tab-active:after:bg-primary-active relative py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-muted-foreground-1 after:absolute after:-bottom-px after:inset-x-0 after:w-full after:h-0.5 after:bg-transparent hover:text-primary-hover focus:outline-hidden focus:text-primary-focus disabled:opacity-50 disabled:pointer-events-none" id="tabs-with-underline-item-2" aria-selected="false" data-hs-tab="#tabs-with-underline-2" aria-controls="tabs-with-underline-2" role="tab">
+                                        Semestre 2
+                                    </button>
+
+                                </nav>
                             </div>
+                            <!-- End Tab Nav -->
+
+                            <!-- Tab Content -->
+                            <div class="">
+                                <div id="tabs-with-underline-1" role="tabpanel" aria-labelledby="tabs-with-underline-item-1">
+
+                                    <div class=" py-3 px-6 border-b border-card-line flex items-start justify-between">
+                                        <div class="relative sm:w-64">
+                                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
+                                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2">
+                                                <circle cx="11" cy="11" r="8" />
+                                                <path d="m21 21-4.34-4.34" />
+                                            </svg>
+                                            <input type="text" placeholder="Rechercher…"
+                                                   class="pl-9 pr-4 py-2 w-full text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
+                                        </div>
+
+                                    </div>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-left">
+                                            <thead>
+                                            <tr class="border-y border-card-line">
+                                                <th
+                                                        class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                    UE</th>
+                                                <th
+                                                        class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                    Code</th>
+                                                <th
+                                                        class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest">
+                                                    Credits</th>
+                                                <th
+                                                        class="px-6 py-3 text-xs font-medium text-muted-foreground-2/60 uppercase tracking-widest text-right">
+                                                    Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-card-line">
+                                            <tr th:if="${ues == null || #lists.isEmpty(ues)}">
+                                                <td class="text-sm px-6 py-4  text-muted-foreground-2" colspan="4">
+                                                    Aucune UE disponible.
+                                                </td>
+                                            </tr>
+
+                                            <tr th:each="ue : ${ues}" class="hover:bg-muted/40 transition-colors">
+                                                <td class="px-6 py-4">
+                                                    <div class="flex items-center gap-3 min-w-0">
+                                                        <div class="size-9 rounded-xl flex items-center justify-center shrink-0"
+                                                             th:style="${ue.couleur != null} ? 'background-color:' + ${ue.couleur} + '1a; color:' + ${ue.couleur} + ';' : ''">
+                                                            <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                                 fill="none" stroke="currentColor" stroke-width="1.5"
+                                                                 stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                                <path d="M5 5a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1l0 -14" />
+                                                                <path d="M9 5a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1l0 -14" />
+                                                                <path d="M5 8h4" />
+                                                                <path d="M9 16h4" />
+                                                                <path d="M13.803 4.56l2.184 -.53c.562 -.135 1.133 .19 1.282 .732l3.695 13.418a1.02 1.02 0 0 1 -.634 1.219l-.133 .041l-2.184 .53c-.562 .135 -1.133 -.19 -1.282 -.732l-3.695 -13.418a1.02 1.02 0 0 1 .634 -1.219l.133 -.041" />
+                                                                <path d="M14 9l4 -1" />
+                                                                <path d="M16 16l3.923 -.98" />
+                                                            </svg>
+                                                        </div>
+                                                        <p class="text-sm text-layer-foreground truncate" th:text="${ue.libelle}">Libelle UE</p>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                <span
+                                                        class="text-sm inline-flex items-center px-2 py-1 rounded-lg bg-muted   text-layer-foreground font-mono"
+                                                        th:text="${ue.code}">UE101</span>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                <span class="text-sm text-layer-foreground"
+                                                      th:text="${ue.credit}">3</span>
+                                                </td>
+                                                <td class="px-6 py-4 text-right">
+                                                    <div class="hs-dropdown relative inline-flex">
+                                                        <button type="button"
+                                                                class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors focus:outline-none"
+                                                                aria-haspopup="menu" aria-expanded="false"
+                                                                th:attr="data-ue-id=${ue.id}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="5" r="1"/>
+                                                                <circle cx="12" cy="12" r="1"/>
+                                                                <circle cx="12" cy="19" r="1"/>
+                                                            </svg>
+                                                        </button>
+                                                        <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-36 bg-layer border border-card-line shadow-lg rounded-xl z-20 p-1"
+                                                             role="menu">
+                                                            <button type="button"
+                                                                    class="w-full flex items-center gap-x-2.5 py-2 px-3 text-sm text-muted-foreground-2 hover:bg-muted rounded-lg transition-colors"
+                                                                    disabled>
+                                                                Actions
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div id="tabs-with-underline-2" class="hidden" role="tabpanel" aria-labelledby="tabs-with-underline-item-2">
+                                    <p class="text-muted-foreground-1">
+                                        This is the <em class="font-semibold text-foreground">second</em> item's tab body.
+                                    </p>
+                                </div>
+
+                            </div>
+                            <!-- End Tab Content -->
+
                         </div>
                     </div>
 
@@ -247,9 +337,94 @@
         </section>
     </section>
 
+    <!-- Modal Ajout UE -->
+    <div id="hs-modal-add-ue"
+        class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none"
+        role="dialog" tabindex="-1">
+        <div
+            class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-300 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+            <div class="flex flex-col bg-layer border border-layer-line shadow-sm rounded-xl pointer-events-auto">
+                <div class="flex justify-between items-center py-3 px-4 border-b border-layer-line">
+                    <h3 class="font-bold text-layer-foreground">Ajouter une UE</h3>
+                    <button type="button"
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-layer-hover text-layer-foreground hover:bg-layer-focus focus:outline-none"
+                        data-hs-overlay="#hs-modal-add-ue">
+                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="addUeForm">
+                    <div class="p-4 space-y-4">
+                        <input type="hidden" name="specialiteId" th:value="${specialite.id}">
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-layer-foreground">Nom (libellé)</label>
+                            <input type="text" name="libelle"
+                                class="py-3 px-4 block w-full bg-layer border border-layer-line rounded-lg text-sm focus:border-primary focus:ring-primary"
+                                required>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-layer-foreground">Code</label>
+                                <input type="text" name="code"
+                                    class="py-3 px-4 block w-full bg-layer border border-layer-line rounded-lg text-sm focus:border-primary focus:ring-primary"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-layer-foreground">Crédits</label>
+                                <input type="number" min="1" name="credit"
+                                    class="py-3 px-4 block w-full bg-layer border border-layer-line rounded-lg text-sm focus:border-primary focus:ring-primary"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-layer-foreground">Volume horaire total</label>
+                                <input type="number" min="1" name="volumeHoraireTotal"
+                                    class="py-3 px-4 block w-full bg-layer border border-layer-line rounded-lg text-sm focus:border-primary focus:ring-primary"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-layer-foreground">Couleur</label>
+                                <input type="color" name="couleur" value="#ffffff"
+                                    class="h-11 py-2 px-2 block w-full bg-layer border border-layer-line rounded-lg">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-layer-foreground">Description</label>
+                            <textarea name="description"
+                                class="py-3 px-4 block w-full bg-layer border border-layer-line rounded-lg text-sm focus:border-primary focus:ring-primary"
+                                rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t border-layer-line">
+                        <button type="button"
+                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-layer-line bg-layer text-layer-foreground shadow-sm hover:bg-layer-hover focus:outline-none"
+                            data-hs-overlay="#hs-modal-add-ue">Annuler</button>
+                        <button id="ap-btn-create-ue" type="submit"
+                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary text-white hover:bg-primary-hover focus:outline-none">
+                            Créer l'UE
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/other/toastify.js}"></script>
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
     <script type="module" th:src="@{/js/common/apBreadcrumbs.js}"></script>
+    <script type="module" th:src="@{/js/Ue/ui/UeController.js}"></script>
 </body>
 
 </html>

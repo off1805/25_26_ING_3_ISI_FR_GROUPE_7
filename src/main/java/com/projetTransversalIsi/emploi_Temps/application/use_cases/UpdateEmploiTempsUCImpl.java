@@ -22,12 +22,10 @@ public class UpdateEmploiTempsUCImpl implements UpdateEmploiTempsUC {
                 .orElseThrow(() -> new EmploiTempsNotFoundException(command.id()));
 
         emploiTemps.update(
-                command.libelle(),
                 command.dateDebut(),
                 command.dateFin(),
                 command.semaine(),
-                command.filiereId(),
-                command.niveauId()
+                command.classeId()
         );
 
         return emploiTempsRepo.save(emploiTemps);

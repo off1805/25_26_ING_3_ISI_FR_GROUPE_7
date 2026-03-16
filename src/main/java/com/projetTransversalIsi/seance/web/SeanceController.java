@@ -23,7 +23,7 @@ public class SeanceController {
     @PostMapping
     public ResponseEntity<?> createSeance(@Valid @RequestBody CreateSeanceRequestDTO request) {
         try {
-            log.info("Création d'une séance: {} - {}", request.libelle(), request.dateSeance());
+            log.info("Création d'une séance: date {}", request.dateSeance());
             SeanceResponseDTO response = seanceService.createSeance(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (SeanceConflictException e) {
@@ -64,7 +64,6 @@ public class SeanceController {
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Long enseignantId,
             @RequestParam(required = false) Long coursId,
-            @RequestParam(required = false) String salle,
             @RequestParam(defaultValue = "false") boolean includeDeleted) {
 
         log.info("Recherche de séances - date: {}, enseignant: {}", date, enseignantId);
@@ -75,7 +74,7 @@ public class SeanceController {
         }
 
         SearchSeanceRequestDTO criteria = new SearchSeanceRequestDTO(
-                dateObj, enseignantId, coursId, salle, includeDeleted
+                dateObj, enseignantId, coursId, includeDeleted
         );
 
         List<SeanceResponseDTO> resultats = seanceService.searchSeances(criteria);
@@ -89,7 +88,7 @@ public class SeanceController {
 
         log.info("Séances de l'enseignant ID: {}", enseignantId);
         SearchSeanceRequestDTO criteria = new SearchSeanceRequestDTO(
-                null, enseignantId, null, null, includeDeleted
+                null, enseignantId, null, includeDeleted
         );
         List<SeanceResponseDTO> resultats = seanceService.searchSeances(criteria);
         return ResponseEntity.ok(resultats);
@@ -102,7 +101,7 @@ public class SeanceController {
 
         log.info("Séances du cours ID: {}", coursId);
         SearchSeanceRequestDTO criteria = new SearchSeanceRequestDTO(
-                null, null, coursId, null, includeDeleted
+                null, null, coursId, includeDeleted
         );
         List<SeanceResponseDTO> resultats = seanceService.searchSeances(criteria);
         return ResponseEntity.ok(resultats);
@@ -116,7 +115,7 @@ public class SeanceController {
         log.info("Séances du date: {}", date);
         LocalDate dateObj = LocalDate.parse(date);
         SearchSeanceRequestDTO criteria = new SearchSeanceRequestDTO(
-                dateObj, null, null, null, includeDeleted
+                dateObj, null, null, includeDeleted
         );
         List<SeanceResponseDTO> resultats = seanceService.searchSeances(criteria);
         return ResponseEntity.ok(resultats);
@@ -125,7 +124,7 @@ public class SeanceController {
     @GetMapping("/active")
     public ResponseEntity<List<SeanceResponseDTO>> getActiveSeances() {
         log.info("Liste des séances actives");
-        SearchSeanceRequestDTO criteria = new SearchSeanceRequestDTO(null, null, null, null, false);
+        SearchSeanceRequestDTO criteria = new SearchSeanceRequestDTO(null, null, null, false);
         List<SeanceResponseDTO> resultats = seanceService.searchSeances(criteria);
         return ResponseEntity.ok(resultats);
     }
@@ -133,7 +132,7 @@ public class SeanceController {
     @GetMapping("/deleted")
     public ResponseEntity<List<SeanceResponseDTO>> getDeletedSeances() {
         log.info("Liste des séances supprimées");
-        SearchSeanceRequestDTO criteria = new SearchSeanceRequestDTO(null, null, null, null, true);
+        SearchSeanceRequestDTO criteria = new SearchSeanceRequestDTO(null, null, null, true);
         List<SeanceResponseDTO> resultats = seanceService.searchSeances(criteria);
         resultats = resultats.stream()
                 .filter(SeanceResponseDTO::deleted)

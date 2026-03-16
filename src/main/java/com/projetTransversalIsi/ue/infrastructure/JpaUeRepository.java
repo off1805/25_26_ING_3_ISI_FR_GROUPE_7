@@ -50,6 +50,7 @@ public class JpaUeRepository implements UeRepository {
         Specification<JpaUeEntity> spec = Specification
                 .where(UeSpec.hasLibelle(command.getLibelle()))
                 .and(UeSpec.hasCode(command.getCode()))
+                .and(UeSpec.hasSpecialiteId(command.getSpecialiteId()))
                 .and(UeSpec.isDeleted(command.getDeleted()));
 
         return springDataUeRepository.findAll(spec, pageable).map(ueMapper::jpaUeEntityToUe);

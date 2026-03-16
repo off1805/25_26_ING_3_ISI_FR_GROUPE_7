@@ -22,7 +22,7 @@ public class JpaEmploiTempsRepository implements EmploiTempsRepository {
     public EmploiTemps save(EmploiTemps emploiTemps) {
         JpaEmploiTempsEntity entity = mapper.toEntity(emploiTemps);
         JpaEmploiTempsEntity savedEntity = jpaRepo.save(entity);
-        log.info("Emploi du temps sauvegardé: {}", savedEntity.getLibelle());
+        log.info("Emploi du temps sauvegardé id={}", savedEntity.getId());
         return mapper.toDomain(savedEntity);
     }
 
@@ -63,15 +63,8 @@ public class JpaEmploiTempsRepository implements EmploiTempsRepository {
     }
 
     @Override
-    public List<EmploiTemps> findByFiliereId(Long filiereId) {
-        return jpaRepo.findByFiliereId(filiereId).stream()
-                .map(mapper::toDomain)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<EmploiTemps> findByNiveauId(Long niveauId) {
-        return jpaRepo.findByNiveauId(niveauId).stream()
+    public List<EmploiTemps> findByClasseId(Long classeId) {
+        return jpaRepo.findByClasseId(classeId).stream()
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());
     }
@@ -91,7 +84,7 @@ public class JpaEmploiTempsRepository implements EmploiTempsRepository {
     }
 
     @Override
-    public boolean existsEmploiForPeriode(Long filiereId, Long niveauId, LocalDate dateDebut, LocalDate dateFin) {
-        return jpaRepo.existsEmploiForPeriode(filiereId, niveauId, dateDebut, dateFin);
+    public boolean existsEmploiForPeriode(Long classeId, LocalDate dateDebut, LocalDate dateFin) {
+        return jpaRepo.existsEmploiForPeriode(classeId, dateDebut, dateFin);
     }
 }

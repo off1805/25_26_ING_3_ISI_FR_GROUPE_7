@@ -6,6 +6,5 @@ public record SearchSeanceRequestDTO(
         LocalDate date,
         Long enseignantId,
         Long coursId,
-        String salle,
         Boolean includeDeleted
 ) {}
