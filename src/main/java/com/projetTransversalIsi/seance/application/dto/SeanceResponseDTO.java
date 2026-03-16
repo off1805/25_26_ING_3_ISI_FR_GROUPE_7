@@ -8,12 +8,12 @@ import java.time.LocalTime;
 public record SeanceResponseDTO(
         Long id,
         String libelle,
+        String salle,
         LocalDate dateSeance,
         LocalTime heureDebut,
         LocalTime heureFin,
         Long coursId,
         Long enseignantId,
-        String salle,
         boolean deleted,
         LocalDateTime deletedAt
 ) {
@@ -21,12 +21,12 @@ public record SeanceResponseDTO(
         return new SeanceResponseDTO(
                 seance.getId(),
                 seance.getLibelle(),
+                seance.getSalle(),
                 seance.getDateSeance(),
                 seance.getHeureDebut(),
                 seance.getHeureFin(),
                 seance.getCoursId(),
                 seance.getEnseignantId(),
-                seance.getSalle(),
                 seance.isDeleted(),
                 seance.getDeletedAt()
         );

@@ -51,25 +51,85 @@
     <div id="view-edit" class="flex h-screen overflow-hidden">
 
         <!-- ══ LEFT PANEL / SIDEBAR ══ -->
-        <div class="w-64 flex flex-col h-full border-e border-sidebar-line bg-sidebar overflow-y-auto"
+        <div class="w-64 flex flex-col h-full border-e border-sidebar-line bg-sidebar overflow-hidden min-h-0"
             style="scrollbar-width:thin">
-            <div class="flex flex-col">
-
-                <!-- Matières -->
-                <div>
-                    <div class="px-4 pt-3 pb-2.5 border-b border-card-line">
-                        <p class="text-sm font-bold text-layer-foreground">Matières</p>
-                        <p class="text-xs text-muted-foreground-2 mt-0.5">Glissez une matière sur le planning</p>
-                    </div>
-                    <div id="subject-list" class="p-2 space-y-1.5"></div>
+            <div class="flex flex-col h-full overflow-hidden min-h-0">
+                <div class="px-3 mt-4  py-1 w-fit  rounded-full hover:bg-layer-hover">
+                    <button id="btn-exit"
+                            class="flex items-center gap-1.5 text-sm font-medium text-muted-foreground-2 hover:text-layer-foreground transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 12H5" />
+                            <path d="M12 19l-7-7 7-7" />
+                        </svg>
+                    </button>
                 </div>
 
-                <!-- Évènements -->
-                <div class="overflow-hidden">
-                    <div class="px-4 pt-3 pb-2.5 border-b border-card-line flex items-center justify-between">
+
+                <div class="px-3 pt-5  ">
+
+                    <p class="text-sm font-semibold text-layer-foreground">Matières</p>
+                    <p class="text-sm text-muted-foreground mt-0.5">Glissez une matière sur le planning</p>
+                    <div class="relative w-full mt-5 ">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
+                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.34-4.34" />
+                        </svg>
+                        <input id="subject-search" type="text" placeholder="Rechercher…"
+                               class="pl-9 pr-4 py-2 w-full text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
+                    </div>
+                </div>
+
+                <!-- Tab Nav -->
+                <div class="border-b border-line-2 px-3 mt-3">
+
+                    <nav id="hs-tabs" class="flex  gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                        <button type="button" class="hs-tab-active:font-semibold hs-tab-active:text-primary-active hs-tab-active:after:bg-primary-active relative py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-muted-foreground-1 after:absolute after:-bottom-px after:inset-x-0 after:w-full after:h-0.5 after:bg-transparent hover:text-primary-hover focus:outline-hidden focus:text-primary-focus disabled:opacity-50 disabled:pointer-events-none active" id="tabs-with-underline-item-1" aria-selected="true" data-hs-tab="#tabs-with-underline-1" aria-controls="tabs-with-underline-1" role="tab">
+                            Toutes
+                        </button>
+                        <button type="button" class="hs-tab-active:font-semibold hs-tab-active:text-primary-active hs-tab-active:after:bg-primary-active relative py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-muted-foreground-1 after:absolute after:-bottom-px after:inset-x-0 after:w-full after:h-0.5 after:bg-transparent hover:text-primary-hover focus:outline-hidden focus:text-primary-focus disabled:opacity-50 disabled:pointer-events-none" id="tabs-with-underline-item-2" aria-selected="false" data-hs-tab="#tabs-with-underline-2" aria-controls="tabs-with-underline-2" role="tab">
+                            Non planifiees
+                        </button>
+                        <button type="button" class="hs-tab-active:font-semibold hs-tab-active:text-primary-active hs-tab-active:after:bg-primary-active relative py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-muted-foreground-1 after:absolute after:-bottom-px after:inset-x-0 after:w-full after:h-0.5 after:bg-transparent hover:text-primary-hover focus:outline-hidden focus:text-primary-focus disabled:opacity-50 disabled:pointer-events-none" id="tabs-with-underline-item-3" aria-selected="false" data-hs-tab="#tabs-with-underline-3" aria-controls="tabs-with-underline-3" role="tab">
+                            Planifiees
+                        </button>
+                    </nav>
+                </div>
+                <!-- End Tab Nav -->
+
+                <!-- Tab Content -->
+                <div class="mt-3 px-3 pb-3 flex-1 min-h-0 overflow-y-auto
+                            [&::-webkit-scrollbar]:w-1.5
+                            [&::-webkit-scrollbar-track]:bg-transparent
+                            [&::-webkit-scrollbar-thumb]:rounded-full
+                            [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb">
+                    <div id="tabs-with-underline-1" role="tabpanel" aria-labelledby="tabs-with-underline-item-1">
                         <div>
-                            <p class="text-sm font-bold text-layer-foreground">Évènements</p>
-                            <p class="text-xs text-muted-foreground-2 mt-0.5">Glissez sur le planning</p>
+
+                            <div id="subject-list-all" class="space-y-1.5"></div>
+                        </div>
+                    </div>
+                    <div id="tabs-with-underline-2" class="hidden" role="tabpanel" aria-labelledby="tabs-with-underline-item-2">
+                        <div id="subject-list-unscheduled" class=" space-y-1.5"></div>
+                    </div>
+                    <div id="tabs-with-underline-3" class="hidden" role="tabpanel" aria-labelledby="tabs-with-underline-item-3">
+                        <div id="subject-list-scheduled" class=" space-y-1.5"></div>
+                    </div>
+                </div>
+                <!-- End Tab Content -->
+
+
+                <!-- Matières -->
+
+
+                <!-- Évènements -->
+                <div class="overflow-hidden shrink-0">
+                    <div class="px-3 pt-3 pb-2.5 border-t border-card-line flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-semibold text-layer-foreground">Évènements</p>
+                            <p class="text-sm text-muted-foreground mt-0.5">Glissez sur le planning</p>
                         </div>
                         <button id="btn-open-event-modal"
                             class="size-6 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary flex items-center justify-center transition-colors shrink-0">
@@ -79,7 +139,7 @@
                             </svg>
                         </button>
                     </div>
-                    <div id="event-list" class="p-2 space-y-1"></div>
+                    <div id="event-list" class="px-3 space-y-0.5 mb-3"></div>
                 </div>
 
             </div>
@@ -93,14 +153,7 @@
             <header
                 class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar w-full items-center px-4 md:px-6 lg:px-8 border-b border-navbar-line z-20">
                 <div class="flex items-center gap-3 py-1">
-                    <button id="btn-exit"
-                        class="flex items-center gap-1.5 text-sm font-medium text-muted-foreground-2 hover:text-layer-foreground transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M19 12H5" />
-                            <path d="M12 19l-7-7 7-7" />
-                        </svg>
-                    </button>
+
                     <div class="hidden lg:flex items-center gap-2 text-sm">
                         <span class="flex items-center gap-1.5 font-bold text-primary">
                             <span class="size-2 rounded-full bg-primary animate-pulse inline-block"></span>

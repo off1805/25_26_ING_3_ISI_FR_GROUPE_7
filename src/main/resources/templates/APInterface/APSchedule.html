@@ -129,30 +129,137 @@
     </div>
 </div>
 
-<script type="module">
-    import { CLASSES } from '/js/APInterface/editScheduleUtils.js';
+<script type="module" th:inline="javascript">
+    import api from '/js/common/ClientHttp.js';
+
+    const CLASSES = /*[[${classes}]]*/ [];
 
     class APScheduleController {
         constructor() {
+            this.grid = document.getElementById('schedules-grid');
             this.init();
+            this.loadSchedules();
         }
 
         init() {
-            // Bind global actions to window for inline onclicks
             window.openClassModal = () => this.openClassModal();
             window.closeClassModal = () => this.hideModal('modal-class');
             window.selectClass = (c) => this.selectClass(c);
-            window.enterEditMode = (className) => this.enterEditMode(className);
+        }
+
+        async loadSchedules() {
+            if (!this.grid) return;
+            this.grid.innerHTML = '';
+            this.grid.appendChild(this._buildAddCard());
+
+            try {
+                const emplois = await api.get('/api/emplois-temps?includeDeleted=false');
+                if (Array.isArray(emplois) && emplois.length) {
+                    emplois.forEach(e => this.grid.appendChild(this._buildScheduleCard(e)));
+                } else {
+                    this.grid.appendChild(this._buildEmptyState());
+                }
+            } catch (error) {
+                console.error('Erreur chargement emplois du temps', error);
+                this.grid.appendChild(this._buildErrorState());
+            }
+        }
+
+        _buildAddCard() {
+            const div = document.createElement('div');
+            div.className = 'bg-card rounded-2xl shadow-sm p-4 flex flex-col items-center justify-center min-h-44 gap-3 cursor-pointer group hover:border-primary/40 hover:shadow-md border-2 border-dashed border-card-line transition-all';
+            div.addEventListener('click', () => this.openClassModal());
+            div.innerHTML = `
+                <div class="size-9 rounded-full border-2 border-dashed border-primary/25 group-hover:border-primary/60 flex items-center justify-center text-primary/30 group-hover:text-primary transition-all bg-primary/5 group-hover:bg-primary/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm font-bold text-muted-foreground-2 group-hover:text-primary transition-colors">Nouvel emploi du temps</p>
+                    <p class="text-xs text-muted-foreground-2 mt-0.5">Cliquez pour commencer</p>
+                </div>`;
+            return div;
+        }
+
+        _buildScheduleCard(emploi) {
+            const card = document.createElement('div');
+            card.className = 'bg-card rounded-2xl shadow-sm p-4 flex flex-col gap-3 hover:shadow-md transition-shadow duration-200';
+
+            const classe = (CLASSES || []).find(c => c?.id === emploi.classeId);
+            const classCode = classe?.code || `Classe ${emploi.classeId}`;
+            const className = classe?.nom || classCode;
+            const dateRange = `${this._formatDate(emploi.dateDebut)} — ${this._formatDate(emploi.dateFin)}`;
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between">
+                    <div class="size-9 rounded-xl bg-primary/15 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    </div>
+                    <button data-action="edit"
+                            class="size-6 flex items-center justify-center rounded-md text-muted-foreground-2 hover:bg-muted transition-colors"
+                            title="Modifier">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="px-1.5 py-0.5 rounded-md bg-primary/10 text-xs font-bold text-primary font-mono">${classCode}</span>
+                    </div>
+                    <p class="text-sm font-bold text-layer-foreground mb-1">Emploi du temps</p>
+                    <p class="text-xs text-muted-foreground-2 leading-relaxed">${className}</p>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs text-muted-foreground-2 mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    <span>${dateRange}</span>
+                </div>
+                <button data-action="edit"
+                        class="w-full py-2 rounded-xl bg-muted text-xs font-semibold text-layer-foreground hover:bg-primary/10 hover:text-primary transition-colors">
+                    Modifier l'emploi du temps
+                </button>
+            `;
+
+            card.querySelectorAll('[data-action="edit"]').forEach(btn => {
+                btn.addEventListener('click', () => this.enterEditMode({ id: emploi.classeId, code: classCode, emploiId: emploi.id }));
+            });
+
+            return card;
+        }
+
+        _buildEmptyState() {
+            const div = document.createElement('div');
+            div.className = 'col-span-full text-center text-sm text-muted-foreground-2 py-8';
+            div.textContent = 'Aucun emploi du temps trouvé.';
+            return div;
+        }
+
+        _buildErrorState() {
+            const div = document.createElement('div');
+            div.className = 'col-span-full text-center text-sm text-red-500 py-8';
+            div.textContent = 'Erreur lors du chargement des emplois du temps.';
+            return div;
+        }
+
+        _formatDate(str) {
+            if (!str) return '';
+            const d = new Date(str);
+            return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
 
         openClassModal() {
             const list = document.getElementById('class-list-modal');
             if (list) {
-                list.innerHTML = CLASSES.map(c => `
-                    <button onclick="selectClass('${c}')"
-                            class="text-left px-3 py-2.5 rounded-xl border border-card-line bg-layer hover:border-primary/40 hover:bg-primary/5 text-sm font-medium text-layer-foreground transition-all">
-                        ${c}
-                    </button>`).join('');
+                list.innerHTML = '';
+                (CLASSES || []).forEach((c) => {
+                    const code = c?.code || '';
+                    const id = c?.id || null;
+                    if (!code || !id) return;
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className =
+                        'text-left px-3 py-2.5 rounded-xl border border-card-line bg-layer hover:border-primary/40 hover:bg-primary/5 text-sm font-medium text-layer-foreground transition-all';
+                    btn.textContent = code;
+                    btn.addEventListener('click', () => this.selectClass({ id, code }));
+                    list.appendChild(btn);
+                });
             }
             this.showModal('modal-class');
         }
@@ -162,9 +269,14 @@
             this.enterEditMode(c);
         }
 
-        enterEditMode(className) {
+        enterEditMode(selected) {
             const url = new URL('/ap/schedule/edit', window.location.origin);
-            if (className) url.searchParams.set('class', className);
+            const classId = typeof selected === 'object' ? selected.id : null;
+            const classCode = typeof selected === 'object' ? selected.code : selected;
+            const emploiId = typeof selected === 'object' ? selected.emploiId : null;
+            if (classId) url.searchParams.set('classId', classId);
+            if (classCode) url.searchParams.set('class', classCode);
+            if (emploiId) url.searchParams.set('emploiId', emploiId);
             window.location.href = url.toString();
         }
 

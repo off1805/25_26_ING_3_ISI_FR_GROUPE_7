@@ -29,6 +29,9 @@ public class JpaUeEntity {
     private int volumeHoraireTotal;
 
     private String description;
+
+    @Column(name = "specialite_id")
+    private Long specialiteId;
     
     @Column(nullable = false, columnDefinition = "varchar(255) default '#ffffff'")
     private String couleur = "#ffffff";

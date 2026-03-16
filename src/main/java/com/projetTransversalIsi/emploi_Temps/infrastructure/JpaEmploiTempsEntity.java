@@ -19,9 +19,6 @@ public class JpaEmploiTempsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String libelle;
-
     @Column(name = "date_debut", nullable = false)
     private LocalDate dateDebut;
 
@@ -30,18 +27,12 @@ public class JpaEmploiTempsEntity {
 
     private Integer semaine;
 
-    @Column(name = "filiere_id", nullable = false)
-    private Long filiereId;
+    @Column(name = "classe_id", nullable = false)
+    private Long classeId;
 
-    @Column(name = "niveau_id", nullable = false)
-    private Long niveauId;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "emploi_temps_seance",
-            joinColumns = @JoinColumn(name = "emploi_temps_id"),
-            inverseJoinColumns = @JoinColumn(name = "seance_id")
-    )
+    // Unidirectional: emploi connaît ses séances; FK dans seance table
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @JoinColumn(name = "emploi_temps_id")
     private Set<JpaSeanceEntity> seances = new HashSet<>();
 
     @Column(name = "deleted", nullable = false)

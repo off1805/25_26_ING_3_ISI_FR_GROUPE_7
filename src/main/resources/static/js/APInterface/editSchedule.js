@@ -2,6 +2,17 @@ import {
     HOURS, DAY_COUNT, PALETTE, SUBJECTS, ICON_SVG,
     getMonday, fmtISO, fmtShort, generatePDF, isAreaOccupied, isWithinBounds
 } from './editScheduleUtils.js';
+import api from '../common/ClientHttp.js';
+
+function resolveColor(colorIdOrHex, fallbackId = 'violet') {
+    const isHex = typeof colorIdOrHex === 'string' && colorIdOrHex.startsWith('#') && colorIdOrHex.length === 7;
+    if (isHex) {
+        return { id: colorIdOrHex, bg: `${colorIdOrHex}1f`, border: colorIdOrHex, text: colorIdOrHex };
+    }
+    const found = PALETTE.find(p => p.id === colorIdOrHex);
+    if (found) return found;
+    return PALETTE.find(p => p.id === fallbackId) || PALETTE[0];
+}
 
 export class EditScheduleController {
     constructor() {
@@ -9,32 +20,47 @@ export class EditScheduleController {
             { id: 'e1', name: 'Pause', iconKey: 'pause', defaultColor: 'yellow' },
             { id: 'e2', name: 'Temps personnel', iconKey: 'perso', defaultColor: 'blue' },
         ];
+        this.SUBJECTS = [];
         this.selectedColors = {};
         this.weekOffset = 0;
+        this.emploiId = null;
         this.slotHeight = 40;
         this.undoStack = [];
         this.activeDragData = null;
         this.popoverKey = null;
         this._pendingDrop = null;
 
-        SUBJECTS.forEach(subject => this.selectedColors[`s${subject.id}`] = subject.defaultColor);
         this.EVENTS.forEach(event => this.selectedColors[event.id] = event.defaultColor);
 
-        this.init();
+        this.init().catch((e) => console.error(e));
     }
 
-    init() {
+    async init() {
         const params = new URLSearchParams(window.location.search);
         const className = params.get('class');
+        const classId = params.get('classId');
+        const emploiId = params.get('emploiId');
+        this.classId = classId ? parseInt(classId) : null;
+        this.emploiId = emploiId ? parseInt(emploiId) : null;
         const label = document.getElementById('edit-class-label');
         if (label) label.textContent = className || 'Nouvelle classe';
 
         const viewEdit = document.getElementById('view-edit');
         if (viewEdit) { viewEdit.classList.remove('hidden'); viewEdit.classList.add('flex'); }
 
+        if (classId) {
+            await this._loadSubjectsForClass(classId);
+        } else {
+            this.SUBJECTS = SUBJECTS;
+        }
+        this.SUBJECTS.forEach(subject => {
+            this.selectedColors[`s${subject.id}`] = subject.defaultColor || 'blue';
+        });
+
         this.renderPanel();
         this._bindControls();
         this._bindSubjectDropModal();
+        this._bindSubjectSearch();
 
         window.addEventListener('resize', () => {
             this.recalcSlotHeight();
@@ -42,9 +68,35 @@ export class EditScheduleController {
             this.refreshBlocksPositions();
         });
 
-        requestAnimationFrame(() => {
-            this.renderWeek();
-        });
+        this.renderWeek();
+
+        if (this.emploiId) {
+            this.loadExistingEmploi(this.emploiId).catch((e) => console.error('Erreur chargement emploi existant', e));
+        }
+    }
+
+    _bindSubjectSearch() {
+        const input = document.getElementById('subject-search');
+        if (!input) return;
+        input.addEventListener('input', () => this._renderSubjects());
+    }
+
+    async _loadSubjectsForClass(classId) {
+        const classe = await api.get(`/api/classes/${classId}`);
+        const specialiteId = classe?.specialiteId;
+        if (!specialiteId) {
+            this.SUBJECTS = [];
+            return;
+        }
+        const page = await api.get(`/api/ue?specialiteId=${encodeURIComponent(specialiteId)}&deleted=false&size=200`);
+        const ues = page?.content || [];
+        this.SUBJECTS = ues.map((ue) => ({
+            id: ue.id,
+            name: ue.libelle,
+            code: ue.code,
+            defaultColor: (typeof ue.couleur === 'string' && ue.couleur.startsWith('#') && ue.couleur.length === 7) ? ue.couleur : '#3b82f6',
+            teachers: [],
+        }));
     }
 
     _bindControls() {
@@ -94,9 +146,12 @@ export class EditScheduleController {
         this._pendingDrop = { hourIndex, dayIndex, subject };
         const teacherSelect = document.getElementById('drop-teacher-select');
         if (teacherSelect) {
-            teacherSelect.innerHTML = subject.teachers.map(teacher =>
-                `<option value="${teacher.id}">${teacher.name}</option>`
-            ).join('');
+            const options = subject.teachers.length
+                ? subject.teachers.map(teacher =>
+                    `<option value="${teacher.id}">${teacher.name}</option>`
+                  ).join('')
+                : `<option value="1">Enseignant par défaut (id 1)</option>`;
+            teacherSelect.innerHTML = options;
         }
 
         const currentSubjectColorId = this.selectedColors[`s${subject.id}`] || subject.defaultColor;
@@ -125,18 +180,20 @@ export class EditScheduleController {
         if (!this._pendingDrop) return;
         const { hourIndex, dayIndex, subject, colorId } = this._pendingDrop;
         const teacherSelect = document.getElementById('drop-teacher-select');
-        const teacherId = teacherSelect ? parseInt(teacherSelect.value) : subject.teachers[0]?.id;
-        const teacher = subject.teachers.find(t => t.id === teacherId) || subject.teachers[0];
+        const teacherId = teacherSelect ? parseInt(teacherSelect.value) || 1 : (subject.teachers[0]?.id || 1);
+        const teacher = subject.teachers.find(t => t.id === teacherId) || subject.teachers[0] || { id: 1, name: 'Enseignant', initials: 'PR' };
 
         this.selectedColors[`s${subject.id}`] = colorId;
         this._refreshSubjectCard(subject.id, colorId);
 
         const dropData = {
             type: 'teacher',
+            subjectId: subject.id,
             subjectName: subject.name,
             subjectCode: subject.code,
-            teacherName: teacher?.name || '',
-            teacherInitials: teacher?.initials || '',
+            teacherId: teacherId,
+            teacherName: teacher?.name || 'Enseignant',
+            teacherInitials: teacher?.initials || 'PR',
             itemKey: `s${subject.id}`,
             fromBlock: false,
         };
@@ -147,7 +204,7 @@ export class EditScheduleController {
     }
 
     _refreshSubjectCard(subjectId, colorId) {
-        const paletteColor = PALETTE.find(p => p.id === colorId);
+        const paletteColor = resolveColor(colorId);
         const colorSwatch = document.getElementById(`swatch-s${subjectId}`);
         if (colorSwatch) {
             colorSwatch.style.background = paletteColor.bg;
@@ -232,13 +289,42 @@ export class EditScheduleController {
         this._renderEvents();
     }
 
-    _renderSubjects() {
-        const subjectListElement = document.getElementById('subject-list');
-        if (!subjectListElement) return;
-        subjectListElement.innerHTML = SUBJECTS.map(subject => {
-            const paletteColor = PALETTE.find(p => p.id === (this.selectedColors[`s${subject.id}`] || subject.defaultColor));
+    _getScheduledSubjectKeySet() {
+        const set = new Set();
+        document.querySelectorAll('.schedule-block[data-item-key]').forEach((b) => {
+            const k = b.dataset.itemKey || '';
+            if (k.startsWith('s')) set.add(k);
+        });
+        return set;
+    }
+
+    _matchesSubjectQuery(subject, query) {
+        if (!query) return true;
+        const q = query.toLowerCase();
+        return (
+            String(subject?.name || '').toLowerCase().includes(q) ||
+            String(subject?.code || '').toLowerCase().includes(q)
+        );
+    }
+
+    _renderSubjectList(containerId, subjects, scheduledKeys) {
+        const el = document.getElementById(containerId);
+        if (!el) return;
+
+        if (!subjects.length) {
+            el.innerHTML = `
+                <div class="px-3 py-3 text-sm text-muted-foreground-2">
+                    Aucune matière.
+                </div>
+            `;
+            return;
+        }
+
+        el.innerHTML = subjects.map(subject => {
+            const paletteColor = resolveColor(this.selectedColors[`s${subject.id}`] || subject.defaultColor);
+            const isScheduled = scheduledKeys?.has(`s${subject.id}`);
             return `
-            <a class="subject-card group flex flex-col bg-layer rounded-xl hover:bg-select-item-hover focus:outline-hidden focus:shadow-md transition cursor-grab active:cursor-grabbing"
+            <a class="subject-card group flex flex-col bg-layer rounded-xl hover:bg-layer-hover px-2 focus:outline-hidden focus:shadow-md transition cursor-grab active:cursor-grabbing"
                draggable="true"
                data-type="subject"
                data-subject-id="${subject.id}"
@@ -246,40 +332,51 @@ export class EditScheduleController {
                data-subject-code="${subject.code}"
                data-item-key="s${subject.id}"
                href="#">
-                <div class="px-3 py-2">
+                <div class="py-2 ">
                     <div class="flex gap-x-3">
-                        <div class="mt-0.5 shrink-0 size-8 rounded-lg flex items-center justify-center" style="background:${paletteColor.bg};color:${paletteColor.border}">
-                            ${ICON_SVG.users}
+                        <div class="mt-0.5 relative shrink-0 size-8 rounded-lg flex items-center justify-center" style="background:${paletteColor.bg};color:${paletteColor.border}">
+                            ${ICON_SVG.books}
+                            <span class="inline-flex absolute bottom-1 translate-y-1/2 right-1 translate-x-1/2 items-center size-2 rounded-full ${isScheduled ? 'bg-emerald-500' : 'bg-muted'}"></span>
                         </div>
                         <div class="grow min-w-0">
-                             <h3 class="group-hover:text-primary font-semibold text-foreground text-[13px] leading-tight truncate">${subject.name}</h3>
+                            <h3 class="group-hover:text-primary font-semibold text-foreground text-[13px] leading-tight truncate">${subject.name}</h3>
                             <div class="flex items-center justify-between gap-1">
-                            <p class="text-xs text-muted-foreground-1 mt-0.5 truncate">${subject.code} · ${subject.teachers.length} enseignant${subject.teachers.length > 1 ? 's' : ''}</p>
-                               
-                                <span class="inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary-600 text-foreground-inverse">5</span>
+                                <p class="text-xs text-muted-foreground-1 mt-0.5 truncate">${subject.code}</p>
                             </div>
-                            
                         </div>
                     </div>
                 </div>
             </a>`;
         }).join('');
 
-        subjectListElement.querySelectorAll('.subject-card').forEach(element => {
+        el.querySelectorAll('.subject-card').forEach(element => {
             element.addEventListener('dragstart', event => this.onDragStart(event, element));
             element.addEventListener('dragend', () => this.onDragEnd(element));
         });
+    }
+
+    _renderSubjects() {
+        const query = (document.getElementById('subject-search')?.value || '').trim();
+        const scheduledKeys = this._getScheduledSubjectKeySet();
+
+        const all = this.SUBJECTS.filter(s => this._matchesSubjectQuery(s, query));
+        const scheduled = all.filter(s => scheduledKeys.has(`s${s.id}`));
+        const unscheduled = all.filter(s => !scheduledKeys.has(`s${s.id}`));
+
+        this._renderSubjectList('subject-list-all', all, scheduledKeys);
+        this._renderSubjectList('subject-list-unscheduled', unscheduled, scheduledKeys);
+        this._renderSubjectList('subject-list-scheduled', scheduled, scheduledKeys);
     }
 
     _renderEvents() {
         const eventListElement = document.getElementById('event-list');
         if (!eventListElement) return;
         eventListElement.innerHTML = this.EVENTS.map(event => {
-            const paletteColor = PALETTE.find(p => p.id === (this.selectedColors[event.id] || event.defaultColor));
+            const paletteColor = resolveColor(this.selectedColors[event.id] || event.defaultColor);
             return `
             <div draggable="true" data-type="event" data-event-name="${event.name}" data-item-key="${event.id}" data-icon-key="${event.iconKey}"
-                 class="event-item flex items-center gap-2 px-3 py-2 bg-layer border border-card-line rounded-xl hover:bg-muted/60 transition-all cursor-grab active:cursor-grabbing shadow-sm text-[12px] font-bold">
-                <div class="size-6 rounded-lg flex items-center justify-center shrink-0" style="background:${paletteColor.bg};color:${paletteColor.border}">
+                 class="event-item flex items-center gap-2 px-3 py-2 bg-layer text-layer-foreground rounded-xl hover:bg-layer-hover transition-all cursor-grab active:cursor-grabbing text-[12px] font-bold">
+                <div class="size-8 rounded-lg flex items-center justify-center shrink-0" style="background:${paletteColor.bg};color:${paletteColor.border}">
                     ${ICON_SVG[event.iconKey] || ICON_SVG.event}
                 </div>
                 <span class="truncate">${event.name}</span>
@@ -471,7 +568,7 @@ export class EditScheduleController {
 
         // Subject drop
         if (this.activeDragData.type === 'subject') {
-            const subject = SUBJECTS.find(s => s.id === this.activeDragData.subjectId);
+            const subject = this.SUBJECTS.find(s => s.id === this.activeDragData.subjectId);
             if (subject) this._openSubjectDropModal(hourIndex, dayIndex, subject);
             this.activeDragData = null;
             return;
@@ -485,7 +582,7 @@ export class EditScheduleController {
 
     placeBlock(hourIndex, dayIndex, blockData, forcedColorId = null) {
         const colorId = forcedColorId || this.selectedColors[blockData.itemKey] || 'violet';
-        const paletteColor = PALETTE.find(p => p.id === colorId);
+        const paletteColor = resolveColor(colorId);
         const primaryLabel = blockData.type === 'teacher' ? blockData.subjectName : blockData.eventName;
         const secondaryLabel = blockData.type === 'teacher' ? blockData.teacherName : null;
         const teacherInitials = blockData.teacherInitials || (blockData.teacherName?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()) || 'UE';
@@ -495,6 +592,10 @@ export class EditScheduleController {
         blockElement.dataset.hourIndex = hourIndex;
         blockElement.dataset.dayIndex = dayIndex;
         blockElement.dataset.rs = "1";
+        if (blockData?.itemKey) blockElement.dataset.itemKey = blockData.itemKey;
+        if (blockData?.subjectId != null) blockElement.dataset.subjectId = String(blockData.subjectId);
+        if (blockData?.teacherId != null) blockElement.dataset.teacherId = String(blockData.teacherId);
+        if (blockData?.type) blockElement.dataset.blockType = blockData.type;
 
         blockElement.style.position = 'absolute';
         blockElement.style.background = paletteColor.bg;
@@ -532,6 +633,7 @@ export class EditScheduleController {
         blockElement.querySelector('.btn-delete-block').addEventListener('click', () => {
             blockElement.remove();
             this.undoStack = this.undoStack.filter(b => b !== blockElement);
+            this._renderSubjects();
         });
 
         blockElement.setAttribute('draggable', 'true');
@@ -550,6 +652,7 @@ export class EditScheduleController {
         this._bindResizers(blockElement, blockData, paletteColor, primaryLabel, secondaryLabel, teacherInitials);
 
         document.getElementById('blocks-layer').appendChild(blockElement);
+        this._renderSubjects();
         return blockElement;
     }
 
@@ -560,6 +663,10 @@ export class EditScheduleController {
         sib.dataset.dayIndex = siblingDayIndex;
         sib.dataset.rs = originalBlock.dataset.rs || "1";
         sib.dataset.isSibling = "true";
+        if (originalBlock.dataset.itemKey) sib.dataset.itemKey = originalBlock.dataset.itemKey;
+        if (originalBlock.dataset.subjectId) sib.dataset.subjectId = originalBlock.dataset.subjectId;
+        if (originalBlock.dataset.teacherId) sib.dataset.teacherId = originalBlock.dataset.teacherId;
+        if (originalBlock.dataset.blockType) sib.dataset.blockType = originalBlock.dataset.blockType;
         sib.style.cssText = originalBlock.style.cssText;
         sib.style.width = originalBlock.style.width;
 
@@ -583,7 +690,10 @@ export class EditScheduleController {
             <div data-r="s" class="absolute bottom-0 left-0 right-0 h-2 cursor-s-resize hover:bg-black/5 rounded-b-xl z-20"></div>
             <div data-r="e" class="absolute top-0 bottom-0 right-0 w-2 cursor-e-resize hover:bg-black/5 rounded-r-xl z-20"></div>
         `;
-        sib.querySelector('.btn-delete-block').addEventListener('click', () => sib.remove());
+        sib.querySelector('.btn-delete-block').addEventListener('click', () => {
+            sib.remove();
+            this._renderSubjects();
+        });
 
         sib.setAttribute('draggable', 'true');
         sib.addEventListener('dragstart', event => {
@@ -600,6 +710,7 @@ export class EditScheduleController {
 
         this._bindResizers(sib, blockData, paletteColor, primaryLabel, secondaryLabel, teacherInitials);
         document.getElementById('blocks-layer').appendChild(sib);
+        this._renderSubjects();
         return sib;
     }
 
@@ -664,8 +775,176 @@ export class EditScheduleController {
     }
 
     refreshBlocksPositions() { document.querySelectorAll('.schedule-block').forEach(b => this._syncBlockToSlot(b)); }
-    undoLast() { if (this.undoStack.length) this.undoStack.pop().remove(); }
-    saveSchedule() { this.showToast('Emploi du temps sauvegardé ✓'); }
+    undoLast() {
+        if (this.undoStack.length) {
+            this.undoStack.pop().remove();
+            this._renderSubjects();
+        }
+    }
+    _formatDateLocal(dateObj) {
+        const tzOffset = dateObj.getTimezoneOffset();
+        const local = new Date(dateObj.getTime() - tzOffset * 60000);
+        return local.toISOString().split('T')[0];
+    }
+
+    _formatHour(hour) {
+        return `${String(hour).padStart(2, '0')}:00`;
+    }
+
+    _computeWeekOffsetFrom(dateStr) {
+        if (!dateStr) return 0;
+        const target = new Date(dateStr);
+        const monday0 = getMonday(0);
+        const diffMs = target.setHours(0,0,0,0) - monday0.setHours(0,0,0,0);
+        return Math.round(diffMs / (7 * 86400000));
+    }
+
+    _computeWeekNumber(dateStr) {
+        if (!dateStr) return null;
+        const d = new Date(dateStr);
+        const target = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        const dayNr = (target.getUTCDay() + 6) % 7;
+        target.setUTCDate(target.getUTCDate() - dayNr + 3);
+        const firstThursday = new Date(Date.UTC(target.getUTCFullYear(), 0, 4));
+        const week = 1 + Math.round(((target - firstThursday) / 86400000 - 3) / 7);
+        return week;
+    }
+
+    _buildSeances() {
+        const startStr = document.getElementById('date-start')?.value;
+        if (!startStr) return [];
+        const startDate = new Date(startStr);
+
+        const blocks = document.querySelectorAll('.schedule-block');
+        const seances = [];
+        blocks.forEach(block => {
+            if (block.dataset.blockType !== 'teacher') return;
+            const subjectId = parseInt(block.dataset.subjectId);
+            const teacherId = parseInt(block.dataset.teacherId) || 1;
+            if (!subjectId) return;
+
+            const libelle = block.querySelector('p')?.textContent?.trim() || `Séance ${subjectId}`;
+            const dayIndex = parseInt(block.dataset.dayIndex);
+            const hourIndex = parseInt(block.dataset.hourIndex);
+            const rowSpan = parseInt(block.dataset.rs || "1");
+
+            const date = new Date(startDate);
+            date.setDate(startDate.getDate() + dayIndex);
+            const startHour = HOURS[hourIndex];
+            const endHour = startHour + rowSpan;
+
+            seances.push({
+                libelle,
+                salle: 'Salle 1',
+                dateSeance: this._formatDateLocal(date),
+                heureDebut: this._formatHour(startHour),
+                heureFin: this._formatHour(endHour),
+                coursId: subjectId,
+                enseignantId: teacherId
+            });
+        });
+        return seances;
+    }
+
+    async loadExistingEmploi(emploiId) {
+        const emploi = await api.get(`/api/emplois-temps/${emploiId}`);
+        console.log(emploi.seances);
+        if (!emploi) return;
+
+        // Positionner la semaine sur la date de début de l'emploi
+        this.weekOffset = this._computeWeekOffsetFrom(emploi.dateDebut);
+        this.renderWeek();
+
+        // Remplir les dates affichées
+        const dateStart = document.getElementById('date-start');
+        const dateEnd = document.getElementById('date-end');
+        if (dateStart) dateStart.value = emploi.dateDebut;
+        if (dateEnd) dateEnd.value = emploi.dateFin;
+
+        // Placer les séances
+        const monday = getMonday(this.weekOffset);
+        (emploi.seances || []).forEach(seance => this._placeSeanceFromData(seance, monday));
+    }
+
+    _placeSeanceFromData(seance, weekMonday) {
+        if (!seance?.dateSeance || !seance?.heureDebut || !seance?.heureFin) return;
+        console.log("niveau 1");
+
+        const seanceDate = new Date(seance.dateSeance);
+        const dayIndex = Math.floor((seanceDate - weekMonday) / 86400000);
+        if (dayIndex < 0 || dayIndex >= DAY_COUNT) return;
+        console.log("niveau 2");
+        const startHour = parseInt(String(seance.heureDebut).split(':')[0]);
+        const endHour = parseInt(String(seance.heureFin).split(':')[0]);
+        const hourIndex = HOURS.indexOf(startHour);
+        if (hourIndex === -1) return;
+        console.log("niveau 3");
+        const rowSpan = Math.max(1, endHour - startHour);
+
+        const subjectId = seance.coursId;
+        const teacherId = seance.enseignantId;
+        const subject = this.SUBJECTS.find(s => s.id === subjectId);
+
+        const blockData = {
+            type: 'teacher',
+            subjectId: subjectId,
+            teacherId: teacherId,
+            subjectName: subject?.name || seance.libelle || 'Séance',
+            subjectCode: subject?.code || '',
+            teacherName: '',
+            teacherInitials: '',
+            itemKey: subjectId ? `s${subjectId}` : `s-${seance.id || Math.random()}`
+        };
+
+        const block = this.placeBlock(hourIndex, dayIndex, blockData);
+        block.dataset.rs = String(rowSpan);
+        // apply rowSpan sizing
+        const slot = this._getSlotElement(hourIndex, dayIndex);
+        if (slot) {
+            block.style.height = `${(slot.offsetHeight * rowSpan) - 2}px`;
+        }
+        this._syncBlockToSlot(block);
+    }
+
+    async saveSchedule() {
+        const dateDebut = document.getElementById('date-start')?.value;
+        const dateFin = document.getElementById('date-end')?.value;
+        const classeId = this.classId;
+
+        if (!classeId || !dateDebut || !dateFin) {
+            this.showToast('Classe ou dates manquantes');
+            return;
+        }
+
+        const seances = this._buildSeances();
+        if (!seances.length) {
+            this.showToast('Ajoutez au moins une séance dans la grille');
+            return;
+        }
+
+        const payload = {
+            id: this.emploiId || undefined,
+            dateDebut,
+            dateFin,
+            semaine: this._computeWeekNumber(dateDebut),
+            classeId,
+            seances,
+        };
+
+        try {
+            if (this.emploiId) {
+                await api.put(`/api/emplois-temps/${this.emploiId}/with-seances`, payload);
+                this.showToast('Emploi du temps mis à jour ✓');
+            } else {
+                await api.post('/api/emplois-temps/with-seances', payload);
+                this.showToast('Emploi du temps sauvegardé ✓');
+            }
+        } catch (error) {
+            console.error('Erreur sauvegarde emploi du temps', error);
+            const msg = error?.response?.data || 'Erreur lors de la sauvegarde';
+            this.showToast(msg);
+        }
+    }
     async exportPDF() { await generatePDF('schedule-card', (msg) => this.showToast(msg)); }
     showToast(message) {
         const t = document.getElementById('toast'), tm = document.getElementById('toast-msg');

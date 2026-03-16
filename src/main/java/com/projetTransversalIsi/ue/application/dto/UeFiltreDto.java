@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class UeFiltreDto {
     private String libelle;
     private String code;
+    private Long specialiteId;
     private Boolean deleted = false;
 }

@@ -30,24 +30,22 @@ public class CreateSeanceUCImpl implements CreateSeanceUC {
         }
 
 
-        if (seanceRepo.existsConflictForSalle(
-                command.salle(),
-                command.dateSeance(),
-                command.heureDebut(),
-                command.heureFin())) {
-            throw new SeanceConflictException(
-                    "La salle est déjà occupée à cette période"
-            );
-        }
+        String libelle = (command.libelle() == null || command.libelle().isBlank())
+                ? "Séance"
+                : command.libelle();
+
+        String salle = (command.salle() == null || command.salle().isBlank())
+                ? "Salle 1"
+                : command.salle();
 
         Seance seance = new Seance(
-                command.libelle(),
+                libelle,
+                salle,
                 command.dateSeance(),
                 command.heureDebut(),
                 command.heureFin(),
                 command.coursId(),
-                command.enseignantId(),
-                command.salle()
+                command.enseignantId()
         );
 
         return seanceRepo.save(seance);

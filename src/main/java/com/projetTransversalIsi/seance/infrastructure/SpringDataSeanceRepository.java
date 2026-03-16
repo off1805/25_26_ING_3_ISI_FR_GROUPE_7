@@ -34,17 +34,4 @@ public interface SpringDataSeanceRepository extends JpaRepository<JpaSeanceEntit
             @Param("heureDebut") LocalTime heureDebut,
             @Param("heureFin") LocalTime heureFin
     );
-
-
-    @Query("SELECT COUNT(s) > 0 FROM JpaSeanceEntity s " +
-            "WHERE s.salle = :salle " +
-            "AND s.dateSeance = :date " +
-            "AND ((s.heureDebut < :heureFin AND s.heureFin > :heureDebut)) " +
-            "AND s.deleted = false")
-    boolean existsConflictForSalle(
-            @Param("salle") String salle,
-            @Param("date") LocalDate date,
-            @Param("heureDebut") LocalTime heureDebut,
-            @Param("heureFin") LocalTime heureFin
-    );
 }

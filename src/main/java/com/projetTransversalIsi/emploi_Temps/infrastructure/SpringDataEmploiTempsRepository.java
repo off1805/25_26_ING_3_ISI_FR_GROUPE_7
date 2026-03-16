@@ -1,8 +1,6 @@
 package com.projetTransversalIsi.emploi_Temps.infrastructure;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,8 +12,7 @@ import java.util.Optional;
 public interface SpringDataEmploiTempsRepository extends JpaRepository<JpaEmploiTempsEntity, Long> {
 
 
-    List<JpaEmploiTempsEntity> findByFiliereId(Long filiereId);
-    List<JpaEmploiTempsEntity> findByNiveauId(Long niveauId);
+    List<JpaEmploiTempsEntity> findByClasseId(Long classeId);
     List<JpaEmploiTempsEntity> findBySemaine(Integer semaine);
 
     @Query("SELECT e FROM JpaEmploiTempsEntity e WHERE " +
@@ -29,19 +26,13 @@ public interface SpringDataEmploiTempsRepository extends JpaRepository<JpaEmploi
 
 
     @Query("SELECT COUNT(e) > 0 FROM JpaEmploiTempsEntity e " +
-            "WHERE e.filiereId = :filiereId " +
-            "AND e.niveauId = :niveauId " +
+            "WHERE e.classeId = :classeId " +
             "AND ((e.dateDebut <= :dateFin AND e.dateFin >= :dateDebut)) " +
             "AND e.deleted = false")
     boolean existsEmploiForPeriode(
-            @Param("filiereId") Long filiereId,
-            @Param("niveauId") Long niveauId,
+            @Param("classeId") Long classeId,
             @Param("dateDebut") LocalDate dateDebut,
             @Param("dateFin") LocalDate dateFin
     );
 
-    @Modifying
-    @Transactional
-    @Query(value = "DELETE FROM emploi_temps_seance WHERE emploi_temps_id = :emploiId AND seance_id = :seanceId", nativeQuery = true)
-    void deleteSeanceFromEmploi(@Param("emploiId") Long emploiId, @Param("seanceId") Long seanceId);
 }

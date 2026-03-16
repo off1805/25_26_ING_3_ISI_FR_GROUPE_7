@@ -4,6 +4,7 @@ import com.projetTransversalIsi.Filiere.application.dto.FiliereResponseDTO;
 import com.projetTransversalIsi.Filiere.application.services.DefaultFiliereService;
 import com.projetTransversalIsi.Niveau.application.dto.NiveauResponseDTO;
 import com.projetTransversalIsi.Niveau.application.services.DefaultNiveauService;
+import com.projetTransversalIsi.classe.application.dto.ClasseResponseDTO;
 import com.projetTransversalIsi.classe.application.services.DefaultClasseService;
 import com.projetTransversalIsi.specialite.application.dto.SpecialiteResponseDTO;
 import com.projetTransversalIsi.specialite.application.services.DefaultSpecialiteService;
@@ -21,6 +22,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 @Controller
@@ -102,10 +107,10 @@ public class APController {
         model.addAttribute("classes", classeService.getClassesBySpecialiteId(id));
 
         // UE catalog (module UE). For now this lists UEs globally (not yet scoped by specialite).
-        Page<Ue> uesPage = searchUeUC.execute(
-                new UeFiltreDto(null, null, false),
-                PageRequest.of(0, 20, Sort.by("id").descending())
-        );
+        UeFiltreDto ueFilter = new UeFiltreDto();
+        ueFilter.setDeleted(false);
+        ueFilter.setSpecialiteId(id);
+        Page<Ue> uesPage = searchUeUC.execute(ueFilter, PageRequest.of(0, 50, Sort.by("id").descending()));
         model.addAttribute("ues", uesPage.map(ueMapper::toResponseDTO).getContent());
 
         NiveauResponseDTO niveau = null;
@@ -136,6 +141,36 @@ public class APController {
 
     @GetMapping("/schedule")
     public String scheduleView(Model model) {
+        // TODO: replace with the filiere linked to the authenticated AP.
+        Long filiereId = 1L;
+        model.addAttribute("filiereId", filiereId);
+
+        // Load "valid" classes for this filiere by walking:
+        // filiere -> niveaux -> specialites -> classes
+        List<ClasseResponseDTO> collected = new ArrayList<>();
+        List<NiveauResponseDTO> niveaux = niveauService.getNiveauxByFiliereId(filiereId);
+        if (niveaux != null) {
+            for (NiveauResponseDTO n : niveaux) {
+                if (n == null || n.id() == null) continue;
+                List<SpecialiteResponseDTO> specialites = specialiteService.getSpecialitesByNiveauId(n.id());
+                if (specialites == null) continue;
+                for (SpecialiteResponseDTO s : specialites) {
+                    if (s == null || s.id() == null) continue;
+                    List<ClasseResponseDTO> classes = classeService.getClassesBySpecialiteId(s.id());
+                    if (classes != null) collected.addAll(classes);
+                }
+            }
+        }
+
+        // De-dup by id (or by code if id missing) while preserving order.
+        Map<String, ClasseResponseDTO> uniq = new LinkedHashMap<>();
+        for (ClasseResponseDTO c : collected) {
+            if (c == null) continue;
+            String key = c.id() != null ? ("id:" + c.id()) : ("code:" + c.code());
+            if (!uniq.containsKey(key)) uniq.put(key, c);
+        }
+        model.addAttribute("classes", new ArrayList<>(uniq.values()));
+
         model.addAttribute("activePage", "schedule");
         model.addAttribute("apName", "AP Name");
         return "APInterface/APSchedule";

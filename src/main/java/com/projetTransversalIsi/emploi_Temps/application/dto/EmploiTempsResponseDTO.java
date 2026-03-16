@@ -11,12 +11,10 @@ import java.util.stream.Collectors;
 
 public record EmploiTempsResponseDTO(
         Long id,
-        String libelle,
         LocalDate dateDebut,
         LocalDate dateFin,
         Integer semaine,
-        Long filiereId,
-        Long niveauId,
+        Long classeId,
         List<SeanceResponseDTO> seances,
         boolean deleted,
         LocalDateTime deletedAt
@@ -24,12 +22,10 @@ public record EmploiTempsResponseDTO(
     public static EmploiTempsResponseDTO fromDomain(EmploiTemps emploiTemps) {
         return new EmploiTempsResponseDTO(
                 emploiTemps.getId(),
-                emploiTemps.getLibelle(),
                 emploiTemps.getDateDebut(),
                 emploiTemps.getDateFin(),
                 emploiTemps.getSemaine(),
-                emploiTemps.getFiliereId(),
-                emploiTemps.getNiveauId(),
+                emploiTemps.getClasseId(),
                 emploiTemps.getSeances().stream()
                         .map(SeanceResponseDTO::fromDomain)
                         .collect(Collectors.toList()),

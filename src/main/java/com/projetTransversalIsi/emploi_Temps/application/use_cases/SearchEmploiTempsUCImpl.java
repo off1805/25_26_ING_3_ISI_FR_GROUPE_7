@@ -20,12 +20,8 @@ public class SearchEmploiTempsUCImpl implements SearchEmploiTempsUC {
         List<EmploiTemps> resultats;
 
 
-        if (criteria.filiereId() != null) {
-            resultats = emploiTempsRepo.findByFiliereId(criteria.filiereId());
-        }
-
-        else if (criteria.niveauId() != null) {
-            resultats = emploiTempsRepo.findByNiveauId(criteria.niveauId());
+        if (criteria.classeId() != null) {
+            resultats = emploiTempsRepo.findByClasseId(criteria.classeId());
         }
 
         else if (criteria.semaine() != null) {

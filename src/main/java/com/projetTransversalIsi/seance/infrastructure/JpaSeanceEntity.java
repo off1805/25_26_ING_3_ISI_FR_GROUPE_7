@@ -15,8 +15,11 @@ public class JpaSeanceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "libelle", nullable = false)
     private String libelle;
+
+    @Column(name = "salle", nullable = false)
+    private String salle;
 
     @Column(name = "date_seance", nullable = false)
     private LocalDate dateSeance;
@@ -32,9 +35,6 @@ public class JpaSeanceEntity {
 
     @Column(name = "enseignant_id", nullable = false)
     private Long enseignantId;
-
-    @Column(nullable = false)
-    private String salle;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;

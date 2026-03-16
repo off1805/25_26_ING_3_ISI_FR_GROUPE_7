@@ -9,10 +9,8 @@ import org.mapstruct.Mapping;
 public interface NiveauMapper {
 
     @Mapping(target = "filiere", source = "filiere")
-    @Mapping(target = "specialites", ignore = true)
     Niveau toDomain(JpaNiveauEntity entity);
 
     @Mapping(target = "filiere", source = "filiere")
-    @Mapping(target = "specialites", ignore = true)
     JpaNiveauEntity toEntity(Niveau niveau);
 }

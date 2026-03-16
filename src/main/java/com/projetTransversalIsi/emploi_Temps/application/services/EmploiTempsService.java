@@ -14,7 +14,9 @@ import java.util.stream.Collectors;
 public class EmploiTempsService implements DefaultEmploiTempsService {
 
     private final CreateEmploiTempsUC createEmploiTempsUC;
+    private final CreateEmploiTempsWithSeancesUC createEmploiTempsWithSeancesUC;
     private final UpdateEmploiTempsUC updateEmploiTempsUC;
+    private final UpdateEmploiTempsWithSeancesUC updateEmploiTempsWithSeancesUC;
     private final DeleteEmploiTempsUC deleteEmploiTempsUC;
     private final FindEmploiTempsByIdUC findEmploiTempsByIdUC;
     private final SearchEmploiTempsUC searchEmploiTempsUC;
@@ -30,8 +32,22 @@ public class EmploiTempsService implements DefaultEmploiTempsService {
 
     @Override
     @Transactional
+    public EmploiTempsResponseDTO createEmploiTempsWithSeances(CreateEmploiTempsWithSeancesDTO request) {
+        EmploiTemps emploi = createEmploiTempsWithSeancesUC.execute(request);
+        return EmploiTempsResponseDTO.fromDomain(emploi);
+    }
+
+    @Override
+    @Transactional
     public EmploiTempsResponseDTO updateEmploiTemps(UpdateEmploiTempsRequestDTO request) {
         EmploiTemps emploi = updateEmploiTempsUC.execute(request);
+        return EmploiTempsResponseDTO.fromDomain(emploi);
+    }
+
+    @Override
+    @Transactional
+    public EmploiTempsResponseDTO updateEmploiTempsWithSeances(UpdateEmploiTempsWithSeancesDTO request) {
+        EmploiTemps emploi = updateEmploiTempsWithSeancesUC.execute(request);
         return EmploiTempsResponseDTO.fromDomain(emploi);
     }
 

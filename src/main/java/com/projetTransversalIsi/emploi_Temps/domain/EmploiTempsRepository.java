@@ -19,11 +19,10 @@ public interface EmploiTempsRepository {
     List<EmploiTemps> findAllDeleted();
 
 
-    List<EmploiTemps> findByFiliereId(Long filiereId);
-    List<EmploiTemps> findByNiveauId(Long niveauId);
+    List<EmploiTemps> findByClasseId(Long classeId);
     List<EmploiTemps> findByPeriode(LocalDate date);
     List<EmploiTemps> findBySemaine(Integer semaine);
 
 
-    boolean existsEmploiForPeriode(Long filiereId, Long niveauId, LocalDate dateDebut, LocalDate dateFin);
+    boolean existsEmploiForPeriode(Long classeId, LocalDate dateDebut, LocalDate dateFin);
 }

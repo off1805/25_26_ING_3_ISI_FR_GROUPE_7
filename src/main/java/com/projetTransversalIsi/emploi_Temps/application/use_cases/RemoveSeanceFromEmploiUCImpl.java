@@ -4,7 +4,6 @@ import com.projetTransversalIsi.emploi_Temps.application.dto.AddSeanceToEmploiDT
 import com.projetTransversalIsi.emploi_Temps.domain.EmploiTemps;
 import com.projetTransversalIsi.emploi_Temps.domain.EmploiTempsRepository;
 import com.projetTransversalIsi.emploi_Temps.domain.exceptions.EmploiTempsNotFoundException;
-import com.projetTransversalIsi.emploi_Temps.infrastructure.SpringDataEmploiTempsRepository;
 import com.projetTransversalIsi.seance.domain.Seance;
 import com.projetTransversalIsi.seance.domain.SeanceRepository;
 import com.projetTransversalIsi.seance.domain.exceptions.SeanceNotFoundException;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 public class RemoveSeanceFromEmploiUCImpl implements RemoveSeanceFromEmploiUC {
 
     private final EmploiTempsRepository emploiTempsRepo;
-    private final SpringDataEmploiTempsRepository springDataEmploiTempsRepo;  // ← AJOUTER CECI
     private final SeanceRepository seanceRepo;
 
     @Override
@@ -38,14 +36,9 @@ public class RemoveSeanceFromEmploiUCImpl implements RemoveSeanceFromEmploiUC {
                 .orElseThrow(() -> new SeanceNotFoundException(command.seanceId()));
 
 
-        springDataEmploiTempsRepo.deleteSeanceFromEmploi(command.emploiTempsId(), command.seanceId());
-
-
-        EmploiTemps emploiTempsMaj = emploiTempsRepo.findById(command.emploiTempsId())
-                .orElseThrow(() -> new EmploiTempsNotFoundException(command.emploiTempsId()));
-
-        log.info("Taille de la liste après suppression: {}", emploiTempsMaj.getSeances().size());
-
-        return emploiTempsMaj;
+        emploiTemps.removeSeance(seance);
+        EmploiTemps saved = emploiTempsRepo.save(emploiTemps);
+        log.info("Taille de la liste après suppression: {}", saved.getSeances().size());
+        return saved;
     }
 }
