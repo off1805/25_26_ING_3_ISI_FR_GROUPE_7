@@ -25,5 +25,4 @@ public interface SeanceRepository {
 
 
     boolean existsConflict(Long enseignantId, LocalDate date, LocalTime heureDebut, LocalTime heureFin);
-    boolean existsConflictForSalle(String salle, LocalDate date, LocalTime heureDebut, LocalTime heureFin);
 }

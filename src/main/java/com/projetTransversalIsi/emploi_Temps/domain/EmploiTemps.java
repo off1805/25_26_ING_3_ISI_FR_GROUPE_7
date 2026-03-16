@@ -18,36 +18,30 @@ import java.util.Set;
 public class EmploiTemps {
 
     private Long id;
-    private String libelle;
     private LocalDate dateDebut;
     private LocalDate dateFin;
     private Integer semaine;
-    private Long filiereId;
-    private Long niveauId;
+    private Long classeId;
     private Set<Seance> seances = new HashSet<>();
     private boolean deleted = false;
     private LocalDateTime deletedAt;
 
-    public EmploiTemps(String libelle, LocalDate dateDebut, LocalDate dateFin,
-                       Integer semaine, Long filiereId, Long niveauId) {
-        this.libelle = libelle;
+    public EmploiTemps(LocalDate dateDebut, LocalDate dateFin,
+                       Integer semaine, Long classeId) {
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
         this.semaine = semaine;
-        this.filiereId = filiereId;
-        this.niveauId = niveauId;
+        this.classeId = classeId;
         this.deleted = false;
     }
 
     // Méthodes métier
-    public void update(String libelle, LocalDate dateDebut, LocalDate dateFin,
-                       Integer semaine, Long filiereId, Long niveauId) {
-        this.libelle = libelle;
+    public void update(LocalDate dateDebut, LocalDate dateFin,
+                       Integer semaine, Long classeId) {
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
         this.semaine = semaine;
-        this.filiereId = filiereId;
-        this.niveauId = niveauId;
+        this.classeId = classeId;
     }
 
     public void addSeance(Seance seance) {

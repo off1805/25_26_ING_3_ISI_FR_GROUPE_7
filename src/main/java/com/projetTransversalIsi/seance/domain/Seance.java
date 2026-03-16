@@ -14,33 +14,31 @@ public class Seance {
 
     private Long id;
     private String libelle;
+    private String salle;
     private LocalDate dateSeance;
     private LocalTime heureDebut;
     private LocalTime heureFin;
     private Long coursId;
     private Long enseignantId;
-    private String salle;
     private boolean deleted = false;
     private LocalDateTime deletedAt;
 
-    public Seance(String libelle, LocalDate dateSeance, LocalTime heureDebut,
-                  LocalTime heureFin, Long coursId, Long enseignantId, String salle) {
+    public Seance(String libelle, String salle, LocalDate dateSeance, LocalTime heureDebut,
+                  LocalTime heureFin, Long coursId, Long enseignantId) {
         this.libelle = libelle;
+        this.salle = salle;
         this.dateSeance = dateSeance;
         this.heureDebut = heureDebut;
         this.heureFin = heureFin;
         this.coursId = coursId;
         this.enseignantId = enseignantId;
-        this.salle = salle;
         this.deleted = false;
     }
 
 
-    public void update(String libelle, LocalTime heureDebut, LocalTime heureFin, String salle) {
-        this.libelle = libelle;
+    public void update(LocalTime heureDebut, LocalTime heureFin) {
         this.heureDebut = heureDebut;
         this.heureFin = heureFin;
-        this.salle = salle;
     }
 
     public void delete() {

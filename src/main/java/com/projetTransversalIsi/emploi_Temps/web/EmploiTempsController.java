@@ -3,6 +3,7 @@ package com.projetTransversalIsi.emploi_Temps.web;
 import com.projetTransversalIsi.emploi_Temps.application.dto.*;
 import com.projetTransversalIsi.emploi_Temps.application.services.DefaultEmploiTempsService;
 import com.projetTransversalIsi.emploi_Temps.domain.exceptions.EmploiTempsConflictException;
+import com.projetTransversalIsi.seance.domain.exceptions.SeanceConflictException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +24,44 @@ public class EmploiTempsController {
     @PostMapping
     public ResponseEntity<?> createEmploiTemps(@Valid @RequestBody CreateEmploiTempsRequestDTO request) {
         try {
-            log.info("Création d'un emploi du temps: {}", request.libelle());
+            log.info("Création d'un emploi du temps pour classe {}", request.classeId());
             EmploiTempsResponseDTO response = emploiTempsService.createEmploiTemps(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (EmploiTempsConflictException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/with-seances")
+    public ResponseEntity<?> createEmploiTempsWithSeances(
+            @Valid @RequestBody CreateEmploiTempsWithSeancesDTO request) {
+        try {
+            log.info("Création d'un emploi du temps avec {} séances pour la classe {}",
+                    request.seances().size(), request.classeId());
+            EmploiTempsResponseDTO response = emploiTempsService.createEmploiTempsWithSeances(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (EmploiTempsConflictException | SeanceConflictException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/with-seances")
+    public ResponseEntity<?> updateEmploiTempsWithSeances(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateEmploiTempsWithSeancesDTO request) {
+        if (!id.equals(request.id())) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            log.info("Mise à jour de l'emploi du temps {} avec {} séances", id, request.seances().size());
+            EmploiTempsResponseDTO response = emploiTempsService.updateEmploiTempsWithSeances(request);
+            return ResponseEntity.ok(response);
+        } catch (EmploiTempsConflictException | SeanceConflictException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -61,13 +95,12 @@ public class EmploiTempsController {
 
     @GetMapping
     public ResponseEntity<List<EmploiTempsResponseDTO>> searchEmploisTemps(
-            @RequestParam(required = false) Long filiereId,
-            @RequestParam(required = false) Long niveauId,
+            @RequestParam(required = false) Long classeId,
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Integer semaine,
             @RequestParam(defaultValue = "false") boolean includeDeleted) {
 
-        log.info("Recherche d'emplois du temps - filière: {}, niveau: {}", filiereId, niveauId);
+        log.info("Recherche d'emplois du temps - classe: {}", classeId);
 
         LocalDate dateObj = null;
         if (date != null) {
@@ -75,7 +108,7 @@ public class EmploiTempsController {
         }
 
         SearchEmploiTempsRequestDTO criteria = new SearchEmploiTempsRequestDTO(
-                filiereId, niveauId, dateObj, semaine, includeDeleted
+                classeId, dateObj, semaine, includeDeleted
         );
 
         List<EmploiTempsResponseDTO> resultats = emploiTempsService.searchEmplois(criteria);
@@ -100,27 +133,14 @@ public class EmploiTempsController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/filiere/{filiereId}")
-    public ResponseEntity<List<EmploiTempsResponseDTO>> getByFiliere(
-            @PathVariable Long filiereId,
+    @GetMapping("/classe/{classeId}")
+    public ResponseEntity<List<EmploiTempsResponseDTO>> getByClasse(
+            @PathVariable Long classeId,
             @RequestParam(defaultValue = "false") boolean includeDeleted) {
 
-        log.info("Emplois du temps de la filière ID: {}", filiereId);
+        log.info("Emplois du temps de la classe ID: {}", classeId);
         SearchEmploiTempsRequestDTO criteria = new SearchEmploiTempsRequestDTO(
-                filiereId, null, null, null, includeDeleted
-        );
-        List<EmploiTempsResponseDTO> resultats = emploiTempsService.searchEmplois(criteria);
-        return ResponseEntity.ok(resultats);
-    }
-
-    @GetMapping("/niveau/{niveauId}")
-    public ResponseEntity<List<EmploiTempsResponseDTO>> getByNiveau(
-            @PathVariable Long niveauId,
-            @RequestParam(defaultValue = "false") boolean includeDeleted) {
-
-        log.info("Emplois du temps du niveau ID: {}", niveauId);
-        SearchEmploiTempsRequestDTO criteria = new SearchEmploiTempsRequestDTO(
-                null, niveauId, null, null, includeDeleted
+                classeId, null, null, includeDeleted
         );
         List<EmploiTempsResponseDTO> resultats = emploiTempsService.searchEmplois(criteria);
         return ResponseEntity.ok(resultats);
@@ -133,7 +153,7 @@ public class EmploiTempsController {
 
         log.info("Emplois du temps de la semaine: {}", semaine);
         SearchEmploiTempsRequestDTO criteria = new SearchEmploiTempsRequestDTO(
-                null, null, null, semaine, includeDeleted
+                null, null, semaine, includeDeleted
         );
         List<EmploiTempsResponseDTO> resultats = emploiTempsService.searchEmplois(criteria);
         return ResponseEntity.ok(resultats);
@@ -143,7 +163,7 @@ public class EmploiTempsController {
     public ResponseEntity<List<EmploiTempsResponseDTO>> getActiveEmploisTemps() {
         log.info("Liste des emplois du temps actifs");
         SearchEmploiTempsRequestDTO criteria = new SearchEmploiTempsRequestDTO(
-                null, null, null, null, false
+                null, null, null, false
         );
         List<EmploiTempsResponseDTO> resultats = emploiTempsService.searchEmplois(criteria);
         return ResponseEntity.ok(resultats);
@@ -153,7 +173,7 @@ public class EmploiTempsController {
     public ResponseEntity<List<EmploiTempsResponseDTO>> getDeletedEmploisTemps() {
         log.info("Liste des emplois du temps supprimés");
         SearchEmploiTempsRequestDTO criteria = new SearchEmploiTempsRequestDTO(
-                null, null, null, null, true
+                null, null, null, true
         );
         List<EmploiTempsResponseDTO> resultats = emploiTempsService.searchEmplois(criteria);
         resultats = resultats.stream()

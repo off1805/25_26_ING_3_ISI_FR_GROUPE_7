@@ -22,10 +22,8 @@ public class UpdateSeanceUCImpl implements UpdateSeanceUC {
                 .orElseThrow(() -> new SeanceNotFoundException(command.id()));
 
         seance.update(
-                command.libelle(),
                 command.heureDebut(),
-                command.heureFin(),
-                command.salle()
+                command.heureFin()
         );
 
         return seanceRepo.save(seance);

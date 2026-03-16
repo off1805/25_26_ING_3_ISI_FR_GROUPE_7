@@ -20,8 +20,7 @@ public class CreateEmploiTempsUCImpl implements CreateEmploiTempsUC {
 
         // Vérifier s'il existe déjà un emploi du temps pour cette période
         if (emploiTempsRepo.existsEmploiForPeriode(
-                command.filiereId(),
-                command.niveauId(),
+                command.classeId(),
                 command.dateDebut(),
                 command.dateFin())) {
             throw new EmploiTempsConflictException(
@@ -30,12 +29,10 @@ public class CreateEmploiTempsUCImpl implements CreateEmploiTempsUC {
         }
 
         EmploiTemps emploiTemps = new EmploiTemps(
-                command.libelle(),
                 command.dateDebut(),
                 command.dateFin(),
                 command.semaine(),
-                command.filiereId(),
-                command.niveauId()
+                command.classeId()
         );
 
         return emploiTempsRepo.save(emploiTemps);

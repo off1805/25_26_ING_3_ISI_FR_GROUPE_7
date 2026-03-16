@@ -1,14 +1,16 @@
 package com.projetTransversalIsi.seance.application.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record CreateSeanceRequestDTO(
 
-        @NotBlank(message = "Le libellé est obligatoire")
+        @NotNull(message = "Le libellé est obligatoire")
         String libelle,
+
+        @NotNull(message = "La salle est obligatoire")
+        String salle,
 
         @NotNull(message = "La date est obligatoire")
         LocalDate dateSeance,
@@ -23,8 +25,5 @@ public record CreateSeanceRequestDTO(
         Long coursId,
 
         @NotNull(message = "L'ID de l'enseignant est obligatoire")
-        Long enseignantId,
-
-        @NotBlank(message = "La salle est obligatoire")
-        String salle
+        Long enseignantId
 ) {}

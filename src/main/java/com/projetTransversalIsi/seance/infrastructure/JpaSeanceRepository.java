@@ -23,7 +23,7 @@ public class JpaSeanceRepository implements SeanceRepository {
     public Seance save(Seance seance) {
         JpaSeanceEntity entity = mapper.toEntity(seance);
         JpaSeanceEntity savedEntity = jpaRepo.save(entity);
-        log.info("Séance sauvegardée: {} - {}", savedEntity.getLibelle(), savedEntity.getDateSeance());
+        log.info("Séance sauvegardée: {}", savedEntity.getDateSeance());
         return mapper.toDomain(savedEntity);
     }
 
@@ -89,8 +89,4 @@ public class JpaSeanceRepository implements SeanceRepository {
         return jpaRepo.existsConflictForEnseignant(enseignantId, date, heureDebut, heureFin);
     }
 
-    @Override
-    public boolean existsConflictForSalle(String salle, LocalDate date, LocalTime heureDebut, LocalTime heureFin) {
-        return jpaRepo.existsConflictForSalle(salle, date, heureDebut, heureFin);
-    }
 }

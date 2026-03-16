@@ -10,5 +10,6 @@ public record CreateUeRequestDTO(
         @NotNull @Min(1) int credit,
         @NotNull @Min(1) int volumeHoraireTotal,
         String description,
-        String couleur) {
+        String couleur,
+        @NotNull Long specialiteId) {
 }
