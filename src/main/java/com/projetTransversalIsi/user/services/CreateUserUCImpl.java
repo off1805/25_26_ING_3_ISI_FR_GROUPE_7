@@ -39,7 +39,16 @@ public class CreateUserUCImpl implements CreateUserUC {
 
         String hashPassword= passwordHasher.encode("password");
         Role role= getRoleById.findRoleById(command.idRole());
-        Profile profile = profileSelectionStrategy.selectProfileFor(role);
+        System.out.println(command);
+        System.out.println("Before Create user execution");
+        System.out.println(command.profile());
+
+        Profile profile = profileSelectionStrategy.selectProfileFor(role,command.profile());
+        System.out.println("Create user execution");
+        System.out.println(profile.getId());
+        System.out.println(profile.getNom());
+        System.out.println(profile.getPrenom());
+        System.out.println(profile.getNumeroTelephone());
         Profile newProfile= initProfile.execute(profile);
         Set<Permission> permissions= getAllPermById.findAllPermissionByIds(command.idPermissions());
         User user = new User(command.email(), role);

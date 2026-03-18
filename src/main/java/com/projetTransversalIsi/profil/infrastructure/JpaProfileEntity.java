@@ -17,6 +17,16 @@ public abstract class JpaProfileEntity {
     @OneToOne(mappedBy = "profile")
     private JpaUserEntity user;
 
-    @Column(nullable = true)
+    @Column(nullable = false, unique = true)
     private String matricule;
+
+    @Column(nullable = false)
+    private String nom;
+
+    @Column(nullable = false)
+    private String prenom;
+
+    @Column(nullable = false)
+    private String numeroTelephone;
+
 }

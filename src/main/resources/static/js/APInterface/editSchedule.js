@@ -398,19 +398,19 @@ export class EditScheduleController {
         });
 
         const dateStart = document.getElementById('date-start');
-        if (dateStart) dateStart.value = fmtISO(weekDays[0]);
+        if (dateStart) dateStart.value = this._formatDateLocal(weekDays[0]);
         const dateEnd = document.getElementById('date-end');
-        if (dateEnd) dateEnd.value = fmtISO(weekDays[5]);
+        if (dateEnd) dateEnd.value = this._formatDateLocal(weekDays[5]);
         document.getElementById('week-label').textContent = `${fmtShort(weekDays[0])} – ${fmtShort(weekDays[5])}`;
 
         const headersElement = document.getElementById('day-headers');
         if (!headersElement) return;
-        headersElement.style.gridTemplateColumns = `${this.timeColumnWidth}px repeat(${DAY_COUNT},${this.dayColumnWidth()}px)`;
+        headersElement.style.gridTemplateColumns = `${this.timeColumnWidth}px repeat(${DAY_COUNT},${this.dayColumnWidth()})`;
         headersElement.innerHTML = `<div class="py-2 text-xs text-center text-muted-foreground-2 font-bold border-r-2 border-card-line sticky left-0 bg-card z-30">Horaires</div>`;
         weekDays.forEach(dayDate => {
             const dayName = dayDate.toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0, 3).toUpperCase();
             const isToday = dayDate.toDateString() === new Date().toDateString();
-            headersElement.innerHTML += `<div class="py-1.5 text-center border-l border-card-line bg-card">
+            headersElement.innerHTML += `<div class="cell py-1.5 text-center border-l border-card-line bg-card">
                 <p class="text-[10px] font-bold  text-muted-foreground-2">${dayName}</p>
                 <p class="text-sm font-extrabold ${isToday ? 'text-primary' : 'text-layer-foreground'}">${dayDate.getDate()}</p>
             </div>`;
@@ -433,23 +433,23 @@ export class EditScheduleController {
     }
 
     get timeColumnWidth() { return 72; }
-    dayColumnWidth() { return 240; }
+    dayColumnWidth() { return "1fr"; }
 
     buildGrid() {
         const gridBody = document.getElementById('schedule-body');
         if (!gridBody) return;
-        gridBody.style.gridTemplateColumns = `${this.timeColumnWidth}px repeat(${DAY_COUNT},${this.dayColumnWidth()}px)`;
+        gridBody.style.gridTemplateColumns = `${this.timeColumnWidth}px repeat(${DAY_COUNT},${this.dayColumnWidth()})`;
         gridBody.style.gridTemplateRows = `repeat(${HOURS.length}, 1fr)`;
 
         let gridHtml = '';
         HOURS.forEach((hour, hourIndex) => {
             gridHtml += `<div style="grid-column:1;grid-row:${hourIndex + 1}"
-                          class="time-cell flex items-center justify-center border-b  border-r-2 border-card-line bg-card sticky left-0 z-20">
+                          class="time-cell cell flex items-center justify-center border-b  border-r-2 border-card-line bg-card sticky left-0 z-20">
                        <span class="text-[11px] font-mono font-semibold text-muted-foreground-2 whitespace-nowrap">${hour}h–${hour + 1}h</span>
                      </div>`;
             for (let dayIndex = 0; dayIndex < DAY_COUNT; dayIndex++) {
                 gridHtml += `<div style="grid-column:${dayIndex + 2};grid-row:${hourIndex + 1}"
-                              class="slot border-b border-card-line border-l bg-card/80 transition-colors "
+                              class="cell slot border-b border-card-line border-l bg-card/80 transition-colors "
                               data-hour-index="${hourIndex}" data-day-index="${dayIndex}"></div>`;
             }
         });
@@ -748,7 +748,7 @@ export class EditScheduleController {
 
             let lastSpan = 1, siblings = [];
             const onMM = me => {
-                const step = this.dayColumnWidth();
+                const step = this._getSlotElement(0, 0)?.offsetWidth || 40;
                 const targetSpan = Math.max(1, Math.round((startW + me.clientX - startX) / step));
                 const h = hourIndex, rs = parseInt(blockElement.dataset.rs || "1");
                 let allowed = 1;
@@ -794,8 +794,9 @@ export class EditScheduleController {
     _computeWeekOffsetFrom(dateStr) {
         if (!dateStr) return 0;
         const target = new Date(dateStr);
+        target.setHours(0, 0, 0, 0);
         const monday0 = getMonday(0);
-        const diffMs = target.setHours(0,0,0,0) - monday0.setHours(0,0,0,0);
+        const diffMs = target.getTime() - monday0.getTime();
         return Math.round(diffMs / (7 * 86400000));
     }
 
@@ -852,6 +853,7 @@ export class EditScheduleController {
         if (!emploi) return;
 
         // Positionner la semaine sur la date de début de l'emploi
+        console.log("Date de début de l'emploi du temps :", emploi.dateDebut);
         this.weekOffset = this._computeWeekOffsetFrom(emploi.dateDebut);
         this.renderWeek();
 
@@ -872,6 +874,9 @@ export class EditScheduleController {
 
         const seanceDate = new Date(seance.dateSeance);
         const dayIndex = Math.floor((seanceDate - weekMonday) / 86400000);
+        console.log("Seance date:", seanceDate);
+        console.log("Week monday:", weekMonday);
+        console.log("Calculated dayIndex:", dayIndex);
         if (dayIndex < 0 || dayIndex >= DAY_COUNT) return;
         console.log("niveau 2");
         const startHour = parseInt(String(seance.heureDebut).split(':')[0]);
@@ -945,7 +950,7 @@ export class EditScheduleController {
             this.showToast(msg);
         }
     }
-    async exportPDF() { await generatePDF('schedule-card', (msg) => this.showToast(msg)); }
+    async exportPDF() { await generatePDF('main-page', (msg) => this.showToast(msg)); }
     showToast(message) {
         const t = document.getElementById('toast'), tm = document.getElementById('toast-msg');
         if (!t || !tm) return; tm.textContent = message; t.classList.remove('hidden');

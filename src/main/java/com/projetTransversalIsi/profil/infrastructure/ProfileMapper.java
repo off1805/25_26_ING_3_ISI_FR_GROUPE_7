@@ -53,7 +53,7 @@ public interface ProfileMapper {
         throw new IllegalArgumentException("Type de Profile non supporté: " + profile.getClass());
     }
     @ObjectFactory
-    default Profile createJpaProfileEntity(JpaProfileEntity jpaProfile) {
+    default Profile createProfile(JpaProfileEntity jpaProfile) {
         if (jpaProfile instanceof JpaStudentProfileEntity) {
             return new StudentProfile();
         }
