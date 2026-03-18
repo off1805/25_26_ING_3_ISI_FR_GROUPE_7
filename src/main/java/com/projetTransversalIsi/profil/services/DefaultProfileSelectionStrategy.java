@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.profil.services;
 
+import com.projetTransversalIsi.profil.application.ProfilCreationDTO;
 import com.projetTransversalIsi.profil.domain.Profile;
 import com.projetTransversalIsi.profil.domain.ProfileProvider;
 import com.projetTransversalIsi.security.domain.EnumRole;
@@ -28,12 +29,20 @@ public class DefaultProfileSelectionStrategy implements ProfileSelectionStrategy
     }
 
     @Override
-    public Profile selectProfileFor(Role role) {
+    public Profile selectProfileFor(Role role, ProfilCreationDTO profileJson) {
         ProfileProvider provider = providerByRole.get(role.getName());
         if (provider == null) {
             throw new RuntimeException("Aucun profil pour le rôle : " + role.getName());
         }
-        return provider.create();
+        System.out.println("Slect porfile ofr");
+        System.out.println(profileJson);
+        Profile pro=provider.create(profileJson);
+        System.out.println("Slect porfile apres la fin");
+        System.out.println(pro.getNom());
+        System.out.println(pro.getNumeroTelephone());
+        System.out.println(pro.getMatricule());
+        System.out.println(pro.getPrenom());
+        return pro;
     }
 
     private ProfileProvider findProvider(List<ProfileProvider> profileProviders, String roleName) {

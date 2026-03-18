@@ -15,7 +15,8 @@ export class CreateUserUC {
             idRole: userData.idRole,
             idPermissions: Array.isArray(userData.idPermissions)
                 ? userData.idPermissions
-                : (userData.idPermissions ? [userData.idPermissions] : [])
+                : (userData.idPermissions ? [userData.idPermissions] : []),
+            profile:userData.profile
         };
 
         try {

@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.profil.application;
 
+import com.google.gson.Gson;
 import com.projetTransversalIsi.profil.domain.AdminProfile;
 import com.projetTransversalIsi.profil.domain.Profile;
 import com.projetTransversalIsi.profil.domain.ProfileProvider;
@@ -13,6 +14,13 @@ public class AdminProfileProvider implements ProfileProvider {
     public boolean supports(String roleName){return EnumRole.ADMIN.name().equals(roleName);}
 
     @Override
-    public Profile create(){return new AdminProfile();
+    public Profile create(ProfilCreationDTO profileJson){
+
+        AdminProfile profile = new AdminProfile();
+        profile.setMatricule(profileJson.getMatricule());
+        profile.setNom(profileJson.getNom());
+        profile.setPrenom(profileJson.getPrenom());
+        profile.setNumeroTelephone(profileJson.getNumeroTelephone());
+        return profile;
     }
 }
