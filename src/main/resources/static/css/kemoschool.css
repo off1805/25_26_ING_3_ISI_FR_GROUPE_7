@@ -2,8 +2,65 @@
 @theme theme-kemoscool inline {
 
 }
-
 :root[data-theme="theme-kemoschool"],
+[data-theme="theme-kemoschool"] {
+  /* --- 1. ÉCHELLE PRIMAIRE (VIOLET) --- */
+  /* On remplace le bleu par ton violet sur toute l'échelle */
+  --primary-50:  #F5F3FF;
+  --primary-100: #EDE9FE;
+  --primary-200: #DDD6FE;
+  --primary-300: #C4B5FD;
+  --primary-400: #A78BFA;
+  --primary-500: #8B5CF6;
+  --primary-600: #7C3AED;
+  --primary-700: #6D28D9;
+  --primary-800: #5B21B6;
+  --primary-900: #4C1D95;
+  --primary-950: #2E1065;
+
+  /* --- 2. VARIABLES D'ACTION PRIMAIRES --- */
+  --primary:         var(--primary-600);
+  --primary-hover:   var(--primary-700);
+  --primary-focus:   var(--primary-700);
+  --primary-active:  var(--primary-700);
+  --primary-checked: var(--primary-600);
+
+  /* --- 3. ADAPTATION DES COMPOSANTS --- */
+  /* On lie les éléments "Inverse" à ton violet très sombre au lieu du bleu noir */
+  --navbar-inverse:  var(--primary-950);
+  --sidebar-inverse: var(--primary-950);
+
+  /* --- 4. CHARTS & VISUELS --- */
+  /* On aligne les couleurs de graphiques sur ta nouvelle identité */
+  --chart-primary:                    var(--primary-600);
+  --chart-colors-primary:             var(--primary-600);
+  --chart-colors-primary-inverse:     var(--primary-500);
+  --chart-colors-primary-hex:         var(--primary-600);
+  --chart-colors-primary-hex-inverse: var(--primary-500);
+
+  --chart-1: var(--primary-50);
+  --chart-2: var(--primary-200);
+  --chart-3: var(--primary-400);
+  --chart-4: var(--primary-800);
+  
+  --chart-colors-chart-1: var(--primary-50);
+  --chart-colors-chart-2: var(--primary-200);
+  --chart-colors-chart-3: var(--primary-400);
+  --chart-colors-chart-4: var(--primary-800);
+
+  /* Map colors */
+  --map-colors-primary:         var(--primary-600);
+  --map-colors-primary-inverse: var(--primary-500);
+  --map-colors-highlight:       var(--primary-300);
+  --map-colors-highlight-inverse: var(--primary-300);
+
+  /* --- NOTES --- */
+  /* Toutes les autres variables (background, foreground, border, muted, etc.) 
+     héritent automatiquement du thème par défaut car elles ne sont pas 
+     redéfinies ici. Cela garantit la cohérence parfaite que tu recherches. */
+}
+
+/* :root[data-theme="theme-kemoschool"],
 [data-theme="theme-kemoschool"] {
 
    --background-1: var(--color-gray-50);
@@ -12,10 +69,7 @@
   --foreground: var(--color-gray-800);
   --foreground-inverse: var(--color-white);
 
-  /* --background:#fafafa;
-  --background-1: #FAF9FF;
-  --background-2: #F5F3FF;
-  --foreground: #4C1D95; */
+
 
   --inverse: #3B0764;
 
@@ -29,7 +83,7 @@
   --border-line-7: #7C3AED;
   --border-line-8: #6D28D9;
 
-  /* Primary scale (violet) */
+
   --primary-50:  #F5F3FF;
   --primary-100: #EDE9FE;
   --primary-200: #DDD6FE;
@@ -78,7 +132,7 @@
   --muted-focus:        #F5F3FF;
   --muted-active:       #F5F3FF;
 
-  /* Navbar */
+
   --navbar-line:              #EDE9FE;
   --navbar-divider:           #EDE9FE;
   --navbar-nav-foreground:    #4C1D95;
@@ -105,7 +159,7 @@
   --navbar-2-nav-active:        #EDE9FE;
   --navbar-2-nav-list-divider:  #EDE9FE;
 
-  /* Sidebar */
+
   --sidebar-line:             #EDE9FE;
   --sidebar-divider:          #EDE9FE;
   --sidebar-nav-foreground:   #4C1D95;
@@ -132,14 +186,14 @@
   --sidebar-2-nav-active:         #EDE9FE;
   --sidebar-2-nav-list-divider:   #EDE9FE;
 
-  /* Card */
+ 
   --card-line:    #EDE9FE;
   --card-divider: #EDE9FE;
   --card-header:  #EDE9FE;
   --card-footer:  #EDE9FE;
   --card-inverse: #2E1065;
 
-  /* Dropdown */
+
   --dropdown-divider:       #EDE9FE;
   --dropdown-header:        #EDE9FE;
   --dropdown-footer:        #EDE9FE;
@@ -149,14 +203,14 @@
   --dropdown-item-active:   #F5F3FF;
   --dropdown-inverse:       #2E1065;
 
-  /* Select */
+
   --select-item-foreground: #4C1D95;
   --select-item-hover:      #F5F3FF;
   --select-item-focus:      #F5F3FF;
   --select-item-active:     #F5F3FF;
   --select-inverse:         #2E1065;
 
-  /* Overlay */
+
   --overlay-divider: #EDE9FE;
   --overlay-header:  #EDE9FE;
   --overlay-footer:  #EDE9FE;
@@ -174,7 +228,7 @@
   --scrollbar-track: #F5F3FF;
   --scrollbar-thumb: #DDD6FE;
 
-  /* Charts */
+ 
   --chart-colors-background-inverse:   #4C1D95;
   --chart-colors-foreground:           #4C1D95;
   --chart-primary:                     #7C3AED;
@@ -258,7 +312,7 @@
   --chart-colors-grid-border-inverse:   #6D28D9;
   --chart-colors-bar-ranges:            #EDE9FE;
 
-  /* Map */
+ 
   --map-colors-primary:           #7C3AED;
   --map-colors-primary-inverse:   #8B5CF6;
   --map-colors-default:           #DDD6FE;
@@ -267,7 +321,7 @@
   --map-colors-highlight-inverse: #A78BFA;
   --map-colors-border:            #F5F3FF;
   --map-colors-border-inverse:    #4C1D95;
-}
+} */
 
 /* ===================== DARK MODE ===================== */
 [data-theme="theme-kemoschool"].dark {

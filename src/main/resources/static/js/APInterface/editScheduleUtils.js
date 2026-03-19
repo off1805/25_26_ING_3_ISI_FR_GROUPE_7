@@ -1,7 +1,10 @@
-// ═══════════════════════════════════════
-//  CONSTANTS & DATA
-// ═══════════════════════════════════════
-export const HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16]; // slots 8h-17h
+
+import { oklabStringToRgb } from "../common/ColorConverter.js";
+import { oklchStringToRgb } from "../common/ColorConverter.js";
+
+
+
+export const HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16];
 export const DAY_COUNT = 6;
 
 export const CLASSES = [
@@ -38,18 +41,13 @@ export const ICON_SVG = {
     books: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 5a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1l0 -14" /><path d="M9 5a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1l0 -14" /><path d="M5 8h4" /><path d="M9 16h4" /><path d="M13.803 4.56l2.184 -.53c.562 -.135 1.133 .19 1.282 .732l3.695 13.418a1.02 1.02 0 0 1 -.634 1.219l-.133 .041l-2.184 .53c-.562 .135 -1.133 -.19 -1.282 -.732l-3.695 -13.418a1.02 1.02 0 0 1 .634 -1.219l.133 -.041" /><path d="M14 9l4 -1" /><path d="M16 16l3.923 -.98" /></svg>`,
 };
 
-// ═══════════════════════════════════════
-//  COLLISION DETECTION
-// ═══════════════════════════════════════
 
-/** 
- * Check if an area is occupied by any block other than excludeBlock 
- */
+//Verifie si une zone du planing est deja occupe par un autre bloc
 export function isAreaOccupied(hourIndex, dayIndex, rowSpan, colSpan, excludeBlock = null, blocks = null) {
     const blocksToCheck = blocks || document.querySelectorAll('.schedule-block');
     for (const block of blocksToCheck) {
         if (block === excludeBlock) continue;
-        
+
         const bHi = parseInt(block.dataset.hourIndex);
         const bDi = parseInt(block.dataset.dayIndex);
         const bRs = parseInt(block.dataset.rs || "1");
@@ -64,6 +62,7 @@ export function isAreaOccupied(hourIndex, dayIndex, rowSpan, colSpan, excludeBlo
     return false;
 }
 
+
 /**
  * Check if a block of given dimensions fits within the grid boundaries
  */
@@ -74,28 +73,33 @@ export function isWithinBounds(hourIndex, dayIndex, rowSpan, colSpan) {
     return true;
 }
 
-// ═══════════════════════════════════════
-//  DATE FORMATTING
-// ═══════════════════════════════════════
 
 export function getMonday(weekOffset = 0) {
-    const todayDate = new Date(), dayOfWeek = todayDate.getDay(), mondayDate = new Date(todayDate);
-    mondayDate.setDate(todayDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1) + weekOffset * 7);
+    const todayDate = new Date();
+    const dayOfWeek = todayDate.getDay(); // 0 (Sunday) to 6 (Saturday)
+    
+    // Pour obtenir le lundi de la semaine courant:
+    // Si dimanche (0), ajouter 1 jour pour obtenir lundi
+    // Sinon, soustraire (dayOfWeek - 1) jours pour obtenir le lundi
+    const daysToAdjust = dayOfWeek === 0 ? 1 : 1 - dayOfWeek;
+    
+    const mondayDate = new Date(todayDate);
+    mondayDate.setDate(todayDate.getDate() + daysToAdjust + weekOffset * 7);
     mondayDate.setHours(0, 0, 0, 0);
     return mondayDate;
 }
 
-export function fmtISO(date) { 
-    return date.toISOString().split('T')[0]; 
+export function fmtISO(date) {
+    return date.toISOString().split('T')[0];
 }
 
-export function fmtShort(date) { 
-    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }); 
+
+
+export function fmtShort(date) {
+    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
 }
 
-// ═══════════════════════════════════════
-//  EXPORT PDF
-// ═══════════════════════════════════════
+
 
 export async function generatePDF(elementId, showToastFn) {
     const root = document.getElementById(elementId);
@@ -105,131 +109,100 @@ export async function generatePDF(elementId, showToastFn) {
         showToastFn?.("html2canvas non chargé");
         return;
     }
+
     const jsPDFCtor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
     if (!jsPDFCtor) {
         showToastFn?.("jsPDF non chargé");
         return;
     }
 
-    const wrapper = root.querySelector("#schedule-wrapper");
+    const wrapper = root.querySelector("#page-content");
     if (!wrapper) {
         showToastFn?.("PDF: zone planning introuvable");
         return;
     }
 
-    const withTimeout = (p, ms, label) => {
-        let t;
-        const timeout = new Promise((_, rej) => {
-            t = setTimeout(() => rej(new Error(`Timeout ${label || ""}`.trim())), ms);
-        });
-        return Promise.race([p.finally(() => clearTimeout(t)), timeout]);
-    };
-
     const injectExportStyles = (doc) => {
+        
+    doc.documentElement.classList.remove("dark");
+
+        // Ajoute les styles nécessaires pour PDF
         const style = doc.createElement("style");
         style.textContent = `
-          body { background: #ffffff !important; }
-          #schedule-card, #schedule-wrapper, #schedule-body, #day-headers { background: #ffffff !important; }
-          #day-headers > div, #schedule-body .slot, #schedule-body .time-cell { background: #ffffff !important; }
-          #schedule-card, #schedule-card * {
-            color: rgb(15, 23, 42);
-            background-color: transparent;
-            border-color: rgb(226, 232, 240);
-            outline-color: rgb(226, 232, 240);
-          }
-          #day-headers { position: static !important; top: auto !important; }
-          .time-cell { position: static !important; left: auto !important; }
-        `;
-        doc.head.appendChild(style);
-    };
+         #page-content {
+            background: #ffffff !important;
+        }
+           
+        .schedule-block p, .schedule-block span {
+            overflow: visible !important;
+            text-overflow: clip !important;
+            white-space: normal !important; /* Désactive le truncate */
+            line-height: 1.4 !important;    /* Donne de l'air au texte */
+            display: block !important;
+        }
 
-    // Save styles/scroll to restore after capture
+      
+        .schedule-block div {
+            overflow: visible !important;
+            height: auto !important; /* Laisse le bloc respirer */
+        }
+
+      
+        .btn-delete-block, [data-r="s"], [data-r="e"] {
+            display: none !important;
+        }
+
+        #day-headers { position: static !important; top: auto !important; }
+        .time-cell { position: static !important; left: auto !important; }
+    `;
+        doc.head.appendChild(style);
+
+        // Parcours tous les éléments pour corriger uniquement les couleurs non supportées
+        const allElements = doc.querySelectorAll("*");
+        allElements.forEach((el) => {
+            const computed = window.getComputedStyle(el);
+
+            // Fonction pour transformer okLab ou autres en rgb
+            const safeColor = (color) => {
+                console.log("Couleur originale:", color);
+                if (!color) return color;
+                // Si c’est déjà rgb ou hex, on garde
+                if (color.startsWith("rgb") || color.startsWith("#")) return color;
+                // Sinon, on met fallback noir (ou blanc si c’est bg)
+                if (color.startsWith("oklch")) return oklchStringToRgb(color);
+                if (color.startsWith("oklab")) return oklabStringToRgb(color);
+
+                return color; // fallback, on espère que jsPDF gérera une couleur valide ou ignorera
+            };
+
+            // Texte
+            if (computed.color) el.style.color = safeColor(computed.color);
+            // Background
+            if (computed.backgroundColor && computed.backgroundColor !== "rgba(0, 0, 0, 0)")
+                el.style.backgroundColor = safeColor(computed.backgroundColor);
+            // Border
+            if (computed.borderColor) el.style.borderColor = safeColor(computed.borderColor);
+        });
+    };
     const rootStyle = root.style.cssText;
     const wrapStyle = wrapper.style.cssText;
-    const wrapScrollLeft = wrapper.scrollLeft;
-    const wrapScrollTop = wrapper.scrollTop;
 
     try {
         showToastFn?.("Génération du PDF…");
 
-        // Expand wrapper to full scroll size to capture entire grid
-        const fullW = wrapper.scrollWidth;
-        const fullH = wrapper.scrollHeight;
-
-        wrapper.style.width = `${fullW}px`;
-        wrapper.style.height = `${fullH}px`;
-        wrapper.style.overflow = "visible";
-        wrapper.scrollLeft = 0;
-        wrapper.scrollTop = 0;
-
-        // Limit scale if dimensions are huge to avoid canvas clipping
-        const MAX_CANVAS = 8192;
-        const maxScale = Math.min(2, MAX_CANVAS / Math.max(fullW, fullH));
-        const scale = Math.max(1, maxScale);
-
-        const canvas = await withTimeout(
-            html2canvas(wrapper, {
-                scale,
-                useCORS: true,
-                allowTaint: true,
-                logging: false,
-                backgroundColor: "#ffffff",
-                width: fullW,
-                height: fullH,
-                windowWidth: fullW,
-                windowHeight: fullH,
-                scrollX: 0,
-                scrollY: 0,
-                onclone: (doc) => {
-                    injectExportStyles(doc);
-                    const cWrap = doc.getElementById("schedule-wrapper");
-                    if (cWrap) {
-                        cWrap.style.width = `${fullW}px`;
-                        cWrap.style.height = `${fullH}px`;
-                        cWrap.style.overflow = "visible";
-                        cWrap.scrollLeft = 0;
-                        cWrap.scrollTop = 0;
-                    }
-                },
-                foreignObjectRendering: true,
-            }),
-            25000,
-            "html2canvas"
-        ).catch(async (e1) => {
-            console.warn("PDF export: foreignObjectRendering failed, retrying without.", e1);
-            return withTimeout(
-                html2canvas(wrapper, {
-                    scale,
-                    useCORS: true,
-                    allowTaint: true,
-                    logging: false,
-                    backgroundColor: "#ffffff",
-                    width: fullW,
-                    height: fullH,
-                    windowWidth: fullW,
-                    windowHeight: fullH,
-                    scrollX: 0,
-                    scrollY: 0,
-                    onclone: (doc) => {
-                        injectExportStyles(doc);
-                        const cWrap = doc.getElementById("schedule-wrapper");
-                        if (cWrap) {
-                            cWrap.style.width = `${fullW}px`;
-                            cWrap.style.height = `${fullH}px`;
-                            cWrap.style.overflow = "visible";
-                            cWrap.scrollLeft = 0;
-                            cWrap.scrollTop = 0;
-                        }
-                    },
-                    foreignObjectRendering: false,
-                }),
-                25000,
-                "html2canvas"
-            );
+        // Capture l'élément directement
+        const canvas = await html2canvas(wrapper, {
+            scale: 2,                 // meilleure résolution
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+            backgroundColor: "#ffffff",
+            onclone: injectExportStyles,
         });
 
         const imgData = canvas.toDataURL("image/png");
 
+        // Création du PDF
         const pdf = new jsPDFCtor({ orientation: "landscape", unit: "mm", format: "a4" });
         const pageW = pdf.internal.pageSize.getWidth();
         const pageH = pdf.internal.pageSize.getHeight();
@@ -245,6 +218,7 @@ export async function generatePDF(elementId, showToastFn) {
             imgPrintH = pageH;
             imgPrintW = pageH * imgRatio;
         }
+
         const offsetX = (pageW - imgPrintW) / 2;
         const offsetY = (pageH - imgPrintH) / 2;
 
@@ -253,12 +227,12 @@ export async function generatePDF(elementId, showToastFn) {
         showToastFn?.("PDF exporté ✓");
     } catch (error) {
         console.error("Erreur lors de la génération du PDF:", error);
-        const msg = error && error.message ? error.message : String(error);
-        showToastFn?.(`Erreur export PDF: ${msg}`);
+        showToastFn?.(`Erreur export PDF: ${error?.message || error}`);
     } finally {
         root.style.cssText = rootStyle;
         wrapper.style.cssText = wrapStyle;
-        wrapper.scrollLeft = wrapScrollLeft;
-        wrapper.scrollTop = wrapScrollTop;
     }
 }
+
+
+

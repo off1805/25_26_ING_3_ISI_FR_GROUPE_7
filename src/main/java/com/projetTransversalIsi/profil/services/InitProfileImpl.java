@@ -13,10 +13,13 @@ public class InitProfileImpl<T extends Profile,E extends JpaProfileEntity> imple
 
     private final JpaProfileRepository<T,E> jpaProfileRepo;
 
-
-
     @Override
     public T execute(T profile){
+        System.out.println("Init Profile in");
+        System.out.println(profile.getId());
+        System.out.println(profile.getNom());
+        System.out.println(profile.getPrenom());
+        System.out.println(profile.getNumeroTelephone());
         return (T) jpaProfileRepo.save(profile);
 
     }

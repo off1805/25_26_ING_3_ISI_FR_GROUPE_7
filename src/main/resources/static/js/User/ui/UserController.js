@@ -6,6 +6,14 @@ import { UserApi } from "../infrastructure/UserApi.js";
 import { userRowTable } from "./userRowTable.js";
 import { GlobalEventNotifier } from "../../common/GlobalEventNotifier.js";
 
+const SELECTORS = {
+    createCompteForm: 'form[data-form="create-compte"]',
+    createProfilForm: 'form[data-form="create-profil"]',
+    createUserTabItemCompte: '#tab-create-user-item-1',
+    createUserTabItemProfil: '#tab-create-user-item-2',
+
+};
+
 export class UserController {
     constructor(userApi, createUserUC, deleteUserUC, modifyUserStatusUC) {
         this.userApi = userApi;
@@ -13,14 +21,15 @@ export class UserController {
         this.deleteUserUC = deleteUserUC;
         this.modifyUserStatusUC = modifyUserStatusUC;
         this.currentPermissions = [];
+        this.currentUserCreateInfo={};
         this.init();
     }
 
     init() {
         // ── Formulaire CRÉER ──
-        const addUserForm = document.getElementById('addUserForm');
+        const addUserForm = document.querySelector(SELECTORS.createCompteForm);
         if (addUserForm) {
-            addUserForm.addEventListener('submit', (e) => this.handleCreateUser(e));
+            addUserForm.addEventListener('submit', (e) => this.switchToProfilEdition(e));
             const roleSelect = addUserForm.querySelector('select[name="role"]');
             if (roleSelect) {
                 roleSelect.addEventListener('change', (e) => this.handleRoleChange(e));
@@ -34,6 +43,25 @@ export class UserController {
                 }
             }
         }
+
+        const profilForm = document.querySelector(SELECTORS.createProfilForm);
+        if (profilForm) {
+            profilForm.addEventListener('submit', (e) => this.handleCreateUser(e));
+        }
+
+        const modal = document.getElementById('hs-modal-add-user');
+
+        const observer = new MutationObserver(() => {
+            if (modal.classList.contains('hidden')) {
+                this.currentUserCreateInfo={};
+                this.currentPermissions = [];
+            }
+        });
+
+        observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+
+
+
 
         // ── Formulaire MODIFIER ──
         const editUserForm = document.getElementById('editUserForm');
@@ -60,21 +88,21 @@ export class UserController {
 
     _getRoleClass(roleName) {
         switch (roleName) {
-            case 'TEACHER':    return 'bg-blue-500/10 text-blue-500';
+            case 'TEACHER': return 'bg-blue-500/10 text-blue-500';
             case 'ADMIN':
-            case 'SURVEILLANT':return 'bg-indigo-500/10 text-indigo-500';
-            case 'AP':         return 'bg-orange-500/10 text-orange-500';
-            default:           return 'bg-muted text-muted-foreground-2';
+            case 'SURVEILLANT': return 'bg-indigo-500/10 text-indigo-500';
+            case 'AP': return 'bg-orange-500/10 text-orange-500';
+            default: return 'bg-muted text-muted-foreground-2';
         }
     }
 
     _getRoleLabel(roleName) {
         switch (roleName) {
-            case 'TEACHER':    return 'ENSEIGNANT';
+            case 'TEACHER': return 'ENSEIGNANT';
             case 'ADMIN':
-            case 'SURVEILLANT':return 'SURVEILLANT';
-            case 'AP':         return 'AP';
-            default:           return 'AUTRE';
+            case 'SURVEILLANT': return 'SURVEILLANT';
+            case 'AP': return 'AP';
+            default: return 'AUTRE';
         }
     }
 
@@ -90,42 +118,76 @@ export class UserController {
 
     // ── Sync empty state ─────────────────────────────────────────────────────
     _syncEmptyState() {
-        const tbody    = document.getElementById('table-body');
+        const tbody = document.getElementById('table-body');
         const emptyRow = document.getElementById('empty-state-row');
         if (!tbody || !emptyRow) return;
         const realRows = tbody.querySelectorAll('tr:not(#empty-state-row)').length;
         emptyRow.classList.toggle('hidden', realRows > 0);
     }
 
-    // ── CRÉER ────────────────────────────────────────────────────────────────
-    async handleCreateUser(event) {
+    switchToProfilEdition(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
-
         const checkedPermissions = [
             ...document.querySelectorAll('#permissionsContainer input[type="checkbox"]:checked')
         ].map(cb => cb.value);
 
         const userData = {
-            email:         formData.get('email'),
-            idRole:        formData.get('role'),
+            email: formData.get('email'),
+            idRole: formData.get('role'),
             idPermissions: checkedPermissions.length > 0
                 ? checkedPermissions
                 : this.currentPermissions.map(p => p.id)
         };
+       
 
         if (!userData.idPermissions || userData.idPermissions.length === 0) {
             alert("Veuillez sélectionner au moins une permission.");
             return;
         }
+         this.currentUserCreateInfo=userData;
+
+        const tabItemCompte = document.querySelector(SELECTORS.createUserTabItemCompte);
+        const tabItemProfil = document.querySelector(SELECTORS.createUserTabItemProfil);
+        if (tabItemCompte && tabItemProfil) {
+            tabItemProfil.removeAttribute('disabled');
+            tabItemProfil.click();
+        }
+
+
+    }
+
+    // ── CRÉER ────────────────────────────────────────────────────────────────
+    async handleCreateUser(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+         const profilData = {
+            nom: formData.get('noms'),
+           prenom: formData.get('prenoms'),
+           matricule: formData.get('matricule'),
+           numeroTelephone: formData.get('telephone'),
+        };
+        this.currentUserCreateInfo["profile"]=profilData;
+        console.log("Données complètes pour création :", this.currentUserCreateInfo);
+
 
         try {
-            const newUser = await this.createUserUC.execute(userData);
-            HSOverlay.close('#hs-modal-add-user');
+            const newUser = await this.createUserUC.execute(this.currentUserCreateInfo);
+           
             GlobalEventNotifier.eventWellDone("Utilisateur créé avec succès !");
             this._addUserRow(newUser);
         } catch (e) {
             GlobalErrorHandler.handle(e);
+        }finally{
+             HSOverlay.close('#hs-modal-add-user');
+             document.querySelector(SELECTORS.createCompteForm)?.reset();
+             document.querySelector(SELECTORS.createProfilForm)?.reset();
+             const tabItemCompte = document.querySelector(SELECTORS.createUserTabItemCompte);
+             const tabItemProfil = document.querySelector(SELECTORS.createUserTabItemProfil);
+                if (tabItemCompte && tabItemProfil) {
+                    tabItemProfil.setAttribute('disabled', 'disabled');
+                    tabItemCompte.click();
+                }
         }
     }
 
@@ -141,14 +203,14 @@ export class UserController {
         );
 
         // Stocker les données brutes sur la ligne pour l'édition
-        row.dataset.userId    = user.id;
+        row.dataset.userId = user.id;
         row.dataset.userEmail = user.email;
-        row.dataset.userRole  = user.roleName;
-        row.dataset.userStatus= user.status;
+        row.dataset.userRole = user.roleName;
+        row.dataset.userStatus = user.status;
 
         // Bind les boutons de la nouvelle ligne
         row.querySelector('.btn-delete-user')?.addEventListener('click', (e) => this.handleDeleteUser(e));
-        row.querySelector('.btn-edit-user')?.addEventListener('click',   (e) => this.handleOpenEditModal(e));
+        row.querySelector('.btn-edit-user')?.addEventListener('click', (e) => this.handleOpenEditModal(e));
 
         tableBody.appendChild(row);
         window.HSStaticMethods.autoInit();
@@ -188,19 +250,19 @@ export class UserController {
         const button = event.currentTarget;
         // Remonter jusqu'à la <tr> pour lire les data
         const row = button.closest('tr');
-        const userId    = row?.dataset.userId    || button.dataset.userId;
+        const userId = row?.dataset.userId || button.dataset.userId;
         const userEmail = row?.dataset.userEmail || button.dataset.userEmail || '';
-        const userRole  = row?.dataset.userRole  || button.dataset.userRole  || '';
-        const userStatus= row?.dataset.userStatus|| button.dataset.userStatus|| '';
+        const userRole = row?.dataset.userRole || button.dataset.userRole || '';
+        const userStatus = row?.dataset.userStatus || button.dataset.userStatus || '';
 
         // Pré-remplir le modal
-        document.getElementById('edit-user-id').value    = userId;
+        document.getElementById('edit-user-id').value = userId;
         document.getElementById('edit-user-email').value = userEmail;
 
         // Sélectionner la bonne option rôle
-        const roleSelect   = document.getElementById('edit-user-role');
+        const roleSelect = document.getElementById('edit-user-role');
         const statusSelect = document.getElementById('edit-user-status');
-        if (roleSelect)   roleSelect.value   = userRole;
+        if (roleSelect) roleSelect.value = userRole;
         if (statusSelect) statusSelect.value = userStatus;
 
         // Ré-initialiser les hs-select pour qu'ils reflètent la valeur
@@ -215,16 +277,16 @@ export class UserController {
         event.preventDefault();
         const formData = new FormData(event.target);
 
-        const userId     = formData.get('id');
-        const newEmail   = formData.get('email');
-        const newRole    = formData.get('role');
-        const newStatus  = formData.get('status');
+        const userId = formData.get('id');
+        const newEmail = formData.get('email');
+        const newRole = formData.get('role');
+        const newStatus = formData.get('status');
 
         try {
             // Adapter selon votre API — exemple :
             const updatedUser = await this.userApi.updateUser(userId, {
-                email:  newEmail,
-                role:   newRole,
+                email: newEmail,
+                role: newRole,
                 status: newStatus
             });
 
@@ -253,13 +315,13 @@ export class UserController {
             this._getStatusClass(user.status)
         );
 
-        newRow.dataset.userId     = user.id;
-        newRow.dataset.userEmail  = user.email;
-        newRow.dataset.userRole   = user.roleName;
+        newRow.dataset.userId = user.id;
+        newRow.dataset.userEmail = user.email;
+        newRow.dataset.userRole = user.roleName;
         newRow.dataset.userStatus = user.status;
 
         newRow.querySelector('.btn-delete-user')?.addEventListener('click', (e) => this.handleDeleteUser(e));
-        newRow.querySelector('.btn-edit-user')?.addEventListener('click',   (e) => this.handleOpenEditModal(e));
+        newRow.querySelector('.btn-edit-user')?.addEventListener('click', (e) => this.handleOpenEditModal(e));
 
         tbody.replaceChild(newRow, oldRow);
         window.HSStaticMethods.autoInit();
@@ -311,24 +373,24 @@ export class UserController {
         return span;
     }
 
-   updatePermissionsUI(permissions) {
-       const container = document.getElementById('permissionsContainer');
-       const view      = document.getElementById('permissions-view');
-       if (!container) return;
+    updatePermissionsUI(permissions) {
+        const container = document.getElementById('permissionsContainer');
+        const view = document.getElementById('permissions-view');
+        if (!container) return;
 
-       container.innerHTML = '';
-       view.innerHTML      = '';
+        container.innerHTML = '';
+        view.innerHTML = '';
 
-       if (!permissions || permissions.length === 0) {
-           container.innerHTML = '<div class="py-2 px-3 text-sm text-muted-foreground-2">Aucune permission pour ce rôle.</div>';
-           return;
-       }
+        if (!permissions || permissions.length === 0) {
+            container.innerHTML = '<div class="py-2 px-3 text-sm text-muted-foreground-2">Aucune permission pour ce rôle.</div>';
+            return;
+        }
 
-       permissions.forEach(p => {
-           const div = document.createElement('div');
-           div.className = 'flex items-start gap-3 py-2 px-3 rounded-lg hover:bg-dropdown-item-hover cursor-pointer transition-colors';
+        permissions.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'flex items-start gap-3 py-2 px-3 rounded-lg hover:bg-dropdown-item-hover cursor-pointer transition-colors';
 
-           div.innerHTML = `
+            div.innerHTML = `
                <div class="relative shrink-0 mt-0.5">
                    <input id="hs-dropdown-item-checkbox-${p.id}"
                           name="hs-dropdown-item-checkbox-${p.id}"
@@ -354,30 +416,30 @@ export class UserController {
                </label>
            `;
 
-           const badge = this._createPermissionsBadge(p.id);
-           badge.querySelector('.remove-btn').addEventListener('click', () => {
-               if (view.children.length > 1) {
-                   badge.remove();
-                   div.querySelector('input').checked = false;
-               }
-           });
-           div.querySelector('input').addEventListener('change', (e) => {
-               if (e.target.checked) {
-                   view.appendChild(badge);
-               } else {
-                   if (view.children.length > 1) badge.remove();
-                   else e.target.checked = true;
-               }
-           });
+            const badge = this._createPermissionsBadge(p.id);
+            badge.querySelector('.remove-btn').addEventListener('click', () => {
+                if (view.children.length > 1) {
+                    badge.remove();
+                    div.querySelector('input').checked = false;
+                }
+            });
+            div.querySelector('input').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    view.appendChild(badge);
+                } else {
+                    if (view.children.length > 1) badge.remove();
+                    else e.target.checked = true;
+                }
+            });
 
-           view.appendChild(badge);
-           container.appendChild(div);
-       });
-   }
+            view.appendChild(badge);
+            container.appendChild(div);
+        });
+    }
 }
 
-const userApi           = new UserApi();
-const createUserUC      = new CreateUserUC(userApi);
-const deleteUserUC      = new DeleteUserUC(userApi);
-const modifyUserStatusUC= new ModifyUserStatusUC(userApi);
+const userApi = new UserApi();
+const createUserUC = new CreateUserUC(userApi);
+const deleteUserUC = new DeleteUserUC(userApi);
+const modifyUserStatusUC = new ModifyUserStatusUC(userApi);
 new UserController(userApi, createUserUC, deleteUserUC, modifyUserStatusUC);

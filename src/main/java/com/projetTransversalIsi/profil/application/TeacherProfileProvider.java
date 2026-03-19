@@ -1,9 +1,7 @@
 package com.projetTransversalIsi.profil.application;
 
-import com.projetTransversalIsi.profil.domain.Profile;
-import com.projetTransversalIsi.profil.domain.ProfileProvider;
-import com.projetTransversalIsi.profil.domain.StudentProfile;
-import com.projetTransversalIsi.profil.domain.TeacherProfile;
+import com.google.gson.Gson;
+import com.projetTransversalIsi.profil.domain.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,6 +10,12 @@ public class TeacherProfileProvider implements ProfileProvider {
         public boolean supports(String roleName){return "TEACHER".equals(roleName);}
 
         @Override
-        public Profile create(){return new TeacherProfile();
+        public Profile create(ProfilCreationDTO profileJson){
+                TeacherProfile profile = new TeacherProfile();
+                profile.setMatricule(profileJson.getMatricule());
+                profile.setNom(profileJson.getNom());
+                profile.setPrenom(profileJson.getPrenom());
+                profile.setNumeroTelephone(profileJson.getNumeroTelephone());
+                return profile;
         }
 }
