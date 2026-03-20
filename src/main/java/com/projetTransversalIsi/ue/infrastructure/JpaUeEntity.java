@@ -32,7 +32,10 @@ public class JpaUeEntity {
 
     @Column(name = "specialite_id")
     private Long specialiteId;
-    
+
+    @Column(name = "enseignant_id")
+    private Long enseignantId;
+
     @Column(nullable = false, columnDefinition = "varchar(255) default '#ffffff'")
     private String couleur = "#ffffff";
 

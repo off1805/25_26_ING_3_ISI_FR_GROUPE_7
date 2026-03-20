@@ -11,5 +11,6 @@ public record UpdateUeRequestDTO(
         @NotNull @Min(1) int volumeHoraireTotal,
         String description,
         String couleur,
-        @NotNull Long specialiteId) {
+        @NotNull Long specialiteId,
+        @NotNull Long enseignantId) {
 }

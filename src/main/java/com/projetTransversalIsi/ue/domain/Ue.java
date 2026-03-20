@@ -18,6 +18,7 @@ public class Ue {
     private String description;
 
     private Long specialiteId;
+    private Long enseignantId;
     private String couleur = "#ffffff";
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;

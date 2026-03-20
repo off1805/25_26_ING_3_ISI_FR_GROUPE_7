@@ -9,5 +9,7 @@ public record UeResponseDTO(
         int credit,
         int volumeHoraireTotal,
         String description,
-        String couleur) {
+        String couleur,
+        Long specialiteId,
+        Long enseignantId) {
 }
