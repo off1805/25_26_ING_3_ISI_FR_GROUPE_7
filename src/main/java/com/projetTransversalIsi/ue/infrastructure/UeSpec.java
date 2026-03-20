@@ -38,4 +38,12 @@ public class UeSpec {
             return cb.equal(root.get("specialiteId"), specialiteId);
         };
     }
+
+    public static Specification<JpaUeEntity> hasEnseignantId(Long enseignantId) {
+        return (root, query, cb) -> {
+            if (enseignantId == null)
+                return null;
+            return cb.equal(root.get("enseignantId"), enseignantId);
+        };
+    }
 }
