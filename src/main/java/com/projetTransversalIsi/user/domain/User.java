@@ -19,6 +19,8 @@ public class User {
     private String email;
     private String password;
     private Long profileId;
+    private String nom;
+    private String prenom;
     private Role role;
     private Set<Permission> permissions;
     private boolean deleted= false;

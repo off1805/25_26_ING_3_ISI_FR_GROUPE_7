@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.ue.application.dto;
 
-import java.time.LocalDateTime;
+import java.util.Set;
 
 public record UeResponseDTO(
         Long id,
@@ -9,5 +9,7 @@ public record UeResponseDTO(
         int credit,
         int volumeHoraireTotal,
         String description,
-        String couleur) {
+        String couleur,
+        Long specialiteId,
+        Set<Long> enseignantIds) {
 }

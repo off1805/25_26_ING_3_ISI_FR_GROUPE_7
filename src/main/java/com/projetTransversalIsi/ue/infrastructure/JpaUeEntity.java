@@ -1,10 +1,13 @@
 package com.projetTransversalIsi.ue.infrastructure;
 
+import com.projetTransversalIsi.profil.infrastructure.JpaTeacherProfileEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -32,7 +35,15 @@ public class JpaUeEntity {
 
     @Column(name = "specialite_id")
     private Long specialiteId;
-    
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "ue_enseignant",
+        joinColumns = @JoinColumn(name = "ue_id"),
+        inverseJoinColumns = @JoinColumn(name = "enseignant_id")
+    )
+    private Set<JpaTeacherProfileEntity> enseignants = new HashSet<>();
+
     @Column(nullable = false, columnDefinition = "varchar(255) default '#ffffff'")
     private String couleur = "#ffffff";
 

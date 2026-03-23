@@ -4,18 +4,42 @@ import com.projetTransversalIsi.ue.application.dto.CreateUeRequestDTO;
 import com.projetTransversalIsi.ue.application.dto.UeResponseDTO;
 import com.projetTransversalIsi.ue.application.dto.UpdateUeRequestDTO;
 import com.projetTransversalIsi.ue.domain.Ue;
+import com.projetTransversalIsi.profil.infrastructure.JpaTeacherProfileEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface UeMapper {
 
     // Domain <-> Entity
+    @Mapping(target = "enseignants", ignore = true)
     JpaUeEntity ueToJpaUeEntity(Ue ue);
 
-    Ue jpaUeEntityToUe(JpaUeEntity jpaUeEntity);
+    default Ue jpaUeEntityToUe(JpaUeEntity entity) {
+        if (entity == null) return null;
+        Ue ue = new Ue();
+        ue.setId(entity.getId());
+        ue.setLibelle(entity.getLibelle());
+        ue.setCode(entity.getCode());
+        ue.setCredit(entity.getCredit());
+        ue.setVolumeHoraireTotal(entity.getVolumeHoraireTotal());
+        ue.setDescription(entity.getDescription());
+        ue.setSpecialiteId(entity.getSpecialiteId());
+        ue.setCouleur(entity.getCouleur());
+        ue.setCreatedAt(entity.getCreatedAt());
+        ue.setDeletedAt(entity.getDeletedAt());
+        ue.setIsDeleted(entity.getIsDeleted());
+        if (entity.getEnseignants() != null) {
+            ue.setEnseignantIds(entity.getEnseignants().stream()
+                    .map(JpaTeacherProfileEntity::getId)
+                    .collect(Collectors.toSet()));
+        }
+        return ue;
+    }
 
     // Request DTO -> Domain
     @Mapping(target = "id", ignore = true)
@@ -35,33 +59,18 @@ public interface UeMapper {
 
     List<UeResponseDTO> toResponseDTOList(List<Ue> ues);
 
-    // Entity -> Response DTO
-    UeResponseDTO toResponseDTO(JpaUeEntity jpaUeEntity);
-
-    List<UeResponseDTO> jpaEntityListToResponseDTOList(List<JpaUeEntity> entities);
-
     // Request DTO -> Entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
+    @Mapping(target = "enseignants", ignore = true)
     JpaUeEntity toEntity(CreateUeRequestDTO request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
+    @Mapping(target = "enseignants", ignore = true)
     void updateEntityFromDTO(UpdateUeRequestDTO request, @org.mapstruct.MappingTarget JpaUeEntity entity);
-
-    // Response DTO -> Domain
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deletedAt", ignore = true)
-    @Mapping(target = "isDeleted", ignore = true)
-    Ue responseDTOToUe(UeResponseDTO responseDTO);
-
-    // Response DTO -> Entity
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deletedAt", ignore = true)
-    @Mapping(target = "isDeleted", ignore = true)
-    JpaUeEntity responseDTOToJpaUeEntity(UeResponseDTO responseDTO);
 }
