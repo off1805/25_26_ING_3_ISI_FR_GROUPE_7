@@ -14,6 +14,9 @@ public record SeanceResponseDTO(
         LocalTime heureFin,
         Long coursId,
         Long enseignantId,
+        Seance.TypeSeance type,
+        String couleur,
+        String iconKey,
         boolean deleted,
         LocalDateTime deletedAt
 ) {
@@ -27,6 +30,9 @@ public record SeanceResponseDTO(
                 seance.getHeureFin(),
                 seance.getCoursId(),
                 seance.getEnseignantId(),
+                seance.getType(),
+                seance.getCouleur(),
+                seance.getIconKey(),
                 seance.isDeleted(),
                 seance.getDeletedAt()
         );

@@ -32,25 +32,43 @@ public class UpdateEmploiTempsWithSeancesUCImpl implements UpdateEmploiTempsWith
         // Mettre à jour les métadonnées de l'emploi
         emploi.update(command.dateDebut(), command.dateFin(), command.semaine(), command.classeId());
 
-        // Ajouter les nouvelles séances
+        // Ajouter les nouvelles séances / événements
         command.seances().forEach(seanceDTO -> {
-            if (seanceRepo.existsConflict(
-                    seanceDTO.enseignantId(),
-                    seanceDTO.dateSeance(),
-                    seanceDTO.heureDebut(),
-                    seanceDTO.heureFin())) {
-                throw new SeanceConflictException("Conflit d'emploi du temps enseignant");
+            Seance.TypeSeance type = seanceDTO.resolvedType();
+
+            // Vérifier les conflits enseignant uniquement pour les séances de cours
+            if (Seance.TypeSeance.SEANCE.equals(type) && seanceDTO.enseignantId() != null) {
+                if (seanceRepo.existsConflict(
+                        seanceDTO.enseignantId(),
+                        seanceDTO.dateSeance(),
+                        seanceDTO.heureDebut(),
+                        seanceDTO.heureFin())) {
+                    throw new SeanceConflictException("Conflit d'emploi du temps enseignant");
+                }
             }
 
-            Seance seance = new Seance(
-                    seanceDTO.libelle(),
-                    seanceDTO.salle(),
-                    seanceDTO.dateSeance(),
-                    seanceDTO.heureDebut(),
-                    seanceDTO.heureFin(),
-                    seanceDTO.coursId(),
-                    seanceDTO.enseignantId()
-            );
+            Seance seance;
+            if (Seance.TypeSeance.EVENEMENT.equals(type)) {
+                seance = new Seance(
+                        seanceDTO.libelle(),
+                        seanceDTO.dateSeance(),
+                        seanceDTO.heureDebut(),
+                        seanceDTO.heureFin(),
+                        seanceDTO.couleur(),
+                        seanceDTO.iconKey()
+                );
+            } else {
+                seance = new Seance(
+                        seanceDTO.libelle(),
+                        seanceDTO.salle() != null ? seanceDTO.salle() : "Salle 1",
+                        seanceDTO.dateSeance(),
+                        seanceDTO.heureDebut(),
+                        seanceDTO.heureFin(),
+                        seanceDTO.coursId(),
+                        seanceDTO.enseignantId()
+                );
+                seance.setCouleur(seanceDTO.couleur());
+            }
 
             emploi.addSeance(seanceRepo.save(seance));
         });
