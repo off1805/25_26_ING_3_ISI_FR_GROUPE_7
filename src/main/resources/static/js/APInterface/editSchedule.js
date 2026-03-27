@@ -14,6 +14,40 @@ function resolveColor(colorIdOrHex, fallbackId = 'violet') {
     return PALETTE.find(p => p.id === fallbackId) || PALETTE[0];
 }
 
+/**
+ * Lit la valeur d'un input Preline datepicker ou d'un input date natif.
+ * Retourne une chaîne au format YYYY-MM-DD ou '' si vide.
+ */
+function getDatePickerValue(inputId) {
+    const el = document.getElementById(inputId);
+    if (!el) return '';
+    // Preline stocke la valeur ISO dans data-hs-datepicker-value
+    // Si elle n'est pas disponible, on retombe sur la valeur brute de l'input
+    return el.dataset.hsDatepickerValue || el.value || '';
+}
+
+/**
+ * Injecte une valeur dans un datepicker Preline (ou dans un input natif).
+ * La valeur doit être au format YYYY-MM-DD.
+ */
+function setDatePickerValue(inputId, isoDateStr) {
+    const el = document.getElementById(inputId);
+    if (!el || !isoDateStr) return;
+
+    // Méthode Preline: passer par l'instance HSDatepicker si disponible
+    const wrapper = el.closest('[data-hs-datepicker]');
+    if (wrapper && window.HSDatepicker) {
+        const instance = HSDatepicker.getInstance(wrapper);
+        if (instance) {
+            instance.setDate(isoDateStr);
+            return;
+        }
+    }
+    // Fallback: écriture directe + dataset
+    el.value = isoDateStr;
+    el.dataset.hsDatepickerValue = isoDateStr;
+}
+
 export class EditScheduleController {
     constructor() {
         this.EVENTS = [
@@ -62,6 +96,10 @@ export class EditScheduleController {
         this._bindSubjectDropModal();
         this._bindSubjectSearch();
 
+        // Exposer les callbacks Preline datepicker sur window AVANT l'init Preline
+        window.__onDateStartChange = (val) => this.handleDatePickerChange(val);
+        window.__onDateEndChange = (val) => { /* la date de fin ne change pas la semaine */ };
+
         window.addEventListener('resize', () => {
             this.recalcSlotHeight();
             this.buildGrid();
@@ -106,7 +144,9 @@ export class EditScheduleController {
         document.getElementById('btn-next-week')?.addEventListener('click', () => { this.weekOffset++; this.renderWeek(); });
         document.getElementById('btn-export-pdf')?.addEventListener('click', () => this.exportPDF());
         document.getElementById('btn-save')?.addEventListener('click', () => this.saveSchedule());
-        document.getElementById('date-start')?.addEventListener('change', e => this.handleDateChange(e));
+
+        // Compatibilité : écoute aussi le changement natif au cas où Preline n'est pas chargé
+        document.getElementById('date-start')?.addEventListener('change', e => this.handleDatePickerChange(e.target.value));
 
         document.getElementById('btn-open-event-modal')?.addEventListener('click', () => this.openAddEventModal());
         document.getElementById('btn-confirm-event')?.addEventListener('click', () => this.confirmAddEvent());
@@ -397,10 +437,10 @@ export class EditScheduleController {
             return dayDate;
         });
 
-        const dateStart = document.getElementById('date-start');
-        if (dateStart) dateStart.value = this._formatDateLocal(weekDays[0]);
-        const dateEnd = document.getElementById('date-end');
-        if (dateEnd) dateEnd.value = this._formatDateLocal(weekDays[5]);
+        // Mise à jour des datepickers Preline (ou des inputs natifs en fallback)
+        setDatePickerValue('date-start', this._formatDateLocal(weekDays[0]));
+        setDatePickerValue('date-end', this._formatDateLocal(weekDays[5]));
+
         document.getElementById('week-label').textContent = `${fmtShort(weekDays[0])} – ${fmtShort(weekDays[5])}`;
 
         const headersElement = document.getElementById('day-headers');
@@ -419,9 +459,16 @@ export class EditScheduleController {
         this.buildGrid();
     }
 
-    handleDateChange(e) {
-        this.weekOffset = Math.round((new Date(e.target.value) - getMonday(0)) / (7 * 86400000));
+    /** Appelé par le callback Preline ou le change natif */
+    handleDatePickerChange(isoValue) {
+        if (!isoValue) return;
+        this.weekOffset = Math.round((new Date(isoValue) - getMonday(0)) / (7 * 86400000));
         this.renderWeek();
+    }
+
+    /** Rétrocompatibilité avec l'ancienne signature handleDateChange(e) */
+    handleDateChange(e) {
+        this.handleDatePickerChange(e?.target?.value || e);
     }
 
     recalcSlotHeight() {
@@ -525,7 +572,7 @@ export class EditScheduleController {
     }
 
     onSlotDragLeave() {
-        // We clear on dragover of another slot or dragend/drop
+        // cleared on next dragover or drop
     }
 
     _clearDragHighlights() {
@@ -596,6 +643,10 @@ export class EditScheduleController {
         if (blockData?.subjectId != null) blockElement.dataset.subjectId = String(blockData.subjectId);
         if (blockData?.teacherId != null) blockElement.dataset.teacherId = String(blockData.teacherId);
         if (blockData?.type) blockElement.dataset.blockType = blockData.type;
+        // Stocker la couleur et l'iconKey pour les événements (utile à la sauvegarde)
+        if (colorId) blockElement.dataset.colorId = colorId;
+        if (blockData?.iconKey) blockElement.dataset.iconKey = blockData.iconKey;
+        if (blockData?.eventName) blockElement.dataset.eventName = blockData.eventName;
 
         blockElement.style.position = 'absolute';
         blockElement.style.background = paletteColor.bg;
@@ -667,6 +718,9 @@ export class EditScheduleController {
         if (originalBlock.dataset.subjectId) sib.dataset.subjectId = originalBlock.dataset.subjectId;
         if (originalBlock.dataset.teacherId) sib.dataset.teacherId = originalBlock.dataset.teacherId;
         if (originalBlock.dataset.blockType) sib.dataset.blockType = originalBlock.dataset.blockType;
+        if (originalBlock.dataset.colorId) sib.dataset.colorId = originalBlock.dataset.colorId;
+        if (originalBlock.dataset.iconKey) sib.dataset.iconKey = originalBlock.dataset.iconKey;
+        if (originalBlock.dataset.eventName) sib.dataset.eventName = originalBlock.dataset.eventName;
         sib.style.cssText = originalBlock.style.cssText;
         sib.style.width = originalBlock.style.width;
 
@@ -736,8 +790,6 @@ export class EditScheduleController {
             e.stopPropagation(); e.preventDefault();
             blockElement.style.zIndex = '50';
             const startX = e.clientX, startW = blockElement.offsetWidth, originD = parseInt(blockElement.dataset.dayIndex), allB = Array.from(document.querySelectorAll('.schedule-block'));
-
-            // Filter out blocks that should not block this resize (self + same-session blocks on other days)
             const hourIndex = parseInt(blockElement.dataset.hourIndex);
             const filteredBlocks = allB.filter(b => {
                 const isSelf = b === blockElement;
@@ -775,12 +827,14 @@ export class EditScheduleController {
     }
 
     refreshBlocksPositions() { document.querySelectorAll('.schedule-block').forEach(b => this._syncBlockToSlot(b)); }
+
     undoLast() {
         if (this.undoStack.length) {
             this.undoStack.pop().remove();
             this._renderSubjects();
         }
     }
+
     _formatDateLocal(dateObj) {
         const tzOffset = dateObj.getTimezoneOffset();
         const local = new Date(dateObj.getTime() - tzOffset * 60000);
@@ -811,20 +865,20 @@ export class EditScheduleController {
         return week;
     }
 
+    /**
+     * Construit le tableau de séances (cours + événements) à envoyer au backend.
+     * Les événements sont envoyés avec type="EVENEMENT", sans coursId ni enseignantId.
+     */
     _buildSeances() {
-        const startStr = document.getElementById('date-start')?.value;
+        const startStr = getDatePickerValue('date-start');
         if (!startStr) return [];
         const startDate = new Date(startStr);
 
         const blocks = document.querySelectorAll('.schedule-block');
         const seances = [];
-        blocks.forEach(block => {
-            if (block.dataset.blockType !== 'teacher') return;
-            const subjectId = parseInt(block.dataset.subjectId);
-            const teacherId = parseInt(block.dataset.teacherId) || 1;
-            if (!subjectId) return;
 
-            const libelle = block.querySelector('p')?.textContent?.trim() || `Séance ${subjectId}`;
+        blocks.forEach(block => {
+            const blockType = block.dataset.blockType;
             const dayIndex = parseInt(block.dataset.dayIndex);
             const hourIndex = parseInt(block.dataset.hourIndex);
             const rowSpan = parseInt(block.dataset.rs || "1");
@@ -833,87 +887,127 @@ export class EditScheduleController {
             date.setDate(startDate.getDate() + dayIndex);
             const startHour = HOURS[hourIndex];
             const endHour = startHour + rowSpan;
+            const dateSeance = this._formatDateLocal(date);
+            const heureDebut = this._formatHour(startHour);
+            const heureFin = this._formatHour(endHour);
+            const colorId = block.dataset.colorId || null;
 
-            seances.push({
-                libelle,
-                salle: 'Salle 1',
-                dateSeance: this._formatDateLocal(date),
-                heureDebut: this._formatHour(startHour),
-                heureFin: this._formatHour(endHour),
-                coursId: subjectId,
-                enseignantId: teacherId
-            });
+            if (blockType === 'teacher') {
+                // Séance de cours
+                const subjectId = parseInt(block.dataset.subjectId);
+                const teacherId = parseInt(block.dataset.teacherId) || 1;
+                if (!subjectId) return;
+
+                const libelle = block.querySelector('p')?.textContent?.trim() || `Séance ${subjectId}`;
+                seances.push({
+                    libelle,
+                    salle: 'Salle 1',
+                    dateSeance,
+                    heureDebut,
+                    heureFin,
+                    coursId: subjectId,
+                    enseignantId: teacherId,
+                    type: 'SEANCE',
+                    couleur: colorId,
+                    iconKey: null,
+                });
+            } else if (blockType === 'event') {
+                // Événement (Pause, Délibération, etc.)
+                const eventName = block.dataset.eventName || block.querySelector('p')?.textContent?.trim() || 'Événement';
+                const iconKey = block.dataset.iconKey || 'event';
+                seances.push({
+                    libelle: eventName,
+                    salle: null,
+                    dateSeance,
+                    heureDebut,
+                    heureFin,
+                    coursId: null,
+                    enseignantId: null,
+                    type: 'EVENEMENT',
+                    couleur: colorId,
+                    iconKey,
+                });
+            }
         });
+
         return seances;
     }
 
     async loadExistingEmploi(emploiId) {
         const emploi = await api.get(`/api/emplois-temps/${emploiId}`);
-        console.log(emploi.seances);
         if (!emploi) return;
 
-        // Positionner la semaine sur la date de début de l'emploi
-        console.log("Date de début de l'emploi du temps :", emploi.dateDebut);
         this.weekOffset = this._computeWeekOffsetFrom(emploi.dateDebut);
         this.renderWeek();
 
-        // Remplir les dates affichées
-        const dateStart = document.getElementById('date-start');
-        const dateEnd = document.getElementById('date-end');
-        if (dateStart) dateStart.value = emploi.dateDebut;
-        if (dateEnd) dateEnd.value = emploi.dateFin;
+        // Mettre à jour les datepickers avec les vraies dates de l'emploi
+        setDatePickerValue('date-start', emploi.dateDebut);
+        setDatePickerValue('date-end', emploi.dateFin);
 
-        // Placer les séances
+        // Placer séances ET événements
         const monday = getMonday(this.weekOffset);
         (emploi.seances || []).forEach(seance => this._placeSeanceFromData(seance, monday));
     }
 
     _placeSeanceFromData(seance, weekMonday) {
         if (!seance?.dateSeance || !seance?.heureDebut || !seance?.heureFin) return;
-        console.log("niveau 1");
 
         const seanceDate = new Date(seance.dateSeance);
         const dayIndex = Math.floor((seanceDate - weekMonday) / 86400000);
-        console.log("Seance date:", seanceDate);
-        console.log("Week monday:", weekMonday);
-        console.log("Calculated dayIndex:", dayIndex);
         if (dayIndex < 0 || dayIndex >= DAY_COUNT) return;
-        console.log("niveau 2");
+
         const startHour = parseInt(String(seance.heureDebut).split(':')[0]);
         const endHour = parseInt(String(seance.heureFin).split(':')[0]);
         const hourIndex = HOURS.indexOf(startHour);
         if (hourIndex === -1) return;
-        console.log("niveau 3");
+
         const rowSpan = Math.max(1, endHour - startHour);
+        const colorId = seance.couleur || null;
 
-        const subjectId = seance.coursId;
-        const teacherId = seance.enseignantId;
-        const subject = this.SUBJECTS.find(s => s.id === subjectId);
+        if (seance.type === 'EVENEMENT') {
+            // Restaurer un événement
+            const iconKey = seance.iconKey || 'event';
+            const blockData = {
+                type: 'event',
+                eventName: seance.libelle || 'Événement',
+                itemKey: `ev-${seance.id || Math.random()}`,
+                iconKey,
+            };
+            const block = this.placeBlock(hourIndex, dayIndex, blockData, colorId || 'violet');
+            block.dataset.rs = String(rowSpan);
+            block.dataset.eventName = seance.libelle || 'Événement';
+            block.dataset.iconKey = iconKey;
+            const slot = this._getSlotElement(hourIndex, dayIndex);
+            if (slot) block.style.height = `${(slot.offsetHeight * rowSpan) - 2}px`;
+            this._syncBlockToSlot(block);
+        } else {
+            // Restaurer une séance de cours
+            const subjectId = seance.coursId;
+            const teacherId = seance.enseignantId;
+            const subject = this.SUBJECTS.find(s => s.id === subjectId);
 
-        const blockData = {
-            type: 'teacher',
-            subjectId: subjectId,
-            teacherId: teacherId,
-            subjectName: subject?.name || seance.libelle || 'Séance',
-            subjectCode: subject?.code || '',
-            teacherName: '',
-            teacherInitials: '',
-            itemKey: subjectId ? `s${subjectId}` : `s-${seance.id || Math.random()}`
-        };
+            const blockData = {
+                type: 'teacher',
+                subjectId,
+                teacherId,
+                subjectName: subject?.name || seance.libelle || 'Séance',
+                subjectCode: subject?.code || '',
+                teacherName: '',
+                teacherInitials: '',
+                itemKey: subjectId ? `s${subjectId}` : `s-${seance.id || Math.random()}`,
+            };
 
-        const block = this.placeBlock(hourIndex, dayIndex, blockData);
-        block.dataset.rs = String(rowSpan);
-        // apply rowSpan sizing
-        const slot = this._getSlotElement(hourIndex, dayIndex);
-        if (slot) {
-            block.style.height = `${(slot.offsetHeight * rowSpan) - 2}px`;
+            const block = this.placeBlock(hourIndex, dayIndex, blockData, colorId);
+            block.dataset.rs = String(rowSpan);
+            const slot = this._getSlotElement(hourIndex, dayIndex);
+            if (slot) block.style.height = `${(slot.offsetHeight * rowSpan) - 2}px`;
+            this._syncBlockToSlot(block);
         }
-        this._syncBlockToSlot(block);
     }
 
     async saveSchedule() {
-        const dateDebut = document.getElementById('date-start')?.value;
-        const dateFin = document.getElementById('date-end')?.value;
+        const dateDebut = getDatePickerValue('date-start');
+        const dateFin = getDatePickerValue('date-end');
         const classeId = this.classId;
 
         if (!classeId || !dateDebut || !dateFin) {
@@ -950,7 +1044,9 @@ export class EditScheduleController {
             this.showToast(msg);
         }
     }
+
     async exportPDF() { await generatePDF('main-page', (msg) => this.showToast(msg)); }
+
     showToast(message) {
         const t = document.getElementById('toast'), tm = document.getElementById('toast-msg');
         if (!t || !tm) return; tm.textContent = message; t.classList.remove('hidden');

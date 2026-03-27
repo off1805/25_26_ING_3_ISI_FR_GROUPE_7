@@ -39,33 +39,53 @@ public class CreateEmploiTempsWithSeancesUCImpl implements CreateEmploiTempsWith
         );
 
         command.seances().forEach(seanceDTO -> {
-            if (seanceRepo.existsConflict(
-                    seanceDTO.enseignantId(),
-                    seanceDTO.dateSeance(),
-                    seanceDTO.heureDebut(),
-                    seanceDTO.heureFin())) {
-                throw new SeanceConflictException(
-                        "L'enseignant a déjà une séance programmée à cette période"
-                );
+            Seance.TypeSeance type = seanceDTO.resolvedType();
+
+            // Vérifier les conflits enseignant uniquement pour les séances de cours
+            if (Seance.TypeSeance.SEANCE.equals(type) && seanceDTO.enseignantId() != null) {
+                if (seanceRepo.existsConflict(
+                        seanceDTO.enseignantId(),
+                        seanceDTO.dateSeance(),
+                        seanceDTO.heureDebut(),
+                        seanceDTO.heureFin())) {
+                    throw new SeanceConflictException(
+                            "L'enseignant a déjà une séance programmée à cette période"
+                    );
+                }
             }
 
-            String libelle = (seanceDTO.libelle() == null || seanceDTO.libelle().isBlank())
-                    ? "Séance"
-                    : seanceDTO.libelle();
+            Seance seance;
+            if (Seance.TypeSeance.EVENEMENT.equals(type)) {
+                // Créer un événement (sans cours ni enseignant)
+                seance = new Seance(
+                        seanceDTO.libelle(),
+                        seanceDTO.dateSeance(),
+                        seanceDTO.heureDebut(),
+                        seanceDTO.heureFin(),
+                        seanceDTO.couleur(),
+                        seanceDTO.iconKey()
+                );
+            } else {
+                // Créer une séance de cours normale
+                String libelle = (seanceDTO.libelle() == null || seanceDTO.libelle().isBlank())
+                        ? "Séance"
+                        : seanceDTO.libelle();
 
-            String salle = (seanceDTO.salle() == null || seanceDTO.salle().isBlank())
-                    ? "Salle 1"
-                    : seanceDTO.salle();
+                String salle = (seanceDTO.salle() == null || seanceDTO.salle().isBlank())
+                        ? "Salle 1"
+                        : seanceDTO.salle();
 
-            Seance seance = new Seance(
-                    libelle,
-                    salle,
-                    seanceDTO.dateSeance(),
-                    seanceDTO.heureDebut(),
-                    seanceDTO.heureFin(),
-                    seanceDTO.coursId(),
-                    seanceDTO.enseignantId()
-            );
+                seance = new Seance(
+                        libelle,
+                        salle,
+                        seanceDTO.dateSeance(),
+                        seanceDTO.heureDebut(),
+                        seanceDTO.heureFin(),
+                        seanceDTO.coursId(),
+                        seanceDTO.enseignantId()
+                );
+                seance.setCouleur(seanceDTO.couleur());
+            }
 
             emploiTemps.addSeance(seanceRepo.save(seance));
         });
