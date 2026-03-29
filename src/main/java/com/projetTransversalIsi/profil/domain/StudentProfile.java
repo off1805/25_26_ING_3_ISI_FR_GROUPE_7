@@ -1,5 +1,10 @@
 package com.projetTransversalIsi.profil.domain;
 
-public class StudentProfile extends Profile{
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+public class StudentProfile extends Profile {
+    private Long classeId;
 }
