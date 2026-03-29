@@ -86,6 +86,11 @@ public class AdminController {
         return "AdminInterface/AdminClasses";
     }
 
+    @GetMapping("/students")
+    public String studentsView(Model model){
+        return "AdminInterface/AdminStudents";
+    }
+
     @GetMapping("/cycles/{id}")
     public String cycleDetailView(@PathVariable("id") Long id, Model model) {
         Cycle cycle = findCycleByIdUC.execute(id);
