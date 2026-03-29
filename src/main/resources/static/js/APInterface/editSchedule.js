@@ -3,6 +3,7 @@ import {
     getMonday, fmtISO, fmtShort, generatePDF, isAreaOccupied, isWithinBounds
 } from './editScheduleUtils.js';
 import api from '../common/ClientHttp.js';
+import { GlobalErrorHandler } from '../common/GlobalErrorHandler.js';
 
 function resolveColor(colorIdOrHex, fallbackId = 'violet') {
     const isHex = typeof colorIdOrHex === 'string' && colorIdOrHex.startsWith('#') && colorIdOrHex.length === 7;
@@ -189,7 +190,7 @@ export class EditScheduleController {
             const options = subject.teachers.length
                 ? subject.teachers.map(teacher =>
                     `<option value="${teacher.id}">${teacher.name}</option>`
-                  ).join('')
+                ).join('')
                 : `<option value="1">Enseignant par défaut (id 1)</option>`;
             teacherSelect.innerHTML = options;
         }
@@ -1033,12 +1034,14 @@ export class EditScheduleController {
         try {
             if (this.emploiId) {
                 await api.put(`/api/emplois-temps/${this.emploiId}/with-seances`, payload);
+
                 this.showToast('Emploi du temps mis à jour ✓');
             } else {
                 await api.post('/api/emplois-temps/with-seances', payload);
                 this.showToast('Emploi du temps sauvegardé ✓');
             }
         } catch (error) {
+            GlobalErrorHandler.handle(error);
             console.error('Erreur sauvegarde emploi du temps', error);
             const msg = error?.response?.data || 'Erreur lors de la sauvegarde';
             this.showToast(msg);

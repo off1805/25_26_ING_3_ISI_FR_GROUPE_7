@@ -224,7 +224,7 @@
         </section>
 
         <!-- Modal Ajout Spécialité -->
-        <div id="hs-modal-add-specialite"
+        <div th:fragment="modal-add-specialite" id="hs-modal-add-specialite"
             class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none"
             role="dialog" tabindex="-1">
             <div
@@ -284,7 +284,7 @@
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
     <script type="module" th:src="@{/js/common/adminBreadcrumbs.js}"></script>
-    <script type="module" th:src="@{/js/SpecialiteJs/ui/SpecialiteController.js}"></script>
+    <script type="module" th:src="@{/js/academicStructure/SpecialiteJs/ui/SpecialiteController.js}"></script>
 
 </body>
 

@@ -56,7 +56,7 @@ class UeMapperTest {
 
     @Test
     void shouldMapCreateUeRequestDTOToUe() {
-        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description", "#ffffff", 10L);
+        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description", "#ffffff", 10L, Set.of(1L, 2L));
         Ue ue = ueMapper.toDomain(request);
 
         assertNull(ue.getId());
@@ -138,7 +138,7 @@ class UeMapperTest {
 
     @Test
     void shouldMapCreateUeRequestDTOToJpaUeEntity() {
-        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description", "#ffffff", 10L);
+        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description", "#ffffff", 10L, Set.of(1L, 2L));
         JpaUeEntity entity = ueMapper.toEntity(request);
 
         assertNull(entity.getId());

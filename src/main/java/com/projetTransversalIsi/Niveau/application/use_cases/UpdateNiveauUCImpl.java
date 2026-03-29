@@ -20,9 +20,9 @@ public class UpdateNiveauUCImpl implements UpdateNiveauUC {
 
     @Override
     @Transactional
-    public Niveau execute(UpdateNiveauRequestDTO request) {
-        Niveau niveau = niveauRepo.findById(request.id())
-                .orElseThrow(() -> new NiveauNotFoundException(request.id()));
+    public Niveau execute(UpdateNiveauRequestDTO request,Long id) {
+        Niveau niveau = niveauRepo.findById(id)
+                .orElseThrow(() -> new NiveauNotFoundException(id));
 
         Filiere filiere = filiereRepo.findById(request.filiereId())
                 .orElseThrow(() -> new FiliereNotFoundException(request.filiereId()));

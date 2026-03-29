@@ -222,7 +222,7 @@
         </section>
 
         <!-- Modal Ajout Niveau -->
-        <div id="hs-modal-add-niveau"
+        <div th:fragment="modal-add-niveau" id="hs-modal-add-niveau"
             class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none"
             role="dialog" tabindex="-1">
             <div
@@ -276,7 +276,7 @@
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
     <script type="module" th:src="@{/js/common/adminBreadcrumbs.js}"></script>
-    <script type="module" th:src="@{/js/NiveauJs/ui/NiveauController.js}"></script>
+    <script type="module" th:src="@{/js/academicStructure/NiveauJs/ui/NiveauController.js}"></script>
 
 </body>
 

@@ -5,6 +5,7 @@ import com.projetTransversalIsi.Filiere.application.services.DefaultFiliereServi
 import com.projetTransversalIsi.Filiere.domain.Filiere;
 import com.projetTransversalIsi.Filiere.domain.FiliereRepository;
 import com.projetTransversalIsi.Filiere.domain.exceptions.FiliereNotFoundException;
+import com.projetTransversalIsi.user.dto.UserFiltreDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,12 +38,10 @@ public class FiliereController {
             @Valid @RequestBody UpdateFiliereRequestDTO request) {
 
 
-        if (!id.equals(request.id())) {
-            return ResponseEntity.badRequest().build();
-        }
+
 
         log.info("Modification de la filière ID: {}", id);
-        FiliereResponseDTO response = filiereService.updateFiliere(request);
+        FiliereResponseDTO response = filiereService.updateFiliere(request,id);
         return ResponseEntity.ok(response);
     }
 
@@ -75,13 +74,10 @@ public class FiliereController {
 
     @GetMapping
     public ResponseEntity<List<FiliereResponseDTO>> searchFilieres(
-            @RequestParam(required = false) String code,
-            @RequestParam(required = false) String nom,
-            @RequestParam(defaultValue = "false") boolean includeDeleted) {
+            @ModelAttribute SearchFiliereRequestDTO command) {
 
-        log.info("Recherche de filières - code: {}, nom: {}", code, nom);
-        SearchFiliereRequestDTO criteria = new SearchFiliereRequestDTO(code, nom, includeDeleted);
-        List<FiliereResponseDTO> resultats = filiereService.searchFilieres(criteria);
+
+        List<FiliereResponseDTO> resultats = filiereService.searchFilieres(command);
         return ResponseEntity.ok(resultats);
     }
 
@@ -89,7 +85,7 @@ public class FiliereController {
     @GetMapping("/active")
     public ResponseEntity<List<FiliereResponseDTO>> getAllActiveFilieres() {
         log.info("Liste de toutes les filières actives");
-        SearchFiliereRequestDTO criteria = new SearchFiliereRequestDTO(null, null, false);
+        SearchFiliereRequestDTO criteria = new SearchFiliereRequestDTO(null, null, null,false);
         List<FiliereResponseDTO> resultats = filiereService.searchFilieres(criteria);
         return ResponseEntity.ok(resultats);
     }
@@ -98,7 +94,7 @@ public class FiliereController {
     @GetMapping("/deleted")
     public ResponseEntity<List<FiliereResponseDTO>> getDeletedFilieres() {
         log.info("Liste des filières supprimées");
-        SearchFiliereRequestDTO criteria = new SearchFiliereRequestDTO(null, null, true);
+        SearchFiliereRequestDTO criteria = new SearchFiliereRequestDTO(null, null,null, true);
         List<FiliereResponseDTO> resultats = filiereService.searchFilieres(criteria);
 
         resultats = resultats.stream()

@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record UpdateClasseRequestDTO(
         @NotBlank String code,
-        String description,
-        @NotNull Long specialiteId
+        String description
 ) {
 }
