@@ -288,6 +288,7 @@ export class CycleController {
                 e.preventDefault();
                 const id = updateFiliereForm.dataset.editId;
                 if (!id) return;
+                console.log(id);
                 const data = Object.fromEntries(new FormData(updateFiliereForm).entries());
                 try {
                     await this.filiereApi.updateFiliere(id, data);
