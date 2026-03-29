@@ -6,8 +6,11 @@ export class UeApi {
   }
 
   async searchUes(params = "") {
-    // params can be query string starting with '?'
     return api.get(`/api/ue${params}`);
+  }
+
+  async getTeachers() {
+    return api.get("/api/users?role=TEACHER&size=100");
   }
 }
 

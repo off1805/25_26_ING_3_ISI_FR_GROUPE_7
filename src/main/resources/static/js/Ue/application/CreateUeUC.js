@@ -24,6 +24,7 @@ export class CreateUeUC {
       description: ueData.description ? String(ueData.description).trim() : null,
       couleur: ueData.couleur ? String(ueData.couleur) : "#ffffff",
       specialiteId: Number(ueData.specialiteId),
+      enseignantIds: Array.isArray(ueData.enseignantIds) ? ueData.enseignantIds.map(Number) : [],
     };
 
     try {

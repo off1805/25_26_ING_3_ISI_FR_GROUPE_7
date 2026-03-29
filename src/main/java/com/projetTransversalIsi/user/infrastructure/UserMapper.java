@@ -15,6 +15,8 @@ public interface UserMapper {
     JpaUserEntity UserToJpaUserEntity(User user, @Context JpaProfileEntity jpaProfile);
 
     @Mapping(source = "profile.id", target = "profileId")
+    @Mapping(source = "profile.nom", target = "nom")
+    @Mapping(source = "profile.prenom", target = "prenom")
     User JpaUseEntityToUser(JpaUserEntity jpaUser);
 
 }

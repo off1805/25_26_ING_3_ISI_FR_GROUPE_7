@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.emploi_Temps.application.dto;
 
+import com.projetTransversalIsi.seance.domain.Seance;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,13 +24,14 @@ public record UpdateEmploiTempsWithSeancesDTO(
         Long classeId,
 
         @NotEmpty(message = "La liste des séances est obligatoire")
-        List<@Valid SeanceCreationDTO> seances
+        @Valid
+        List< SeanceCreationDTO> seances
 ) {
     public record SeanceCreationDTO(
             @NotNull(message = "Le libellé de la séance est obligatoire")
             String libelle,
 
-            @NotNull(message = "La salle est obligatoire")
+            // Nullable pour les événements
             String salle,
 
             @NotNull(message = "La date de la séance est obligatoire")
@@ -41,10 +43,23 @@ public record UpdateEmploiTempsWithSeancesDTO(
             @NotNull(message = "L'heure de fin est obligatoire")
             LocalTime heureFin,
 
-            @NotNull(message = "L'ID du cours est obligatoire")
+            // Nullable pour les événements
             Long coursId,
 
-            @NotNull(message = "L'ID de l'enseignant est obligatoire")
-            Long enseignantId
-    ) {}
+            // Nullable pour les événements
+            Long enseignantId,
+
+            // SEANCE ou EVENEMENT (défaut: SEANCE si null)
+            Seance.TypeSeance type,
+
+            // Couleur hex ou id de palette
+            String couleur,
+
+            // Clé d'icône
+            String iconKey
+    ) {
+        public Seance.TypeSeance resolvedType() {
+            return type != null ? type : Seance.TypeSeance.SEANCE;
+        }
+    }
 }

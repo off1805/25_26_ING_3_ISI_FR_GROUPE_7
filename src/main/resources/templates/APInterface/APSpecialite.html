@@ -284,52 +284,7 @@
                         </div>
                     </div>
 
-                    <!-- Spécialité Details Card -->
-                    <div class="space-y-6 w-xs">
-                        <div class="bg-card rounded-xl border border-card-line">
-                            <div
-                                class="relative h-20 bg-gradient-to-r from-purple-400 via-purple-600 to-purple-700 rounded-t-xl pt-6">
-                                <div
-                                    class="left-6 absolute -bottom-6 h-16 w-16 flex justify-center items-center rounded-full bg-layer border border-card-line">
-                                    <h3 class="font-bold text-layer-foreground text-xs" th:text="${specialite.code}">
-                                        CODE
-                                    </h3>
-                                </div>
-                            </div>
-                            <div class="space-y-3 px-6 mt-8">
-                                <h2 class="text-lg text-foreground font-bold" th:text="${specialite.libelle}">
-                                    Spécialité
-                                </h2>
-                                <div class="flex items-center justify-between" th:if="${niveau != null}">
-                                    <span class="text-sm text-muted-foreground-2">Niveau</span>
-                                    <span class="text-sm font-medium text-layer-foreground"
-                                        th:text="${'Niveau ' + niveau.ordre}">
-                                        Niveau
-                                    </span>
-                                </div>
-                                <div class="flex items-center justify-between" th:if="${filiere != null}">
-                                    <span class="text-sm text-muted-foreground-2">Filiere</span>
-                                    <span class="text-sm font-medium text-layer-foreground" th:text="${filiere.nom}">
-                                        Filiere
-                                    </span>
-                                </div>
-                                <p class="text-muted-foreground-1 leading-relaxed text-sm"
-                                    th:text="${specialite.description}">
-                                    Description...
-                                </p>
-                            </div>
-                            <div class="border-t border-t-card-line py-3 mt-5 flex justify-end px-6">
-                                <a th:if="${niveau != null}" th:href="@{/ap/niveau/{id}(id=${niveau.id})}"
-                                    class="px-4 py-1.5 border text-secondary border-card-line rounded-lg hover:bg-layer-hover text-sm">
-                                    Retour niveau
-                                </a>
-                                <a th:if="${niveau == null && filiere != null}" th:href="@{/ap/filiere/{id}(id=${filiere.id})}"
-                                    class="px-4 py-1.5 border text-secondary border-card-line rounded-lg hover:bg-layer-hover text-sm">
-                                    Retour filiere
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+
 
                 </div>
             </div>
@@ -403,6 +358,25 @@
                             <textarea name="description"
                                 class="py-3 px-4 block w-full bg-layer border border-layer-line rounded-lg text-sm focus:border-primary focus:ring-primary"
                                 rows="3"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-layer-foreground">Enseignants</label>
+                            <select id="enseignant-select" name="enseignantIds" multiple
+                                data-hs-select='{
+                                    "placeholder": "Sélectionner des enseignants...",
+                                    "hasSearch": true,
+                                    "searchPlaceholder": "Rechercher...",
+                                    "searchClasses": "block w-full text-sm border-gray-200 rounded-lg focus:border-primary focus:ring-primary py-2 px-3",
+                                    "searchWrapperClasses": "bg-white p-2 -mx-1 sticky top-0",
+                                    "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                    "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 px-4 pe-9 flex text-nowrap w-full cursor-pointer bg-layer border border-layer-line rounded-lg text-start text-sm text-layer-foreground focus:outline-none focus:border-primary focus:ring-primary",
+                                    "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-layer border border-layer-line rounded-lg shadow-lg overflow-hidden overflow-y-auto",
+                                    "optionClasses": "py-2 px-4 w-full text-sm text-layer-foreground cursor-pointer hover:bg-muted rounded-lg focus:outline-none hs-selected:bg-primary/10 hs-selected:text-primary",
+                                    "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                    "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden">
+                            </select>
                         </div>
                     </div>
 

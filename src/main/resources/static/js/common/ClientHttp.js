@@ -52,6 +52,7 @@ class HttpClient {
 
         if (!response.ok) {
             const errorPayload = await this._parseResponse(response).catch(() => null);
+            console.log(response);
             const error = new Error(`HTTP ${response.status}`);
             error.status = response.status;
             error.payload = errorPayload;

@@ -20,10 +20,10 @@ public class UpdateFiliereUCImpl implements UpdateFiliereUC {
 
     @Override
     @Transactional
-    public Filiere execute(UpdateFiliereRequestDTO command) {
+    public Filiere execute(UpdateFiliereRequestDTO command,Long id) {
 
-        Filiere filiere = filiereRepo.findById(command.id())
-                .orElseThrow(() -> new FiliereNotFoundException(command.id()));
+        Filiere filiere = filiereRepo.findById(id)
+                .orElseThrow(() -> new FiliereNotFoundException(id));
 
         Cycle cycle = cycleRepo.findById(command.cycleId())
                 .orElseThrow(() -> new CycleNotFoundException(command.cycleId()));

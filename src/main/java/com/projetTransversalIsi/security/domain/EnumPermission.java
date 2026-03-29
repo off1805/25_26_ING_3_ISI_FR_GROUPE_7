@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum EnumPermission {
 
-    MANAGE_STAFF(EnumRole.ADMIN, "Creer, modifier ou supprimer un membre du personnel"),
+    MANAGE_STAFF(EnumRole.SURVEILLANT, "Creer, modifier ou supprimer un membre du personnel"),
 
 
 

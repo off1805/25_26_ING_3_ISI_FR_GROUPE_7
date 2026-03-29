@@ -1,9 +1,11 @@
 package com.projetTransversalIsi.Filiere.infrastructure;
 
+import com.projetTransversalIsi.Filiere.application.dto.SearchFiliereRequestDTO;
 import com.projetTransversalIsi.Filiere.domain.Filiere;
 import com.projetTransversalIsi.Filiere.domain.FiliereRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
@@ -93,5 +95,12 @@ public class JpaFiliereRepository implements FiliereRepository {
         return jpaRepo.findByCycleIdAndDeletedFalse(cycleId).stream()
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());
+    }
+
+     @Override
+     public List<Filiere> search(SearchFiliereRequestDTO command){
+        Specification<JpaFiliereEntity> spec= Specification
+                .where(JpaFiliereSpec.inCycle(command.cycleId()));
+        return jpaRepo.findAll(spec).stream().map(mapper::toDomain).collect(Collectors.toList());
     }
 }

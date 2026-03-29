@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.seance.infrastructure;
 
+import com.projetTransversalIsi.seance.domain.Seance;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
@@ -18,7 +19,7 @@ public class JpaSeanceEntity {
     @Column(name = "libelle", nullable = false)
     private String libelle;
 
-    @Column(name = "salle", nullable = false)
+    @Column(name = "salle")
     private String salle;
 
     @Column(name = "date_seance", nullable = false)
@@ -30,11 +31,23 @@ public class JpaSeanceEntity {
     @Column(name = "heure_fin", nullable = false)
     private LocalTime heureFin;
 
-    @Column(name = "cours_id", nullable = false)
+    // Nullable : null pour les événements
+    @Column(name = "cours_id")
     private Long coursId;
 
-    @Column(name = "enseignant_id", nullable = false)
+    // Nullable : null pour les événements
+    @Column(name = "enseignant_id")
     private Long enseignantId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private Seance.TypeSeance type = Seance.TypeSeance.SEANCE;
+
+    @Column(name = "couleur", length = 32)
+    private String couleur;
+
+    @Column(name = "icon_key", length = 64)
+    private String iconKey;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;

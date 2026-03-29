@@ -10,8 +10,10 @@ import com.projetTransversalIsi.user.infrastructure.UserMapper;
 import com.projetTransversalIsi.user.services.GetAllUserStaffUC;
 import com.projetTransversalIsi.user.services.SearchUserUC;
 import com.projetTransversalIsi.Filiere.application.dto.FiliereResponseDTO;
+import com.projetTransversalIsi.Filiere.application.dto.SearchFiliereRequestDTO;
 import com.projetTransversalIsi.Filiere.application.services.DefaultFiliereService;
 import com.projetTransversalIsi.Niveau.application.dto.NiveauResponseDTO;
+import com.projetTransversalIsi.Niveau.application.dto.SearchNiveauRequestDTO;
 import com.projetTransversalIsi.Niveau.application.services.DefaultNiveauService;
 import com.projetTransversalIsi.specialite.application.dto.SpecialiteResponseDTO;
 import com.projetTransversalIsi.specialite.application.services.DefaultSpecialiteService;
@@ -46,6 +48,7 @@ public class AdminController {
     private final DefaultClasseService classeService;
     private final UserMapper userMapper;
 
+
     private static String bcSanitizeLabel(String label) {
         if (label == null) return "";
         // We use '|' and ':' as separators client-side; strip them from labels.
@@ -71,6 +74,9 @@ public class AdminController {
     public String schoolView(Model model){
         Map <String,Object> users= new HashMap<>();
         model.addAttribute("cycles", getAllCyclesUC.execute());
+        model.addAttribute("filieres", filiereService.searchFilieres(new SearchFiliereRequestDTO(null, null, null,false)));
+        model.addAttribute("niveaux", niveauService.searchNiveaux(new SearchNiveauRequestDTO(null, null, false)));
+        model.addAttribute("specialites", specialiteService.getAllSpecialites());
         return "AdminInterface/AdminCycles";
     }
     @GetMapping("/users")
@@ -84,6 +90,11 @@ public class AdminController {
     public String classesView(Model model){
         model.addAttribute("staff", getAllUserStaffUC.execute());
         return "AdminInterface/AdminClasses";
+    }
+
+    @GetMapping("/students")
+    public String studentsView(Model model){
+        return "AdminInterface/AdminStudents";
     }
 
     @GetMapping("/cycles/{id}")

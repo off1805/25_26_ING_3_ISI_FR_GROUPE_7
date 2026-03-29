@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +20,7 @@ public class Ue {
     private String description;
 
     private Long specialiteId;
+    private Set<Long> enseignantIds = new HashSet<>();
     private String couleur = "#ffffff";
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;

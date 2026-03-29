@@ -26,8 +26,8 @@ public class NiveauService implements DefaultNiveauService {
     }
 
     @Override
-    public NiveauResponseDTO updateNiveau(UpdateNiveauRequestDTO request) {
-        Niveau niveau = updateNiveauUC.execute(request);
+    public NiveauResponseDTO updateNiveau(UpdateNiveauRequestDTO request,Long id) {
+        Niveau niveau = updateNiveauUC.execute(request,id);
         return NiveauResponseDTO.fromDomain(niveau);
     }
 

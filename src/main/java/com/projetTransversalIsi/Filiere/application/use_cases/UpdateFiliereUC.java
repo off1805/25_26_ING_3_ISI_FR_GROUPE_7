@@ -4,5 +4,5 @@ import com.projetTransversalIsi.Filiere.application.dto.UpdateFiliereRequestDTO;
 import com.projetTransversalIsi.Filiere.domain.Filiere;
 
 public interface UpdateFiliereUC {
-    Filiere execute(UpdateFiliereRequestDTO command);
+    Filiere execute(UpdateFiliereRequestDTO command,Long id);
 }
