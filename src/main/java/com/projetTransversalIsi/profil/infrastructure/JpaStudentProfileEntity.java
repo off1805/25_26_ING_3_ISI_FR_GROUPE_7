@@ -1,4 +1,6 @@
 package com.projetTransversalIsi.profil.infrastructure;
+
+import com.projetTransversalIsi.classe.infrastructure.JpaClasseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -6,8 +8,11 @@ import lombok.*;
 @Setter
 @Entity
 @Table(name="student_profile")
-public class JpaStudentProfileEntity extends JpaProfileEntity{
+public class JpaStudentProfileEntity extends JpaProfileEntity {
 
-    public JpaStudentProfileEntity(){}
+    public JpaStudentProfileEntity() {}
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classe_id")
+    private JpaClasseEntity classe;
 }

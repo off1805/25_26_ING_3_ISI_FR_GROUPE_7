@@ -24,63 +24,35 @@ export class UeController {
   }
 
   async loadTeachers() {
-    const container = document.getElementById("enseignant-select-container");
-    if (!container) return;
+    const select = document.getElementById("enseignant-select");
+    if (!select) return;
 
     try {
       const response = await this.ueApi.getTeachers();
       const teachers = response?.content ?? response ?? [];
-      this.renderTeacherSelect(container, teachers);
+
+      // Vider les options existantes
+      select.innerHTML = "";
+
+      teachers.forEach((t) => {
+        const label = t.nom && t.prenom ? `${t.prenom} ${t.nom}` : t.email;
+        const option = document.createElement("option");
+        option.value = t.id;
+        option.textContent = label;
+        select.appendChild(option);
+      });
+
+      // Réinitialiser le composant Preline après avoir peuplé les options
+      if (window.HSSelect) {
+        const hsInstance = window.HSSelect.getInstance(select);
+        if (hsInstance) {
+          hsInstance.destroy();
+        }
+        window.HSSelect.autoInit();
+      }
     } catch (e) {
       console.error("Erreur chargement enseignants", e);
     }
-  }
-
-  renderTeacherSelect(container, teachers) {
-    container.innerHTML = "";
-
-    // Input de recherche
-    const searchInput = document.createElement("input");
-    searchInput.type = "text";
-    searchInput.placeholder = "Rechercher un enseignant...";
-    searchInput.className =
-      "py-2 px-3 block w-full bg-layer border border-layer-line rounded-lg text-sm focus:border-primary focus:ring-primary mb-2 text-layer-foreground placeholder:text-muted-foreground-2";
-    searchInput.id = "teacher-search-input";
-
-    // Liste des options
-    const list = document.createElement("div");
-    list.id = "teacher-options-list";
-    list.className =
-      "max-h-48 overflow-y-auto border border-layer-line rounded-lg divide-y divide-layer-line";
-
-    if (teachers.length === 0) {
-      list.innerHTML = `<p class="text-sm text-muted-foreground-2 px-3 py-2">Aucun enseignant disponible.</p>`;
-    } else {
-      teachers.forEach((t) => {
-        const label = t.nom && t.prenom ? `${t.prenom} ${t.nom}` : t.email;
-        const item = document.createElement("label");
-        item.className =
-          "flex items-center gap-x-3 px-3 py-2 cursor-pointer hover:bg-muted/40 transition-colors";
-        item.innerHTML = `
-          <input type="checkbox" name="enseignantIds" value="${t.id}"
-            class="shrink-0 size-4 rounded border-layer-line text-primary focus:ring-primary bg-layer">
-          <span class="text-sm text-layer-foreground">${label}</span>
-        `;
-        list.appendChild(item);
-      });
-    }
-
-    container.appendChild(searchInput);
-    container.appendChild(list);
-
-    // Filtre de recherche
-    searchInput.addEventListener("input", () => {
-      const q = searchInput.value.toLowerCase();
-      list.querySelectorAll("label").forEach((item) => {
-        const text = item.querySelector("span").textContent.toLowerCase();
-        item.style.display = text.includes(q) ? "" : "none";
-      });
-    });
   }
 
   async handleCreateUe(event) {
@@ -88,12 +60,21 @@ export class UeController {
 
     const form = event.target;
     const submitBtn = form.querySelector('button[type="submit"]');
+    const select = document.getElementById("enseignant-select");
+
+    // Récupérer les ids sélectionnés via l'instance Preline ou le select natif
+    let enseignantIds = [];
+    if (window.HSSelect) {
+      const hsInstance = window.HSSelect.getInstance(select);
+      if (hsInstance) {
+        enseignantIds = hsInstance.value.map(Number);
+      }
+    }
+    if (enseignantIds.length === 0 && select) {
+      enseignantIds = Array.from(select.selectedOptions).map((o) => Number(o.value));
+    }
 
     const fd = new FormData(form);
-
-    // Récupérer tous les enseignantIds cochés
-    const enseignantIds = fd.getAll("enseignantIds").map(Number);
-
     const ueData = {
       libelle: fd.get("libelle"),
       code: fd.get("code"),
