@@ -6,6 +6,8 @@ import com.projetTransversalIsi.Niveau.application.dto.NiveauResponseDTO;
 import com.projetTransversalIsi.Niveau.application.services.DefaultNiveauService;
 import com.projetTransversalIsi.classe.application.dto.ClasseResponseDTO;
 import com.projetTransversalIsi.classe.application.services.DefaultClasseService;
+import com.projetTransversalIsi.profil.infrastructure.JpaStudentProfileEntity;
+import com.projetTransversalIsi.profil.infrastructure.SpringDataStudentProfileRepository;
 import com.projetTransversalIsi.specialite.application.dto.SpecialiteResponseDTO;
 import com.projetTransversalIsi.specialite.application.services.DefaultSpecialiteService;
 import com.projetTransversalIsi.ue.application.dto.UeFiltreDto;
@@ -39,10 +41,30 @@ public class APController {
     private final DefaultClasseService classeService;
     private final SearchUeUC searchUeUC;
     private final UeMapper ueMapper;
+    private final SpringDataStudentProfileRepository studentProfileRepository;
+
+    // ── View-model records ────────────────────────────────────────────────────
+
+    public record EtudiantVM(
+            String noms,
+            String prenoms,
+            String email,
+            String matricule,
+            String telephone
+    ) {}
+
+    public record ClasseAvecEtudiants(
+            Long id,
+            String code,
+            List<EtudiantVM> students
+    ) {
+        public int getStudentCount() { return students == null ? 0 : students.size(); }
+    }
+
+    // ── Breadcrumb helpers ────────────────────────────────────────────────────
 
     private static String bcSanitizeLabel(String label) {
         if (label == null) return "";
-        // We use '|' and ':' as separators client-side; strip them from labels.
         return label.replace('|', ' ').replace(':', ' ').trim();
     }
 
@@ -61,6 +83,8 @@ public class APController {
         return joiner.toString();
     }
 
+    // ── Routes ────────────────────────────────────────────────────────────────
+
     @GetMapping("/filiere/{id}")
     public String subjectsView(@PathVariable("id") Long id, Model model) {
         FiliereResponseDTO filiere = filiereService.getFiliereById(id);
@@ -68,12 +92,10 @@ public class APController {
         model.addAttribute("niveaux", niveauService.getNiveauxByFiliereId(id));
         model.addAttribute(
                 "apPageBreadcrumb",
-                bcJoin(
-                        bcItem(filiere != null ? filiere.nom() : "Filiere", null)
-                )
+                bcJoin(bcItem(filiere != null ? filiere.nom() : "Filiere", null))
         );
         model.addAttribute("activePage", "subjects");
-        model.addAttribute("apName", "AP Name"); // à remplacer par l'utilisateur connecté
+        model.addAttribute("apName", "AP Name");
         return "APInterface/APSubjects";
     }
 
@@ -106,7 +128,6 @@ public class APController {
         model.addAttribute("specialite", specialite);
         model.addAttribute("classes", classeService.getClassesBySpecialiteId(id));
 
-        // UE catalog (module UE). For now this lists UEs globally (not yet scoped by specialite).
         UeFiltreDto ueFilter = new UeFiltreDto();
         ueFilter.setDeleted(false);
         ueFilter.setSpecialiteId(id);
@@ -145,8 +166,6 @@ public class APController {
         Long filiereId = 1L;
         model.addAttribute("filiereId", filiereId);
 
-        // Load "valid" classes for this filiere by walking:
-        // filiere -> niveaux -> specialites -> classes
         List<ClasseResponseDTO> collected = new ArrayList<>();
         List<NiveauResponseDTO> niveaux = niveauService.getNiveauxByFiliereId(filiereId);
         if (niveaux != null) {
@@ -162,7 +181,6 @@ public class APController {
             }
         }
 
-        // De-dup by id (or by code if id missing) while preserving order.
         Map<String, ClasseResponseDTO> uniq = new LinkedHashMap<>();
         for (ClasseResponseDTO c : collected) {
             if (c == null) continue;
@@ -181,5 +199,56 @@ public class APController {
         model.addAttribute("activePage", "schedule");
         model.addAttribute("apName", "AP Name");
         return "APInterface/EditSchedule";
+    }
+
+    @GetMapping("/classes")
+    public String classesView(Model model) {
+        // TODO: replace with the filiere linked to the authenticated AP.
+        Long filiereId = 1L;
+
+        // Walk filière → niveaux → spécialités → classes (dedup by id)
+        List<ClasseResponseDTO> rawClasses = new ArrayList<>();
+        List<NiveauResponseDTO> niveaux = niveauService.getNiveauxByFiliereId(filiereId);
+        if (niveaux != null) {
+            for (NiveauResponseDTO n : niveaux) {
+                if (n == null || n.id() == null) continue;
+                List<SpecialiteResponseDTO> specialites = specialiteService.getSpecialitesByNiveauId(n.id());
+                if (specialites == null) continue;
+                for (SpecialiteResponseDTO s : specialites) {
+                    if (s == null || s.id() == null) continue;
+                    List<ClasseResponseDTO> cs = classeService.getClassesBySpecialiteId(s.id());
+                    if (cs != null) rawClasses.addAll(cs);
+                }
+            }
+        }
+
+        Map<Long, ClasseResponseDTO> dedup = new LinkedHashMap<>();
+        for (ClasseResponseDTO c : rawClasses) {
+            if (c == null || c.id() == null) continue;
+            dedup.putIfAbsent(c.id(), c);
+        }
+
+        // For each class, fetch enrolled students
+        List<ClasseAvecEtudiants> classesAvecEtudiants = new ArrayList<>();
+        for (ClasseResponseDTO c : dedup.values()) {
+            List<JpaStudentProfileEntity> profiles = studentProfileRepository.findByClasseId(c.id());
+            List<EtudiantVM> students = new ArrayList<>();
+            for (JpaStudentProfileEntity p : profiles) {
+                String email = (p.getUser() != null) ? p.getUser().getEmail() : null;
+                students.add(new EtudiantVM(
+                        p.getNom(),
+                        p.getPrenom(),
+                        email,
+                        p.getMatricule(),
+                        p.getNumeroTelephone()
+                ));
+            }
+            classesAvecEtudiants.add(new ClasseAvecEtudiants(c.id(), c.code(), students));
+        }
+
+        model.addAttribute("classes", classesAvecEtudiants);
+        model.addAttribute("activePage", "classes");
+        model.addAttribute("apName", "AP Name");
+        return "APInterface/APClasses";
     }
 }

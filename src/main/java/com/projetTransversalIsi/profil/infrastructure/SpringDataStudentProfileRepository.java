@@ -2,5 +2,9 @@ package com.projetTransversalIsi.profil.infrastructure;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SpringDataStudentProfileRepository extends JpaRepository<JpaStudentProfileEntity,Long> {
+import java.util.List;
+
+public interface SpringDataStudentProfileRepository extends JpaRepository<JpaStudentProfileEntity, Long> {
+    List<JpaStudentProfileEntity> findByClasseId(Long classeId);
 }
+
