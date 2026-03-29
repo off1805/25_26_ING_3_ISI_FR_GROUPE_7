@@ -15,7 +15,7 @@ export class AuthController{
 
         try{
             await this.loginUC.execute(new UserCredentials(email,password));
-            alert("Bienvenue");
+
         }catch (e){
             console.log("Erreur de connexion.",e.message);
         }

@@ -1,5 +1,5 @@
 
-const ADMIN_REDIRECTION_PAGE="/admin/dashboard";
+const ADMIN_REDIRECTION_PAGE="/admin/users";
 const STUDENT_REDIRECTION_PAGE= "/student/dashboard";
 
 
