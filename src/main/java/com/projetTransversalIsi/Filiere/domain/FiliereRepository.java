@@ -1,5 +1,7 @@
 package com.projetTransversalIsi.Filiere.domain;
 
+import com.projetTransversalIsi.Filiere.application.dto.SearchFiliereRequestDTO;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +25,5 @@ public interface FiliereRepository {
     boolean existsByCode(String code);
     boolean existsActiveByCode(String code);
     List<Filiere> findByCycleId(Long cycleId);
+    List<Filiere> search(SearchFiliereRequestDTO command);
 }

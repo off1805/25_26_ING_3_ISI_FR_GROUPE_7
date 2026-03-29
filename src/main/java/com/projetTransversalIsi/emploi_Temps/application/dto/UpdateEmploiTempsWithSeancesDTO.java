@@ -24,7 +24,8 @@ public record UpdateEmploiTempsWithSeancesDTO(
         Long classeId,
 
         @NotEmpty(message = "La liste des séances est obligatoire")
-        List<@Valid SeanceCreationDTO> seances
+        @Valid
+        List< SeanceCreationDTO> seances
 ) {
     public record SeanceCreationDTO(
             @NotNull(message = "Le libellé de la séance est obligatoire")

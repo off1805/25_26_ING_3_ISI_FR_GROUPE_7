@@ -152,33 +152,6 @@
                         </ul>
                     </div>
 
-                    <!-- Filiere Details Card -->
-                    <div class="space-y-6 w-xs">
-                        <div class="bg-card rounded-xl border border-card-line">
-                            <div class="relative h-20 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-700 rounded-t-xl pt-6">
-                                <div class="left-6 absolute -bottom-6 h-16 w-16 flex justify-center items-center rounded-full bg-layer border border-card-line">
-                                    <h3 class="font-bold text-layer-foreground" th:text="${filiere.code}">CODE</h3>
-                                </div>
-                            </div>
-                            <div class="space-y-3 px-6 mt-8">
-                                <h2 class="text-lg text-foreground font-bold" th:text="${filiere.nom}">Filiere</h2>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm text-muted-foreground-2">Cycle</span>
-                                    <span class="text-sm font-medium text-layer-foreground"
-                                        th:text="${filiere.cycleName}">Cycle</span>
-                                </div>
-                                <p class="text-muted-foreground-1 leading-relaxed text-sm" th:text="${filiere.description}">
-                                    Description...
-                                </p>
-                            </div>
-                            <div class="border-t border-t-card-line py-3 mt-5 flex justify-end px-6">
-                                <a th:href="@{/ap/filiere/{id}(id=${filiere.id})}"
-                                    class="px-4 py-1.5 border text-secondary border-card-line rounded-lg hover:bg-layer-hover text-sm">
-                                    Rafraichir
-                                </a>
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
             </div>

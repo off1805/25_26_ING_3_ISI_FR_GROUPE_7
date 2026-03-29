@@ -16,30 +16,8 @@ public class SearchFiliereUCImpl implements SearchFiliereUC {
     @Override
     public List<Filiere> execute(SearchFiliereRequestDTO criteria) {
 
-        return filiereRepo.search(criteria.code(),criteria.nom());
+        return filiereRepo.search(criteria);
 
-//
-//        if (criteria.code() != null && !criteria.code().isEmpty()) {
-//            return filiereRepo.findByCode(criteria.code())
-//                    .map(List::of)
-//                    .orElse(List.of());
-//        }
-//
-//
-//        if (criteria.nom() != null && !criteria.nom().isEmpty()) {
-//            resultats = filiereRepo.searchByNom(criteria.nom());
-//        } else {
-//
-//            resultats = filiereRepo.findAll();
-//        }
-//
-//
-//        if (!criteria.includeDeleted()) {
-//            resultats = resultats.stream()
-//                    .filter(f -> !f.isDeleted())
-//                    .collect(Collectors.toList());
-//        }
-//
-//        return resultats;
+
     }
 }

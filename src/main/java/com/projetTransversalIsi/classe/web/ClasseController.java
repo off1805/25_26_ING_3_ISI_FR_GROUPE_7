@@ -23,6 +23,7 @@ public class ClasseController {
     private final FindAllClassesUC findAllClassesUC;
     private final FindClasseByIdUC findClasseByIdUC;
     private final DeleteClasseUC deleteClasseUC;
+    private final FindClassesBySpecialiteIdUC findClassesBySpecialiteIdUC;
 
     @PostMapping
     public ResponseEntity<ClasseResponseDTO> createClasse(@Valid @RequestBody CreateClassRequestDTO request) {
@@ -50,5 +51,12 @@ public class ClasseController {
     public ResponseEntity<Void> deleteClasse(@PathVariable Long id) {
         deleteClasseUC.execute(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/specialite/{specialiteId}")
+    public ResponseEntity<List<ClasseResponseDTO>> getClassesBySpecialiteId(@PathVariable Long specialiteId) {
+        return ResponseEntity.ok(findClassesBySpecialiteIdUC.execute(specialiteId).stream()
+                .map(ClasseResponseDTO::fromDomain)
+                .collect(Collectors.toList()));
     }
 }

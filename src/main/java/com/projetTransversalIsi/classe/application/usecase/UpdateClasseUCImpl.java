@@ -23,12 +23,12 @@ public class UpdateClasseUCImpl implements UpdateClasseUC {
         Classe classe = repository.findById(id)
                 .orElseThrow(() -> new ClasseNotFoundException(id));
 
-        Specialite specialite = findSpecialiteByIdUC.execute(command.specialiteId());
+
 
         classe.update(
                 command.code().toUpperCase(),
-                command.description(),
-                specialite
+                command.description()
+
         );
 
         return repository.save(classe);
