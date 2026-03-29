@@ -26,11 +26,9 @@ public class NiveauController {
 
     @PutMapping("/{id}")
     public ResponseEntity<NiveauResponseDTO> updateNiveau(@PathVariable Long id, @Valid @RequestBody UpdateNiveauRequestDTO request) {
-        if (!id.equals(request.id())) {
-            return ResponseEntity.badRequest().build();
-        }
+
         log.info("Mise à jour du niveau ID: {}", id);
-        return ResponseEntity.ok(niveauService.updateNiveau(request));
+        return ResponseEntity.ok(niveauService.updateNiveau(request,id));
     }
 
     @DeleteMapping("/{id}")
@@ -54,5 +52,11 @@ public class NiveauController {
         log.info("Recherche de niveaux: ordre {}, description {}", ordre, description);
         SearchNiveauRequestDTO criteria = new SearchNiveauRequestDTO(ordre, description, includeDeleted);
         return ResponseEntity.ok(niveauService.searchNiveaux(criteria));
+    }
+
+    @GetMapping("/filiere/{filiereId}")
+    public ResponseEntity<List<NiveauResponseDTO>> getNiveauxByFiliereId(@PathVariable Long filiereId) {
+        log.info("Récupération des niveaux pour la filière ID: {}", filiereId);
+        return ResponseEntity.ok(niveauService.getNiveauxByFiliereId(filiereId));
     }
 }

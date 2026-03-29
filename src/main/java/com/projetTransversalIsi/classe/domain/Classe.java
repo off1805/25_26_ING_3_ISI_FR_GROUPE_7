@@ -20,9 +20,8 @@ public class Classe {
         this.specialite = specialite;
     }
 
-    public void update(String code, String description, Specialite specialite) {
+    public void update(String code, String description) {
         this.code = code;
         this.description = description;
-        this.specialite = specialite;
     }
 }

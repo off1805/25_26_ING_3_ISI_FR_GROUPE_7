@@ -29,8 +29,8 @@ public class FiliereService implements DefaultFiliereService {
 
     @Override
     @Transactional
-    public FiliereResponseDTO updateFiliere(UpdateFiliereRequestDTO request) {
-        Filiere filiere = updateFiliereUC.execute(request);
+    public FiliereResponseDTO updateFiliere(UpdateFiliereRequestDTO request,Long id) {
+        Filiere filiere = updateFiliereUC.execute(request,id);
         return FiliereResponseDTO.fromDomain(filiere);
     }
 

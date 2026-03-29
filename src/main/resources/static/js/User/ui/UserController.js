@@ -5,7 +5,7 @@ import { ModifyUserStatusUC } from "../application/ModifyUserStatusUC.js";
 import { UserApi } from "../infrastructure/UserApi.js";
 import { userRowTable } from "./userRowTable.js";
 import { GlobalEventNotifier } from "../../common/GlobalEventNotifier.js";
-
+import { customAlert } from "../../common/CustomAlert.js";
 const SELECTORS = {
     createCompteForm: 'form[data-form="create-compte"]',
     createProfilForm: 'form[data-form="create-profil"]',
@@ -226,10 +226,15 @@ export class UserController {
 
     // ── SUPPRIMER ────────────────────────────────────────────────────────────
     async handleDeleteUser(event) {
-        if (!confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) return;
+        let reponse= await customAlert("Supprimer un utilisateur", "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action n'est pas reversible.", "Oui", "Abandonner");
+        console.log(reponse);
+        if (! reponse) return;
+         console.log(event);
 
-        const button = event.currentTarget;
+        const button = event.target;
+ console.log(button);
         const userId = button.dataset.userId;
+        
 
         if (!userId) {
             alert("Erreur: ID utilisateur introuvable.");
