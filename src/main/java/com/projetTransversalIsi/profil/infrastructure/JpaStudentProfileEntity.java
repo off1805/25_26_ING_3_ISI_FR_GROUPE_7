@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.profil.infrastructure;
 
-import com.projetTransversalIsi.classe.infrastructure.JpaClasseEntity;
+import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaClasseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

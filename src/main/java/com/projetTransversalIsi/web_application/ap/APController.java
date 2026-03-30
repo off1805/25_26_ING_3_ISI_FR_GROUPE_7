@@ -1,19 +1,19 @@
 package com.projetTransversalIsi.web_application.ap;
 
-import com.projetTransversalIsi.Filiere.application.dto.FiliereResponseDTO;
-import com.projetTransversalIsi.Filiere.application.services.DefaultFiliereService;
-import com.projetTransversalIsi.Niveau.application.dto.NiveauResponseDTO;
-import com.projetTransversalIsi.Niveau.application.services.DefaultNiveauService;
-import com.projetTransversalIsi.classe.application.dto.ClasseResponseDTO;
-import com.projetTransversalIsi.classe.application.services.DefaultClasseService;
+import com.projetTransversalIsi.structure_academique.application.dto.FiliereResponseDTO;
+import com.projetTransversalIsi.structure_academique.application.service.FiliereService;
+import com.projetTransversalIsi.structure_academique.application.dto.NiveauResponseDTO;
+import com.projetTransversalIsi.structure_academique.application.service.NiveauService;
+import com.projetTransversalIsi.structure_academique.application.dto.ClasseResponseDTO;
+import com.projetTransversalIsi.structure_academique.application.service.ClasseService;
 import com.projetTransversalIsi.profil.infrastructure.JpaStudentProfileEntity;
 import com.projetTransversalIsi.profil.infrastructure.SpringDataStudentProfileRepository;
-import com.projetTransversalIsi.specialite.application.dto.SpecialiteResponseDTO;
-import com.projetTransversalIsi.specialite.application.services.DefaultSpecialiteService;
-import com.projetTransversalIsi.ue.application.dto.UeFiltreDto;
-import com.projetTransversalIsi.ue.domain.Ue;
-import com.projetTransversalIsi.ue.application.use_cases.SearchUeUC;
-import com.projetTransversalIsi.ue.infrastructure.UeMapper;
+import com.projetTransversalIsi.structure_academique.application.dto.SpecialiteResponseDTO;
+import com.projetTransversalIsi.structure_academique.application.service.SpecialiteService;
+import com.projetTransversalIsi.pedagogie.application.dto.UeFiltreDto;
+import com.projetTransversalIsi.pedagogie.domain.model.Ue;
+import com.projetTransversalIsi.pedagogie.application.use_cases.SearchUeUC;
+import com.projetTransversalIsi.pedagogie.infrastructure.UeMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,10 +35,10 @@ import java.util.StringJoiner;
 @RequiredArgsConstructor
 public class APController {
 
-    private final DefaultFiliereService filiereService;
-    private final DefaultNiveauService niveauService;
-    private final DefaultSpecialiteService specialiteService;
-    private final DefaultClasseService classeService;
+    private final FiliereService filiereService;
+    private final NiveauService niveauService;
+    private final SpecialiteService specialiteService;
+    private final ClasseService classeService;
     private final SearchUeUC searchUeUC;
     private final UeMapper ueMapper;
     private final SpringDataStudentProfileRepository studentProfileRepository;
