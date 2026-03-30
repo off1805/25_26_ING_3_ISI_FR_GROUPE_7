@@ -1,0 +1,16 @@
+package com.projetTransversalIsi.emploi_temps.application.dto;
+
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+
+public record UpdateEmploiTempsRequestDTO(
+        @NotNull(message = "L'ID est obligatoire")
+        Long id,
+        @NotNull(message = "La date de début est obligatoire")
+        LocalDate dateDebut,
+        @NotNull(message = "La date de fin est obligatoire")
+        LocalDate dateFin,
+        Integer semaine,
+        @NotNull(message = "La classe est obligatoire")
+        Long classeId
+) {}
