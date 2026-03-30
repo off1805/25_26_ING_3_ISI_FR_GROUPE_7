@@ -2,6 +2,7 @@ import { GlobalErrorHandler } from "../../common/GlobalErrorHandler.js";
 import { CreateUserUC } from "../application/CreateUserUC.js";
 import { DeleteUserUC } from "../application/DeleteUserUC.js";
 import { ModifyUserStatusUC } from "../application/ModifyUserStatusUC.js";
+import { RetrieveUserUC } from "../application/RetrieveUserUC.js";
 import { UserApi } from "../infrastructure/UserApi.js";
 import { userRowTable } from "./userRowTable.js";
 import { GlobalEventNotifier } from "../../common/GlobalEventNotifier.js";
@@ -15,13 +16,15 @@ const SELECTORS = {
 };
 
 export class UserController {
-    constructor(userApi, createUserUC, deleteUserUC, modifyUserStatusUC) {
+    constructor(userApi, createUserUC, deleteUserUC, modifyUserStatusUC, retrieveUserUC) {
         this.userApi = userApi;
         this.createUserUC = createUserUC;
         this.deleteUserUC = deleteUserUC;
         this.modifyUserStatusUC = modifyUserStatusUC;
+        this.retrieveUserUC = retrieveUserUC;
         this.currentPermissions = [];
         this.currentUserCreateInfo={};
+        this._staffSearchDebounce = null;
         this.init();
     }
 
@@ -71,6 +74,98 @@ export class UserController {
 
         // ── Boutons DELETE & EDIT existants (rendu Thymeleaf) ──
         this._bindTableActions(document.getElementById('table-body'));
+
+        this._initStaffSearch();
+    }
+
+    _initStaffSearch() {
+        if (!this.retrieveUserUC) return;
+        const searchInput = document.getElementById('user-search-input');
+        const roleSelect = document.getElementById('hs-basic-usage-example');
+        const statusSelect = document.getElementById('select-status');
+        if (!searchInput) return;
+
+        const schedule = () => {
+            clearTimeout(this._staffSearchDebounce);
+            this._staffSearchDebounce = setTimeout(() => this._fetchAndRenderStaffList(), 320);
+        };
+
+        searchInput.addEventListener('input', schedule);
+        roleSelect?.addEventListener('change', () => this._fetchAndRenderStaffList());
+        statusSelect?.addEventListener('change', () => this._fetchAndRenderStaffList());
+    }
+
+    async _fetchAndRenderStaffList() {
+        if (!this.retrieveUserUC) return;
+        const searchInput = document.getElementById('user-search-input');
+        const roleSelect = document.getElementById('hs-basic-usage-example');
+        const statusSelect = document.getElementById('select-status');
+        try {
+            const page = await this.retrieveUserUC.execute({
+                email: searchInput?.value ?? '',
+                roleFilter: roleSelect?.value ?? 'ALL',
+                statusFilter: statusSelect?.value ?? 'ALL',
+                page: 0,
+                size: 50
+            });
+            this._renderStaffPage(page);
+        } catch (e) {
+            GlobalErrorHandler.handle(e);
+        }
+    }
+
+    _renderStaffPage(page) {
+        const tbody = document.getElementById('table-body');
+        const emptyRow = document.getElementById('empty-state-row');
+        const paginationEl = document.getElementById('user-pagination-info');
+        if (!tbody) return;
+
+        const users = page?.content ?? [];
+
+        tbody.querySelectorAll('tr:not(#empty-state-row)').forEach((tr) => tr.remove());
+
+        if (users.length === 0) {
+            emptyRow?.classList.remove('hidden');
+            if (paginationEl) paginationEl.textContent = '0 résultat';
+            return;
+        }
+
+        emptyRow?.classList.add('hidden');
+
+        const fragment = document.createDocumentFragment();
+        for (const u of users) {
+            const row = userRowTable(
+                u.email,
+                this._getRoleLabel(u.roleName),
+                this._getStatusLabel(u.status),
+                u.id,
+                this._getRoleClass(u.roleName),
+                this._getStatusClass(u.status)
+            );
+            row.dataset.userId = String(u.id);
+            row.dataset.userEmail = u.email;
+            row.dataset.userRole = u.roleName;
+            row.dataset.userStatus = u.status;
+
+            row.querySelector('.btn-delete-user')?.addEventListener('click', (e) => this.handleDeleteUser(e));
+            row.querySelector('.btn-edit-user')?.addEventListener('click', (e) => this.handleOpenEditModal(e));
+
+            fragment.appendChild(row);
+        }
+        tbody.appendChild(fragment);
+
+        if (typeof window.HSStaticMethods !== 'undefined') {
+            window.HSStaticMethods.autoInit();
+        }
+
+        const total = page?.totalElements ?? users.length;
+        const number = page?.number ?? 0;
+        const size = page?.size ?? users.length;
+        const from = total === 0 ? 0 : number * size + 1;
+        const to = Math.min(number * size + users.length, total);
+        if (paginationEl) {
+            paginationEl.textContent = total ? `${from} – ${to} sur ${total}` : '0 résultat';
+        }
     }
 
     // ── Bind clics sur une tbody (ou un tr) ──────────────────────────────────
@@ -447,4 +542,5 @@ const userApi = new UserApi();
 const createUserUC = new CreateUserUC(userApi);
 const deleteUserUC = new DeleteUserUC(userApi);
 const modifyUserStatusUC = new ModifyUserStatusUC(userApi);
-new UserController(userApi, createUserUC, deleteUserUC, modifyUserStatusUC);
+const retrieveUserUC = new RetrieveUserUC(userApi);
+new UserController(userApi, createUserUC, deleteUserUC, modifyUserStatusUC, retrieveUserUC);

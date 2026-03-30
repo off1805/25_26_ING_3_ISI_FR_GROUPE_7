@@ -152,7 +152,7 @@
                                         <circle cx="11" cy="11" r="8" />
                                         <path d="m21 21-4.34-4.34" />
                                     </svg>
-                                    <input type="text" placeholder="Rechercher…"
+                                    <input type="text" id="user-search-input" name="email" autocomplete="off" placeholder="Rechercher par e-mail…"
                                         class="pl-9 pr-4 py-2 w-full text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
                                 </div>
                             </div>
@@ -348,7 +348,7 @@
                                     </select>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <span class="text-xs text-muted-foreground-2 font-semibold">1 – 2 sur 2</span>
+                                    <span id="user-pagination-info" class="text-xs text-muted-foreground-2 font-semibold" th:text="${#lists.size(staff)} + ' utilisateur(s) sur cette page'">—</span>
                                     <div class="flex items-center gap-1">
                                         <button type="button" disabled
                                             class="size-8 flex items-center justify-center rounded-lg bg-layer border border-layer-line text-muted-foreground-2 hover:bg-muted transition-colors disabled:opacity-40 disabled:pointer-events-none">
