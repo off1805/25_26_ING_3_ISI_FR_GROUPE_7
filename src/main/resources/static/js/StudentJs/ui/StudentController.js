@@ -24,27 +24,16 @@ let classeSelectionneeId = null;
 // ── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await chargerClasses();
     attacherEvenements();
 });
 
-// ── Chargement des classes ────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-async function chargerClasses() {
-    try {
-        const classes = await ClasseApi.getAll();
-        remplirSelectClasses(classes);
-    } catch (e) {
-        showToast('Impossible de charger les classes : ' + e.message, 'error');
-    }
-}
-
-function remplirSelectClasses(classes) {
-    const selects = document.querySelectorAll('.select-classe');
-    selects.forEach(sel => {
-        sel.innerHTML = '<option value="">— Sélectionner une classe —</option>'
-            + classes.map(c => `<option value="${c.id}">${c.code}</option>`).join('');
-    });
+function getActiveClasseId() {
+    // Dans APClasses.html, l'onglet actif a la classe "active" (ajoutée par Thymeleaf ou Preline)
+    const activeTab = document.querySelector('#classes-tablist button.active');
+    if (!activeTab) return null;
+    return parseInt(activeTab.getAttribute('data-classe-id'), 10);
 }
 
 // ── Attachement des événements ────────────────────────────────────────────────
@@ -57,13 +46,17 @@ function attacherEvenements() {
 
     // Dropdown → Importer depuis Excel
     document.getElementById('btn-add-excel')?.addEventListener('click', () => {
-        ouvrirModal('modal-excel');
         resetModalExcel();
     });
 
     // Fermeture des modals
     document.querySelectorAll('[data-close-modal]').forEach(btn => {
-        btn.addEventListener('click', () => fermerTousLesModals());
+        btn.addEventListener('click', (e) => {
+            const modalEl = e.target.closest('.hs-overlay');
+            if (modalEl && typeof HSOverlay !== 'undefined') {
+                HSOverlay.close(modalEl);
+            }
+        });
     });
 
     // Clic en dehors d'un modal le ferme
@@ -89,12 +82,11 @@ function attacherEvenements() {
 
 // ── Helpers modals ────────────────────────────────────────────────────────────
 
-function ouvrirModal(id) {
-    document.getElementById(id)?.classList.remove('hidden');
-}
-
-function fermerTousLesModals() {
-    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.add('hidden'));
+function fermerModal(id) {
+    const el = document.getElementById(id);
+    if (el && typeof HSOverlay !== 'undefined') {
+        HSOverlay.close(el);
+    }
 }
 
 // ── Ajout manuel ──────────────────────────────────────────────────────────────
@@ -110,11 +102,11 @@ async function soumettreFormManuel(e) {
         prenom:          form.prenom.value.trim(),
         matricule:       form.matricule.value.trim(),
         numeroTelephone: form.numeroTelephone.value.trim(),
-        classeId:        parseInt(form.classeId.value, 10),
+        classeId:        getActiveClasseId(),
     };
 
     if (!data.classeId) {
-        showToast('Veuillez sélectionner une classe.', 'warning');
+        showToast('Erreur : impossible d\'identifier la classe active.', 'error');
         return;
     }
 
@@ -128,7 +120,9 @@ async function soumettreFormManuel(e) {
             : `✓ ${res.nom} ${res.prenom} inscrit(e) dans la classe.`;
         showToast(msg, 'success');
         form.reset();
-        fermerTousLesModals();
+        fermerModal('modal-manual');
+        // Refresh to see the new student in the table
+        setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
         showToast(err.message, 'error');
     } finally {
@@ -172,14 +166,14 @@ function getInputVal(id) {
 
 async function lancerImportExcel() {
     const fichier  = document.getElementById('input-excel-file')?.files[0];
-    const classeId = parseInt(document.getElementById('select-classe-excel')?.value, 10);
+    const classeId = getActiveClasseId();
 
     if (!fichier) {
         showToast('Veuillez sélectionner un fichier Excel.', 'warning');
         return;
     }
     if (!classeId) {
-        showToast('Veuillez sélectionner une classe.', 'warning');
+        showToast('Erreur : impossible d\'identifier la classe cible.', 'error');
         return;
     }
 
@@ -234,6 +228,16 @@ async function lancerImportExcel() {
     mettreAJourProgression(total, total, null);
     await pause(400);
     afficherResultat(total, echecs);
+
+    // Si des succès ont eu lieu, on rafraîchit la page à la fermeture pour voir les changements
+    if (echecs.length < total) {
+        // On attend que l'utilisateur ferme le modal de résultat ou on peut forcer un reload après un délai
+        // Pour rester simple et efficace :
+        setTimeout(() => {
+            // On ne reload que si l'utilisateur n'a pas déjà fermé (ou on force le reload quoi qu'il arrive)
+            // L'idéal est de reload quand on ferme le modal final.
+        }, 2000);
+    }
 }
 
 function afficherEtape(idVisible) {
@@ -264,6 +268,14 @@ function afficherResultat(total, echecs) {
     afficherEtape('excel-step-result');
 
     const succes = total - echecs.length;
+
+    // Si au moins un succès, on prépare le rafraîchissement à la fermeture
+    if (succes > 0) {
+        const btnFermer = document.querySelector('#excel-step-result [data-close-modal]');
+        if (btnFermer) {
+            btnFermer.addEventListener('click', () => window.location.reload(), { once: true });
+        }
+    }
     const resumeEl = document.getElementById('result-resume');
     if (resumeEl) {
         resumeEl.innerHTML = `
