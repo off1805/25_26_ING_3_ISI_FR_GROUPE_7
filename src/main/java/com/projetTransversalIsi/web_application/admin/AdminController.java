@@ -1,23 +1,23 @@
 package com.projetTransversalIsi.web_application.admin;
 
-import com.projetTransversalIsi.cycle.application.use_cases.FindCycleByIdUC;
-import com.projetTransversalIsi.cycle.application.use_cases.GetAllCyclesUC;
-import com.projetTransversalIsi.cycle.domain.Cycle;
+import com.projetTransversalIsi.structure_academique.application.use_case.FindCycleByIdUC;
+import com.projetTransversalIsi.structure_academique.application.use_case.GetAllCyclesUC;
+import com.projetTransversalIsi.structure_academique.domain.model.Cycle;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.dto.UserDetailsResponseDTO;
 import com.projetTransversalIsi.user.dto.UserFiltreDto;
 import com.projetTransversalIsi.user.infrastructure.UserMapper;
 import com.projetTransversalIsi.user.services.GetAllUserStaffUC;
 import com.projetTransversalIsi.user.services.SearchUserUC;
-import com.projetTransversalIsi.Filiere.application.dto.FiliereResponseDTO;
-import com.projetTransversalIsi.Filiere.application.dto.SearchFiliereRequestDTO;
-import com.projetTransversalIsi.Filiere.application.services.DefaultFiliereService;
-import com.projetTransversalIsi.Niveau.application.dto.NiveauResponseDTO;
-import com.projetTransversalIsi.Niveau.application.dto.SearchNiveauRequestDTO;
-import com.projetTransversalIsi.Niveau.application.services.DefaultNiveauService;
-import com.projetTransversalIsi.specialite.application.dto.SpecialiteResponseDTO;
-import com.projetTransversalIsi.specialite.application.services.DefaultSpecialiteService;
-import com.projetTransversalIsi.classe.application.services.DefaultClasseService;
+import com.projetTransversalIsi.structure_academique.application.dto.FiliereResponseDTO;
+import com.projetTransversalIsi.structure_academique.application.dto.SearchFiliereRequestDTO;
+import com.projetTransversalIsi.structure_academique.application.service.FiliereService;
+import com.projetTransversalIsi.structure_academique.application.dto.NiveauResponseDTO;
+import com.projetTransversalIsi.structure_academique.application.dto.SearchNiveauRequestDTO;
+import com.projetTransversalIsi.structure_academique.application.service.NiveauService;
+import com.projetTransversalIsi.structure_academique.application.dto.SpecialiteResponseDTO;
+import com.projetTransversalIsi.structure_academique.application.service.SpecialiteService;
+import com.projetTransversalIsi.structure_academique.application.service.ClasseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,10 +42,10 @@ public class AdminController {
     private final SearchUserUC searchUserUC;
     private final GetAllCyclesUC getAllCyclesUC;
     private final FindCycleByIdUC findCycleByIdUC;
-    private final DefaultFiliereService filiereService;
-    private final DefaultNiveauService niveauService;
-    private final DefaultSpecialiteService specialiteService;
-    private final DefaultClasseService classeService;
+    private final FiliereService filiereService;
+    private final NiveauService niveauService;
+    private final SpecialiteService specialiteService;
+    private final ClasseService classeService;
     private final UserMapper userMapper;
 
 

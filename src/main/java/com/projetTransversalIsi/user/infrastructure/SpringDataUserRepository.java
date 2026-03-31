@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.user.infrastructure;
 
-import com.projetTransversalIsi.Filiere.infrastructure.JpaFiliereEntity;
+import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaFiliereEntity;
 import com.projetTransversalIsi.security.domain.EnumRole;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.domain.enums.UserStatus;

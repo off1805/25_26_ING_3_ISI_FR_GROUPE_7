@@ -1,7 +1,7 @@
 package com.projetTransversalIsi.student.application.use_cases;
 
-import com.projetTransversalIsi.classe.infrastructure.JpaClasseEntity;
-import com.projetTransversalIsi.classe.infrastructure.SpringdataClasseRepository;
+import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaClasseEntity;
+import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataClasseRepository;
 import com.projetTransversalIsi.profil.infrastructure.JpaStudentProfileEntity;
 import com.projetTransversalIsi.profil.infrastructure.SpringDataStudentProfileRepository;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
@@ -25,7 +25,7 @@ public class EnrollStudentUCImpl implements EnrollStudentUC {
 
     private final SpringDataUserRepository userRepository;
     private final SpringDataStudentProfileRepository studentProfileRepository;
-    private final SpringdataClasseRepository classeRepository;
+    private final SpringDataClasseRepository classeRepository;
     private final PasswordHasherAC passwordHasher;
     private final EntityManager entityManager;
 
