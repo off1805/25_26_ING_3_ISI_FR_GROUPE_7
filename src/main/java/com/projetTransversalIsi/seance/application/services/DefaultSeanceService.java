@@ -10,4 +10,6 @@ public interface DefaultSeanceService {
     void deleteSeance(Long id);
     SeanceResponseDTO getSeanceById(Long id);
     List<SeanceResponseDTO> searchSeances(SearchSeanceRequestDTO criteria);
+
+    List<SeanceResponseDTO> getSeancesTodayByEnseignant(Long enseignantId, Boolean includeDeleted);
 }

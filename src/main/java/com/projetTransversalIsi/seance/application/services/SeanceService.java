@@ -18,6 +18,7 @@ public class SeanceService implements DefaultSeanceService {
     private final DeleteSeanceUC deleteSeanceUC;
     private final FindSeanceByIdUC findSeanceByIdUC;
     private final SearchSeanceUC searchSeanceUC;
+    private final GetSeancesTodayByEnseignantUC getSeancesTodayByEnseignantUC;
 
     @Override
     @Transactional
@@ -48,6 +49,13 @@ public class SeanceService implements DefaultSeanceService {
     @Override
     public List<SeanceResponseDTO> searchSeances(SearchSeanceRequestDTO criteria) {
         return searchSeanceUC.execute(criteria).stream()
+                .map(SeanceResponseDTO::fromDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SeanceResponseDTO> getSeancesTodayByEnseignant(Long enseignantId, Boolean includeDeleted) {
+        return getSeancesTodayByEnseignantUC.execute(enseignantId, includeDeleted).stream()
                 .map(SeanceResponseDTO::fromDomain)
                 .collect(Collectors.toList());
     }

@@ -139,4 +139,13 @@ public class SeanceController {
                 .toList();
         return ResponseEntity.ok(resultats);
     }
+
+    @GetMapping("/enseignant/{enseignantId}/today")
+    public ResponseEntity<List<SeanceResponseDTO>> getSeancesTodayByEnseignant(
+            @PathVariable Long enseignantId,
+            @RequestParam(defaultValue = "false") boolean includeDeleted) {
+        log.info("Séances du jour de l'enseignant ID: {}", enseignantId);
+        List<SeanceResponseDTO> resultats = seanceService.getSeancesTodayByEnseignant(enseignantId, includeDeleted);
+        return ResponseEntity.ok(resultats);
+    }
 }
