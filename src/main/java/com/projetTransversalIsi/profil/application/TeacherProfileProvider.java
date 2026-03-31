@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.profil.application;
 
-import com.google.gson.Gson;
+
 import com.projetTransversalIsi.profil.domain.*;
 import org.springframework.stereotype.Component;
 

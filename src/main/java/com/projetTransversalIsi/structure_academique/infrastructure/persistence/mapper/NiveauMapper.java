@@ -12,5 +12,5 @@ public interface NiveauMapper {
     Niveau toDomain(JpaNiveauEntity entity);
 
     @Mapping(target = "filiere", source = "filiere")
-    JpaNiveauEntity toEntity(Niveau niveau);
+    JpaNiveauEntity  toEntity(Niveau niveau);
 }
