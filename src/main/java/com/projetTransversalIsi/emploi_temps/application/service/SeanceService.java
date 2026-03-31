@@ -8,7 +8,11 @@ import com.projetTransversalIsi.emploi_temps.domain.exceptions.SeanceNotFoundExc
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,4 +109,25 @@ public class SeanceService {
                 .map(SeanceResponseDTO::fromDomain)
                 .collect(Collectors.toList());
     }
+
+    public List<Seance> getSeancesTodayByEnseignant(Long enseignantId, Boolean includeDeleted) {
+        if (enseignantId == null) {
+            return Collections.emptyList();
+        }
+
+        LocalDate today = LocalDate.now();
+
+        List<Seance> result = seanceRepo.findByDate(today).stream()
+                .filter(s -> Objects.equals(s.getEnseignantId(), enseignantId))
+                .collect(Collectors.toList());
+
+        if (includeDeleted != null && !includeDeleted) {
+            result = result.stream()
+                    .filter(s -> !s.isDeleted())
+                    .collect(Collectors.toList());
+        }
+
+        return result;
+    }
 }
+
