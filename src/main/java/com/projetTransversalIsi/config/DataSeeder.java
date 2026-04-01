@@ -93,53 +93,53 @@ public class DataSeeder implements ApplicationRunner {
     }
 
     private void seedStructure() {
-        // ── Cycle Ingénieur ──────────────────────────────────────────────
+        // Cycle Ingénieur
         JpaCycleEntity ing = createCycle("Ingénieur", "ING", 5, "Cycle Ingénieur de conception");
         JpaCycleEntity lic = createCycle("Licence", "LIC", 3, "Cycle Licence professionnelle");
 
-        // ── Filières Ingénieur ───────────────────────────────────────────
+        // Filières Ingénieur
         JpaFiliereEntity isi = createFiliere("ISI", "Informatique et Sciences de l'Ingénieur", ing);
         JpaFiliereEntity srt = createFiliere("SRT", "Systèmes et Réseaux de Télécommunication", ing);
         JpaFiliereEntity gc  = createFiliere("GC",  "Génie Civil", ing);
         JpaFiliereEntity ge  = createFiliere("GE",  "Génie Électrique", ing);
 
-        // ── Filière Licence ──────────────────────────────────────────────
+        // Filière Licence
         JpaFiliereEntity licIsi = createFiliere("LMG", "Licence en Management et Gestion", lic);
 
-        // ── Niveaux ISI (ING1 → ING5) ────────────────────────────────────
+        // Niveaux ISI (ING1 → ING5)
         JpaNiveauEntity isi1 = createNiveau(1, "ING1 - Tronc commun", isi);
         JpaNiveauEntity isi2 = createNiveau(2, "ING2 - Tronc commun", isi);
         JpaNiveauEntity isi3 = createNiveau(3, "ING3 - Spécialisation", isi);
         JpaNiveauEntity isi4 = createNiveau(4, "ING4 - Spécialisation", isi);
         JpaNiveauEntity isi5 = createNiveau(5, "ING5 - Spécialisation", isi);
 
-        // ── Niveaux SRT ───────────────────────────────────────────────────
+        //  Niveaux SRT
         JpaNiveauEntity srt1 = createNiveau(1, "ING1 - Tronc commun", srt);
         JpaNiveauEntity srt2 = createNiveau(2, "ING2 - Tronc commun", srt);
         JpaNiveauEntity srt3 = createNiveau(3, "ING3 - Spécialisation", srt);
         JpaNiveauEntity srt4 = createNiveau(4, "ING4 - Spécialisation", srt);
         JpaNiveauEntity srt5 = createNiveau(5, "ING5 - Spécialisation", srt);
 
-        // ── Niveaux GC ────────────────────────────────────────────────────
+        // Niveaux GC
         JpaNiveauEntity gc1 = createNiveau(1, "ING1", gc);
         JpaNiveauEntity gc2 = createNiveau(2, "ING2", gc);
         JpaNiveauEntity gc3 = createNiveau(3, "ING3", gc);
         JpaNiveauEntity gc4 = createNiveau(4, "ING4", gc);
         JpaNiveauEntity gc5 = createNiveau(5, "ING5", gc);
 
-        // ── Niveaux GE ────────────────────────────────────────────────────
+        // Niveaux GE
         JpaNiveauEntity ge1 = createNiveau(1, "ING1", ge);
         JpaNiveauEntity ge2 = createNiveau(2, "ING2", ge);
         JpaNiveauEntity ge3 = createNiveau(3, "ING3", ge);
         JpaNiveauEntity ge4 = createNiveau(4, "ING4", ge);
         JpaNiveauEntity ge5 = createNiveau(5, "ING5", ge);
 
-        // ── Niveaux Licence ───────────────────────────────────────────────
+        // Niveaux Licence
         JpaNiveauEntity l1 = createNiveau(1, "Licence 1", licIsi);
         JpaNiveauEntity l2 = createNiveau(2, "Licence 2", licIsi);
         JpaNiveauEntity l3 = createNiveau(3, "Licence 3", licIsi);
 
-        // ── Spécialités ISI ───────────────────────────────────────────────
+        // Spécialités ISI
         // Tronc commun ING1-ING2 : une seule spécialité générale
         JpaSpecialiteEntity isiTc1 = createSpecialite("ISI-TC1", "Tronc Commun ISI", isi1);
         JpaSpecialiteEntity isiTc2 = createSpecialite("ISI-TC2", "Tronc Commun ISI", isi2);
@@ -151,7 +151,7 @@ public class DataSeeder implements ApplicationRunner {
         JpaSpecialiteEntity il5  = createSpecialite("ISI-IL5",  "Ingénierie Logicielle", isi5);
         JpaSpecialiteEntity msi5 = createSpecialite("ISI-MSI5", "Management des Systèmes d'Information", isi5);
 
-        // ── Spécialités SRT ───────────────────────────────────────────────
+        // Spécialités SRT
         JpaSpecialiteEntity srtTc1 = createSpecialite("SRT-TC1", "Tronc Commun SRT", srt1);
         JpaSpecialiteEntity srtTc2 = createSpecialite("SRT-TC2", "Tronc Commun SRT", srt2);
         JpaSpecialiteEntity tel3 = createSpecialite("SRT-TEL3", "Télécommunications", srt3);
@@ -161,26 +161,26 @@ public class DataSeeder implements ApplicationRunner {
         JpaSpecialiteEntity tel5 = createSpecialite("SRT-TEL5", "Télécommunications", srt5);
         JpaSpecialiteEntity res5 = createSpecialite("SRT-RES5", "Réseaux", srt5);
 
-        // ── Spécialités GC ────────────────────────────────────────────────
+        // Spécialités GC
         JpaSpecialiteEntity gcS1 = createSpecialite("GC1", "Génie Civil", gc1);
         JpaSpecialiteEntity gcS2 = createSpecialite("GC2", "Génie Civil", gc2);
         JpaSpecialiteEntity gcS3 = createSpecialite("GC3", "Génie Civil", gc3);
         JpaSpecialiteEntity gcS4 = createSpecialite("GC4", "Génie Civil", gc4);
         JpaSpecialiteEntity gcS5 = createSpecialite("GC5", "Génie Civil", gc5);
 
-        // ── Spécialités GE ────────────────────────────────────────────────
+        // Spécialités GE
         JpaSpecialiteEntity geS1 = createSpecialite("GE1", "Génie Électrique", ge1);
         JpaSpecialiteEntity geS2 = createSpecialite("GE2", "Génie Électrique", ge2);
         JpaSpecialiteEntity geS3 = createSpecialite("GE3", "Génie Électrique", ge3);
         JpaSpecialiteEntity geS4 = createSpecialite("GE4", "Génie Électrique", ge4);
         JpaSpecialiteEntity geS5 = createSpecialite("GE5", "Génie Électrique", ge5);
 
-        // ── Spécialités Licence ───────────────────────────────────────────
+        // Spécialités Licence
         JpaSpecialiteEntity licS1 = createSpecialite("LIC1", "Management et Gestion L1", l1);
         JpaSpecialiteEntity licS2 = createSpecialite("LIC2", "Management et Gestion L2", l2);
         JpaSpecialiteEntity licS3 = createSpecialite("LIC3", "Management et Gestion L3", l3);
 
-        // ── Classes ───────────────────────────────────────────────────────
+        // Classes
         // ING1 & ING2 : groupes FR (francophone)
         createClasse("ING1-FR", "ING1 Groupe Francophone", isiTc1);
         createClasse("ING2-FR", "ING2 Groupe Francophone", isiTc2);
@@ -252,7 +252,7 @@ public class DataSeeder implements ApplicationRunner {
                 createSurveillantProfile("SUR001", "Fall", "Ousmane", "775555555"));
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+
 
     private JpaCycleEntity createCycle(String name, String code, int years, String desc) {
         if (cycleRepo.existsByCode(code)) return cycleRepo.findByCode(code).orElseThrow();
