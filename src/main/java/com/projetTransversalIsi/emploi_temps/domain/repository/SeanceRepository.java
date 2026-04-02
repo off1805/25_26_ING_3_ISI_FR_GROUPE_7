@@ -22,27 +22,4 @@ public interface SeanceRepository {
     List<Seance> findByCoursId(Long coursId);
 
     boolean existsConflict(Long enseignantId, LocalDate date, LocalTime heureDebut, LocalTime heureFin);
-
-    // -------------------------------------------------------------------------
-    // Nouvelles méthodes — requises par les use cases professeur
-    // -------------------------------------------------------------------------
-
-    /**
-     * Retourne les séances d'un enseignant pour un jour précis.
-     *
-     * @param enseignantId identifiant de l'enseignant
-     * @param date         jour cible
-     * @return liste des séances (incluant les soft-deleted ; le filtrage est à la charge du use case)
-     */
-    List<Seance> findByEnseignantIdAndDate(Long enseignantId, LocalDate date);
-
-    /**
-     * Retourne les séances d'un enseignant comprises entre {@code debut} et {@code fin} (inclus).
-     *
-     * @param enseignantId identifiant de l'enseignant
-     * @param debut        premier jour de la période (ex : lundi de la semaine)
-     * @param fin          dernier jour de la période  (ex : dimanche de la semaine)
-     * @return liste des séances (incluant les soft-deleted ; le filtrage est à la charge du use case)
-     */
-    List<Seance> findByEnseignantIdAndDateBetween(Long enseignantId, LocalDate debut, LocalDate fin);
 }

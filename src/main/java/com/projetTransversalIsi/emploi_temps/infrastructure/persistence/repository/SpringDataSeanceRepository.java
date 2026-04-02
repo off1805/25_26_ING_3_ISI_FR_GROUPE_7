@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface SpringDataSeanceRepository extends JpaRepository<JpaSeanceEntity, Long> {
 
-    // Recherches simples existantes
+    // Recherches simples
     List<JpaSeanceEntity> findByDateSeance(LocalDate date);
     List<JpaSeanceEntity> findByEnseignantId(Long enseignantId);
     List<JpaSeanceEntity> findByCoursId(Long coursId);
@@ -33,23 +33,5 @@ public interface SpringDataSeanceRepository extends JpaRepository<JpaSeanceEntit
             @Param("date") LocalDate date,
             @Param("heureDebut") LocalTime heureDebut,
             @Param("heureFin") LocalTime heureFin
-    );
-
-    // -------------------------------------------------------------------------
-    // Nouvelles méthodes — use cases professeur
-    // -------------------------------------------------------------------------
-
-    /**
-     * Séances d'un enseignant pour un jour précis (toutes, y compris soft-deleted).
-     */
-    List<JpaSeanceEntity> findByEnseignantIdAndDateSeance(Long enseignantId, LocalDate dateSeance);
-
-    /**
-     * Séances d'un enseignant entre deux dates incluses (toutes, y compris soft-deleted).
-     */
-    List<JpaSeanceEntity> findByEnseignantIdAndDateSeanceBetween(
-            Long enseignantId,
-            LocalDate debut,
-            LocalDate fin
     );
 }

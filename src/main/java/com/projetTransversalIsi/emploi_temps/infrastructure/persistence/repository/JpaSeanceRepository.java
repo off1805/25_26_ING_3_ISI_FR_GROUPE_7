@@ -90,24 +90,4 @@ public class JpaSeanceRepository implements SeanceRepository {
     public boolean existsConflict(Long enseignantId, LocalDate date, LocalTime heureDebut, LocalTime heureFin) {
         return jpaRepo.existsConflictForEnseignant(enseignantId, date, heureDebut, heureFin);
     }
-
-    // -------------------------------------------------------------------------
-    // Nouvelles méthodes — use cases professeur
-    // -------------------------------------------------------------------------
-
-    @Override
-    public List<Seance> findByEnseignantIdAndDate(Long enseignantId, LocalDate date) {
-        return jpaRepo.findByEnseignantIdAndDateSeance(enseignantId, date).stream()
-                .map(mapper::toDomain)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Seance> findByEnseignantIdAndDateBetween(Long enseignantId,
-                                                          LocalDate debut,
-                                                          LocalDate fin) {
-        return jpaRepo.findByEnseignantIdAndDateSeanceBetween(enseignantId, debut, fin).stream()
-                .map(mapper::toDomain)
-                .collect(Collectors.toList());
-    }
 }

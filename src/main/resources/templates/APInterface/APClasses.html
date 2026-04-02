@@ -569,58 +569,26 @@
                         </div>
                     </div>
 
-                    <!-- Configuration des colonnes -->
-                    <div class="bg-muted/50 rounded-xl p-4 space-y-3">
-                        <div class="flex items-center gap-2 mb-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" class="text-primary shrink-0">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M12 16v-4M12 8h.01" />
-                            </svg>
-                            <p class="text-xs font-bold text-layer-foreground">Coordonnées des colonnes dans le fichier
-                                Excel</p>
-                        </div>
-                        <p class="text-xs text-muted-foreground-2 -mt-1">Indiquez la lettre de colonne pour chaque champ
-                            (ex
-                            : A, B, C…)</p>
+                    <div class="space-y-1.5 mt-2">
+                        <label class="text-xs font-semibold text-layer-foreground">Exemple de fichier importable :</label>
 
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-2.5">
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-semibold text-layer-foreground w-28 shrink-0">Email</label>
-                                <input id="col-email" type="text" value="A" maxlength="2" placeholder="A"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-semibold text-layer-foreground w-28 shrink-0">Nom</label>
-                                <input id="col-nom" type="text" value="B" maxlength="2" placeholder="B"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-semibold text-layer-foreground w-28 shrink-0">Prénom</label>
-                                <input id="col-prenom" type="text" value="C" maxlength="2" placeholder="C"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label
-                                    class="text-xs font-semibold text-layer-foreground w-28 shrink-0">Matricule</label>
-                                <input id="col-matricule" type="text" value="D" maxlength="2" placeholder="D"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label
-                                    class="text-xs font-semibold text-layer-foreground w-28 shrink-0">Téléphone</label>
-                                <input id="col-telephone" type="text" value="E" maxlength="2" placeholder="E"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-semibold text-layer-foreground w-28 shrink-0">1ère ligne de
-                                    données</label>
-                                <input id="ligne-debut" type="number" value="2" min="1" max="9999" placeholder="2"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary" />
+                        <div class="relative group cursor-pointer border border-layer-line rounded-xl overflow-hidden bg-muted/30"
+                             onclick="openZoomModal(this.querySelector('img').src)">
+
+                            <img src="/images/modele-excel.png"
+                                 alt="Modèle du fichier Excel"
+                                 class="w-full h-auto max-h-32 object-cover transition-transform duration-300 group-hover:scale-105">
+
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white drop-shadow-md">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                                </svg>
                             </div>
                         </div>
                     </div>
-
                     <!-- Erreurs de validation pré-import -->
                     <div id="excel-validation-errors" class="hidden space-y-0.5 max-h-24 overflow-y-auto"></div>
 
@@ -727,7 +695,31 @@
             if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
         });
     </script>
+    <div id="image-zoom-modal" class="fixed inset-0 z-[100] hidden bg-black/80 flex items-center justify-center p-4 transition-opacity backdrop-blur-sm cursor-zoom-out" onclick="closeZoomModal()">
+        <div class="relative max-w-5xl w-full flex justify-center">
+            <img id="zoomed-image" src="" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl object-contain" alt="Aperçu agrandi du modèle Excel">
 
+            <button class="absolute -top-4 -right-4 sm:top-0 sm:-right-12 text-white bg-black/50 p-2 rounded-full hover:bg-black/80 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Fonctions pour gérer le zoom de l'image Excel
+        function openZoomModal(imageSrc) {
+            document.getElementById('zoomed-image').src = imageSrc;
+            document.getElementById('image-zoom-modal').classList.remove('hidden');
+        }
+
+        function closeZoomModal() {
+            document.getElementById('image-zoom-modal').classList.add('hidden');
+            document.getElementById('zoomed-image').src = ''; // Vide la source pour éviter un flash à la prochaine ouverture
+        }
+    </script>
 </body>
 
 </html>
