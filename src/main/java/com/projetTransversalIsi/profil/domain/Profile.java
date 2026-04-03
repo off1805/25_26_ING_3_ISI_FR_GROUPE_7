@@ -12,5 +12,6 @@ public abstract class Profile {
     private String nom;
     private String prenom;
     private String numeroTelephone;
+    private String photoUrl;
 
 }
