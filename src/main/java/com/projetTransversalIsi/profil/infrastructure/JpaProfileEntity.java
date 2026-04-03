@@ -29,4 +29,7 @@ public abstract class JpaProfileEntity {
     @Column(nullable = false)
     private String numeroTelephone;
 
+    @Column(name = "photo_url")
+    private String photoUrl;
+
 }
