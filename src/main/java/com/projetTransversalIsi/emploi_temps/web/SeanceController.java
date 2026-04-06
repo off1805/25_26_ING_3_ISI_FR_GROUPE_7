@@ -1,4 +1,4 @@
-package com.projetTransversalIsi.emploi_temps.web;
+/*package com.projetTransversalIsi.emploi_temps.web;
 
 import com.projetTransversalIsi.emploi_temps.application.dto.*;
 import com.projetTransversalIsi.emploi_temps.application.service.SeanceService;
@@ -150,4 +150,4 @@ public class SeanceController {
                 .toList();
         return ResponseEntity.ok(resultats);
     }
-}
+}*/

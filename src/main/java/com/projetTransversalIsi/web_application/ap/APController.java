@@ -46,8 +46,9 @@ public class APController {
     // ── View-model records ────────────────────────────────────────────────────
 
     public record EtudiantVM(
-            String noms,
-            String prenoms,
+            Long userId,
+            String nom,
+            String prenom,
             String email,
             String matricule,
             String telephone
@@ -234,8 +235,11 @@ public class APController {
             List<JpaStudentProfileEntity> profiles = studentProfileRepository.findByClasseId(c.id());
             List<EtudiantVM> students = new ArrayList<>();
             for (JpaStudentProfileEntity p : profiles) {
+                Long userId = (p.getUser() != null) ? p.getUser().getId() : null;
                 String email = (p.getUser() != null) ? p.getUser().getEmail() : null;
+
                 students.add(new EtudiantVM(
+                        userId,
                         p.getNom(),
                         p.getPrenom(),
                         email,

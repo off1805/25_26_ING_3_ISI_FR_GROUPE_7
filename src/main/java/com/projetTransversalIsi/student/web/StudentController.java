@@ -3,6 +3,7 @@ package com.projetTransversalIsi.student.web;
 import com.projetTransversalIsi.student.application.dto.EnrollStudentRequestDTO;
 import com.projetTransversalIsi.student.application.dto.EnrollStudentResponseDTO;
 import com.projetTransversalIsi.student.application.use_cases.EnrollStudentUC;
+import com.projetTransversalIsi.student.application.use_cases.RemoveStudentFromClasseUC;
 import com.projetTransversalIsi.student.domain.exceptions.StudentAlreadyEnrolledException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class StudentController {
 
     private final EnrollStudentUC enrollStudentUC;
+    private final RemoveStudentFromClasseUC removeStudentFromClasseUC;
 
     @PostMapping("/enroll")
     public ResponseEntity<?> enroll(@Valid @RequestBody EnrollStudentRequestDTO request) {
@@ -28,6 +30,18 @@ public class StudentController {
             return ResponseEntity.status(status).body(response);
         } catch (StudentAlreadyEnrolledException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{userId}/classes/{classeId}")
+    public ResponseEntity<?> removeFromClasse(
+            @PathVariable Long userId,
+            @PathVariable Long classeId) {
+        try {
+            removeStudentFromClasseUC.execute(userId, classeId);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
