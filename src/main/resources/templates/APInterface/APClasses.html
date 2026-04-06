@@ -570,55 +570,20 @@
                     </div>
 
                     <!-- Configuration des colonnes -->
-                    <div class="bg-muted/50 rounded-xl p-4 space-y-3">
-                        <div class="flex items-center gap-2 mb-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" class="text-primary shrink-0">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M12 16v-4M12 8h.01" />
+                    <div class="mt-4 p-4 bg-muted/30 border border-layer-line rounded-xl flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-semibold text-layer-foreground">Modèle de fichier</p>
+                            <p class="text-xs text-muted-foreground-2">Téléchargez le format exact à respecter.</p>
+                        </div>
+                        <button type="button" onclick="exporterModeleExcel()"
+                                class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold bg-surface border border-layer-line text-layer-foreground rounded-lg hover:bg-muted transition-colors shadow-2xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
                             </svg>
-                            <p class="text-xs font-bold text-layer-foreground">Coordonnées des colonnes dans le fichier
-                                Excel</p>
-                        </div>
-                        <p class="text-xs text-muted-foreground-2 -mt-1">Indiquez la lettre de colonne pour chaque champ
-                            (ex
-                            : A, B, C…)</p>
-
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-2.5">
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-semibold text-layer-foreground w-28 shrink-0">Email</label>
-                                <input id="col-email" type="text" value="A" maxlength="2" placeholder="A"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-semibold text-layer-foreground w-28 shrink-0">Nom</label>
-                                <input id="col-nom" type="text" value="B" maxlength="2" placeholder="B"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-semibold text-layer-foreground w-28 shrink-0">Prénom</label>
-                                <input id="col-prenom" type="text" value="C" maxlength="2" placeholder="C"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label
-                                    class="text-xs font-semibold text-layer-foreground w-28 shrink-0">Matricule</label>
-                                <input id="col-matricule" type="text" value="D" maxlength="2" placeholder="D"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label
-                                    class="text-xs font-semibold text-layer-foreground w-28 shrink-0">Téléphone</label>
-                                <input id="col-telephone" type="text" value="E" maxlength="2" placeholder="E"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary uppercase" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-semibold text-layer-foreground w-28 shrink-0">1ère ligne de
-                                    données</label>
-                                <input id="ligne-debut" type="number" value="2" min="1" max="9999" placeholder="2"
-                                    class="w-14 py-1.5 px-2 text-xs bg-layer border border-layer-line rounded-lg text-layer-foreground text-center font-mono focus:outline-none focus:ring-1 focus:ring-primary" />
-                            </div>
-                        </div>
+                            Exporter le modèle
+                        </button>
                     </div>
 
                     <!-- Erreurs de validation pré-import -->
@@ -727,7 +692,33 @@
             if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
         });
     </script>
+    <script>
+        function exporterModeleExcel() {
+            // 1. Définir les colonnes attendues (basé sur ton tableau HTML)
+            const entetes = [
+                ["Email","Noms", "Prénoms",  "Matricule", "Téléphone"]
+            ];
 
+            // 2. Créer une feuille de calcul avec SheetJS
+            const worksheet = XLSX.utils.aoa_to_sheet(entetes);
+
+            // Optionnel : Ajuster la largeur des colonnes pour un meilleur rendu
+            worksheet['!cols'] = [
+                { wch: 35 }, // Email
+                { wch: 25 }, // Noms
+                { wch: 25 }, // Prénoms
+                { wch: 15 }, // Matricule
+                { wch: 15 }  // Téléphone
+            ];
+
+            // 3. Créer le classeur (workbook) et y ajouter la feuille
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Modele_Import");
+
+            // 4. Déclencher le téléchargement du fichier
+            XLSX.writeFile(workbook, "Modele_Import_Etudiants.xlsx");
+        }
+    </script>
 </body>
 
 </html>

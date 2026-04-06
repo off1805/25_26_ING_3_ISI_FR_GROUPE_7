@@ -7,16 +7,24 @@ import com.projetTransversalIsi.pedagogie.infrastructure.entity.JpaAnneeScolaire
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 public class JpaAnneeScolaireRepository implements AnneeScolaireRepository {
-    final private SpringDataAnneeScolaireRepository sprgRepo;
-    final private AnneeScolaireMapper anneeMaper;
-    public AnneeScolaire save(AnneeScolaire anneeScolaire){
-        System.out.println(anneeScolaire);
-        JpaAnneeScolaireEntity jpaEntity= anneeMaper.toJpaEntity(anneeScolaire);
-        System.out.println(jpaEntity);
-       return anneeMaper.toDomainModel(sprgRepo.save(jpaEntity));
+
+    private final SpringDataAnneeScolaireRepository sprgRepo;
+    private final AnneeScolaireMapper anneeMaper;
+
+    @Override
+    public AnneeScolaire save(AnneeScolaire anneeScolaire) {
+        JpaAnneeScolaireEntity jpaEntity = anneeMaper.toJpaEntity(anneeScolaire);
+        return anneeMaper.toDomainModel(sprgRepo.save(jpaEntity));
+    }
+
+    @Override
+    public Optional<AnneeScolaire> findById(Long id) {
+        return sprgRepo.findById(id)
+                .map(anneeMaper::toDomainModel);
     }
 }
