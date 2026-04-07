@@ -335,9 +335,41 @@
             <form id="form-manual" class="p-6 space-y-4" novalidate>
                 <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-1.5">
-                        <label class="text-xs font-semibold text-layer-foreground">Nom <span class="text-red-500">*</span></label>
-                        <input name="nom" type="text" required placeholder="Ex : Dupont"
-                               class="w-full py-2.5 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"/>
+                        <label class="text-xs font-semibold text-layer-foreground">Fichier Excel <span
+                                class="text-red-500">*</span></label>
+                        <div class="flex items-center gap-2">
+                            <label
+                                class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-muted text-layer-foreground rounded-xl hover:bg-muted-hover transition-colors border border-layer-line">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                                Choisir un fichier
+                                <input id="input-excel-file" type="file" accept=".xlsx,.xls,.ods" class="sr-only" />
+                            </label>
+                            <span id="excel-file-label"
+                                class="text-xs text-muted-foreground-2 truncate max-w-[180px]">Aucun
+                                fichier sélectionné</span>
+                        </div>
+                    </div>
+
+                    <!-- Configuration des colonnes -->
+                    <div class="mt-4 p-4 bg-muted/30 border border-layer-line rounded-xl flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-semibold text-layer-foreground">Modèle de fichier</p>
+                            <p class="text-xs text-muted-foreground-2">Téléchargez le format exact à respecter.</p>
+                        </div>
+                        <button type="button" onclick="exporterModeleExcel()"
+                                class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold bg-surface border border-layer-line text-layer-foreground rounded-lg hover:bg-muted transition-colors shadow-2xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Exporter le modèle
+                        </button>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-xs font-semibold text-layer-foreground">Prénom <span class="text-red-500">*</span></label>
@@ -447,12 +479,63 @@
     </div>
 </div>
 
+    <script th:src="@{/js/other/toastify.js}"></script>
+    <script th:src="@{/js/preline.js}"></script>
+    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script type="module" th:src="@{/js/StudentJs/ui/StudentController.js}"></script>
 
-<script th:src="@{/js/other/toastify.js}"></script>
-<script th:src="@{/js/preline.js}"></script>
-<script type="module" th:src="@{/js/common/themeToggle.js}"></script>
-<script type="module" th:src="@{/js/StudentJs/ui/StudentController.js}"></script>
-<script th:src="@{/js/APInterface/retraitStudent.js}"></script>
+    <!-- Recherche côté client dans les tableaux -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+
+            // Filtrage par saisie dans chaque barre de recherche
+            document.querySelectorAll('.student-search').forEach(input => {
+                input.addEventListener('input', () => {
+                    const query = input.value.toLowerCase().trim();
+                    // Le tbody est le sibling table -> tbody
+                    const panel = input.closest('[id^="panel-classe-"]');
+                    if (!panel) return;
+                    panel.querySelectorAll('.student-row').forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(query) ? '' : 'none';
+                    });
+                });
+            });
+        });
+
+        window.addEventListener('load', () => {
+            if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+        });
+    </script>
+    <script>
+        function exporterModeleExcel() {
+            // 1. Définir les colonnes attendues (basé sur ton tableau HTML)
+            const entetes = [
+                ["Email","Noms", "Prénoms",  "Matricule", "Téléphone"]
+            ];
+
+            // 2. Créer une feuille de calcul avec SheetJS
+            const worksheet = XLSX.utils.aoa_to_sheet(entetes);
+
+            // Optionnel : Ajuster la largeur des colonnes pour un meilleur rendu
+            worksheet['!cols'] = [
+                { wch: 35 }, // Email
+                { wch: 25 }, // Noms
+                { wch: 25 }, // Prénoms
+                { wch: 15 }, // Matricule
+                { wch: 15 }  // Téléphone
+            ];
+
+            // 3. Créer le classeur (workbook) et y ajouter la feuille
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Modele_Import");
+
+            // 4. Déclencher le téléchargement du fichier
+            XLSX.writeFile(workbook, "Modele_Import_Etudiants.xlsx");
+        }
+    </script>
+</body>
 
 </body>
 </html>
