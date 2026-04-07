@@ -37,6 +37,17 @@ public class TeacherController {
         return "TeacherInterface/TeacherDashboard";
     }
 
+    @GetMapping("/schedule")
+    public String scheduleView(Model model) {
+        UserDetailsResponseDTO teacher = getFakeTeacher();
+        List<SeanceViewModel> seances = getFakeSchedule();
+
+        model.addAttribute("teacher", teacher);
+        model.addAttribute("seances", seances);
+
+        return "TeacherInterface/TeacherSchedule";
+    }
+
     @GetMapping("/seance")
     public String seanceView(Model model) {
         UserDetailsResponseDTO teacher = getFakeTeacher();
@@ -48,17 +59,6 @@ public class TeacherController {
         model.addAttribute("etudiants", etudiants);
 
         return "TeacherInterface/TeacherSeance";
-    }
-
-    @GetMapping("/schedule")
-    public String scheduleView(Model model) {
-        UserDetailsResponseDTO teacher = getFakeTeacher();
-        List<SeanceViewModel> seances = getFakeSchedule();
-
-        model.addAttribute("teacher", teacher);
-        model.addAttribute("seances", seances);
-
-        return "TeacherInterface/TeacherSchedule";
     }
 
     private UserDetailsResponseDTO getFakeTeacher() {
@@ -80,7 +80,7 @@ public class TeacherController {
                 "Salle B12",
                 LocalDate.now(),
                 LocalTime.of(8, 0),
-                LocalTime.of(10, 0),
+                LocalTime.of(12, 0),
                 11L
         );
     }
@@ -93,7 +93,7 @@ public class TeacherController {
                         "Salle B12",
                         LocalDate.now(),
                         LocalTime.of(8, 0),
-                        LocalTime.of(10, 0),
+                        LocalTime.of(12, 0),
                         11L
                 ),
                 new SeanceViewModel(
@@ -122,6 +122,24 @@ public class TeacherController {
                         LocalTime.of(9, 0),
                         LocalTime.of(11, 0),
                         14L
+                ),
+                new SeanceViewModel(
+                        5L,
+                        "Programmation Java",
+                        "Salle E03",
+                        LocalDate.now().plusDays(4),
+                        LocalTime.of(13, 0),
+                        LocalTime.of(15, 0),
+                        15L
+                ),
+                new SeanceViewModel(
+                        6L,
+                        "Systèmes d'exploitation",
+                        "Salle F01",
+                        LocalDate.now().plusDays(5),
+                        LocalTime.of(8, 0),
+                        LocalTime.of(10, 0),
+                        16L
                 )
         );
     }
@@ -132,7 +150,10 @@ public class TeacherController {
                 new StudentViewModel(2L, "Kevin", "Foka", "23L3I002"),
                 new StudentViewModel(3L, "Sarah", "Njoya", "23L3I003"),
                 new StudentViewModel(4L, "Merveille", "Tchoumi", "23L3I004"),
-                new StudentViewModel(5L, "Jordan", "Essomba", "23L3I005")
+                new StudentViewModel(5L, "Jordan", "Essomba", "23L3I005"),
+                new StudentViewModel(6L, "Prisca", "Ngassa", "23L3I006"),
+                new StudentViewModel(7L, "Blaise", "Mvondo", "23L3I007"),
+                new StudentViewModel(8L, "Esther", "Kouam", "23L3I008")
         );
     }
 

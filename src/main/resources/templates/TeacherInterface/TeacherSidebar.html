@@ -75,15 +75,12 @@
                             <span th:classappend="${activePage == 'dashboard'} ?
             'bg-white/20' : 'bg-muted group-hover:bg-primary/10'"
                                   class="size-8 rounded-lg flex items-center justify-center shrink-0 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
-                                     stroke-linejoin="round">
-                                    <path d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                                    <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                    <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
-                                </svg>
-                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="3" y="3" width="7" height="7" rx="2"/>
+  <rect x="14" y="3" width="7" height="4" rx="2"/>
+  <rect x="14" y="10" width="7" height="11" rx="2"/>
+  <rect x="3" y="13" width="7" height="8" rx="2"/>
+</svg></span>
                             <span class="hs-overlay-minified:hidden">Dashboard</span>
                         </a>
                     </li>
@@ -97,15 +94,12 @@
                             <span th:classappend="${activePage == 'seance'} ?
             'bg-white/20' : 'bg-muted group-hover:bg-primary/10'"
                                   class="size-8 rounded-lg flex items-center justify-center shrink-0 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
-                                     stroke-linejoin="round">
-                                    <path d="M12 5m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                    <path d="M5 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                    <path d="M19 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                    <path d="M12 7v3a2 2 0 0 1 -2 2h-2a2 2 0 0 0 -2 2v1" />
-                                    <path d="M12 7v3a2 2 0 0 0 2 2h2a2 2 0 0 1 2 2v1" />
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M2 7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7z"/>
+  <path d="M16 9l5-3v12l-5-3"/>
+  <path d="M7 10h4"/>
+  <path d="M7 14h2"/>
+</svg>
                             </span>
                             <span class="hs-overlay-minified:hidden">Seances cours</span>
                         </a>
@@ -121,12 +115,17 @@
                             <span th:classappend="${activePage == 'schedule'} ?
             'bg-white/20' : 'bg-muted group-hover:bg-primary/10'"
                                   class="size-8 rounded-lg flex items-center justify-center shrink-0 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
-                                     stroke-linejoin="round">
-                                    <path d="M4 5a3 3 0 0 1 3 -3h13v18h-13a3 3 0 0 0 -3 3z" />
-                                    <path d="M7 2v18" />
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="3" y="4" width="18" height="17" rx="2"/>
+  <path d="M8 2v4"/>
+  <path d="M16 2v4"/>
+  <path d="M3 10h18"/>
+  <path d="M8 14h.01"/>
+  <path d="M12 14h.01"/>
+  <path d="M16 14h.01"/>
+  <path d="M8 18h.01"/>
+  <path d="M12 18h.01"/>
+</svg>
                             </span>
                             <span class="hs-overlay-minified:hidden">Emploi du temps</span>
                         </a>
@@ -140,9 +139,8 @@
         </nav>
 
         <!-- Teacher profile -->
-        <div class="flex items-center gap-3 px-1 hs-overlay-minified:justify-center">
-            <div
-                    class="size-9 rounded-full bg-primary/10 border border-primary/20 overflow-hidden shrink-0 flex items-center justify-center text-primary">
+        <div class="flex items-center gap-3 px-5 py-5 border-t border-sidebar-line hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:py-5">
+            <div class="size-9 rounded-full bg-primary/10 border border-primary/20 overflow-hidden shrink-0 flex items-center justify-center text-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
@@ -150,16 +148,16 @@
                 </svg>
             </div>
             <div class="hs-overlay-minified:hidden min-w-0 flex-1">
-                <p class="text-sm font-bold text-layer-foreground truncate">Teacher Caleb</p>
+                <p class="text-sm font-bold text-layer-foreground truncate" th:text="${teacherName} ?: 'Teacher Name'">Teacher Name</p>
                 <p class="text-xs text-muted-foreground-2 truncate">Enseignant</p>
             </div>
             <button type="button"
                     class="hs-overlay-minified:hidden size-7 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted transition-colors shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" x2="9" y1="12" y2="12" />
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" x2="9" y1="12" y2="12"/>
                 </svg>
             </button>
         </div>
