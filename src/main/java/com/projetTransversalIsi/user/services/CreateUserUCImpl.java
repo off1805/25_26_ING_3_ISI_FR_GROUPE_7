@@ -1,9 +1,9 @@
 package com.projetTransversalIsi.user.services;
 
 
-import com.projetTransversalIsi.profil.services.InitProfile;
-import com.projetTransversalIsi.profil.services.ProfileSelectionStrategy;
-import com.projetTransversalIsi.profil.domain.Profile;
+import com.projetTransversalIsi.user.profil.services.InitProfile;
+import com.projetTransversalIsi.user.profil.services.ProfileSelectionStrategy;
+import com.projetTransversalIsi.user.profil.domain.Profile;
 import com.projetTransversalIsi.security.services.FindAllPermissionByIdsAccessPort;
 import com.projetTransversalIsi.security.services.FindRoleByIdAccessPort;
 import com.projetTransversalIsi.security.services.PasswordHasherAC;
@@ -53,8 +53,9 @@ public class CreateUserUCImpl implements CreateUserUC {
         Set<Permission> permissions= getAllPermById.findAllPermissionByIds(command.idPermissions());
         User user = new User(command.email(), role);
         user.setPassword(hashPassword);
-        user.setProfileId(newProfile.getId());
+        user.setProfile(newProfile);
         user.setPermissions(permissions);
         return userRepo.registerNewUser(user);
+
     }
 }

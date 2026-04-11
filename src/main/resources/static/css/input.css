@@ -4,6 +4,8 @@
 @import "../../../../../src/main/resources/static/css/kemoschool.css";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@import "../../../../../node_modules/preline/src/plugins/datepicker/styles.css";
+
 
 
 
@@ -28,6 +30,12 @@
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
+}
+
+.vanilla-calendar {
+    width: 100% !important;
+    max-width: 320px !important;
+    margin: 0 auto; /* Pour le centrer si besoin */
 }
 
 ::-webkit-scrollbar-button {

@@ -5,7 +5,7 @@ import com.projetTransversalIsi.pedagogie.application.dto.UeResponseDTO;
 import com.projetTransversalIsi.pedagogie.application.dto.UpdateUeRequestDTO;
 import com.projetTransversalIsi.pedagogie.domain.model.Ue;
 import com.projetTransversalIsi.pedagogie.infrastructure.entity.JpaUeEntity;
-import com.projetTransversalIsi.profil.infrastructure.JpaTeacherProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaTeacherProfileEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

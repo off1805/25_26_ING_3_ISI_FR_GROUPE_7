@@ -19,7 +19,7 @@ class UeMapperTest {
 
     @Test
     void shouldMapUeToJpaUeEntity() {
-        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", 10L, new java.util.HashSet<>(), "#ffffff", null, null, false);
+        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", 10L, new java.util.HashSet<>(), "#ffffff", 1, null, null, false);
         JpaUeEntity entity = ueMapper.ueToJpaUeEntity(ue);
 
         assertEquals(ue.getId(), entity.getId());
@@ -58,7 +58,7 @@ class UeMapperTest {
 
     @Test
     void shouldMapCreateUeRequestDTOToUe() {
-        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description", "#ffffff", 10L, Set.of(1L, 2L));
+        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description", "#ffffff", 10L, 1, Set.of(1L, 2L));
         Ue ue = ueMapper.toDomain(request);
 
         assertNull(ue.getId());
@@ -73,8 +73,8 @@ class UeMapperTest {
 
     @Test
     void shouldUpdateUeFromUpdateUeRequestDTO() {
-        UpdateUeRequestDTO request = new UpdateUeRequestDTO("Maths Updated", "MATH101", 8, 80, "Description Updated", "#ff0000", 11L, new java.util.HashSet<>());
-        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", 10L, new java.util.HashSet<>(), "#ffffff", null, null, false);
+        UpdateUeRequestDTO request = new UpdateUeRequestDTO("Maths Updated", "MATH101", 8, 80, "Description Updated", "#ff0000", 11L, 2, new java.util.HashSet<>());
+        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", 10L, new java.util.HashSet<>(), "#ffffff", 1, null, null, false);
         
         ueMapper.updateFromDTO(request, ue);
 
@@ -90,7 +90,7 @@ class UeMapperTest {
 
     @Test
     void shouldMapUeToUeResponseDTO() {
-        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", 10L, new java.util.HashSet<>(), "#ffffff", null, null, false);
+        Ue ue = new Ue(1L, "Maths", "MATH101", 6, 60, "Description", 10L, new java.util.HashSet<>(), "#ffffff", 1, null, null, false);
         UeResponseDTO response = ueMapper.toResponseDTO(ue);
 
         assertEquals(ue.getId(), response.id());
@@ -146,7 +146,7 @@ class UeMapperTest {
 
     @Test
     void shouldMapCreateUeRequestDTOToJpaUeEntity() {
-        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description", "#ffffff", 10L, Set.of(1L, 2L));
+        CreateUeRequestDTO request = new CreateUeRequestDTO("Maths", "MATH101", 6, 60, "Description", "#ffffff", 10L, 1, Set.of(1L, 2L));
         JpaUeEntity entity = ueMapper.toEntity(request);
 
         assertNull(entity.getId());
@@ -158,7 +158,7 @@ class UeMapperTest {
 
     @Test
     void shouldUpdateJpaUeEntityFromUpdateUeRequestDTO() {
-        UpdateUeRequestDTO request = new UpdateUeRequestDTO("Maths Updated", "MATH101", 8, 80, "Description Updated", "#ff0000", 11L, new java.util.HashSet<>());
+        UpdateUeRequestDTO request = new UpdateUeRequestDTO("Maths Updated", "MATH101", 8, 80, "Description Updated", "#ff0000", 11L, 2, new java.util.HashSet<>());
         JpaUeEntity entity = new JpaUeEntity();
         entity.setId(1L);
 

@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.user.dto;
 
-import com.projetTransversalIsi.profil.application.ProfilCreationDTO;
+import com.projetTransversalIsi.user.profil.application.ProfilCreationDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

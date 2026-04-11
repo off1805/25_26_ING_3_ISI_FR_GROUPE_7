@@ -1,11 +1,15 @@
 package com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository;
 
+import com.projetTransversalIsi.emploi_temps.application.dto.SearchEmploiTempsRequestDTO;
 import com.projetTransversalIsi.emploi_temps.domain.model.EmploiTemps;
 import com.projetTransversalIsi.emploi_temps.domain.repository.EmploiTempsRepository;
 import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.entity.JpaEmploiTempsEntity;
 import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.mapper.EmploiTempsMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
@@ -31,6 +35,19 @@ public class JpaEmploiTempsRepository implements EmploiTempsRepository {
     @Override
     public Optional<EmploiTemps> findById(Long id) {
         return jpaRepo.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public Page<EmploiTemps> findAll(SearchEmploiTempsRequestDTO comand, Pageable page){
+        Specification<JpaEmploiTempsEntity> spec= Specification
+                .where(JpaEmploiTempsSpec.hasStatus(comand.status()))
+                .and(JpaEmploiTempsSpec.isForClasse(comand.classeId()))
+                .and(JpaEmploiTempsSpec.isDeleted(comand.includeDeleted()))
+                .and(JpaEmploiTempsSpec.startDateAfter(comand.startDateAfter()))
+                .and(JpaEmploiTempsSpec.endDateBefore(comand.endDateBefore()))
+                .and(JpaEmploiTempsSpec.startDateBeforeOrEqual(comand.startDateBefore()))
+                .and(JpaEmploiTempsSpec.endDateAfterOrEqual(comand.endDateAfter()));
+        return jpaRepo.findAll(spec,page).map(mapper::toDomain);
     }
 
     @Override

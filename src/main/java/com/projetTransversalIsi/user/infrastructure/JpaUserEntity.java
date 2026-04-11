@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.user.infrastructure;
 
-import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaProfileEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaPermissionEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
@@ -54,7 +54,7 @@ public class JpaUserEntity {
     )
     private Set<JpaPermissionEntity> permissions;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name= "profile_id",referencedColumnName = "id")
     private JpaProfileEntity profile = null;
 

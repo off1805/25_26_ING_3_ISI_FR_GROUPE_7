@@ -11,5 +11,6 @@ public record UeResponseDTO(
         String description,
         String couleur,
         Long specialiteId,
+        Integer semestre,
         Set<Long> enseignantIds) {
 }
