@@ -192,7 +192,7 @@ export async function generatePDF(elementId, showToastFn) {
 
         // Capture l'élément directement
         const canvas = await html2canvas(wrapper, {
-            scale: 2,                 // meilleure résolution
+            scale: 2,
             useCORS: true,
             allowTaint: true,
             logging: false,

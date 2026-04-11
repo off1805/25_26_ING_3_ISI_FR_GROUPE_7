@@ -1,7 +1,7 @@
 package com.projetTransversalIsi.student.application.use_cases;
 
-import com.projetTransversalIsi.profil.infrastructure.JpaStudentProfileEntity;
-import com.projetTransversalIsi.profil.infrastructure.SpringDataStudentProfileRepository;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaStudentProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProfileRepository;
 import com.projetTransversalIsi.user.infrastructure.JpaUserEntity;
 import com.projetTransversalIsi.user.infrastructure.SpringDataUserRepository;
 import jakarta.transaction.Transactional;

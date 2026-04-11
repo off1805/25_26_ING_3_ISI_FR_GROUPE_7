@@ -81,7 +81,7 @@ public class AdminController {
     }
     @GetMapping("/users")
     public String usersView(Model model){
-        Page<User> users=searchUserUC.execute(new UserFiltreDto(null, List.of("AP","TEACHER","SURVEILLANT"),null,null), PageRequest.of(0, 10, Sort.by("id").descending()));
+        Page<User> users=searchUserUC.execute(new UserFiltreDto(null, List.of("AP","TEACHER","SURVEILLANT"),null,null,null), PageRequest.of(0, 10, Sort.by("id").descending()));
         model.addAttribute("staff", users.stream().map(UserDetailsResponseDTO::fromDomain).toList());
         return "AdminInterface/AdminUser";
     }

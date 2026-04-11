@@ -2,8 +2,8 @@ package com.projetTransversalIsi.student.application.use_cases;
 
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaClasseEntity;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataClasseRepository;
-import com.projetTransversalIsi.profil.infrastructure.JpaStudentProfileEntity;
-import com.projetTransversalIsi.profil.infrastructure.SpringDataStudentProfileRepository;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaStudentProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProfileRepository;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
 import com.projetTransversalIsi.security.services.PasswordHasherAC;
 import com.projetTransversalIsi.student.application.dto.EnrollStudentRequestDTO;
@@ -58,15 +58,14 @@ public class EnrollStudentUCImpl implements EnrollStudentUC {
             studentProfile.setClasse(classe);
             studentProfileRepository.save(studentProfile);
 
-            return new EnrollStudentResponseDTO(
-                    user.getId(),
-                    user.getEmail(),
-                    studentProfile.getNom(),
-                    studentProfile.getPrenom(),
-                    studentProfile.getMatricule(),
-                    classe.getId(),
-                    false
-            );
+            return  EnrollStudentResponseDTO.builder()
+                    .userId(user.getId())
+                    .nom(studentProfile.getNom())
+                    .prenom(studentProfile.getPrenom())
+                    .matricule(studentProfile.getMatricule())
+                    .classeId(studentProfile.getClasse().getId())
+                    .build();
+
 
         } else {
             // L'utilisateur n'existe pas — créer profil + user
@@ -88,15 +87,13 @@ public class EnrollStudentUCImpl implements EnrollStudentUC {
             newUser.setPermissions(Set.of());
             JpaUserEntity savedUser = userRepository.save(newUser);
 
-            return new EnrollStudentResponseDTO(
-                    savedUser.getId(),
-                    savedUser.getEmail(),
-                    savedProfile.getNom(),
-                    savedProfile.getPrenom(),
-                    savedProfile.getMatricule(),
-                    classe.getId(),
-                    true
-            );
+            return  EnrollStudentResponseDTO.builder()
+                    .userId(savedUser.getId())
+                    .nom(studentProfile.getNom())
+                    .prenom(studentProfile.getPrenom())
+                    .matricule(studentProfile.getMatricule())
+                    .classeId(studentProfile.getClasse().getId())
+                    .build();
         }
     }
 }

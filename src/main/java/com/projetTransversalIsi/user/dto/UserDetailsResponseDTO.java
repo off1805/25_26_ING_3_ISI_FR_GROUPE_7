@@ -4,16 +4,15 @@ package com.projetTransversalIsi.user.dto;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
 
-public record UserDetailsResponseDTO(Long id, UserStatus status, String email, String roleName, Long profileId, String nom, String prenom) {
+public record UserDetailsResponseDTO(Long id, UserStatus status, String email, String roleName, ProfileResponseDTO profile) {
     public static UserDetailsResponseDTO fromDomain(User user) {
         return new UserDetailsResponseDTO(
                 user.getId(),
                 user.getStatus(),
                 user.getEmail(),
                 user.getRole().getName(),
-                user.getProfileId(),
-                user.getNom(),
-                user.getPrenom()
+                ProfileResponseDTO.fromDomain(user.getProfile())
         );
     }
+
 }

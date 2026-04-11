@@ -1,6 +1,7 @@
 package com.projetTransversalIsi.web_application.teacher;
 
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
+import com.projetTransversalIsi.user.dto.ProfileResponseDTO;
 import com.projetTransversalIsi.user.dto.UserDetailsResponseDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,11 +68,19 @@ public class TeacherController {
                 UserStatus.ACTIVE,
                 "enseignant@kemoschool.com",
                 "TEACHER",
-                101L,
-                "Ngono",
-                "Terence"
+                ProfileResponseDTO.builder()
+                        .id(101L)
+                        .nom("Ngono")
+                        .prenom("Terence")
+                        .matricule("FAKE-MAT-001")
+                        .numeroTelephone("677777777")
+                        .titre("Dr")
+                        .specialite("Informatique")
+                        .type("PERMANENT")
+                        .build()
         );
     }
+
 
     private SeanceViewModel getFakeCurrentSeance() {
         return new SeanceViewModel(

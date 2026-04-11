@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.config;
 
-import com.projetTransversalIsi.profil.infrastructure.*;
+import com.projetTransversalIsi.user.profil.infrastructure.*;
 import com.projetTransversalIsi.structure_academique.domain.model.CycleStatus;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaClasseEntity;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaCycleEntity;

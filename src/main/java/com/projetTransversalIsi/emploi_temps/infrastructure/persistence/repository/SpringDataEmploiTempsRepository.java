@@ -1,7 +1,9 @@
 package com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository;
 
 import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.entity.JpaEmploiTempsEntity;
+import com.projetTransversalIsi.user.infrastructure.JpaUserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,7 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SpringDataEmploiTempsRepository extends JpaRepository<JpaEmploiTempsEntity, Long> {
+public interface SpringDataEmploiTempsRepository extends JpaRepository<JpaEmploiTempsEntity, Long>, JpaSpecificationExecutor<JpaEmploiTempsEntity> {
+
 
     List<JpaEmploiTempsEntity> findByClasseId(Long classeId);
     List<JpaEmploiTempsEntity> findBySemaine(Integer semaine);

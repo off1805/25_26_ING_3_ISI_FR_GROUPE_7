@@ -33,6 +33,10 @@ public class JpaUserSpec {
         };
     }
 
+    public static Specification<JpaUserEntity> isFromClass(Long classId){
+        return ((root, query, criteriaBuilder) -> classId == null?null:criteriaBuilder.equal(root.join("profile").join("classe").get("id"),classId));
+    }
+
     public static Specification<JpaUserEntity> isDeleted(Boolean deleted){
         return ((root, query, criteriaBuilder) -> deleted == null?null:criteriaBuilder.equal(root.get("deleted"),deleted));
     }

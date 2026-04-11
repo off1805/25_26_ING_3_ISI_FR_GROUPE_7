@@ -71,20 +71,34 @@ export class EditScheduleController {
     }
 
     async init() {
+        const config = window.scheduleConfig || {};
         const params = new URLSearchParams(window.location.search);
-        const className = params.get('class');
-        const classId = params.get('classId');
-        const emploiId = params.get('emploiId');
-        this.classId = classId ? parseInt(classId) : null;
-        this.emploiId = emploiId ? parseInt(emploiId) : null;
+        
+        // Prioritize window.scheduleConfig (from Thymeleaf) then URL params
+        this.emploiId = config.emploiId || (params.get('id') ? parseInt(params.get('id')) : null);
+        this.classId = config.classId || (params.get('classId') ? parseInt(params.get('classId')) : null);
+        this.fixedStartDate = config.dateDebut || params.get('dateDebut');
+        this.fixedEndDate = config.dateFin || params.get('dateFin');
+        this.semaine = config.semaine || params.get('semaine');
+
         const label = document.getElementById('edit-class-label');
-        if (label) label.textContent = className || 'Nouvelle classe';
+        if (label) label.textContent = config.className || 'Nouvelle classe';
+
+        if (this.fixedStartDate) {
+            this.weekOffset = this._computeWeekOffsetFrom(this.fixedStartDate);
+            this.rangeStart = new Date(this.fixedStartDate);
+            this.rangeStart.setHours(0, 0, 0, 0);
+        }
+        if (this.fixedEndDate) {
+            this.rangeEnd = new Date(this.fixedEndDate);
+            this.rangeEnd.setHours(23, 59, 59, 999);
+        }
 
         const viewEdit = document.getElementById('view-edit');
         if (viewEdit) { viewEdit.classList.remove('hidden'); viewEdit.classList.add('flex'); }
 
-        if (classId) {
-            await this._loadSubjectsForClass(classId);
+        if (this.classId) {
+            await this._loadSubjectsForClass(this.classId);
         } else {
             this.SUBJECTS = SUBJECTS;
         }
@@ -97,9 +111,8 @@ export class EditScheduleController {
         this._bindSubjectDropModal();
         this._bindSubjectSearch();
 
-        // Exposer les callbacks Preline datepicker sur window AVANT l'init Preline
         window.__onDateStartChange = (val) => this.handleDatePickerChange(val);
-        window.__onDateEndChange = (val) => { /* la date de fin ne change pas la semaine */ };
+        window.__onDateEndChange = (val) => {};
 
         window.addEventListener('resize', () => {
             this.recalcSlotHeight();
@@ -141,8 +154,6 @@ export class EditScheduleController {
     _bindControls() {
         document.getElementById('btn-exit')?.addEventListener('click', () => this.exitEditMode());
         document.getElementById('btn-undo')?.addEventListener('click', () => this.undoLast());
-        document.getElementById('btn-prev-week')?.addEventListener('click', () => { this.weekOffset--; this.renderWeek(); });
-        document.getElementById('btn-next-week')?.addEventListener('click', () => { this.weekOffset++; this.renderWeek(); });
         document.getElementById('btn-export-pdf')?.addEventListener('click', () => this.exportPDF());
         document.getElementById('btn-save')?.addEventListener('click', () => this.saveSchedule());
 
@@ -438,11 +449,24 @@ export class EditScheduleController {
             return dayDate;
         });
 
+        // Determine active days based on range
+        this.activeDays = weekDays.map(day => {
+            if (!this.rangeStart || !this.rangeEnd) return true;
+            // Set time to noon to avoid boundary issues with DST or different zones
+            const d = new Date(day); d.setHours(12,0,0,0);
+            const s = new Date(this.rangeStart); s.setHours(0,0,0,0);
+            const e = new Date(this.rangeEnd); e.setHours(23,59,59,999);
+            return d >= s && d <= e;
+        });
+
         // Mise à jour des datepickers Preline (ou des inputs natifs en fallback)
         setDatePickerValue('date-start', this._formatDateLocal(weekDays[0]));
         setDatePickerValue('date-end', this._formatDateLocal(weekDays[5]));
 
-        document.getElementById('week-label').textContent = `${fmtShort(weekDays[0])} – ${fmtShort(weekDays[5])}`;
+        const weekLabel = document.getElementById('week-label');
+        if (weekLabel) {
+            weekLabel.textContent = `${fmtShort(weekDays[0])} – ${fmtShort(weekDays[5])}`;
+        }
 
         const headersElement = document.getElementById('day-headers');
         if (!headersElement) return;
@@ -496,9 +520,12 @@ export class EditScheduleController {
                        <span class="text-[11px] font-mono font-semibold text-muted-foreground-2 whitespace-nowrap">${hour}h–${hour + 1}h</span>
                      </div>`;
             for (let dayIndex = 0; dayIndex < DAY_COUNT; dayIndex++) {
+                const isActive = this.activeDays ? this.activeDays[dayIndex] : true;
+                const disabledClass = isActive ? '' : 'bg-muted/40 opacity-40 cursor-not-allowed';
                 gridHtml += `<div style="grid-column:${dayIndex + 2};grid-row:${hourIndex + 1}"
-                              class="cell slot border-b border-card-line border-l bg-card/80 transition-colors "
-                              data-hour-index="${hourIndex}" data-day-index="${dayIndex}"></div>`;
+                              class="cell slot border-b border-card-line border-l bg-card/80 transition-colors ${disabledClass}"
+                              data-hour-index="${hourIndex}" data-day-index="${dayIndex}"
+                              ${isActive ? '' : 'data-disabled="true"'}></div>`;
             }
         });
         gridBody.innerHTML = gridHtml;
@@ -559,7 +586,9 @@ export class EditScheduleController {
         const rs = this.activeDragData.rowSpan || 1;
         const blockEl = this.activeDragData.fromBlock ? this.activeDragData.blockEl : null;
 
-        const isOk = isWithinBounds(h, d, rs, 1) && !isAreaOccupied(h, d, rs, 1, blockEl);
+        const isOk = isWithinBounds(h, d, rs, 1) && 
+                     !isAreaOccupied(h, d, rs, 1, blockEl) &&
+                     this._isRangeActive(h, d, rs);
         const highlightClass = isOk ? '!bg-primary/20' : '!bg-red-500/20';
 
         this._clearDragHighlights();
@@ -572,8 +601,13 @@ export class EditScheduleController {
         }
     }
 
-    onSlotDragLeave() {
-        // cleared on next dragover or drop
+    onSlotDragLeave(slotElement) {
+        slotElement.classList.remove('drag-highlight', '!bg-primary/20', '!bg-red-500/20');
+    }
+
+    _isRangeActive(h, d, rs) {
+        if (!this.activeDays) return true;
+        return this.activeDays[d];
     }
 
     _clearDragHighlights() {
@@ -593,14 +627,8 @@ export class EditScheduleController {
         const rs = this.activeDragData.rowSpan || 1;
         const blockEl = this.activeDragData.fromBlock ? this.activeDragData.blockEl : null;
 
-        if (!isWithinBounds(hourIndex, dayIndex, rs, 1)) {
-            this.showToast('Déborde de la grille');
-            this.activeDragData = null;
-            return;
-        }
-
-        if (isAreaOccupied(hourIndex, dayIndex, rs, 1, blockEl)) {
-            this.showToast('Espace déjà occupé');
+        if (!isWithinBounds(hourIndex, dayIndex, rs, 1) || isAreaOccupied(hourIndex, dayIndex, rs, 1, blockEl) || !this._isRangeActive(hourIndex, dayIndex, rs)) {
+            this.showToast('Emplacement invalide ou hors période');
             this.activeDragData = null;
             return;
         }
@@ -1007,8 +1035,8 @@ export class EditScheduleController {
     }
 
     async saveSchedule() {
-        const dateDebut = getDatePickerValue('date-start');
-        const dateFin = getDatePickerValue('date-end');
+        const dateDebut = this.fixedStartDate || getDatePickerValue('date-start');
+        const dateFin = this.fixedEndDate || getDatePickerValue('date-end');
         const classeId = this.classId;
 
         if (!classeId || !dateDebut || !dateFin) {
@@ -1026,7 +1054,7 @@ export class EditScheduleController {
             id: this.emploiId || undefined,
             dateDebut,
             dateFin,
-            semaine: this._computeWeekNumber(dateDebut),
+            semaine: this.semaine || this._computeWeekNumber(dateDebut),
             classeId,
             seances,
         };

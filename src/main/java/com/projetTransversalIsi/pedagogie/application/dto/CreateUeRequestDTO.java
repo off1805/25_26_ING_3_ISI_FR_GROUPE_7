@@ -14,5 +14,6 @@ public record CreateUeRequestDTO(
         String description,
         String couleur,
         @NotNull Long specialiteId,
+        Integer semestre,
         Set<Long> enseignantIds) {
 }

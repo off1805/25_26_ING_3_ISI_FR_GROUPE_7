@@ -1,11 +1,20 @@
 package com.projetTransversalIsi.student.application.dto;
 
-public record EnrollStudentResponseDTO(
-        Long userId,
-        String email,
-        String nom,
-        String prenom,
-        String matricule,
-        Long classeId,
-        boolean created) {
+
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import lombok.*;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access=AccessLevel.PRIVATE)
+public class EnrollStudentResponseDTO
+        {
+           private Long userId;
+           private String nom;
+           private String prenom;
+           private  String matricule;
+           private Long classeId;
+
 }

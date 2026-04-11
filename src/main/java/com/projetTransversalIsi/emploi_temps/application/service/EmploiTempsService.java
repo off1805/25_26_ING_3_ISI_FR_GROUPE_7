@@ -1,6 +1,7 @@
 package com.projetTransversalIsi.emploi_temps.application.service;
 
 import com.projetTransversalIsi.emploi_temps.application.dto.*;
+import com.projetTransversalIsi.emploi_temps.domain.model.EmploiStatus;
 import com.projetTransversalIsi.emploi_temps.domain.model.EmploiTemps;
 import com.projetTransversalIsi.emploi_temps.domain.model.Seance;
 import com.projetTransversalIsi.emploi_temps.domain.repository.EmploiTempsRepository;
@@ -11,8 +12,12 @@ import com.projetTransversalIsi.emploi_temps.domain.exceptions.SeanceConflictExc
 import com.projetTransversalIsi.emploi_temps.domain.exceptions.SeanceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,18 +35,18 @@ public class EmploiTempsService {
                 request.classeId(),
                 request.dateDebut(),
                 request.dateFin())) {
-            throw new EmploiTempsConflictException(
-                    "Un emploi du temps existe déjà pour cette période"
-            );
+            throw new EmploiTempsConflictException("Un emploi du temps existe déjà pour cette période");
         }
-
-        EmploiTemps emploiTemps = new EmploiTemps(
-                request.dateDebut(),
-                request.dateFin(),
-                request.semaine(),
-                request.classeId()
-        );
-
+        if(request.dateDebut().isBefore(LocalDate.now())){
+            throw new EmploiTempsConflictException("Vous ne pouvez pas creer un emploi de temps pour une periode deja passee.");
+        }
+        EmploiTemps emploiTemps= EmploiTemps.builder()
+                .dateDebut(request.dateDebut())
+                .dateFin(request.dateFin())
+                .semaine(request.semaine())
+                .classeId(request.classeId())
+                .status(EmploiStatus.UPCOMING)
+                .build();
         return EmploiTempsResponseDTO.fromDomain(emploiTempsRepo.save(emploiTemps));
     }
 
@@ -56,7 +61,6 @@ public class EmploiTempsService {
                 request.semaine(),
                 request.classeId()
         );
-
         return EmploiTempsResponseDTO.fromDomain(emploiTempsRepo.save(emploiTemps));
     }
 
@@ -68,7 +72,6 @@ public class EmploiTempsService {
         if (emploiTemps.isDeleted()) {
             throw new IllegalStateException("L'emploi du temps " + id + " est déjà supprimé");
         }
-
         emploiTemps.delete();
         emploiTempsRepo.save(emploiTemps);
     }
@@ -79,29 +82,10 @@ public class EmploiTempsService {
                 .orElseThrow(() -> new EmploiTempsNotFoundException(id));
     }
 
-    public List<EmploiTempsResponseDTO> searchEmploiTemps(SearchEmploiTempsRequestDTO criteria) {
-        List<EmploiTemps> resultats;
-
-        if (criteria.classeId() != null) {
-            resultats = emploiTempsRepo.findByClasseId(criteria.classeId());
-        } else if (criteria.semaine() != null) {
-            resultats = emploiTempsRepo.findBySemaine(criteria.semaine());
-        } else if (criteria.date() != null) {
-            resultats = emploiTempsRepo.findByPeriode(criteria.date());
-        } else {
-            resultats = emploiTempsRepo.findAll();
-        }
-
-        if (criteria.includeDeleted() != null && !criteria.includeDeleted()) {
-            resultats = resultats.stream()
-                    .filter(e -> !e.isDeleted())
-                    .collect(Collectors.toList());
-        }
-
-        return resultats.stream()
-                .map(EmploiTempsResponseDTO::fromDomain)
-                .collect(Collectors.toList());
+    public Page<EmploiTempsResponseDTO> searchEmploiTemps(SearchEmploiTempsRequestDTO criteria, Pageable page) {
+        return emploiTempsRepo.findAll(criteria,page).map(EmploiTempsResponseDTO::fromDomain);
     }
+
 
     @Transactional
     public EmploiTempsResponseDTO createEmploiTempsWithSeances(CreateEmploiTempsWithSeancesDTO command) {

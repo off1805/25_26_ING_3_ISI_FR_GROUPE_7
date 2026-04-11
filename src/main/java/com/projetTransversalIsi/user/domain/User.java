@@ -2,6 +2,7 @@ package com.projetTransversalIsi.user.domain;
 
 import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
+import com.projetTransversalIsi.user.profil.domain.Profile;
 import java.util.Set;
 
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
@@ -18,10 +19,9 @@ public class User {
     private UserStatus status;
     private String email;
     private String password;
-    private Long profileId;
-    private String nom;
-    private String prenom;
+    private Profile profile;
     private Role role;
+
     private Set<Permission> permissions;
     private boolean deleted= false;
     private LocalDateTime deletedAt;
