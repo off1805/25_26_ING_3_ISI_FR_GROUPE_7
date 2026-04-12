@@ -144,7 +144,9 @@ public class SeanceController {
             @PathVariable Long enseignantId,
             @RequestParam(defaultValue = "false") boolean includeDeleted) {
         log.info("Séances du jour de l'enseignant ID: {}", enseignantId);
-        List<SeanceResponseDTO> resultats = seanceService.getSeancesTodayByEnseignant(enseignantId, includeDeleted);
+        List<SeanceResponseDTO> resultats = seanceService.getSeancesTodayByEnseignant(enseignantId, includeDeleted).stream()
+                .map(SeanceResponseDTO::fromDomain)
+                .toList();
         return ResponseEntity.ok(resultats);
     }
 }

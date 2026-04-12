@@ -1,6 +1,5 @@
 package com.projetTransversalIsi.structure_academique.application.use_case;
 
-import com.projetTransversalIsi.structure_academique.application.dto.UpdateCycleRequestDTO;
 import com.projetTransversalIsi.structure_academique.domain.exception.CycleNotFoundException;
 import com.projetTransversalIsi.structure_academique.domain.exception.SchoolNotFoundException;
 import com.projetTransversalIsi.structure_academique.domain.model.Cycle;
@@ -12,24 +11,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UpdateCycleUC {
+public class LinkCycleToSchoolUC {
 
     private final CycleRepository cycleRepository;
     private final SchoolRepository schoolRepository;
 
     @Transactional
-    public Cycle execute(Long id, UpdateCycleRequestDTO request) {
-        Cycle cycle = cycleRepository.findById(id)
-                .orElseThrow(() -> new CycleNotFoundException(id));
-        cycle.setName(request.name());
-        cycle.setDurationYears(request.durationYears());
-        cycle.setDescription(request.description());
-        request.schoolId().ifPresent(schoolId -> {
-            if (!schoolRepository.existsById(schoolId)) {
-                throw new SchoolNotFoundException(schoolId);
-            }
-            cycle.setSchoolId(schoolId);
-        });
+    public Cycle execute(Long cycleId, Long schoolId) {
+        Cycle cycle = cycleRepository.findById(cycleId)
+                .orElseThrow(() -> new CycleNotFoundException(cycleId));
+        if (schoolId != null && !schoolRepository.existsById(schoolId)) {
+            throw new SchoolNotFoundException(schoolId);
+        }
+        cycle.setSchoolId(schoolId);
         return cycleRepository.save(cycle);
     }
 }

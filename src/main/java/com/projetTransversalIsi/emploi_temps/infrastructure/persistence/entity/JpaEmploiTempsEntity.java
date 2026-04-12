@@ -10,7 +10,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "emploi_temps")
-public class JpaEmploiTempsEntity {
+public class   JpaEmploiTempsEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

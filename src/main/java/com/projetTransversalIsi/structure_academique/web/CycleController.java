@@ -51,6 +51,14 @@ public class CycleController {
         return ResponseEntity.ok(cycleService.modifyStatus(id, statusDTO));
     }
 
+    @PutMapping("/{id}/school")
+    public ResponseEntity<CycleResponseDTO> linkCycleToSchool(
+            @PathVariable("id") Long id,
+            @RequestBody LinkCycleToSchoolRequestDTO request) {
+        log.info("Rattachement du cycle ID : {} à l'école ID : {}", id, request.schoolId());
+        return ResponseEntity.ok(cycleService.linkCycleToSchool(id, request.schoolId()));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<DeleteCycleResponseDTO> deleteCycle(@PathVariable("id") Long id) {
         log.info("Requête de suppression du cycle ID : {}", id);
