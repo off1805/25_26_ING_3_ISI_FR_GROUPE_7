@@ -2,10 +2,8 @@ package com.projetTransversalIsi.structure_academique.application.use_case;
 
 import com.projetTransversalIsi.structure_academique.application.dto.UpdateCycleRequestDTO;
 import com.projetTransversalIsi.structure_academique.domain.exception.CycleNotFoundException;
-import com.projetTransversalIsi.structure_academique.domain.exception.SchoolNotFoundException;
 import com.projetTransversalIsi.structure_academique.domain.model.Cycle;
 import com.projetTransversalIsi.structure_academique.domain.repository.CycleRepository;
-import com.projetTransversalIsi.structure_academique.domain.repository.SchoolRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Component;
 public class UpdateCycleUC {
 
     private final CycleRepository cycleRepository;
-    private final SchoolRepository schoolRepository;
 
     @Transactional
     public Cycle execute(Long id, UpdateCycleRequestDTO request) {
@@ -24,12 +21,6 @@ public class UpdateCycleUC {
         cycle.setName(request.name());
         cycle.setDurationYears(request.durationYears());
         cycle.setDescription(request.description());
-        request.schoolId().ifPresent(schoolId -> {
-            if (!schoolRepository.existsById(schoolId)) {
-                throw new SchoolNotFoundException(schoolId);
-            }
-            cycle.setSchoolId(schoolId);
-        });
         return cycleRepository.save(cycle);
     }
 }
