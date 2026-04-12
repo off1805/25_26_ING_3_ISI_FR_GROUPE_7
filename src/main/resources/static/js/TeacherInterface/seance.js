@@ -256,15 +256,16 @@ const blocks = Array.from(container.querySelectorAll('.hour-block'));
             if (type === 'qr') {
                 const container = document.getElementById('qr-code-container');
                 container.innerHTML = '';
+                const qrContent = code.scanUrl || code.valeur;
                 if (typeof QRCode !== 'undefined') {
                     new QRCode(container, {
-                        text: code.valeur,
+                        text: qrContent,
                         width: 180, height: 180,
                         colorDark: '#7c3aed', colorLight: '#ffffff',
                         correctLevel: QRCode.CorrectLevel.M
                     });
                 } else {
-                    container.innerHTML = `<p class="text-xs font-mono text-primary break-all text-center">${code.valeur}</p>`;
+                    container.innerHTML = `<p class="text-xs font-mono text-primary break-all text-center">${qrContent}</p>`;
                 }
             } else {
                 const digits = document.querySelectorAll('.pin-digit');

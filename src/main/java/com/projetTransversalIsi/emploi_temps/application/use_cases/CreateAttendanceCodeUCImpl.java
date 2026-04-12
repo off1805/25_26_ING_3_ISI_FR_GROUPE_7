@@ -30,9 +30,7 @@ public class CreateAttendanceCodeUCImpl implements CreateAttendanceCodeUC {
         if (type == AttendanceCode.CodeType.PIN) {
             return String.format("%06d", new Random().nextInt(999999));
         }
-        // QR : URL absolue — le téléphone l'ouvre directement au scan
-        // L'étudiant doit être connecté, son identité vient du JWT
-        String token = UUID.randomUUID().toString();
-        return "http://localhost:8080/api/presences/scan?code=" + token;
+        // QR : on stocke juste le token UUID en base
+        return UUID.randomUUID().toString();
     }
 }
