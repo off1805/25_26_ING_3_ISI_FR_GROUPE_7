@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface AttendanceCodeRepository {
     AttendanceCode save(AttendanceCode code);
     Optional<AttendanceCode> findById(Long id);
+    Optional<AttendanceCode> findByValeur(String valeur);
     List<AttendanceCode> findBySeanceId(Long seanceId);
     List<AttendanceCode> findByEnseignantId(Long enseignantId);
     void delete(Long id);

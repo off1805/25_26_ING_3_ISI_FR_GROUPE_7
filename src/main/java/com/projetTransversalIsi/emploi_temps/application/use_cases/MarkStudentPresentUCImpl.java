@@ -22,9 +22,15 @@ public class MarkStudentPresentUCImpl implements MarkStudentPresentUC {
 
     @Override
     public PresenceRowResponseDTO execute(MarkStudentPresentCommand command) {
-        // 1. Récupérer et valider le code
-        AttendanceCode code = attendanceCodeRepo.findById(command.idCode())
-                .orElseThrow(() -> new IllegalArgumentException("Code introuvable : " + command.idCode()));
+        // 1. Récupérer et valider le code (par valeur token QR ou par id PIN)
+        AttendanceCode code;
+        if (command.codeValeur() != null) {
+            code = attendanceCodeRepo.findByValeur(command.codeValeur())
+                    .orElseThrow(() -> new IllegalArgumentException("Code QR invalide"));
+        } else {
+            code = attendanceCodeRepo.findById(command.idCode())
+                    .orElseThrow(() -> new IllegalArgumentException("Code introuvable : " + command.idCode()));
+        }
 
         if (code.isExpired()) {
             throw new IllegalStateException("Le code a expiré");

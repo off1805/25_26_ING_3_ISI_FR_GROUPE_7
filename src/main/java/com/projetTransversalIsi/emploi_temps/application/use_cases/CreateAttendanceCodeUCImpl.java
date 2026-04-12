@@ -28,10 +28,9 @@ public class CreateAttendanceCodeUCImpl implements CreateAttendanceCodeUC {
 
     private String generateValeur(AttendanceCode.CodeType type) {
         if (type == AttendanceCode.CodeType.PIN) {
-            // PIN à 6 chiffres
             return String.format("%06d", new Random().nextInt(999999));
         }
-        // QR : UUID complet
+        // QR : on stocke juste le token UUID en base
         return UUID.randomUUID().toString();
     }
 }
