@@ -6,8 +6,8 @@ import org.mapstruct.ObjectFactory;
 import org.mapstruct.SubclassMapping;
 import org.mapstruct.ObjectFactory;
 
-@Mapper(componentModel = "spring")
-public interface ProfileMapper {
+@Mapper(componentModel = "spring", implementationName = "UserProfileMapperImpl")
+public interface UserProfileMapper {
 
     @SubclassMapping(source = StudentProfile.class, target = JpaStudentProfileEntity.class)
     @SubclassMapping(source = TeacherProfile.class, target = JpaTeacherProfileEntity.class)

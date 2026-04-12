@@ -58,6 +58,7 @@ public class TeacherController {
         model.addAttribute("teacher", teacher);
         model.addAttribute("seance", seance);
         model.addAttribute("etudiants", etudiants);
+        model.addAttribute("enseignantId", teacher.profile() != null ? teacher.profile().getId() : null);
 
         return "TeacherInterface/TeacherSeance";
     }

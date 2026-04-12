@@ -15,7 +15,7 @@ import java.util.List;
 public class JpaProfileRepository<T extends Profile,E extends JpaProfileEntity> implements ProfileRepository<T> {
 
     private final SpringDataProfileRepository<E> sprgDataProfileRepo;
-    private final ProfileMapper profileMapper;
+    private final UserProfileMapper profileMapper;
 
     @Override
     public T save(T profile){
