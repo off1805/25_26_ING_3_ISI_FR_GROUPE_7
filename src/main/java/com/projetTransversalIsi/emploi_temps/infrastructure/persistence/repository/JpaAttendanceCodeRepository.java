@@ -28,6 +28,11 @@ public class JpaAttendanceCodeRepository implements AttendanceCodeRepository {
     }
 
     @Override
+    public Optional<AttendanceCode> findByValeur(String valeur) {
+        return springData.findByValeur(valeur).map(mapper::toDomain);
+    }
+
+    @Override
     public List<AttendanceCode> findBySeanceId(Long seanceId) {
         return springData.findBySeanceId(seanceId).stream().map(mapper::toDomain).collect(Collectors.toList());
     }
