@@ -221,17 +221,61 @@ const blocks = Array.from(container.querySelectorAll('.hour-block'));
             pinC.classList.add('hidden');
             title.textContent = 'QR Code de présence';
             subtitle.textContent = 'Les étudiants scannent pour se marquer présents';
-            startPanelTimer('qr', 299);
         } else {
             pinC.classList.remove('hidden');
             qrC.classList.add('hidden');
             title.textContent = 'Code PIN de présence';
             subtitle.textContent = 'Dictez ce code aux étudiants';
-            startPanelTimer('pin', 599);
         }
 
         panel.classList.add('open');
         overlay.classList.add('open');
+        generateAttendanceCode(type);
+    }
+
+    async function generateAttendanceCode(type) {
+        const seanceId    = window.SEANCE_ID;
+        const enseignantId = window.ENSEIGNANT_ID;
+        if (!seanceId || !enseignantId) return;
+
+        try {
+            const res = await fetch('/api/attendance-codes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    seanceId: seanceId,
+                    enseignantId: enseignantId,
+                    type: type.toUpperCase(),
+                    heuresAMarquer: 2.0,
+                    dureeVieMinutes: type === 'qr' ? 5 : 10
+                })
+            });
+            if (!res.ok) throw new Error('Erreur API');
+            const code = await res.json();
+
+            if (type === 'qr') {
+                const container = document.getElementById('qr-code-container');
+                container.innerHTML = '';
+                if (typeof QRCode !== 'undefined') {
+                    new QRCode(container, {
+                        text: code.valeur,
+                        width: 180, height: 180,
+                        colorDark: '#7c3aed', colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                } else {
+                    container.innerHTML = `<p class="text-xs font-mono text-primary break-all text-center">${code.valeur}</p>`;
+                }
+            } else {
+                const digits = document.querySelectorAll('.pin-digit');
+                const pin = code.valeur.padStart(digits.length, '0');
+                digits.forEach((el, i) => { el.textContent = pin[i] ?? ''; });
+            }
+
+            startPanelTimer(type, code.dureeVieMinutes * 60);
+        } catch (e) {
+            console.error('Erreur génération code:', e);
+        }
     }
 
     function closeSidePanel() {
@@ -253,7 +297,7 @@ const blocks = Array.from(container.querySelectorAll('.hour-block'));
         if (type === 'qr') panelTimerQR = t; else panelTimerPIN = t;
     }
 
-    function regenerateCode(type) { startPanelTimer(type, type==='qr'?299:599); }
+    function regenerateCode(type) { generateAttendanceCode(type); }
 
     function copyPIN() {
 const digits = Array.from(document.querySelectorAll('.pin-digit'))
