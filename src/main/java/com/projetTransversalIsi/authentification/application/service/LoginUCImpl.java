@@ -24,20 +24,29 @@ public class LoginUCImpl implements LoginUC {
     private final RegisterNewRefreshTokenUC registerNewRefreshToken;
 
     @Override
-    public LoginResponseDTO execute(LoginRequestDTO command){
-        String truePassword= getPasswordByEmail.getPasswordByEmail(command.getEmail())
-                .orElseThrow(()->new UserNotFoundException(command.getEmail()));
-        if(!passwordHasher.matches(command.getPassword(),truePassword)){
+    public LoginResponseDTO execute(LoginRequestDTO command) {
+        String truePassword = getPasswordByEmail.getPasswordByEmail(command.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(command.getEmail()));
+
+        if (!passwordHasher.matches(command.getPassword(), truePassword)) {
             throw new RuntimeException("Mot de passe ou email incorrect.");
         }
-        User user= getUserByEmail.getByEmail(
-                command.getEmail()).orElseThrow(
-                ()->new UserNotFoundException(command.getEmail())
-        );
-        String token= jwtS.generateJwtToken(user);
 
-        RefreshToken rToken= registerNewRefreshToken.execute(user);
-        return new LoginResponseDTO(token,rToken.getToken());
+        User user = getUserByEmail.getByEmail(command.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(command.getEmail()));
+
+        String token = jwtS.generateJwtToken(user);
+        RefreshToken rToken = registerNewRefreshToken.execute(user);
+
+        String role = user.getRole() != null ? user.getRole().getName() : null;
+        String displayName = user.getEmail();
+
+        return new LoginResponseDTO(
+                token,
+                rToken.getToken(),
+                role,
+                displayName
+        );
     }
 
 }

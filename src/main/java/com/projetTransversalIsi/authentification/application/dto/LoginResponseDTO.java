@@ -10,5 +10,7 @@ public class LoginResponseDTO {
 
     private String token;
     private String refreshToken;
+    private String role;
+    private String displayName;
 
 }

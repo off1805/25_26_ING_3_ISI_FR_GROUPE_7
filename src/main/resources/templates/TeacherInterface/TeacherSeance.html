@@ -69,9 +69,7 @@
 <body class="h-screen bg-background-1 flex flex-row overflow-hidden">
 
 <!-- SIDEBAR -->
-<section th:replace="~{TeacherInterface/TeacherSidebar :: teacher-sidebar('seance')}"></section>
-
-<!-- MAIN -->
+<section th:replace="~{common/AppSidebar :: app-sidebar('seance', null)}"></section>
 <div class="flex-1 flex flex-col overflow-hidden">
 
     <!-- HEADER SÉANCE -->
