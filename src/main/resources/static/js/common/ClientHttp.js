@@ -38,7 +38,7 @@ class HttpClient {
 
         //token invalide/expiré, tentative de refresh.
         if (response.status === 401 && retry) {
-            const refreshed = await this.refreshToken();
+            const refreshed = await this._refreshToken();
             if (refreshed) {
                 return await this._request(method, endpoint, { body, headers, retry: false });
             }

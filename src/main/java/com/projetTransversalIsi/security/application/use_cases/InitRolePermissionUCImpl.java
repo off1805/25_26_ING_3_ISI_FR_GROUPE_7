@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.security.application.use_cases;
 
-import com.projetTransversalIsi.profil.application.ProfilCreationDTO;
+import com.projetTransversalIsi.user.profil.application.ProfilCreationDTO;
 import com.projetTransversalIsi.security.services.DefaultPermissionOperation;
 import com.projetTransversalIsi.security.services.DefaultRoleOperation;
 import com.projetTransversalIsi.security.services.FindAllPermissionByIdsAccessPort;

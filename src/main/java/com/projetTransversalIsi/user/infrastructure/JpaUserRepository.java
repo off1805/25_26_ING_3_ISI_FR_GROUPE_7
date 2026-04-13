@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.user.infrastructure;
 
-import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaProfileEntity;
 import com.projetTransversalIsi.security.domain.EnumRole;
 import com.projetTransversalIsi.security.infrastructure.JpaPermissionEntity;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
@@ -32,11 +32,7 @@ public class JpaUserRepository implements UserRepository {
 
     @Override
     public User registerNewUser(User user){
-        JpaRoleEntity jpaRole= entityManager.getReference(JpaRoleEntity.class,user.getRole().getName());
-        JpaProfileEntity jpaProfile = user.getProfileId() == null ? null : entityManager.getReference(JpaProfileEntity.class, user.getProfileId());
-        Set<JpaPermissionEntity> jpaPermissions = user.getPermissions() == null ? Set.of() : user.getPermissions().stream()
-                        .map(perm -> entityManager.getReference(JpaPermissionEntity.class, perm.getName()))
-                        .collect(Collectors.toSet());
+        JpaProfileEntity jpaProfile = user.getProfile() == null ? null : entityManager.getReference(JpaProfileEntity.class, user.getProfile().getId());
         JpaUserEntity jpaUser= userMapper.UserToJpaUserEntity(user, jpaProfile);
         JpaUserEntity newEntity= jpaRepo.save(jpaUser);
 
@@ -46,8 +42,8 @@ public class JpaUserRepository implements UserRepository {
 
     @Override
     public void save(User user) {
-        JpaProfileEntity jpaProfile= entityManager.getReference(JpaProfileEntity.class,user.getProfileId());
-        JpaUserEntity savedEntity = jpaRepo.save(userMapper.UserToJpaUserEntity(user,jpaProfile));
+        JpaProfileEntity jpaProfile = user.getProfile() == null ? null : entityManager.getReference(JpaProfileEntity.class, user.getProfile().getId());
+        JpaUserEntity savedEntity = jpaRepo.save(userMapper.UserToJpaUserEntity(user, jpaProfile));
         log.info("User updated: {}", savedEntity.getId());
 
     }
@@ -104,7 +100,8 @@ public class JpaUserRepository implements UserRepository {
                 .where(JpaUserSpec.hasStatus(command.getStatus()))
                 .and(JpaUserSpec.hasAnyRole(command.getRole()))
                 .and(JpaUserSpec.isDeleted(command.getDeleted()))
-                .and(JpaUserSpec.hasEmailLike(command.getEmail()));
+                .and(JpaUserSpec.hasEmailLike(command.getEmail()))
+                .and(JpaUserSpec.isFromClass(command.getClassId()));
         return jpaRepo.findAll(spec,page).map(userMapper::JpaUseEntityToUser);
     }
 }

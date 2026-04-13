@@ -12,18 +12,24 @@
  *      4. Récapitulatif des échecs en fin de traitement
  */
 
-import { ClasseApi }        from '../../common/application/ClasseApi.js';
-import { enrollStudentUC }  from '../application/EnrollStudentUC.js';
+import { ClasseApi } from '../../academicStructure/infrastructure/ClasseApi.js';
+import { SpecialiteApi } from '../../academicStructure/infrastructure/SpecialiteApi.js';
+import { enrollStudentUC } from '../application/EnrollStudentUC.js';
 import { EtudiantExcelParser } from '../../ExcelJs/application/infrastructure/Lecture.js';
-import { showToast }        from './studentToast.js';
+
+import api from '../../common/ClientHttp.js';
+import { StudentApi } from '../infrastructure/StudentApi.js';
 
 // ── État global ──────────────────────────────────────────────────────────────
 
 let classeSelectionneeId = null;
 
 // ── Init ─────────────────────────────────────────────────────────────────────
+const specialiteApi = new SpecialiteApi();
+const classeApi = new ClasseApi();
 
 document.addEventListener('DOMContentLoaded', async () => {
+
     attacherEvenements();
 });
 
@@ -40,6 +46,48 @@ function getActiveClasseId() {
 
 function attacherEvenements() {
     // Dropdown → Ajouter manuellement
+
+    onMainCheckboxChange();
+
+    document.getElementById("remove-all").addEventListener("click", () => {
+        const checkboxes = document.querySelectorAll('.checkebox-student');
+        const userIds = Array.from(checkboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.getAttribute('data-user-id'));
+
+        if (userIds.length === 0) {
+            console.log('Aucun étudiant sélectionné.', 'warning');
+            return;
+        }
+
+        if (!confirm(`Confirmer le retrait de ${userIds.length} étudiant(s) de la classe ?`)) {
+            return;
+        }
+
+        // Retrait en séquence pour éviter de saturer le serveur
+        (async () => {
+            for (const userId of userIds) {
+                try {
+                    await StudentApi.removeFromClass(userId, getActiveClasseId());
+                } catch (err) {
+                    console.log(`Échec retrait ID ${userId} : ${err.message}`, 'error');
+                }
+            }
+            // Après tous les retraits, on rafraîchit la page pour voir les changements
+            await handleClasseChange(getActiveClasseId());
+        })();
+    });
+
+    document.getElementById("level-tabs").addEventListener('click', (e) => {
+        const btn = e.target.closest(".level-filter-btn");
+        if (!btn) {
+            return;
+        }
+        console.log(e.target.closest(".level-filter-btn"));
+        console.log(btn.dataset.levelId);
+        handleNiveauChange(btn.dataset.levelId);
+
+    })
     document.getElementById('btn-add-manual')?.addEventListener('click', () => {
         ouvrirModal('modal-manual');
     });
@@ -97,12 +145,12 @@ async function soumettreFormManuel(e) {
     const btnSubmit = form.querySelector('button[type="submit"]');
 
     const data = {
-        email:           form.email.value.trim(),
-        nom:             form.nom.value.trim(),
-        prenom:          form.prenom.value.trim(),
-        matricule:       form.matricule.value.trim(),
+        email: form.email.value.trim(),
+        nom: form.nom.value.trim(),
+        prenom: form.prenom.value.trim(),
+        matricule: form.matricule.value.trim(),
         numeroTelephone: form.numeroTelephone.value.trim(),
-        classeId:        getActiveClasseId(),
+        classeId: getActiveClasseId(),
     };
 
     if (!data.classeId) {
@@ -147,12 +195,12 @@ function resetModalExcel() {
 
     // Remettre les colonnes par défaut dans les inputs
     const defauts = EtudiantExcelParser.COLONNES_DEFAUT;
-    setInputVal('col-email',    defauts.email);
-    setInputVal('col-nom',      defauts.nom);
-    setInputVal('col-prenom',   defauts.prenom);
-    setInputVal('col-matricule',defauts.matricule);
-    setInputVal('col-telephone',defauts.numeroTelephone);
-    setInputVal('ligne-debut',  '2');
+    setInputVal('col-email', defauts.email);
+    setInputVal('col-nom', defauts.nom);
+    setInputVal('col-prenom', defauts.prenom);
+    setInputVal('col-matricule', defauts.matricule);
+    setInputVal('col-telephone', defauts.numeroTelephone);
+    setInputVal('ligne-debut', '2');
 }
 
 function setInputVal(id, val) {
@@ -165,7 +213,7 @@ function getInputVal(id) {
 }
 
 async function lancerImportExcel() {
-    const fichier  = document.getElementById('input-excel-file')?.files[0];
+    const fichier = document.getElementById('input-excel-file')?.files[0];
     const classeId = getActiveClasseId();
 
     if (!fichier) {
@@ -178,11 +226,11 @@ async function lancerImportExcel() {
     }
 
     const colonnes = {
-        email:           getInputVal('col-email')    || 'A',
-        nom:             getInputVal('col-nom')      || 'B',
-        prenom:          getInputVal('col-prenom')   || 'C',
-        matricule:       getInputVal('col-matricule')|| 'D',
-        numeroTelephone: getInputVal('col-telephone')|| 'E',
+        email: getInputVal('col-email') || 'A',
+        nom: getInputVal('col-nom') || 'B',
+        prenom: getInputVal('col-prenom') || 'C',
+        matricule: getInputVal('col-matricule') || 'D',
+        numeroTelephone: getInputVal('col-telephone') || 'E',
     };
     const debutLigne = parseInt(getInputVal('ligne-debut'), 10) || 2;
 
@@ -206,7 +254,7 @@ async function lancerImportExcel() {
     // Passer à l'étape progression
     afficherEtape('excel-step-progress');
 
-    const total  = etudiants.length;
+    const total = etudiants.length;
     const echecs = [];
 
     for (let i = 0; i < total; i++) {
@@ -249,11 +297,11 @@ function afficherEtape(idVisible) {
 function mettreAJourProgression(traites, total, etudiantEnCours) {
     const pct = Math.round((traites / total) * 100);
 
-    const bar  = document.getElementById('progress-bar');
+    const bar = document.getElementById('progress-bar');
     const pctEl = document.getElementById('progress-pct');
     const infoEl = document.getElementById('progress-info');
 
-    if (bar)   { bar.style.width = pct + '%'; bar.setAttribute('aria-valuenow', pct); }
+    if (bar) { bar.style.width = pct + '%'; bar.setAttribute('aria-valuenow', pct); }
     if (pctEl) pctEl.textContent = pct + '%';
     if (infoEl) {
         if (etudiantEnCours) {
@@ -263,6 +311,188 @@ function mettreAJourProgression(traites, total, etudiantEnCours) {
         }
     }
 }
+
+function onMainCheckboxChange() {
+
+    const mainCheckbox = document.getElementById('select-all');
+    mainCheckbox.addEventListener('change', () => {
+        console.log("Main checkbox changed: ", mainCheckbox.checked);
+        console.log(mainCheckbox);
+        const checkboxes = document.querySelectorAll('.checkebox-student');
+        const isChecked = mainCheckbox.querySelector('input[type="checkbox"]').checked;
+
+        checkboxes.forEach(cb => {
+            cb.checked = isChecked;
+        });
+    
+    });
+}
+
+function removeFromClass(userId) {
+    StudentApi.removeFromClass(userId, getActiveClasseId());
+}
+
+async function handleNiveauChange(levelId) {
+    const container = document.getElementById("classes-tablist");
+    if (!container) {
+        return;
+    }
+
+    const response = await specialiteApi.getByNiveauId(levelId);
+    var classes = [];
+    let first = true;
+    Array.from(response).forEach(async (e) => {
+        console.log(e);
+        const classe = await classeApi.getBySpecialiteId(e.id);
+        Array.from(classe).forEach(e => classes.push(e));
+
+
+
+
+    });
+    console.log("classes ", classes);
+
+    const results = await Promise.all(
+        response.map(e => classeApi.getBySpecialiteId(e.id))
+    );
+
+    classes = results.flat();
+
+    container.innerHTML = classes.map((spec, index) => `
+        <button type="button" 
+            data-classe-id="${spec.id}"
+            class="classe-tab-btn hs-tab-active:bg-primary/20 specialty-tab hs-tab-active:text-primary px-5 py-1.5 text-xs font-semibold rounded-full text-muted-foreground-2 hover:bg-layer/60 transition-all ${index === 0 ? 'active' : ''}"
+            role="tab"
+            data-hs-tab="#panel-ue-specialite-${spec.code}"
+            aria-controls="panel-ue-specialite-${spec.code}"
+            aria-selected="${index === 0 ? true : false}">
+            ${spec.code}
+        </button>
+    `).join('');
+
+    container.querySelectorAll('.classe-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Désactiver tous les boutons
+            container.querySelectorAll('.classe-tab-btn').forEach(b => {
+                b.classList.remove('active', 'bg-primary/20', 'text-primary');
+                b.classList.add('text-muted-foreground-2');
+                b.setAttribute('aria-selected', 'false');
+            });
+
+            // Activer le bouton cliqué
+            btn.classList.add('active', 'bg-primary/20', 'text-primary');
+            btn.classList.remove('text-muted-foreground-2');
+            btn.setAttribute('aria-selected', 'true');
+
+            // Mettre à jour classeSelectionneeId si besoin
+            classeSelectionneeId = btn.dataset.classeId;
+            handleClasseChange(classeSelectionneeId);
+        });
+    });
+
+    requestAnimationFrame(() => {
+        if (window.HSStaticMethods) {
+            window.HSStaticMethods.autoInit();
+        }
+    });
+
+   
+
+
+
+
+
+
+
+    console.log(response);
+
+}
+
+ async function handleClasseChange(classeId) {
+        const container = document.getElementById("student-table");
+        const response = await StudentApi.getStudentOfClass(classeId);
+        container.innerHTML = response.content.map((student, index) => ` <tr 
+                                                    class="student-row hover:bg-muted/20 transition-colors group"
+                                                    attr="data-user-id=${student.id}">
+
+
+                                                    <!-- Nom & Prénom - avatar avec 6 couleurs variées -->
+                                                    <td class="px-3 py-3.5 min-w-0">
+                                                        <div class="flex items-center gap-3">
+                                                           <label class="relative flex items-center cursor-pointer shrink-0 group">
+                                                                <input type="checkbox"
+                                                                    class="peer sr-only checkebox-student"
+                                                                    th:attr="data-user-id=${student.userId}"
+                                                                     />
+
+                                                                <!-- La box + coche en un seul élément -->
+                                                                <div class="size-4 rounded-[4px] border-2 
+                                                                            border-layer-line bg-layer
+                                                                            group-hover:border-primary/60
+                                                                            peer-checked:bg-primary 
+                                                                            peer-checked:border-primary
+                                                                            peer-checked:bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%223.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20%206%209%2017l-5-5%22%2F%3E%3C%2Fsvg%3E')]
+                                                                            peer-checked:bg-center
+                                                                            peer-checked:bg-no-repeat
+                                                                            peer-checked:bg-[length:70%_70%]
+                                                                            transition-all duration-150">
+                                                                </div>
+                                                            </label>
+
+                                                            <div class="size-9 rounded-xl flex items-center justify-center shrink-0 text-sm font-bold
+                                                                ${index % 6 === 0 ? 'bg-primary/10 text-primary' :
+                (index % 6 === 1 ? 'bg-blue-500/10 text-blue-500' :
+                    (index % 6 === 2 ? 'bg-green-500/10 text-green-600' :
+                        (index % 6 === 3 ? 'bg-orange-500/10 text-orange-500' :
+                            (index % 6 === 4 ? 'bg-indigo-500/10 text-indigo-500' :
+                                'bg-teal-500/10 text-teal-600'))))}"
+                                                                >
+                                                                ${student.profile.nom ? student.profile.nom.toUpperCase().charAt(0) : 'E'}</div>
+
+                                                            <p class="text-sm font-semibold text-layer-foreground truncate"
+                                                                >
+                                                                ${(student.profile.nom ? student.profile.nom : '') + ' ' + (student.profile.prenom ? student.profile.prenom : '')}</p>
+                                                        </div>
+                                                    </td>
+
+                                                    <!-- Email -->
+                                                    <td class="px-4 py-3.5 hidden md:table-cell">
+                                                        <span class="text-sm text-muted-foreground-2"
+                                                            >${student.email}</span>
+                                                    </td>
+
+                                                    <!-- Matricule -->
+                                                    <td class="px-4 py-3.5 hidden lg:table-cell">
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-gray-100 text-gray-500"
+                                                            >${student.profile.matricule ? student.profile.matricule : '—'}</span>
+                                                    </td>
+
+                                                    <!-- Téléphone -->
+                                                    <td class="px-4 py-3.5 hidden xl:table-cell">
+                                                        <span class="text-sm text-muted-foreground-2"
+                                                            >${student.profile.numeroTelephone != null ? student.profile.numeroTelephone : '—'}</span>
+                                                    </td>
+
+                                                    <!-- Bouton retrait individuel (visible au hover) -->
+                                                    <td class="pr-4 sm:pr-5 pl-2 py-3.5 text-right">
+                                                        <button type="button"
+                                                            class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100 ml-auto"
+                                                            attr="data-user-id=${student.id}"
+                                                            onclick="removeSingle(this)" title="Retirer de la classe">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="15"
+                                                                height="15" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2">
+                                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                                                <circle cx="9" cy="7" r="4" />
+                                                                <line x1="17" y1="8" x2="23" y2="14" />
+                                                                <line x1="23" y1="8" x2="17" y2="14" />
+                                                            </svg>
+                                                        </button>
+                                                    </td>
+                                                </tr>`).join('');
+
+    }
 
 function afficherResultat(total, echecs) {
     afficherEtape('excel-step-result');

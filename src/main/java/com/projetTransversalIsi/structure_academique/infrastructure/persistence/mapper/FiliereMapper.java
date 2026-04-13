@@ -14,5 +14,6 @@ public interface FiliereMapper {
     Filiere toDomain(JpaFiliereEntity entity);
 
     @Mapping(target = "cycle", source = "cycle")
+    @Mapping(target = "niveaux", ignore = true)
     JpaFiliereEntity toEntity(Filiere filiere);
 }

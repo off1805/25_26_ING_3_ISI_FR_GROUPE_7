@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>KemOSchool — Mon emploi du temps</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
+    <style>
+        .course-block {
+            position: absolute;
+            left: 2px; right: 2px;
+            border-radius: 12px;
+            padding: 6px 8px;
+            cursor: pointer;
+            transition: all .15s ease;
+            overflow: hidden;
+        }
+        .course-block:active { transform: scale(0.97); }
+        .time-col { min-width: 44px; }
+        .day-col  { min-width: 90px; }
+        @media (min-width: 640px) { .day-col { min-width: 120px; } }
+        .slot-h { height: 60px; }
+        @media (min-width: 640px) { .slot-h { height: 70px; } }
+        .today-col { background: rgba(124,58,237,.03); }
+        /* Scrollbar thin */
+        .schedule-scroll::-webkit-scrollbar { height: 4px; width: 4px; }
+        .schedule-scroll::-webkit-scrollbar-thumb { background: #7c3aed33; border-radius: 4px; }
+    </style>
+</head>
+<body class="h-screen bg-background-1 flex flex-col">
+
+<!-- NAVBAR -->
+<header class="flex-none flex items-center gap-3 px-4 sm:px-5 py-3 bg-card border-b border-card-line sticky top-0 z-30">
+    <a th:href="@{/teacher/dashboard}" class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+    </a>
+    <div class="flex-1">
+        <h1 class="text-sm font-bold text-layer-foreground">Emploi du temps</h1>
+        <p class="text-xs text-muted-foreground-2" id="week-label">Semaine du 31 mars au 5 avril</p>
+    </div>
+    <!-- Nav semaine -->
+    <div class="flex items-center gap-1">
+        <button type="button" id="prev-week" class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button type="button" id="today-btn" class="px-3 h-9 text-xs font-bold rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Aujourd'hui</button>
+        <button type="button" id="next-week" class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+    </div>
+</header>
+
+<!-- VUE MOBILE: JOUR PAR JOUR (visible sur <sm) -->
+<div class="sm:hidden flex-none overflow-x-auto schedule-scroll">
+    <div class="flex gap-1.5 px-4 py-2.5 min-w-max" id="day-pills">
+        <!-- généré par JS -->
+    </div>
+</div>
+
+<!-- GRILLE PRINCIPALE -->
+<div class="flex-1 overflow-auto schedule-scroll">
+    <div class="min-w-[500px] relative" id="schedule-grid">
+
+        <!-- HEADER JOURS -->
+        <div class="sticky top-0 z-20 flex bg-card border-b border-card-line">
+            <div class="time-col flex-none border-r border-card-line"></div>
+            <!-- Jours: Lu Ma Me Je Ve Sa -->
+            <div id="days-header" class="flex flex-1">
+                <!-- généré par JS -->
+            </div>
+        </div>
+
+        <!-- LIGNE TEMPS + COLONNES -->
+        <div class="flex">
+            <!-- Colonne heures -->
+            <div class="time-col flex-none border-r border-card-line">
+                <div id="time-slots" class="relative">
+                    <!-- généré par JS -->
+                </div>
+            </div>
+            <!-- Colonnes jours -->
+            <div class="flex flex-1" id="day-columns">
+                <!-- généré par JS -->
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- LÉGENDE -->
+<div class="flex-none bg-card border-t border-card-line px-4 sm:px-5 py-2.5 overflow-x-auto schedule-scroll">
+    <div class="flex items-center gap-4 min-w-max" id="legend">
+        <!-- généré par JS -->
+    </div>
+</div>
+
+<!-- MODAL DÉTAIL COURS -->
+<div id="hs-modal-course" class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none" role="dialog" tabindex="-1">
+    <div class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all max-w-sm sm:w-full m-3 mx-auto min-h-[calc(100%-3.5rem)] flex items-end sm:items-center">
+        <div class="pointer-events-auto w-full bg-card border border-card-line rounded-2xl shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between px-5 pt-5 pb-4 border-b border-card-line">
+                <div class="flex items-center gap-3">
+                    <div id="modal-color-dot" class="size-3 rounded-full" style="background:#7c3aed"></div>
+                    <p id="modal-subject" class="text-base font-bold text-layer-foreground">Mathématiques</p>
+                </div>
+                <button type="button" class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted" data-hs-overlay="#hs-modal-course">
+                    <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <div class="px-5 py-4 space-y-3">
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    <span class="text-sm text-layer-foreground font-medium" id="modal-class">L3 Informatique</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span class="text-sm text-layer-foreground font-medium" id="modal-time">08:00 → 10:00</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span class="text-sm text-layer-foreground font-medium" id="modal-room">Salle A12</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+                    <span class="text-sm text-layer-foreground font-medium" id="modal-students">32 étudiants</span>
+                </div>
+            </div>
+            <div class="px-5 pb-5 flex gap-3">
+                <button type="button" class="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-muted text-layer-foreground" data-hs-overlay="#hs-modal-course">Fermer</button>
+                <a href="TeacherSeance.html" id="modal-seance-link" class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-primary text-white text-center hover:bg-primary/90 active:scale-95 transition-all">Démarrer l'appel</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/preline.js}"></script>
+<script>
+    // ── Configuration ──────────────────────────────────────────
+    const HOURS_START = 7;
+    const HOURS_END   = 19;
+    const SLOT_H_PX   = window.innerWidth < 640 ? 60 : 70;
+    const DAYS_FR     = ['Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const DAYS_FULL   = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    const MONTHS_FR   = ['jan','fév','mar','avr','mai','juin','juil','aoû','sep','oct','nov','déc'];
+    const MONTHS_FULL = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+    // Données exemple (remplacer par th:inline="javascript" + JSON Thymeleaf)
+    const COURSES = [
+        { id:1, day:0, start:8,  end:10, subject:'Mathématiques', class:'L3 Info', room:'Salle A12', students:32, color:'#7c3aed' },
+        { id:2, day:0, start:14, end:16, subject:'Statistiques',  class:'M1 Data', room:'Salle B05', students:18, color:'#2563eb' },
+        { id:3, day:1, start:10, end:12, subject:'Algèbre',       class:'L2 Math', room:'Amphi C',   students:55, color:'#0891b2' },
+        { id:4, day:2, start:8,  end:10, subject:'Analyse',       class:'L3 Info', room:'Salle A12', students:32, color:'#7c3aed' },
+        { id:5, day:2, start:15, end:17, subject:'Probabilités',  class:'M1 Data', room:'Salle D01', students:22, color:'#059669' },
+        { id:6, day:3, start:9,  end:11, subject:'Géométrie',     class:'L1 Info', room:'Salle E02', students:48, color:'#d97706' },
+        { id:7, day:4, start:13, end:15, subject:'Mathématiques', class:'L3 Info', room:'Salle A12', students:32, color:'#7c3aed' },
+    ];
+
+    const SUBJECTS_LEGEND = [...new Set(COURSES.map(c => ({subject:c.subject, color:c.color})).map(JSON.stringify))].map(JSON.parse);
+
+    // ── État semaine ───────────────────────────────────────────
+    let weekOffset = 0;
+
+    function getMondayOfWeek(offset) {
+        const now = new Date();
+        const day = now.getDay();
+        const diff = (day === 0 ? -6 : 1 - day); // lundi
+        const monday = new Date(now);
+        monday.setDate(now.getDate() + diff + offset * 7);
+        monday.setHours(0,0,0,0);
+        return monday;
+    }
+
+    function getTodayDayIndex() {
+        const d = new Date().getDay();
+        return d === 0 ? 6 : d - 1; // 0=lundi, 5=samedi
+    }
+
+    // ── Render ─────────────────────────────────────────────────
+    function render() {
+        const monday = getMondayOfWeek(weekOffset);
+        const todayIdx = weekOffset === 0 ? getTodayDayIndex() : -1;
+
+        // Label semaine
+        const saturday = new Date(monday); saturday.setDate(monday.getDate() + 5);
+        document.getElementById('week-label').textContent =
+            'Semaine du ' + monday.getDate() + ' ' + MONTHS_FULL[monday.getMonth()] +
+            ' au ' + saturday.getDate() + ' ' + MONTHS_FULL[saturday.getMonth()];
+
+        // Slots heures
+        const slotsEl = document.getElementById('time-slots');
+        slotsEl.innerHTML = '';
+        for (let h = HOURS_START; h < HOURS_END; h++) {
+            const div = document.createElement('div');
+            div.className = 'slot-h border-b border-card-line flex items-start justify-end pr-2 pt-0.5';
+            div.innerHTML = '<span class="text-xs text-muted-foreground-2 font-mono">' + h + 'h</span>';
+            slotsEl.appendChild(div);
+        }
+        const totalH = (HOURS_END - HOURS_START) * SLOT_H_PX;
+        slotsEl.style.height = totalH + 'px';
+
+        // Header jours
+        const headerEl = document.getElementById('days-header');
+        headerEl.innerHTML = '';
+
+        // Colonnes jours
+        const colsEl = document.getElementById('day-columns');
+        colsEl.innerHTML = '';
+
+        // Pills mobile
+        const pillsEl = document.getElementById('day-pills');
+        pillsEl.innerHTML = '';
+
+        for (let d = 0; d < 6; d++) {
+            const date = new Date(monday); date.setDate(monday.getDate() + d);
+            const isToday = d === todayIdx;
+
+            // Header
+            const th = document.createElement('div');
+            th.className = 'day-col flex-1 border-r border-card-line py-2 text-center ' + (isToday ? 'bg-primary/5' : '');
+            th.innerHTML = '<p class="text-xs font-bold ' + (isToday ? 'text-primary' : 'text-muted-foreground-2') + ' uppercase tracking-widest">' + DAYS_FR[d] + '</p>' +
+                           '<p class="text-sm font-bold ' + (isToday ? 'text-primary' : 'text-layer-foreground') + ' mt-0.5 ' + (isToday ? 'size-7 rounded-full bg-primary/10 flex items-center justify-center mx-auto' : '') + '">' + date.getDate() + '</p>';
+            headerEl.appendChild(th);
+
+            // Colonne
+            const col = document.createElement('div');
+            col.className = 'day-col flex-1 border-r border-card-line relative ' + (isToday ? 'today-col' : '');
+            col.style.height = totalH + 'px';
+
+            // Lignes heures fond
+            for (let h = 0; h < (HOURS_END - HOURS_START); h++) {
+                const line = document.createElement('div');
+                line.className = 'absolute w-full border-b border-card-line/60';
+                line.style.top = (h * SLOT_H_PX) + 'px';
+                col.appendChild(line);
+            }
+
+            // Cours de ce jour
+            COURSES.filter(c => c.day === d).forEach(course => {
+                const topPct = (course.start - HOURS_START) * SLOT_H_PX;
+                const heightPct = (course.end - course.start) * SLOT_H_PX;
+                const block = document.createElement('div');
+                block.className = 'course-block';
+                block.style.cssText = 'top:' + (topPct+2) + 'px; height:' + (heightPct-4) + 'px; background:' + course.color + '18; border: 1.5px solid ' + course.color + '44; border-left: 3px solid ' + course.color + ';';
+                block.innerHTML = '<p style="color:' + course.color + ';font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + course.subject + '</p>' +
+                    '<p style="color:' + course.color + '99;font-size:10px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + course.class + '</p>' +
+                    (heightPct > 80 ? '<p style="color:' + course.color + '80;font-size:10px;margin-top:1px">' + course.start + 'h–' + course.end + 'h</p>' : '');
+                block.addEventListener('click', () => openCourseModal(course, date));
+                col.appendChild(block);
+            });
+
+            // Ligne heure actuelle (today only)
+            if (isToday) {
+                const now = new Date();
+                const minutesSinceStart = (now.getHours() - HOURS_START) * 60 + now.getMinutes();
+                if (minutesSinceStart >= 0 && minutesSinceStart < (HOURS_END - HOURS_START) * 60) {
+                    const topNow = minutesSinceStart / 60 * SLOT_H_PX;
+                    const nowLine = document.createElement('div');
+                    nowLine.style.cssText = 'position:absolute;top:' + topNow + 'px;left:0;right:0;height:2px;background:#7c3aed;z-index:10;';
+                    nowLine.innerHTML = '<div style="position:absolute;left:-1px;top:-4px;width:10px;height:10px;border-radius:50%;background:#7c3aed"></div>';
+                    col.appendChild(nowLine);
+                }
+            }
+
+            colsEl.appendChild(col);
+
+            // Pill mobile
+            const pill = document.createElement('button');
+            pill.type = 'button';
+            pill.className = 'flex flex-col items-center px-3 py-2 rounded-xl border-2 transition-all ' +
+                (isToday ? 'bg-primary text-white border-primary' : 'bg-card border-card-line text-muted-foreground-2');
+            pill.innerHTML = '<span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">' + DAYS_FR[d] + '</span>' +
+                            '<span style="font-size:13px;font-weight:700;margin-top:1px">' + date.getDate() + '</span>';
+            const hasCourse = COURSES.some(c => c.day === d);
+            if (hasCourse) {
+                const dot = document.createElement('div');
+                dot.style.cssText = 'width:4px;height:4px;border-radius:50%;margin-top:2px;background:' + (isToday ? 'white' : '#7c3aed') + ';';
+                pill.appendChild(dot);
+            }
+            pillsEl.appendChild(pill);
+        }
+
+        // Légende
+        const legendEl = document.getElementById('legend');
+        legendEl.innerHTML = '';
+        SUBJECTS_LEGEND.forEach(s => {
+            const span = document.createElement('div');
+            span.className = 'flex items-center gap-2 shrink-0';
+            span.innerHTML = '<div style="width:10px;height:10px;border-radius:3px;background:' + s.color + '" class="shrink-0"></div>' +
+                             '<span style="font-size:11px;color:var(--tw-color-muted-foreground-2,#888)">' + s.subject + '</span>';
+            legendEl.appendChild(span);
+        });
+    }
+
+    function openCourseModal(course, date) {
+        document.getElementById('modal-subject').textContent = course.subject;
+        document.getElementById('modal-color-dot').style.background = course.color;
+        document.getElementById('modal-class').textContent = course.class;
+        document.getElementById('modal-time').textContent = course.start + 'h00 → ' + course.end + 'h00 · ' + DAYS_FULL[course.day] + ' ' + date.getDate() + ' ' + MONTHS_FR[date.getMonth()];
+        document.getElementById('modal-room').textContent = course.room;
+        document.getElementById('modal-students').textContent = course.students + ' étudiants';
+        document.getElementById('modal-seance-link').href = '/ap/seance/' + course.id;
+        HSOverlay.open('#hs-modal-course');
+    }
+
+    // Nav
+    document.getElementById('prev-week').addEventListener('click', () => { weekOffset--; render(); });
+    document.getElementById('next-week').addEventListener('click', () => { weekOffset++; render(); });
+    document.getElementById('today-btn').addEventListener('click', () => { weekOffset = 0; render(); });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+        render();
+        // Scroll to 7h
+        setTimeout(() => {
+            const grid = document.querySelector('.schedule-scroll');
+            if (grid) grid.scrollTop = 0;
+        }, 100);
+    });
+</script>
+</body>
+</html>

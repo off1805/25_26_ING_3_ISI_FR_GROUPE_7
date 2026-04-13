@@ -1,4 +1,4 @@
-package com.projetTransversalIsi.emploi_temps.web;
+/*package com.projetTransversalIsi.emploi_temps.web;
 
 import com.projetTransversalIsi.emploi_temps.application.dto.*;
 import com.projetTransversalIsi.emploi_temps.application.service.SeanceService;
@@ -144,9 +144,10 @@ public class SeanceController {
             @PathVariable Long enseignantId,
             @RequestParam(defaultValue = "false") boolean includeDeleted) {
         log.info("Séances du jour de l'enseignant ID: {}", enseignantId);
-        List<SeanceResponseDTO> resultats = seanceService.getSeancesTodayByEnseignant(enseignantId, includeDeleted).stream()
+        List<SeanceResponseDTO> resultats = seanceService.getSeancesTodayByEnseignant(enseignantId, includeDeleted)
+                .stream()
                 .map(SeanceResponseDTO::fromDomain)
                 .toList();
         return ResponseEntity.ok(resultats);
     }
-}
+}*/

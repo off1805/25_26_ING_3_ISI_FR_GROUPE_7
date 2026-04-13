@@ -1,8 +1,7 @@
 package com.projetTransversalIsi.emploi_temps.domain.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -10,9 +9,10 @@ import java.util.Set;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access= AccessLevel.PRIVATE)
 public class EmploiTemps {
-
     private Long id;
     private LocalDate dateDebut;
     private LocalDate dateFin;
@@ -21,6 +21,7 @@ public class EmploiTemps {
     private Set<Seance> seances = new HashSet<>();
     private boolean deleted = false;
     private LocalDateTime deletedAt;
+    private EmploiStatus status;
 
     public EmploiTemps(LocalDate dateDebut, LocalDate dateFin,
                        Integer semaine, Long classeId) {

@@ -22,6 +22,7 @@ public class Ue {
     private Long specialiteId;
     private Set<Long> enseignantIds = new HashSet<>();
     private String couleur = "#ffffff";
+    private Integer semestre; // 1 or 2
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
     private Boolean isDeleted = false;

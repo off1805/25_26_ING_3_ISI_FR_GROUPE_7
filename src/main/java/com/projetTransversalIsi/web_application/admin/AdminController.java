@@ -27,6 +27,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -81,7 +84,7 @@ public class AdminController {
     }
     @GetMapping("/users")
     public String usersView(Model model){
-        Page<User> users=searchUserUC.execute(new UserFiltreDto(null, List.of("AP","TEACHER","SURVEILLANT"),null,null), PageRequest.of(0, 10, Sort.by("id").descending()));
+        Page<User> users=searchUserUC.execute(new UserFiltreDto(null, List.of("AP","TEACHER","SURVEILLANT"),null,null,null), PageRequest.of(0, 10, Sort.by("id").descending()));
         model.addAttribute("staff", users.stream().map(UserDetailsResponseDTO::fromDomain).toList());
         return "AdminInterface/AdminUser";
     }
@@ -176,6 +179,26 @@ public class AdminController {
                 )
         );
         return "AdminInterface/specialite";
+    }
+
+    private String anneeScolaireActive = null;
+
+    @GetMapping("/annee-scolaire")
+    public String anneeScolaireView(Model model) {
+        model.addAttribute("anneeActive", anneeScolaireActive);
+        return "AdminInterface/AdminConfigAnnee";
+    }
+
+    @PostMapping("/annee-scolaire")
+    public String definirAnneeScolaire(
+            @RequestParam("annee") String annee,
+            RedirectAttributes redirectAttributes) {
+
+        this.anneeScolaireActive = annee;
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Année scolaire définie : " + annee);
+
+        return "redirect:/admin/users";
     }
 }
 

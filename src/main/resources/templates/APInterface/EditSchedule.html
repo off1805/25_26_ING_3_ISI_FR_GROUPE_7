@@ -160,7 +160,7 @@
                             Mode Édition
                         </span>
                         <span class="text-muted-foreground-2">·</span>
-                        <span id="edit-class-label" class="text-layer-foreground font-medium"></span>
+                        <span id="edit-class-label" class="text-layer-foreground font-medium" th:text="${className}"></span>
                     </div>
                 </div>
 
@@ -174,25 +174,18 @@
                         </svg>
                     </button>
 
-                    <button id="btn-prev-week"
-                        class="size-9 flex items-center justify-center rounded-xl border border-card-line bg-layer text-muted-foreground-2 hover:bg-muted transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M15 18l-6-6 6-6" />
-                        </svg>
-                    </button>
-                    <span id="week-label"
-                        class="text-xs font-semibold text-layer-foreground min-w-28 text-center select-none"></span>
-                    <button id="btn-next-week"
-                        class="size-9 flex items-center justify-center rounded-xl border border-card-line bg-layer text-muted-foreground-2 hover:bg-muted transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M9 18l6-6-6-6" />
-                        </svg>
-                    </button>
+                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-layer border border-layer-line">
+                        <span class="text-xs font-bold text-primary group">
+                            Semaine [[${semaine}]]
+                        </span>
+                        <span class="text-muted-foreground-2">·</span>
+                        <span class="text-xs font-semibold text-layer-foreground" 
+                              th:text="${#temporals.format(dateDebut ?: #temporals.createNow(), 'dd/MM/yyyy')} + ' – ' + ${#temporals.format(dateFin ?: #temporals.createNow(), 'dd/MM/yyyy')}">
+                        </span>
+                    </div>
 
-                    <!-- Preline Datepicker: date de début -->
-                    <div class="flex items-center gap-1 bg-layer border border-layer-line rounded-xl px-2.5 py-2">
+                    <!-- Preline Datepicker: caché car géré en amont -->
+                    <div class="hidden items-center gap-1 bg-layer border border-layer-line rounded-xl px-2.5 py-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0">
                             <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -428,6 +421,16 @@
         </div>
     </div>
 
+    <script th:inline="javascript">
+        window.scheduleConfig = {
+            emploiId: /*[[${emploiId}]]*/ null,
+            classId: /*[[${classId}]]*/ null,
+            className: /*[[${className}]]*/ 'Nouvelle classe',
+            dateDebut: /*[[${dateDebut}]]*/ null,
+            dateFin: /*[[${dateFin}]]*/ null,
+            semaine: /*[[${semaine}]]*/ null
+        };
+    </script>
 
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>

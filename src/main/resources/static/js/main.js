@@ -1,1 +1,2 @@
-import Toastify from "./preline/toastify";
+
+import { Calendar } from "./vanilla-calendar.js";

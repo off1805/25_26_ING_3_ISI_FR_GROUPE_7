@@ -1,6 +1,6 @@
 package com.projetTransversalIsi.pedagogie.infrastructure.entity;
 
-import com.projetTransversalIsi.profil.infrastructure.JpaTeacherProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaTeacherProfileEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,6 +46,9 @@ public class JpaUeEntity {
 
     @Column(nullable = false, columnDefinition = "varchar(255) default '#ffffff'")
     private String couleur = "#ffffff";
+
+    @Column(name = "semestre")
+    private Integer semestre; // 1 or 2
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

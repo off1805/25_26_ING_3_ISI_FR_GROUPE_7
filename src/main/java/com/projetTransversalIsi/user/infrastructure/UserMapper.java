@@ -1,6 +1,7 @@
 package com.projetTransversalIsi.user.infrastructure;
 
-import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.UserProfileMapper;
 import com.projetTransversalIsi.security.infrastructure.PermissionMapper;
 import com.projetTransversalIsi.security.infrastructure.RolerMapper;
 import com.projetTransversalIsi.user.domain.User;
@@ -8,15 +9,12 @@ import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring",uses = {RolerMapper.class, PermissionMapper.class})
+@Mapper(componentModel = "spring",uses = {RolerMapper.class, PermissionMapper.class, UserProfileMapper.class})
 public interface UserMapper {
 
     @Mapping(target = "profile",expression = "java(jpaProfile)")
     JpaUserEntity UserToJpaUserEntity(User user, @Context JpaProfileEntity jpaProfile);
 
-    @Mapping(source = "profile.id", target = "profileId")
-    @Mapping(source = "profile.nom", target = "nom")
-    @Mapping(source = "profile.prenom", target = "prenom")
     User JpaUseEntityToUser(JpaUserEntity jpaUser);
 
 }

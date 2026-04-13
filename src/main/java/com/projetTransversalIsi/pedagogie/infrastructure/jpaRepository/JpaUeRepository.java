@@ -2,8 +2,8 @@ package com.projetTransversalIsi.pedagogie.infrastructure.jpaRepository;
 
 import com.projetTransversalIsi.pedagogie.infrastructure.UeMapper;
 import com.projetTransversalIsi.pedagogie.infrastructure.entity.JpaUeEntity;
-import com.projetTransversalIsi.profil.infrastructure.JpaTeacherProfileEntity;
-import com.projetTransversalIsi.profil.infrastructure.SpringDataTeacherProfileRepository;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaTeacherProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.SpringDataTeacherProfileRepository;
 import com.projetTransversalIsi.pedagogie.domain.model.Ue;
 import com.projetTransversalIsi.pedagogie.domain.UeRepository;
 import com.projetTransversalIsi.pedagogie.application.dto.UeFiltreDto;

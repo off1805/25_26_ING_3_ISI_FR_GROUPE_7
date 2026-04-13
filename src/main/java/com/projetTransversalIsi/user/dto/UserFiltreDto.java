@@ -12,4 +12,5 @@ public class UserFiltreDto {
     private List<String> role;
     private Boolean deleted = false;
     private String email;
+    private Long classId;
 }

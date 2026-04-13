@@ -1,7 +1,7 @@
 package com.projetTransversalIsi.security.infrastructure;
 
 
-import com.projetTransversalIsi.profil.infrastructure.JpaProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaProfileEntity;
 import com.projetTransversalIsi.security.domain.Permission;
 import com.projetTransversalIsi.security.domain.Role;
 import com.projetTransversalIsi.user.domain.User;
@@ -20,8 +20,6 @@ public interface RolerMapper {
 
     @Mapping(target = "permissions",expression = "java(jpaPerm)")
     JpaRoleEntity RoleToJpaRoleEntity(Role role,@Context Set<JpaPermissionEntity> jpaPerm);
-
-
 
 
 }
