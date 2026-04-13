@@ -20,11 +20,17 @@ import java.util.stream.Collectors;
 public class JpaCycleRepository implements CycleRepository {
 
     private final SpringDataCycleRepository jpaRepo;
+    private final SpringDataSchoolRepository schoolJpaRepo;
     private final CycleMapper cycleMapper;
 
     @Override
     public Cycle save(Cycle cycle) {
         JpaCycleEntity entity = cycleMapper.cycleToJpaCycleEntity(cycle);
+        if (cycle.getSchoolId() != null) {
+            entity.setSchool(schoolJpaRepo.getReferenceById(cycle.getSchoolId()));
+        } else {
+            entity.setSchool(null);
+        }
         JpaCycleEntity saved = jpaRepo.save(entity);
         log.info("Cycle sauvegardé : id={}, code={}", saved.getId(), saved.getCode());
         return cycleMapper.jpaCycleEntityToCycle(saved);

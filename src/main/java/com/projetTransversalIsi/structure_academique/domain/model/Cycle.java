@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class Cycle {
 
     private Long id;
+    private Long schoolId;
     private String name;
     private String code;
     private int durationYears;

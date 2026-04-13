@@ -19,6 +19,7 @@ public class CycleService {
     private final FindCycleByIdUC findCycleByIdUC;
     private final GetAllCyclesUC getAllCyclesUC;
     private final ModifyCycleStatusUC modifyCycleStatusUC;
+    private final LinkCycleToSchoolUC linkCycleToSchoolUC;
 
     public CycleResponseDTO createCycle(CreateCycleRequestDTO request) {
         return CycleResponseDTO.fromDomain(createCycleUC.execute(request));
@@ -44,5 +45,9 @@ public class CycleService {
 
     public CycleResponseDTO modifyStatus(Long id, ModifyCycleStatusDTO statusDTO) {
         return CycleResponseDTO.fromDomain(modifyCycleStatusUC.execute(id, statusDTO));
+    }
+
+    public CycleResponseDTO linkCycleToSchool(Long cycleId, Long schoolId) {
+        return CycleResponseDTO.fromDomain(linkCycleToSchoolUC.execute(cycleId, schoolId));
     }
 }

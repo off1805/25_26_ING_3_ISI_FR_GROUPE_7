@@ -46,6 +46,10 @@ public class JpaCycleEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "school_id")
+    private JpaSchoolEntity school;
+
     @OneToMany(mappedBy = "cycle")
     private List<JpaFiliereEntity> filieres = new ArrayList<>();
 }
