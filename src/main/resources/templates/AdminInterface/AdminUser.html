@@ -18,32 +18,24 @@
     <section class="flex flex-row h-full">
 
         <!-- SIDEBAR -->
-        <section th:replace="~{AdminInterface/AdminSidebar :: admin-sidebar('users')}"></section>
-
-        <!-- MAIN -->
-        <section class="flex-1 flex flex-col overflow-hidden">
+        <section th:replace="~{common/AppSidebar :: app-sidebar('users', null)}"></section>        <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
             <header
                 class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar relative w-full flex justify-between items-center px-4 md:px-6 lg:px-8 mx-auto border-b border-navbar-line">
                 <div class="lg:hidden">
                     <button type="button"
-                        class="hs-collapse-toggle size-9.5 flex justify-center items-center text-sm font-semibold rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
-                        aria-haspopup="dialog" aria-expanded="false"
-                        aria-controls="hs-sidebar-content-push-to-mini-sidebar"
-                        data-hs-overlay="#hs-sidebar-content-push-to-mini-sidebar">
-                        <svg class="hs-collapse-open:hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
-                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            class="lg:hidden size-9.5 flex justify-center items-center text-sm font-semibold rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
+                            aria-haspopup="dialog"
+                            aria-expanded="false"
+                            aria-controls="hs-app-sidebar"
+                            data-hs-overlay="#hs-app-sidebar">
+                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                             width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="3" x2="21" y1="6" y2="6" />
                             <line x1="3" x2="21" y1="12" y2="12" />
                             <line x1="3" x2="21" y1="18" y2="18" />
-                        </svg>
-                        <svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
-                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 6 6 18" />
-                            <path d="m6 6 12 12" />
                         </svg>
                     </button>
                 </div>

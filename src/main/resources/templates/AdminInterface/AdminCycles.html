@@ -13,8 +13,7 @@
 
 <body class="h-screen">
     <section class="flex flex-row bg-sidebar-nav-hover h-full">
-        <section th:replace="~{AdminInterface/AdminSidebar :: admin-sidebar('school')}"></section>
-        <!-- ========== MAIN CONTENT ========== -->
+        <section th:replace="~{common/AppSidebar :: app-sidebar('school', null)}"></section>
         <section class="flex-1 flex flex-col overflow-hidden items-center bg-background-1">
 
             <!-- NAVBAR -->
