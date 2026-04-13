@@ -89,8 +89,8 @@ public class TeacherController {
                 "Architecture des ordinateurs",
                 "Salle B12",
                 LocalDate.now(),
-                LocalTime.of(8, 0),
-                LocalTime.of(12, 0),
+                LocalTime.of(23, 0),
+                LocalTime.of(23, 50),
                 11L
         );
     }

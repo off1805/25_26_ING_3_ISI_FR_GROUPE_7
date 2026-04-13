@@ -27,6 +27,20 @@
 @import "../../../../../node_modules/preline/css/themes/theme.css";
 @import "./kemoschool.css";
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Masquer scrollbar (Firefox) */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+/* IE/Edge ancien */
+.no-scrollbar {
+  -ms-overflow-style: none;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
