@@ -21,12 +21,11 @@
         <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
-            <header
-                class="flex-none flex justify-between items-center px-4 md:px-6 lg:px-8 py-2 bg-navbar border-b border-navbar-line">
+            <header class="flex-none flex flex-row justify-between lg:justify-start lg:flex-nowrap py-2 lg:py-1 bg-navbar relative w-full lg:items-center px-4 md:px-6 lg:px-8 mx-auto border-b border-navbar-line">
                 <div class="flex items-center gap-3">
                     <button type="button"
                         class="lg:hidden size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover"
-                        data-hs-overlay="#hs-ap-sidebar">
+                        data-hs-overlay="#hs-app-sidebar">
                         <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2">
                             <line x1="3" x2="21" y1="6" y2="6" />
@@ -743,8 +742,8 @@
                             <span>Progression</span><span id="progress-pct">0%</span>
                         </div>
                         <div class="w-full h-2.5 bg-muted rounded-full overflow-hidden">
-                            <div id="progress-bar" style="width:0%"
-                                class="h-full bg-primary rounded-full transition-all duration-300"></div>
+                            <div id="progress-bar"
+                                class="h-full bg-primary rounded-full transition-all duration-300 w-0"></div>
                         </div>
                     </div>
                 </div>

@@ -12,299 +12,256 @@
 </head>
 
 <body class="h-screen">
-    <section class="flex flex-row bg-sidebar-nav-hover h-full">
-        <section th:replace="~{common/AppSidebar :: app-sidebar('school', null)}"></section>
-        <section class="flex-1 flex flex-col overflow-hidden items-center bg-background-1">
+<section class="flex flex-row bg-sidebar-nav-hover h-full">
+    <section th:replace="~{common/AppSidebar :: app-sidebar('school', null)}"></section>
+    <section class="flex-1 flex flex-col overflow-hidden items-center bg-background-1">
 
-            <!-- NAVBAR -->
-            <header
-                class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar relative w-full flex justify-between items-center px-4 md:px-6 lg:px-8 mx-auto border-b border-b-navbar-line">
+        <!-- NAVBAR -->
+        <header class="flex-none flex flex-row justify-between lg:justify-start lg:flex-nowrap py-2 lg:py-1 bg-navbar relative w-full lg:items-center px-4 md:px-6 lg:px-8 mx-auto border-b border-navbar-line">
 
-                <!-- Mobile hamburger -->
-                <div class="lg:hidden">
-                    <button type="button"
-                        class="hs-collapse-toggle size-9.5 flex justify-center items-center text-sm font-semibold rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
+            <div class="flex items-center gap-2">
+                <button type="button"
+                        class="lg:hidden hs-collapse-toggle size-9 flex justify-center items-center text-sm font-semibold rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
                         aria-haspopup="dialog" aria-expanded="false"
-                        aria-controls="hs-sidebar-content-push-to-mini-sidebar"
-                        data-hs-overlay="#hs-sidebar-content-push-to-mini-sidebar">
-                        <svg class="hs-collapse-open:hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
-                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="3" x2="21" y1="6" y2="6" />
-                            <line x1="3" x2="21" y1="12" y2="12" />
-                            <line x1="3" x2="21" y1="18" y2="18" />
-                        </svg>
-                        <svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
-                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 6 6 18" />
-                            <path d="m6 6 12 12" />
-                        </svg>
-                    </button>
+                        aria-controls="hs-app-sidebar"
+                        data-hs-overlay="#hs-app-sidebar">
+                    <svg class="hs-collapse-open:hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" x2="21" y1="6" y2="6"/>
+                        <line x1="3" x2="21" y1="12" y2="12"/>
+                        <line x1="3" x2="21" y1="18" y2="18"/>
+                    </svg>
+                    <svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground flex-1"
+                 aria-label="Breadcrumb" data-admin-breadcrumb-target="navbar"></nav>
+
+            <div class="flex items-center gap-x-1 lg:gap-x-2 ms-auto py-1 lg:ps-6 lg:order-3 lg:col-span-3">
+                <div class="relative hidden md:block">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.34-4.34"/>
+                    </svg>
+                    <input type="text" placeholder="Recherche globale..."
+                           class="pl-9 pr-4 py-1.5 text-sm bg-layer border border-layer-line rounded-lg w-56 focus:outline-none focus:ring-1 text-layer-foreground placeholder:text-muted-foreground-2"/>
                 </div>
+                <button type="button" data-theme-toggle
+                        class="size-9 relative flex justify-center items-center rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
+                    <span class="sr-only" data-theme-toggle-label>Passer en theme sombre</span>
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/>
+                    </svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                    </svg>
+                </button>
+                <button type="button"
+                        class="size-9 relative flex justify-center items-center rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
+                    <span class="sr-only">Notifications</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/>
+                        <path d="M9 17v1a3 3 0 0 0 6 0v-1"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
 
-                <!-- Breadcrumb -->
-                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1"
-                    aria-label="Breadcrumb" data-admin-breadcrumb-target="navbar"></nav>
+        <!-- PAGE CONTENT -->
+        <div class="flex-1 overflow-y-auto p-4 sm:p-5 w-full">
+            <div class="max-w-6xl mx-auto w-full flex flex-col gap-5">
 
-                <!-- Right actions -->
-                <div class="flex items-center gap-x-1 lg:gap-x-2 ms-auto py-1 lg:ps-6 lg:order-3 lg:col-span-3">
-                    <!-- Search -->
-                    <div class="relative hidden md:block">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.34-4.34" />
-                        </svg>
-                        <input type="text" placeholder="Recherche globale..."
-                            class="pl-9 pr-4 py-1.5 text-sm bg-layer border border-layer-line rounded-lg w-56 focus:outline-none focus:ring-1 text-layer-foreground placeholder:text-muted-foreground-2" />
-                    </div>
-
-                    <button type="button" data-theme-toggle
-                        class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
-                        <span class="sr-only" data-theme-toggle-label>Passer en theme sombre</span>
-                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
-                        </svg>
-                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18"
-                            height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="4" />
-                            <path d="M12 2v2" />
-                            <path d="M12 20v2" />
-                            <path d="M4.93 4.93l1.41 1.41" />
-                            <path d="M17.66 17.66l1.41 1.41" />
-                            <path d="M2 12h2" />
-                            <path d="M20 12h2" />
-                            <path d="M6.34 17.66l-1.41 1.41" />
-                            <path d="M19.07 4.93l-1.41 1.41" />
-                        </svg>
-                    </button>
-
-                    <!-- Notifications -->
-                    <button type="button"
-                        class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus disabled:opacity-50 disabled:pointer-events-none">
-                        <span class="sr-only">Notifications</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
-                            class="icon icon-tabler icons-tabler-outline icon-tabler-bell">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path
-                                d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
-                            <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
-                        </svg>
-                    </button>
-                </div>
-
-            </header>
-
-            <!-- PAGE CONTENT -->
-            <div class="flex-1 max-w-6xl w-full overflow-y-auto p-5  flex flex-col ">
-
-
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 sm:mb-8">
+                <!-- Page header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h2 class="text-2xl font-semibold text-layer-foreground">Gérez la structure académique</h2>
-                        <p class="text-base text-muted-foreground-2 mt-0.5">Créez et organisez les cycles, filières,
-                            niveaux, specialites et classes de votre université.</p>
+                        <p class="text-sm text-muted-foreground-2 mt-0.5">
+                            Créez et organisez les cycles, filières, niveaux, spécialités et classes de votre université.
+                        </p>
                     </div>
                     <button type="button"
-                        class="fixed bottom-15 right-5 sm:static inline-flex items-center justify-center gap-x-2 p-4 sm:py-2.5 sm:px-5 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary/90 focus:outline-none shadow-sm transition-all active:scale-95"
-                        aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-modal-add-user"
-                        data-hs-overlay="#hs-modal-add-user">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                            <circle cx="9" cy="7" r="4" />
-                            <line x1="19" x2="19" y1="8" y2="14" />
-                            <line x1="22" x2="16" y1="11" y2="11" />
+                            class="fixed bottom-15 right-5 sm:static inline-flex items-center justify-center gap-x-2
+                               p-4 sm:py-2.5 sm:px-5 text-sm font-semibold rounded-xl bg-primary text-white
+                               hover:bg-primary/90 focus:outline-none shadow-sm transition-all active:scale-95"
+                            aria-haspopup="dialog" aria-expanded="false"
+                            aria-controls="hs-modal-add-cycle" data-hs-overlay="#hs-modal-add-cycle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14m-7-7h14"/>
                         </svg>
-                        <span class="hidden sm:block">Ajouter utilisateur</span>
+                        <span class="hidden sm:block">Nouveau cycle</span>
                     </button>
                 </div>
 
-                <section class="h-[500px] flex rounded-xl bg-layer w-full border border-layer-line overflow-hidden">
+                <!-- Deux cards égales -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
-                    <!-- ══════════════════════════════════════
-         COLONNE GAUCHE : Arbre Preline
-    ═══════════════════════════════════════ -->
-                    <div class="w-md shrink-0 border-e border-e-layer-line flex flex-col">
+                    <!-- ═══ CARD GAUCHE — Arbre ═══ -->
+                    <div class="bg-card border border-card-line rounded-2xl overflow-hidden flex flex-col min-h-96 lg:h-[calc(100vh-13rem)]">
 
-                        <!-- Header arbre -->
-                        <div class="flex items-center gap-5 px-4 py-3  shrink-0">
-                            <div class="flex items-center gap-2">
-
-                                <span class="font-semibold text-layer-foreground">Cycles</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button type="button" aria-haspopup="dialog" aria-expanded="false"
-                                    aria-controls="hs-modal-add-cycle" data-hs-overlay="#hs-modal-add-cycle"
-                                    class="inline-flex items-center gap-x-2 p-2 text-xs font-medium rounded-lg bg-surface text-surface-foreground hover:bg-surface-hover focus:outline-none shadow-sm transition-all active:scale-95 border border-layer-line">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path d="M12 5v14m-7-7h14" />
+                        <!-- Header -->
+                        <div class="flex items-center justify-between px-5 py-3.5 border-b border-card-line shrink-0">
+                            <div class="flex items-center gap-2.5">
+                                <div class="size-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                        <path d="M2 17l10 5 10-5"/>
+                                        <path d="M2 12l10 5 10-5"/>
                                     </svg>
-
-                                </button>
-
+                                </div>
+                                <span class="text-sm font-bold text-layer-foreground">Cycles & Filières</span>
                             </div>
+                            <button type="button"
+                                    aria-haspopup="dialog" aria-expanded="false"
+                                    aria-controls="hs-modal-add-cycle" data-hs-overlay="#hs-modal-add-cycle"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg
+                                       bg-primary/10 text-primary hover:bg-primary/15 transition-all active:scale-95
+                                       border border-primary/20">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M12 5v14m-7-7h14"/>
+                                </svg>
+                                Cycle
+                            </button>
                         </div>
 
-                        <!-- Arbre scrollable -->
-                        <div class="overflow-y-auto flex-1 p-3">
+                        <!-- Tree scrollable -->
+                        <div class="flex-1 overflow-y-auto p-3">
+                            <div class="hs-accordion-treeview-root" id="hierarchy-tree" role="tree" aria-orientation="vertical">
+                                <div class="hs-accordion-group" role="group" data-hs-accordion-always-open>
 
-                            <!-- ═══ PRELINE TREEVIEW ROOT ═══ -->
-                            <div class="hs-accordion-treeview-root " id="hierarchy-tree" role="tree"
-                                aria-orientation="vertical">
-                                <div class="hs-accordion-group  " role="group" data-hs-accordion-always-open>
+                                    <div th:each="cycle : ${cycles}"
+                                         class="hs-accordion noeud-cycle" role="treeitem"
+                                         th:id="|tree-node-cycle-${cycle.id}|"
+                                         th:data-node-id="${cycle.id}"
+                                         data-node-type="cycle"
+                                         th:data-node-name="${cycle.name}">
 
-                                    <!-- ══ NIVEAU 1 : Cycle (rendu Thymeleaf) ══ -->
-                                    <div th:each="cycle : ${cycles}" class="hs-accordion noeud-cycle" role="treeitem"
-                                        th:id="|tree-node-cycle-${cycle.id}|" th:data-node-id="${cycle.id}"
-                                        data-node-type="cycle" th:data-node-name="${cycle.name}">
-
-                                        <!-- Heading Cycle -->
                                         <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
-
-                                            <!-- Bouton chevron Preline -->
                                             <button class="hs-accordion-toggle size-6 flex justify-center items-center
-                                           hover:bg-muted-hover rounded-md focus:outline-hidden focus:bg-muted-focus
-                                           disabled:opacity-50 disabled:pointer-events-none"
-                                                th:aria-controls="|tree-collapse-cycle-${cycle.id}|"
-                                                th:data-node-id="${cycle.id}" data-node-type="cycle"
-                                                th:data-node-name="${cycle.name}">
-                                                <!-- Spinner (caché par défaut) -->
+                                                           hover:bg-muted rounded-md focus:outline-none
+                                                           disabled:opacity-50 disabled:pointer-events-none"
+                                                    th:aria-controls="|tree-collapse-cycle-${cycle.id}|"
+                                                    th:data-node-id="${cycle.id}"
+                                                    data-node-type="cycle"
+                                                    th:data-node-name="${cycle.name}">
                                                 <svg class="tree-spinner hidden animate-spin size-3 text-muted-foreground-2"
-                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2">
-                                                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                                                 </svg>
-                                                <!-- Chevron Preline (visible par défaut) -->
                                                 <svg class="hs-accordion-active:rotate-90 transition duration-300 size-2.5 text-muted-foreground-2 tree-chevron"
-                                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+                                                     xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                    <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
                                                 </svg>
                                             </button>
 
-                                            <!-- Zone sélectionnable Cycle -->
-                                            <div class="grow 
-                                        px-1.5 rounded-md cursor-pointer tree-selectable" th:data-node-id="${cycle.id}"
-                                                data-node-type="cycle" th:data-node-name="${cycle.name}">
-                                                <div class="flex items-center gap-x-2 py-1">
-                                                    <!-- Icône cycle -->
-                                                    <svg class="shrink-0 size-4 text-violet-500"
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round">
-                                                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                                                        <path d="M2 17l10 5 10-5" />
-                                                        <path d="M2 12l10 5 10-5" />
-                                                    </svg>
-                                                    <span class="text-sm text-foreground font-medium"
-                                                        th:text="${cycle.name}">Cycle</span>
-                                                    <span
-                                                        class="ml-auto text-xs font-mono text-muted-foreground-2 bg-muted px-1.5 py-0.5 rounded"
-                                                        th:text="${cycle.code}">ING</span>
+                                            <div class="grow px-1.5 rounded-lg cursor-pointer tree-selectable hover:bg-muted transition-colors"
+                                                 th:data-node-id="${cycle.id}"
+                                                 data-node-type="cycle"
+                                                 th:data-node-name="${cycle.name}">
+                                                <div class="flex items-center gap-x-2.5 py-1.5">
+                                                    <div class="size-6 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+                                                        <svg class="size-3.5 text-primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                                            <path d="M2 17l10 5 10-5"/>
+                                                            <path d="M2 12l10 5 10-5"/>
+                                                        </svg>
+                                                    </div>
+                                                    <span class="text-sm font-semibold text-layer-foreground" th:text="${cycle.name}">Cycle</span>
+                                                    <span class="ml-auto text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md" th:text="${cycle.code}">ING</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- End Heading Cycle -->
 
-                                        <!-- Collapse Cycle — les enfants (filières…) sont injectés ici par JS -->
                                         <div th:id="|tree-collapse-cycle-${cycle.id}|"
-                                            class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                                            role="group" th:aria-labelledby="|tree-node-cycle-${cycle.id}|">
-                                            <!--
-                                JS _buildChildAccordion() injecte ici un .hs-accordion-group
-                                au premier clic sur le bouton chevron.
-                                Structure injectée :
-                                <div class="hs-accordion-group ps-7 relative before:..." role="group" data-hs-accordion-always-open>
-                                    <div class="hs-accordion" role="treeitem" data-node-id="..." data-node-type="filiere" data-node-name="...">
-                                        ...même structure récursive...
-                                    </div>
-                                </div>
-                            -->
+                                             class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                                             role="group"
+                                             th:aria-labelledby="|tree-node-cycle-${cycle.id}|">
                                         </div>
-                                        <!-- End Collapse Cycle -->
-
                                     </div>
-                                    <!-- End th:each Cycle -->
 
                                 </div>
                             </div>
-                            <!-- ═══ END PRELINE TREEVIEW ROOT ═══ -->
+                        </div>
 
+                        <!-- Footer hint -->
+                        <div class="shrink-0 px-5 py-2.5 border-t border-card-line flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            <p class="text-xs text-muted-foreground-2">Cliquez sur la flèche pour développer, sur le nom pour voir les détails.</p>
                         </div>
                     </div>
-                    <!-- End Colonne gauche -->
 
+                    <!-- ═══ CARD DROITE — Panneau description ═══ -->
+                    <div class="bg-card border border-card-line rounded-2xl overflow-hidden flex flex-col min-h-96 lg:h-[calc(100vh-13rem)]">
 
-                    <!-- ══════════════════════════════════════
-         COLONNE DROITE : Panneau description
-    ═══════════════════════════════════════ -->
-                    <div class="flex-1 flex flex-col min-w-0">
-
-                        <!-- Header description -->
-                        <div class="flex items-center justify-between px-5 py-3 border-b border-layer-line shrink-0">
-                            <span class="text-sm font-semibold text-layer-foreground">Détails</span>
-
-                            <!-- Badge type (mis à jour par JS) -->
+                        <!-- Header -->
+                        <div class="flex items-center justify-between px-5 py-3.5 border-b border-card-line shrink-0">
+                            <div class="flex items-center gap-2.5">
+                                <div class="size-7 rounded-lg bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2">
+                                        <path d="M9 11l3 3L22 4"/>
+                                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                                    </svg>
+                                </div>
+                                <span class="text-sm font-bold text-layer-foreground">Détails</span>
+                            </div>
                             <span id="tree-desc-type-badge"
-                                class="hidden text-xs font-bold px-2.5 py-1 rounded-lg bg-muted text-muted-foreground-2">
+                                  class="hidden text-xs font-bold px-2.5 py-1 rounded-lg bg-primary/10 text-primary">
                                 —
                             </span>
                         </div>
 
-                        <!-- Contenu du panneau (mis à jour par JS via _setFocus) -->
-                        <div id="tree-description-panel" class="flex-1 p-5">
+                        <!-- Panel content scrollable -->
+                        <div id="tree-description-panel" class="flex-1 overflow-y-auto">
 
                             <!-- État vide par défaut -->
-                            <div class="flex flex-col items-center justify-center text-center h-full gap-4 py-16">
-                                <div
-                                    class="size-14 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path d="M9 11l3 3L22 4" />
-                                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                            <div class="flex flex-col items-center justify-center text-center h-full gap-4 p-8">
+                                <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-muted-foreground-2">
+                                        <path d="M9 11l3 3L22 4"/>
+                                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text font-semibold text-layer-foreground">Aucun élément sélectionné</p>
-                                    <p class="text-sm text-muted-foreground-2 mt-1 max-w-xs leading-relaxed">
-                                        Cliquez sur un élément dans l'arbre pour afficher ses informations.
+                                    <p class="text-sm font-bold text-layer-foreground">Aucun élément sélectionné</p>
+                                    <p class="text-xs text-muted-foreground-2 mt-1.5 max-w-xs leading-relaxed">
+                                        Cliquez sur un élément dans l'arbre pour afficher ses informations ici.
                                     </p>
+                                </div>
+                                <div class="hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl bg-muted border border-card-line">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary">
+                                        <path d="M19 12H5M12 5l-7 7 7 7"/>
+                                    </svg>
+                                    <span class="text-xs font-semibold text-muted-foreground-2">Sélectionnez dans l'arbre</span>
                                 </div>
                             </div>
 
                         </div>
+
+                        <!-- Footer vide (symétrie avec card gauche) -->
+                        <div class="shrink-0 px-5 py-2.5 border-t border-card-line flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            <p class="text-xs text-muted-foreground-2">Les actions disponibles apparaissent selon l'élément sélectionné.</p>
+                        </div>
                     </div>
-                    <!-- End Colonne droite -->
 
-                </section>
-
-        </section>
-
-
-
-
+                </div>
+            </div>
         </div>
-        <!-- END tab panels -->
-
-        </div>
-        <!-- END PAGE CONTENT -->
 
     </section>
-    <!-- ========== END MAIN ========== -->
+</section>
 
-    </section>
+
     <!-- Create Cycle Modal -->
     <div id="hs-modal-add-cycle"
         class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"

@@ -1,4 +1,4 @@
-<section xmlns:th="http://www.thymeleaf.org" id="hs-sidebar-content-push-to-mini-sidebar" th:fragment="admin-sidebar(activePage)" class=" hs-overlay [--auto-close:lg] hs-overlay-minified:w-fit lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 w-64
+<section xmlns:th="http://www.thymeleaf.org" id="hs-app-sidebar" th:fragment="admin-sidebar(activePage)" class=" hs-overlay [--auto-close:lg] hs-overlay-minified:w-fit lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 w-64
 hs-overlay-open:translate-x-0
 -translate-x-full transition-all duration-300 transform
 h-full
@@ -8,9 +8,6 @@ overflow-y-hidden
 
 lg:static
 
-
- z-60
-bg-sidebar border-e border-sidebar-line
 
  z-60
 bg-sidebar border-e border-sidebar-line" role="dialog" tabindex="-1" aria-label="Sidebar">
@@ -25,7 +22,7 @@ bg-sidebar border-e border-sidebar-line" role="dialog" tabindex="-1" aria-label=
                 <!-- Close Button -->
                 <button type="button"
                     class="flex justify-center items-center gap-x-3 size-6 bg-layer border border-layer-line text-sm text-muted-foreground-2 hover:bg-layer-hover rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-layer-focus"
-                    data-hs-overlay="#hs-sidebar-content-push-to-mini-sidebar">
+                    data-hs-overlay="#hs-app-sidebar">
                     <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -40,8 +37,8 @@ bg-sidebar border-e border-sidebar-line" role="dialog" tabindex="-1" aria-label=
                 <!-- Toggle Button -->
                 <button type="button"
                     class="flex justify-center items-center flex-none gap-x-3 size-9 text-sm text-muted-foreground-2 hover:bg-muted-hover rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-muted-focus"
-                    aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-sidebar-content-push-to-mini-sidebar"
-                    aria-label="Minify navigation" data-hs-overlay-minifier="#hs-sidebar-content-push-to-mini-sidebar">
+                    aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-app-sidebar"
+                    aria-label="Minify navigation" data-hs-overlay-minifier="#hs-app-sidebar">
                     <svg class="hidden hs-overlay-minified:block shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
                         width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">

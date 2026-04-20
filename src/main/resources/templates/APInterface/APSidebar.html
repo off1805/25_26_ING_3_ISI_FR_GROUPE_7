@@ -1,5 +1,5 @@
 <!-- ========== AP SIDEBAR ========== -->
-<section id="hs-ap-sidebar" th:fragment="ap-sidebar(activePage, subjectsFiliereId)" xmlns:th="http://www.thymeleaf.org"
+<section id="hs-app-sidebar" th:fragment="ap-sidebar(activePage, subjectsFiliereId)" xmlns:th="http://www.thymeleaf.org"
          class="hs-overlay [--auto-close:lg] hs-overlay-minified:w-fit lg:translate-x-0 lg:end-auto lg:bottom-0
          w-64 hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform
          h-full hidden lg:flex lg:flex-col z-60
@@ -13,8 +13,8 @@
                        hover:bg-muted-hover rounded-full bg-sidebar border border-card-line shadow-sm
                        absolute right-0 translate-x-1/2 top-6 z-10"
                 aria-haspopup="dialog" aria-expanded="false"
-                aria-controls="hs-ap-sidebar"
-                data-hs-overlay-minifier="#hs-ap-sidebar">
+                aria-controls="hs-app-sidebar"
+                data-hs-overlay-minifier="#hs-app-sidebar">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                  class="hidden hs-overlay-minified:block">
@@ -45,7 +45,7 @@
             </div>
             <!-- Mobile close -->
             <button type="button" class="lg:hidden ms-auto size-7 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted"
-                    data-hs-overlay="#hs-ap-sidebar">
+                    data-hs-overlay="#hs-app-sidebar">
                 <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>

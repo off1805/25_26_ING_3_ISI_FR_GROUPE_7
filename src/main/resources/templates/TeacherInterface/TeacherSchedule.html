@@ -6,27 +6,6 @@
     <title>KemOSchool — Mon emploi du temps</title>
     <link rel="stylesheet" th:href="@{/css/output.css}"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
-    <style>
-        .course-block {
-            position: absolute;
-            left: 2px; right: 2px;
-            border-radius: 12px;
-            padding: 6px 8px;
-            cursor: pointer;
-            transition: all .15s ease;
-            overflow: hidden;
-        }
-        .course-block:active { transform: scale(0.97); }
-        .time-col { min-width: 44px; }
-        .day-col  { min-width: 90px; }
-        @media (min-width: 640px) { .day-col { min-width: 120px; } }
-        .slot-h { height: 60px; }
-        @media (min-width: 640px) { .slot-h { height: 70px; } }
-        .today-col { background: rgba(124,58,237,.03); }
-        /* Scrollbar thin */
-        .schedule-scroll::-webkit-scrollbar { height: 4px; width: 4px; }
-        .schedule-scroll::-webkit-scrollbar-thumb { background: #7c3aed33; border-radius: 4px; }
-    </style>
 </head>
 <body class="h-screen bg-background-1 flex flex-col">
 
@@ -101,7 +80,7 @@
         <div class="pointer-events-auto w-full bg-card border border-card-line rounded-2xl shadow-2xl overflow-hidden">
             <div class="flex items-center justify-between px-5 pt-5 pb-4 border-b border-card-line">
                 <div class="flex items-center gap-3">
-                    <div id="modal-color-dot" class="size-3 rounded-full" style="background:#7c3aed"></div>
+                    <div id="modal-color-dot" class="size-3 rounded-full bg-primary"></div>
                     <p id="modal-subject" class="text-base font-bold text-layer-foreground">Mathématiques</p>
                 </div>
                 <button type="button" class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted" data-hs-overlay="#hs-modal-course">
@@ -192,7 +171,7 @@
         slotsEl.innerHTML = '';
         for (let h = HOURS_START; h < HOURS_END; h++) {
             const div = document.createElement('div');
-            div.className = 'slot-h border-b border-card-line flex items-start justify-end pr-2 pt-0.5';
+            div.className = 'slot-h h-[60px] sm:h-[70px] border-b border-card-line flex items-start justify-end pr-2 pt-0.5';
             div.innerHTML = '<span class="text-xs text-muted-foreground-2 font-mono">' + h + 'h</span>';
             slotsEl.appendChild(div);
         }
@@ -235,61 +214,105 @@
                 col.appendChild(line);
             }
 
-            // Cours de ce jour
-            COURSES.filter(c => c.day === d).forEach(course => {
-                const topPct = (course.start - HOURS_START) * SLOT_H_PX;
-                const heightPct = (course.end - course.start) * SLOT_H_PX;
-                const block = document.createElement('div');
-                block.className = 'course-block';
-                block.style.cssText = 'top:' + (topPct+2) + 'px; height:' + (heightPct-4) + 'px; background:' + course.color + '18; border: 1.5px solid ' + course.color + '44; border-left: 3px solid ' + course.color + ';';
-                block.innerHTML = '<p style="color:' + course.color + ';font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + course.subject + '</p>' +
-                    '<p style="color:' + course.color + '99;font-size:10px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + course.class + '</p>' +
-                    (heightPct > 80 ? '<p style="color:' + course.color + '80;font-size:10px;margin-top:1px">' + course.start + 'h–' + course.end + 'h</p>' : '');
-                block.addEventListener('click', () => openCourseModal(course, date));
-                col.appendChild(block);
-            });
+             // Cours de ce jour
+             COURSES.filter(c => c.day === d).forEach(course => {
+                 const topPct = (course.start - HOURS_START) * SLOT_H_PX;
+                 const heightPct = (course.end - course.start) * SLOT_H_PX;
+                 const block = document.createElement('div');
+                 block.className = 'absolute left-0.5 right-0.5 rounded-2xl p-1.5 cursor-pointer transition-all duration-150 ease-out active:scale-97 overflow-hidden';
+                 block.style.top = (topPct+2) + 'px';
+                 block.style.height = (heightPct-4) + 'px';
+                 block.style.backgroundColor = course.color + '18';
+                 block.style.borderColor = course.color + '44';
+                 block.style.borderWidth = '1.5px';
+                 block.style.borderLeftWidth = '3px';
 
-            // Ligne heure actuelle (today only)
-            if (isToday) {
-                const now = new Date();
-                const minutesSinceStart = (now.getHours() - HOURS_START) * 60 + now.getMinutes();
-                if (minutesSinceStart >= 0 && minutesSinceStart < (HOURS_END - HOURS_START) * 60) {
-                    const topNow = minutesSinceStart / 60 * SLOT_H_PX;
-                    const nowLine = document.createElement('div');
-                    nowLine.style.cssText = 'position:absolute;top:' + topNow + 'px;left:0;right:0;height:2px;background:#7c3aed;z-index:10;';
-                    nowLine.innerHTML = '<div style="position:absolute;left:-1px;top:-4px;width:10px;height:10px;border-radius:50%;background:#7c3aed"></div>';
-                    col.appendChild(nowLine);
-                }
-            }
+                 const title = document.createElement('p');
+                 title.className = 'font-bold text-xs leading-tight whitespace-nowrap overflow-hidden text-ellipsis';
+                 title.style.color = course.color;
+                 title.textContent = course.subject;
+
+                 const classroom = document.createElement('p');
+                 classroom.className = 'text-[10px] mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis';
+                 classroom.style.color = course.color + '99';
+                 classroom.textContent = course.class;
+
+                 block.appendChild(title);
+                 block.appendChild(classroom);
+
+                 if (heightPct > 80) {
+                     const time = document.createElement('p');
+                     time.className = 'text-[10px] mt-0.5';
+                     time.style.color = course.color + '80';
+                     time.textContent = course.start + 'h–' + course.end + 'h';
+                     block.appendChild(time);
+                 }
+
+                 block.addEventListener('click', () => openCourseModal(course, date));
+                 col.appendChild(block);
+             });
+
+             // Ligne heure actuelle (today only)
+             if (isToday) {
+                 const now = new Date();
+                 const minutesSinceStart = (now.getHours() - HOURS_START) * 60 + now.getMinutes();
+                 if (minutesSinceStart >= 0 && minutesSinceStart < (HOURS_END - HOURS_START) * 60) {
+                     const topNow = minutesSinceStart / 60 * SLOT_H_PX;
+                     const nowLine = document.createElement('div');
+                     nowLine.className = 'absolute left-0 right-0 h-0.5 bg-primary z-10';
+                     nowLine.style.top = topNow + 'px';
+                     const dotChild = document.createElement('div');
+                     dotChild.className = 'absolute -left-0.5 -top-1 w-2.5 h-2.5 rounded-full bg-primary';
+                     nowLine.appendChild(dotChild);
+                     col.appendChild(nowLine);
+                 }
+             }
 
             colsEl.appendChild(col);
 
-            // Pill mobile
-            const pill = document.createElement('button');
-            pill.type = 'button';
-            pill.className = 'flex flex-col items-center px-3 py-2 rounded-xl border-2 transition-all ' +
-                (isToday ? 'bg-primary text-white border-primary' : 'bg-card border-card-line text-muted-foreground-2');
-            pill.innerHTML = '<span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">' + DAYS_FR[d] + '</span>' +
-                            '<span style="font-size:13px;font-weight:700;margin-top:1px">' + date.getDate() + '</span>';
-            const hasCourse = COURSES.some(c => c.day === d);
-            if (hasCourse) {
-                const dot = document.createElement('div');
-                dot.style.cssText = 'width:4px;height:4px;border-radius:50%;margin-top:2px;background:' + (isToday ? 'white' : '#7c3aed') + ';';
-                pill.appendChild(dot);
-            }
-            pillsEl.appendChild(pill);
+             // Pill mobile
+             const pill = document.createElement('button');
+             pill.type = 'button';
+             pill.className = 'flex flex-col items-center px-3 py-2 rounded-xl border-2 transition-all ' +
+                 (isToday ? 'bg-primary text-white border-primary' : 'bg-card border-card-line text-muted-foreground-2');
+
+             const dayLabel = document.createElement('span');
+             dayLabel.className = 'text-[10px] font-bold uppercase tracking-widest';
+             dayLabel.textContent = DAYS_FR[d];
+
+             const dateLabel = document.createElement('span');
+             dateLabel.className = 'text-sm font-bold mt-0.5';
+             dateLabel.textContent = date.getDate().toString();
+
+             pill.appendChild(dayLabel);
+             pill.appendChild(dateLabel);
+
+             const hasCourse = COURSES.some(c => c.day === d);
+             if (hasCourse) {
+                 const dot = document.createElement('div');
+                 dot.className = 'w-1 h-1 rounded-full mt-0.5';
+                 dot.style.backgroundColor = isToday ? 'white' : '#7c3aed';
+                 pill.appendChild(dot);
+             }
+             pillsEl.appendChild(pill);
         }
 
-        // Légende
-        const legendEl = document.getElementById('legend');
-        legendEl.innerHTML = '';
-        SUBJECTS_LEGEND.forEach(s => {
-            const span = document.createElement('div');
-            span.className = 'flex items-center gap-2 shrink-0';
-            span.innerHTML = '<div style="width:10px;height:10px;border-radius:3px;background:' + s.color + '" class="shrink-0"></div>' +
-                             '<span style="font-size:11px;color:var(--tw-color-muted-foreground-2,#888)">' + s.subject + '</span>';
-            legendEl.appendChild(span);
-        });
+         // Légende
+         const legendEl = document.getElementById('legend');
+         legendEl.innerHTML = '';
+         SUBJECTS_LEGEND.forEach(s => {
+             const span = document.createElement('div');
+             span.className = 'flex items-center gap-2 shrink-0';
+             const colorBox = document.createElement('div');
+             colorBox.className = 'w-2.5 h-2.5 rounded-sm shrink-0';
+             colorBox.style.backgroundColor = s.color;
+             const label = document.createElement('span');
+             label.className = 'text-xs text-muted-foreground-2';
+             label.textContent = s.subject;
+             span.appendChild(colorBox);
+             span.appendChild(label);
+             legendEl.appendChild(span);
+         });
     }
 
     function openCourseModal(course, date) {
