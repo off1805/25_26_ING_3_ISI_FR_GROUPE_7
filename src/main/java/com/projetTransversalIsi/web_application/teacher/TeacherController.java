@@ -1,34 +1,76 @@
 package com.projetTransversalIsi.web_application.teacher;
 
-import com.projetTransversalIsi.user.domain.enums.UserStatus;
-import com.projetTransversalIsi.user.dto.ProfileResponseDTO;
+import com.projetTransversalIsi.emploi_temps.application.dto.SearchSeanceRequestDTO;
+import com.projetTransversalIsi.emploi_temps.application.dto.SeanceResponseDTO;
+import com.projetTransversalIsi.emploi_temps.application.service.SeanceService;
+import com.projetTransversalIsi.emploi_temps.application.use_cases.GetCurrentSeanceUC;
+import com.projetTransversalIsi.user.services.FindUserByIdUC;          // CORR #1 : bon package
+import com.projetTransversalIsi.user.domain.User;                       // CORR #2 : execute() retourne User
 import com.projetTransversalIsi.user.dto.UserDetailsResponseDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/teacher")
+@RequiredArgsConstructor
+@Slf4j
 public class TeacherController {
+
+    private final FindUserByIdUC findUserByIdUC;
+    private final GetCurrentSeanceUC getCurrentSeanceUC;
+    private final SeanceService seanceService;
+    private final ObjectMapper objectMapper;
+
+    // ── Routes ───────────────────────────────────────────────────────────────
 
     @GetMapping("/dashboard")
     public String dashboardView(Model model) {
-        UserDetailsResponseDTO teacher = getFakeTeacher();
-        List<DashboardSeanceViewModel> seancesJour = getFakeDashboardSeancesJour();
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // CORR #2 : execute() retourne User, on convertit ensuite en DTO
+        User userDomain = findUserByIdUC.execute(userId);
+        UserDetailsResponseDTO teacher = UserDetailsResponseDTO.fromDomain(userDomain);
+        Long enseignantId = teacher.profile() != null ? teacher.profile().getId() : null;
+
+        List<DashboardSeanceViewModel> seancesJour = List.of();
+        if (enseignantId != null) {
+            // CORR #3 : getSeancesTodayByEnseignant retourne List<Seance> (domaine)
+            //           → on convertit via SeanceResponseDTO.fromDomain() puis on
+            //             utilise les accesseurs record (heureDebut(), etc.)
+            seancesJour = seanceService.getSeancesTodayByEnseignant(enseignantId, false)
+                    .stream()
+                    .map(seance -> {
+                        SeanceResponseDTO dto = SeanceResponseDTO.fromDomain(seance);
+                        DashboardSeanceStatus status = computeStatus(dto.heureDebut(), dto.heureFin());
+                        return new DashboardSeanceViewModel(
+                                dto.id(),
+                                dto.libelle(),
+                                dto.salle(),
+                                dto.heureDebut(),
+                                dto.heureFin(),
+                                status
+                        );
+                    })
+                    .toList();
+        }
 
         DashboardNextCourseViewModel nextCourse = seancesJour.stream()
-                .filter(seance -> seance.status() == DashboardSeanceStatus.EN_COURS
-                        || seance.status() == DashboardSeanceStatus.A_VENIR)
+                .filter(s -> s.status() == DashboardSeanceStatus.EN_COURS
+                        || s.status() == DashboardSeanceStatus.A_VENIR)
                 .findFirst()
-                .map(seance -> new DashboardNextCourseViewModel(
-                        seance.heureDebut(),
-                        seance.libelle()
-                ))
+                .map(s -> new DashboardNextCourseViewModel(s.heureDebut(), s.libelle()))
                 .orElse(null);
 
         model.addAttribute("teacher", teacher);
@@ -39,181 +81,97 @@ public class TeacherController {
     }
 
     @GetMapping("/schedule")
-    public String scheduleView(Model model) {
-        UserDetailsResponseDTO teacher = getFakeTeacher();
-        List<SeanceViewModel> seances = getFakeSchedule();
+    public String scheduleView(Model model) throws JsonProcessingException {
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // CORR #2 : idem
+        User userDomain = findUserByIdUC.execute(userId);
+        UserDetailsResponseDTO teacher = UserDetailsResponseDTO.fromDomain(userDomain);
+        Long enseignantId = teacher.profile() != null ? teacher.profile().getId() : null;
+
+        List<SeanceResponseDTO> seances = List.of();
+        if (enseignantId != null) {
+            // CORR #4 : getSeancesByEnseignant() n'existe pas dans SeanceService
+            //           → on utilise searchSeances() avec le critère enseignantId
+            seances = seanceService.searchSeances(
+                    new SearchSeanceRequestDTO(null, enseignantId, null, false)
+            );
+        }
+
+        // Sérialise en format attendu par le JS de TeacherSchedule.html
+        List<Map<String, Object>> seancesJson = seances.stream()
+                .map(s -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("id",       s.id());
+                    // MONDAY=1 → 0, ..., SATURDAY=6 → 5
+                    m.put("day",      s.dateSeance().getDayOfWeek().getValue() - 1);
+                    m.put("start",    s.heureDebut().getHour());
+                    m.put("end",      s.heureFin().getHour());
+                    m.put("subject",  s.libelle());
+                    m.put("class",    "");
+                    m.put("room",     s.salle());
+                    m.put("students", 0);
+                    m.put("color",    s.couleur() != null ? s.couleur() : "#7c3aed");
+                    return m;
+                })
+                .toList();
 
         model.addAttribute("teacher", teacher);
         model.addAttribute("seances", seances);
+        model.addAttribute("seancesJson", objectMapper.writeValueAsString(seancesJson));
 
         return "TeacherInterface/TeacherSchedule";
     }
 
     @GetMapping("/seance")
     public String seanceView(Model model) {
-        UserDetailsResponseDTO teacher = getFakeTeacher();
-        SeanceViewModel seance = getFakeCurrentSeance();
-        List<StudentViewModel> etudiants = getFakeStudents();
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // CORR #2 : idem
+        User userDomain = findUserByIdUC.execute(userId);
+        UserDetailsResponseDTO teacher = UserDetailsResponseDTO.fromDomain(userDomain);
+        Long enseignantId = teacher.profile() != null ? teacher.profile().getId() : null;
+
+        SeanceResponseDTO seance = null;
+        if (enseignantId != null) {
+            seance = getCurrentSeanceUC.execute(enseignantId).orElse(null);
+        }
 
         model.addAttribute("teacher", teacher);
         model.addAttribute("seance", seance);
-        model.addAttribute("etudiants", etudiants);
-        model.addAttribute("enseignantId", teacher.profile() != null ? teacher.profile().getId() : null);
+        model.addAttribute("etudiants", List.of());
+        model.addAttribute("enseignantId", enseignantId);
 
         return "TeacherInterface/TeacherSeance";
     }
 
-    private UserDetailsResponseDTO getFakeTeacher() {
-        return new UserDetailsResponseDTO(
-                1L,
-                UserStatus.ACTIVE,
-                "enseignant@kemoschool.com",
-                "TEACHER",
-                ProfileResponseDTO.builder()
-                        .id(101L)
-                        .nom("Ngono")
-                        .prenom("Terence")
-                        .matricule("FAKE-MAT-001")
-                        .numeroTelephone("677777777")
-                        .titre("Dr")
-                        .specialite("Informatique")
-                        .type("PERMANENT")
-                        .build()
-        );
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    private DashboardSeanceStatus computeStatus(LocalTime debut, LocalTime fin) {
+        LocalTime now = LocalTime.now();
+        if (now.isBefore(debut)) return DashboardSeanceStatus.A_VENIR;
+        if (now.isAfter(fin))    return DashboardSeanceStatus.TERMINE;
+        return DashboardSeanceStatus.EN_COURS;
     }
 
-
-    private SeanceViewModel getFakeCurrentSeance() {
-        return new SeanceViewModel(
-                1L,
-                "Architecture des ordinateurs",
-                "Salle B12",
-                LocalDate.now(),
-                LocalTime.of(23, 0),
-                LocalTime.of(23, 50),
-                11L
-        );
-    }
-
-    private List<SeanceViewModel> getFakeSchedule() {
-        return List.of(
-                new SeanceViewModel(
-                        1L,
-                        "Architecture des ordinateurs",
-                        "Salle B12",
-                        LocalDate.now(),
-                        LocalTime.of(8, 0),
-                        LocalTime.of(12, 0),
-                        11L
-                ),
-                new SeanceViewModel(
-                        2L,
-                        "Réseaux informatiques",
-                        "Salle C04",
-                        LocalDate.now().plusDays(1),
-                        LocalTime.of(10, 0),
-                        LocalTime.of(12, 0),
-                        12L
-                ),
-                new SeanceViewModel(
-                        3L,
-                        "Bases de données",
-                        "Salle A07",
-                        LocalDate.now().plusDays(2),
-                        LocalTime.of(14, 0),
-                        LocalTime.of(16, 0),
-                        13L
-                ),
-                new SeanceViewModel(
-                        4L,
-                        "Mathématiques appliquées",
-                        "Salle D02",
-                        LocalDate.now().plusDays(3),
-                        LocalTime.of(9, 0),
-                        LocalTime.of(11, 0),
-                        14L
-                ),
-                new SeanceViewModel(
-                        5L,
-                        "Programmation Java",
-                        "Salle E03",
-                        LocalDate.now().plusDays(4),
-                        LocalTime.of(13, 0),
-                        LocalTime.of(15, 0),
-                        15L
-                ),
-                new SeanceViewModel(
-                        6L,
-                        "Systèmes d'exploitation",
-                        "Salle F01",
-                        LocalDate.now().plusDays(5),
-                        LocalTime.of(8, 0),
-                        LocalTime.of(10, 0),
-                        16L
-                )
-        );
-    }
-
-    private List<StudentViewModel> getFakeStudents() {
-        return List.of(
-                new StudentViewModel(1L, "Aminata", "Bah", "23L3I001"),
-                new StudentViewModel(2L, "Kevin", "Foka", "23L3I002"),
-                new StudentViewModel(3L, "Sarah", "Njoya", "23L3I003"),
-                new StudentViewModel(4L, "Merveille", "Tchoumi", "23L3I004"),
-                new StudentViewModel(5L, "Jordan", "Essomba", "23L3I005"),
-                new StudentViewModel(6L, "Prisca", "Ngassa", "23L3I006"),
-                new StudentViewModel(7L, "Blaise", "Mvondo", "23L3I007"),
-                new StudentViewModel(8L, "Esther", "Kouam", "23L3I008")
-        );
-    }
-
-    private List<DashboardSeanceViewModel> getFakeDashboardSeancesJour() {
-        return List.of(
-                new DashboardSeanceViewModel(
-                        1L,
-                        "Mathématiques",
-                        "Salle A12",
-                        LocalTime.of(8, 0),
-                        LocalTime.of(10, 0),
-                        DashboardSeanceStatus.EN_COURS
-                ),
-                new DashboardSeanceViewModel(
-                        2L,
-                        "Architecture des ordinateurs",
-                        "Salle B08",
-                        LocalTime.of(11, 0),
-                        LocalTime.of(13, 0),
-                        DashboardSeanceStatus.A_VENIR
-                ),
-                new DashboardSeanceViewModel(
-                        3L,
-                        "Bases de données",
-                        "Salle C05",
-                        LocalTime.of(15, 0),
-                        LocalTime.of(17, 0),
-                        DashboardSeanceStatus.TERMINE
-                )
-        );
-    }
+    // ── Records internes (utilisés par les templates Thymeleaf) ──────────────
 
     public record SeanceViewModel(
             Long id,
             String libelle,
             String salle,
-            LocalDate dateSeance,
+            java.time.LocalDate dateSeance,
             LocalTime heureDebut,
             LocalTime heureFin,
             Long coursId
-    ) {
-    }
+    ) {}
 
     public record StudentViewModel(
             Long id,
             String prenom,
             String nom,
             String matricule
-    ) {
-    }
+    ) {}
 
     public record DashboardSeanceViewModel(
             Long id,
@@ -222,14 +180,12 @@ public class TeacherController {
             LocalTime heureDebut,
             LocalTime heureFin,
             DashboardSeanceStatus status
-    ) {
-    }
+    ) {}
 
     public record DashboardNextCourseViewModel(
             LocalTime heureDebut,
             String libelle
-    ) {
-    }
+    ) {}
 
     public enum DashboardSeanceStatus {
         EN_COURS,

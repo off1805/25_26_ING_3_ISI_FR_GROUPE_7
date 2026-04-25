@@ -501,8 +501,53 @@ function initBlockInteraction() {
         HSOverlay.open('#modal-end-session');
     }
 
-    function confirmEnd() {
+    async function confirmEnd() {
         HSOverlay.close('#modal-end-session');
+
+        // ── Sauvegarde la fiche de présence avant redirection ──────────────
+        try {
+            const { apiFetch } = await import('/js/common/globalErrorHandler.js');
+
+            // 1. Créer la fiche de présence (PresenceList)
+            const presenceList = await apiFetch('/api/presences', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    seanceId:     window.SEANCE_ID,
+                    enseignantId: window.ENSEIGNANT_ID,
+                    classeId:     null,
+                    ueId:         null,
+                    date:         new Date().toISOString().split('T')[0]
+                })
+            });
+
+            // 2. Pour chaque étudiant dans blockStatuses, créer une ligne de présence
+            const rowPromises = Object.entries(blockStatuses).map(([etudiantId, blocks]) => {
+                // Statut dominant : absent si absent majoritaire, sinon present
+                const counts = { present: 0, late: 0, absent: 0 };
+                blocks.forEach(b => { if (b !== 'empty') counts[b]++; });
+                const dominant = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+                const present = dominant[1] > 0 ? dominant[0] !== 'absent' : false;
+
+                return apiFetch('/api/presences/rows', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        presenceListId: presenceList.id,
+                        etudiantId:     Number(etudiantId),
+                        present:        present
+                    })
+                });
+            });
+
+            await Promise.all(rowPromises);
+            console.info('[seance.js] Fiche de présence sauvegardée avec succès.');
+        } catch (err) {
+            // Le modal d'erreur globalErrorHandler s'affiche automatiquement.
+            // On redirige quand même pour ne pas bloquer l'enseignant.
+            console.error('[seance.js] Erreur lors de la sauvegarde de la présence :', err);
+        }
+
         window.location.href = /*[[@{/teacher/dashboard}]]*/ '/teacher/dashboard';
     }
 
