@@ -1,113 +1,104 @@
-import { TokenService } from "./application/TokenService.js";
+/**
+ * ClientHttp.js — Client HTTP générique basé sur apiFetch
+ * ─────────────────────────────────────────────────────────
+ * Fournit une API simple (get / post / put / patch / delete)
+ * en s'appuyant sur apiFetch de globalErrorHandler.js.
+ * Toutes les erreurs API sont donc gérées automatiquement par
+ * le système de modals catégorisés.
+ *
+ * Utilisation :
+ *   import api from '/js/common/ClientHttp.js';
+ *
+ *   const students = await api.get('/api/students');
+ *   const created  = await api.post('/api/students', payload);
+ *   const updated  = await api.put('/api/students/1', payload);
+ *   await api.delete('/api/students/1');
+ */
 
-class HttpClient {
+import { apiFetch } from '/js/common/globalErrorHandler.js';
 
-    static REFRESH_TOKEN_ENDPOINT = "/refresh";
+// ── Helpers internes ───────────────────────────────────────────────────────
 
-    constructor(baseURL) {
-        this.baseURL = baseURL;
-    }
-
-    async _buildHeaders(customHeaders = {}) {
-        const token = await TokenService.getToken();
-        return {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            ...customHeaders
-        };
-    }
-
-    async _parseResponse(response) {
-        if (response.status === 204) {
-            return null;
-        }
-
-        const contentType = response.headers.get("content-type");
-        const isJson = contentType?.includes("application/json");
-        return isJson ? await response.json() : await response.text();
-    }
-
-    async _request(method, endpoint, { body, headers = {}, retry = true } = {}) {
-        const options = {
-            method,
-            headers: await this._buildHeaders(headers),
-            ...(body !== undefined ? { body: JSON.stringify(body) } : {})
-        };
-
-        const response = await fetch(this.baseURL + endpoint, options);
-
-        //token invalide/expiré, tentative de refresh.
-        if (response.status === 401 && retry) {
-            const refreshed = await this._refreshToken();
-            if (refreshed) {
-                return await this._request(method, endpoint, { body, headers, retry: false });
-            }
-            window.location.href = "/login";
-            return null;
-        }
-
-        if (response.status === 403) {
-            throw new Error("Vous n'avez pas les droits nécessaires.");
-        }
-
-        if (!response.ok) {
-            const errorPayload = await this._parseResponse(response).catch(() => null);
-            console.log(response);
-            const error = new Error(`HTTP ${response.status}`);
-            error.status = response.status;
-            error.payload = errorPayload;
-            throw error;
-        }
-        return await this._parseResponse(response);
-    }
-
-    get(endpoint, headers = {}) {
-        return this._request("GET", endpoint, { headers });
-    }
-
-    post(endpoint, body = {}, headers = {}) {
-        return this._request("POST", endpoint, { body, headers });
-    }
-
-    put(endpoint, body = {}, headers = {}) {
-        return this._request("PUT", endpoint, { body, headers });
-    }
-
-    delete(endpoint, headers = {}) {
-        return this._request("DELETE", endpoint, { headers });
-    }
-
-    /**
-     * Cette méthode permet de rafraîchir le token d'authentification.
-     * @returns {Promise<boolean>}
-     */
-    async _refreshToken() {
-        const refreshToken = await TokenService.getRefreshToken();
-
-        if (!refreshToken) {
-            return false;
-        }
-
-        const response = await fetch(this.baseURL + HttpClient.REFRESH_TOKEN_ENDPOINT, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refreshToken })
-        });
-
-        if (!response.ok) {
-            return false;
-        }
-
-        const newTokens = await response.json();
-        await TokenService.setToken(newTokens.token);
-        await TokenService.setRefreshToken(newTokens.refreshToken);
-        return true;
-    }
+function jsonHeaders() {
+  return { 'Content-Type': 'application/json' };
 }
 
-const BASE_URL = "http://localhost:8080";
+function buildOptions(method, body, extraOptions = {}) {
+  const opts = { method, ...extraOptions };
+  if (body !== undefined) {
+    opts.headers = { ...jsonHeaders(), ...(extraOptions.headers ?? {}) };
+    opts.body = typeof body === 'string' ? body : JSON.stringify(body);
+  }
+  return opts;
+}
 
-const api = new HttpClient(BASE_URL);
+// ── API publique ───────────────────────────────────────────────────────────
 
-// Exportation de l'instance
+const api = {
+  /**
+   * GET — récupérer une ressource.
+   * @param {string}   url
+   * @param {object}   [handlerOpts]        { onRetry }
+   * @returns {Promise<any>}
+   */
+  get(url, handlerOpts = {}) {
+    return apiFetch(url, { method: 'GET' }, handlerOpts);
+  },
+
+  /**
+   * POST — créer une ressource.
+   * @param {string}   url
+   * @param {any}      body                 Corps à sérialiser en JSON
+   * @param {object}   [handlerOpts]        { onRetry }
+   * @returns {Promise<any>}
+   */
+  post(url, body, handlerOpts = {}) {
+    return apiFetch(url, buildOptions('POST', body), handlerOpts);
+  },
+
+  /**
+   * PUT — remplacer une ressource.
+   * @param {string}   url
+   * @param {any}      body
+   * @param {object}   [handlerOpts]
+   * @returns {Promise<any>}
+   */
+  put(url, body, handlerOpts = {}) {
+    return apiFetch(url, buildOptions('PUT', body), handlerOpts);
+  },
+
+  /**
+   * PATCH — modifier partiellement une ressource.
+   * @param {string}   url
+   * @param {any}      body
+   * @param {object}   [handlerOpts]
+   * @returns {Promise<any>}
+   */
+  patch(url, body, handlerOpts = {}) {
+    return apiFetch(url, buildOptions('PATCH', body), handlerOpts);
+  },
+
+  /**
+   * DELETE — supprimer une ressource.
+   * @param {string}   url
+   * @param {object}   [handlerOpts]
+   * @returns {Promise<any>}
+   */
+  delete(url, handlerOpts = {}) {
+    return apiFetch(url, { method: 'DELETE' }, handlerOpts);
+  },
+
+  /**
+   * Upload — envoyer un FormData (multipart/form-data).
+   * Ne pose pas de Content-Type (le navigateur le fait automatiquement).
+   * @param {string}   url
+   * @param {FormData} formData
+   * @param {object}   [handlerOpts]
+   * @returns {Promise<any>}
+   */
+  upload(url, formData, handlerOpts = {}) {
+    return apiFetch(url, { method: 'POST', body: formData }, handlerOpts);
+  },
+};
+
 export default api;

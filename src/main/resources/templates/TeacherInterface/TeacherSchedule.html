@@ -128,14 +128,14 @@
             </div>
             <div class="px-5 pb-5 flex gap-3">
                 <button type="button" class="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-muted text-layer-foreground" data-hs-overlay="#hs-modal-course">Fermer</button>
-                <a href="TeacherSeance.html" id="modal-seance-link" class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-primary text-white text-center hover:bg-primary/90 active:scale-95 transition-all">Démarrer l'appel</a>
+                <a th:href="@{/teacher/seance}" id="modal-seance-link" class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-primary text-white text-center hover:bg-primary/90 active:scale-95 transition-all">Démarrer l'appel</a>
             </div>
         </div>
     </div>
 </div>
 
 <script th:src="@{/js/preline.js}"></script>
-<script>
+<script th:inline="javascript">
     // ── Configuration ──────────────────────────────────────────
     const HOURS_START = 7;
     const HOURS_END   = 19;
@@ -145,16 +145,8 @@
     const MONTHS_FR   = ['jan','fév','mar','avr','mai','juin','juil','aoû','sep','oct','nov','déc'];
     const MONTHS_FULL = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 
-    // Données exemple (remplacer par th:inline="javascript" + JSON Thymeleaf)
-    const COURSES = [
-        { id:1, day:0, start:8,  end:10, subject:'Mathématiques', class:'L3 Info', room:'Salle A12', students:32, color:'#7c3aed' },
-        { id:2, day:0, start:14, end:16, subject:'Statistiques',  class:'M1 Data', room:'Salle B05', students:18, color:'#2563eb' },
-        { id:3, day:1, start:10, end:12, subject:'Algèbre',       class:'L2 Math', room:'Amphi C',   students:55, color:'#0891b2' },
-        { id:4, day:2, start:8,  end:10, subject:'Analyse',       class:'L3 Info', room:'Salle A12', students:32, color:'#7c3aed' },
-        { id:5, day:2, start:15, end:17, subject:'Probabilités',  class:'M1 Data', room:'Salle D01', students:22, color:'#059669' },
-        { id:6, day:3, start:9,  end:11, subject:'Géométrie',     class:'L1 Info', room:'Salle E02', students:48, color:'#d97706' },
-        { id:7, day:4, start:13, end:15, subject:'Mathématiques', class:'L3 Info', room:'Salle A12', students:32, color:'#7c3aed' },
-    ];
+    // Données injectées par Thymeleaf depuis TeacherController (/teacher/schedule)
+    const COURSES = /*[[${seancesJson}]]*/ [];
 
     const SUBJECTS_LEGEND = [...new Set(COURSES.map(c => ({subject:c.subject, color:c.color})).map(JSON.stringify))].map(JSON.parse);
 
