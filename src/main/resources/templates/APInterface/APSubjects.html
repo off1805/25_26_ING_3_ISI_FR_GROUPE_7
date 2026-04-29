@@ -9,41 +9,6 @@
     <link rel="stylesheet" th:href="@{/css/output.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
-
-    <style>
-        .level-circle-tab {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            border: 2px solid transparent;
-            user-select: none;
-        }
-
-        .level-circle-tab:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .level-circle-tab.active {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
-        }
-
-        .level-circle-tab.inactive {
-            background-color: var(--layer);
-            color: var(--muted-foreground-2);
-            border-color: var(--layer-line);
-        }
-    </style>
 </head>
 
 <body class="h-screen" th:attr="data-ap-page-bc=${apPageBreadcrumb}">
@@ -55,15 +20,14 @@
         <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
-            <header
-                class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar relative w-full flex justify-between items-center px-4 md:px-6 lg:px-8 mx-auto border border-b border-navbar-line">
+            <header class="flex-none flex flex-row justify-between lg:justify-start lg:flex-nowrap py-2 lg:py-1 bg-navbar relative w-full lg:items-center px-4 md:px-6 lg:px-8 mx-auto border-b border-navbar-line">
 
-                <!-- Mobile hamburger -->
-                <div class="lg:hidden">
+                <!-- Mobile hamburger & actions (left side) -->
+                <div class="flex items-center gap-2">
                     <button type="button"
-                        class="hs-collapse-toggle size-9.5 flex justify-center items-center text-sm font-semibold rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
-                        aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-ap-sidebar"
-                        data-hs-overlay="#hs-ap-sidebar">
+                        class="lg:hidden hs-collapse-toggle size-9 flex justify-center items-center text-sm font-semibold rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
+                        aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-app-sidebar"
+                        data-hs-overlay="#hs-app-sidebar">
                         <svg class="hs-collapse-open:hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -80,14 +44,14 @@
                     </button>
                 </div>
 
-                <!-- Breadcrumb -->
-                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1"
+                <!-- Breadcrumb (hidden on mobile) -->
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground flex-1"
                     aria-label="Breadcrumb" data-ap-breadcrumb-target="navbar"></nav>
 
                 <!-- Right actions -->
-                <div class="flex items-center gap-x-1 lg:gap-x-2 ms-auto py-1 lg:ps-6 lg:order-3 lg:col-span-3">
+                <div class="flex items-center gap-1 lg:gap-2 ms-auto">
                     <button type="button" data-theme-toggle
-                        class="size-9.5 relative flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus">
+                        class="size-9 relative flex justify-center items-center rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted-hover focus:outline-hidden focus:bg-muted-focus">
                         <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -212,23 +176,25 @@
                                         <tr th:each="ue, iter : ${ues}"
                                             class="hover:bg-muted/40 transition-colors group">
 
-                                            <td class="px-6 py-4">
-                                                <span>eoo</span>
-                                                <div class="flex items-center gap-3 min-w-0">
-                                                    <div class="size-9 rounded-xl flex items-center justify-center shrink-0"
-                                                        th:style="${'background-color:'+ ((ue.couleur==null)?'#7c3aed':ue.couleur) +'1a ; color:'+ ((ue.couleur==null)?'#7c3aed':ue.couleur) }">
-                                                        <i class="bi bi-journal-text text-lg"></i>
-                                                    </div>
-                                                    <div>
-                                                        <p class="text-sm font-bold text-layer-foreground truncate"
-                                                            th:text="${ue.libelle}">
-                                                            ${ue.libelle}</p>
-                                                        <p class="text-[10px] text-muted-foreground-2 uppercase tracking-tight"
-                                                            th:text="${ue.description}">
-                                                            ${ue.description || 'Pas de description'}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
+                                             <td class="px-6 py-4">
+                                                 <span>eoo</span>
+                                                 <div class="flex items-center gap-3 min-w-0">
+                                                     <div class="size-9 rounded-xl flex items-center justify-center shrink-0 text-lg"
+                                                         th:classappend="'text-color-' + (${ue.couleur == null} ? 'primary' : ${ue.couleur})"
+                                                         th:style="${ue.couleur != null} ? 'background-color:' + ${ue.couleur} + '1a; color:' + ${ue.couleur} : 'background-color:#7c3aed1a; color:#7c3aed'"
+                                                         >
+                                                         <i class="bi bi-journal-text"></i>
+                                                     </div>
+                                                     <div>
+                                                         <p class="text-sm font-bold text-layer-foreground truncate"
+                                                             th:text="${ue.libelle}">
+                                                             ${ue.libelle}</p>
+                                                         <p class="text-[10px] text-muted-foreground-2 uppercase tracking-tight"
+                                                             th:text="${ue.description}">
+                                                             ${ue.description || 'Pas de description'}</p>
+                                                     </div>
+                                                 </div>
+                                             </td>
                                             <td class="px-6 py-4">
                                                 <span
                                                     class="text-xs inline-flex items-center px-2 py-1 rounded-lg bg-muted text-layer-foreground font-mono font-bold border border-layer-line"

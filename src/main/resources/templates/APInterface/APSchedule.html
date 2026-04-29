@@ -20,10 +20,32 @@
     <div id="view-main" class="flex h-screen overflow-hidden">
 
         <section th:replace="~{common/AppSidebar :: app-sidebar('schedule', ${subjectsFiliereId})}"></section>
-            <!-- NAVBAR -->
-            <header
-                class="flex-none flex flex-wrap lg:justify-start lg:flex-nowrap py-1 bg-navbar w-full items-center px-4 md:px-6 lg:px-8 border-b border-navbar-line">
-                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground py-1">
+             <!-- NAVBAR -->
+        <header class="flex-none flex flex-row justify-between lg:justify-start lg:flex-nowrap py-2 lg:py-1 bg-navbar relative w-full lg:items-center px-4 md:px-6 lg:px-8 mx-auto border-b border-navbar-line">
+                 <!-- Mobile hamburger & actions -->
+                 <div class="flex items-center gap-2">
+                     <button type="button"
+                         class="lg:hidden hs-collapse-toggle size-9 flex justify-center items-center text-sm font-semibold rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none"
+                         aria-haspopup="dialog" aria-expanded="false"
+                         aria-controls="hs-app-sidebar"
+                         data-hs-overlay="#hs-app-sidebar">
+                         <svg class="hs-collapse-open:hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                             <line x1="3" x2="21" y1="6" y2="6" />
+                             <line x1="3" x2="21" y1="12" y2="12" />
+                             <line x1="3" x2="21" y1="18" y2="18" />
+                         </svg>
+                         <svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                             <path d="M18 6 6 18" />
+                             <path d="m6 6 12 12" />
+                         </svg>
+                     </button>
+                 </div>
+                 <!-- Breadcrumb -->
+                 <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground flex-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="1.5">
                         <path d="M5 12l-2 0l9-9l9 9l-2 0" />
@@ -37,7 +59,7 @@
                     </svg>
                     <span class="font-medium text-layer-foreground">Emplois du temps</span>
                 </nav>
-                <div class="flex items-center gap-x-2 ms-auto py-1">
+                 <div class="flex items-center gap-1 lg:gap-2 ms-auto">
                     <button type="button" data-theme-toggle
                         class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
                         <span class="sr-only" data-theme-toggle-label>Passer en theme sombre</span>
@@ -144,7 +166,7 @@
 
                 </div>
             </div>
-        </section>
+        </div>
     </div>
 
     <!-- ══ MODAL: Nouvel emploi du temps (Preline) ══ -->
