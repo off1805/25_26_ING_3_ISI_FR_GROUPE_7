@@ -7,6 +7,7 @@ import com.projetTransversalIsi.pedagogie.infrastructure.entity.JpaAnneeScolaire
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,7 +25,16 @@ public class JpaAnneeScolaireRepository implements AnneeScolaireRepository {
 
     @Override
     public Optional<AnneeScolaire> findById(Long id) {
-        return sprgRepo.findById(id)
-                .map(anneeMaper::toDomainModel);
+        return sprgRepo.findById(id).map(anneeMaper::toDomainModel);
+    }
+
+    @Override
+    public List<AnneeScolaire> findAll() {
+        return sprgRepo.findAll().stream().map(anneeMaper::toDomainModel).toList();
+    }
+
+    @Override
+    public Optional<AnneeScolaire> findActive() {
+        return sprgRepo.findByActiveTrue().map(anneeMaper::toDomainModel);
     }
 }

@@ -15,6 +15,7 @@ export class AuthController {
 
         try {
             const data = await this.loginUC.execute(new UserCredentials(email, password));
+            console.log(data)
 
             localStorage.setItem("token", data.token);
             localStorage.setItem("refreshToken", data.refreshToken);
@@ -22,7 +23,7 @@ export class AuthController {
             localStorage.setItem("displayName", data.displayName);
 
             if (data.role === "ADMIN") {
-                window.location.href = "/admin/annee-scolaire";
+                window.location.href = "/admin/users";
             } else if (data.role === "AP") {
                 window.location.href = "/ap/classes";
             } else if (data.role === "TEACHER") {

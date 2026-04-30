@@ -6,7 +6,6 @@ import com.projetTransversalIsi.structure_academique.domain.model.Cycle;
 import com.projetTransversalIsi.user.domain.User;
 import com.projetTransversalIsi.user.dto.UserDetailsResponseDTO;
 import com.projetTransversalIsi.user.dto.UserFiltreDto;
-import com.projetTransversalIsi.user.infrastructure.UserMapper;
 import com.projetTransversalIsi.user.services.GetAllUserStaffUC;
 import com.projetTransversalIsi.user.services.SearchUserUC;
 import com.projetTransversalIsi.structure_academique.application.dto.FiliereResponseDTO;
@@ -27,9 +26,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +45,6 @@ public class AdminController {
     private final NiveauService niveauService;
     private final SpecialiteService specialiteService;
     private final ClasseService classeService;
-    private final UserMapper userMapper;
 
 
     private static String bcSanitizeLabel(String label) {
@@ -181,24 +176,9 @@ public class AdminController {
         return "AdminInterface/specialite";
     }
 
-    private String anneeScolaireActive = null;
-
-    @GetMapping("/annee-scolaire")
-    public String anneeScolaireView(Model model) {
-        model.addAttribute("anneeActive", anneeScolaireActive);
-        return "AdminInterface/AdminConfigAnnee";
-    }
-
-    @PostMapping("/annee-scolaire")
-    public String definirAnneeScolaire(
-            @RequestParam("annee") String annee,
-            RedirectAttributes redirectAttributes) {
-
-        this.anneeScolaireActive = annee;
-        redirectAttributes.addFlashAttribute("successMessage",
-                "Année scolaire définie : " + annee);
-
-        return "redirect:/admin/users";
+    @GetMapping("/config")
+    public String configView() {
+        return "AdminInterface/AdminConfig";
     }
 }
 

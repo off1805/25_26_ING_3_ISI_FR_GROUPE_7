@@ -208,8 +208,8 @@
   "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative  ps-2 pe-9 flex text-nowrap w-full cursor-pointer  text-layer-foreground  text-start text-sm  focus:outline-hidden ",
   "dropdownClasses": "mt-2 z-50 w-fit max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
   "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
-  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http:.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></span></div>",
-  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none" stroke=\"currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
 }' class="hidden">
                                                                 <option value="ALL" selected>Tout</option>
                                                                 <option value="ACTIVE">Actif</option>
@@ -469,6 +469,7 @@
                                         class="pl-9 pr-4 py-2.5 block w-full border border-layer-line rounded-lg text-sm text-layer-foreground bg-layer placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
                                 </div>
                             </div>
+                            
 
                             <!-- Rôle -->
                             <div class="space-y-1.5">
@@ -482,8 +483,8 @@
                             "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
                             "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
                             }' class="hidden" name="role" required>
-                                    <option value="TEACHER">Enseignant</option>
-                                    <option value="ADMIN">Surveillant</option>
+                                    <option value="TEACHER" selected>Enseignant</option>
+                                    <option value="SURVEILLANT">Surveillant</option>
                                     <option value="AP">Assistant pédagogique</option>
                                 </select>
                             </div>
@@ -678,6 +679,7 @@
                     </div>
 
                     <!-- Rôle -->
+                    
                     <div class="space-y-1.5">
                         <label for="edit-user-role" class="block text-sm font-medium text-layer-foreground">Rôle</label>
                         <select id="edit-user-role" name="role" required data-hs-select='{
@@ -688,7 +690,7 @@
                                 "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
                                 "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
                             }' class="hidden">
-                            <option value="TEACHER">Enseignant</option>
+                            <option value="TEACHER" selected>Enseignant</option>
                             <option value="SURVEILLANT">Surveillant</option>
                             <option value="AP">Assistant pédagogique</option>
                         </select>
@@ -736,12 +738,12 @@
             document.getElementById('permissions-count').textContent = checked + ' sélectionnée(s)';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
-        });
-        window.addEventListener('load', () => {
-            if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
-        });
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+        // });
+        // window.addEventListener('load', () => {
+        //     if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+        // });
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js').catch(err => console.log('Erreur SW:', err));

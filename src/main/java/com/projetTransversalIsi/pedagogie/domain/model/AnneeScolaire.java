@@ -12,4 +12,5 @@ public class AnneeScolaire {
     Long id;
     int anneeDebut;
     int anneeFin;
+    boolean active;
 }

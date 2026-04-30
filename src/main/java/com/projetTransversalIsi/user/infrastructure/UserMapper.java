@@ -16,5 +16,4 @@ public interface UserMapper {
     JpaUserEntity UserToJpaUserEntity(User user, @Context JpaProfileEntity jpaProfile);
 
     User JpaUseEntityToUser(JpaUserEntity jpaUser);
-
 }

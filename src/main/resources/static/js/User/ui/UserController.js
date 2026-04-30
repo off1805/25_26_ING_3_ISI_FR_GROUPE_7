@@ -56,8 +56,10 @@ export class UserController {
 
         const observer = new MutationObserver(() => {
             if (modal.classList.contains('hidden')) {
-                this.currentUserCreateInfo={};
+                this.currentUserCreateInfo = {};
                 this.currentPermissions = [];
+            } else {
+                if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
             }
         });
 
@@ -359,14 +361,17 @@ export class UserController {
         document.getElementById('edit-user-id').value = userId;
         document.getElementById('edit-user-email').value = userEmail;
 
-        // Sélectionner la bonne option rôle
+        // Sélectionner la bonne option rôle via l'API Preline
         const roleSelect = document.getElementById('edit-user-role');
         const statusSelect = document.getElementById('edit-user-status');
-        if (roleSelect) roleSelect.value = userRole;
-        if (statusSelect) statusSelect.value = userStatus;
-
-        // Ré-initialiser les hs-select pour qu'ils reflètent la valeur
-        window.HSStaticMethods.autoInit();
+        if (roleSelect) {
+            roleSelect.value = userRole;
+            HSSelect.getInstance(roleSelect)?.setValue(userRole);
+        }
+        if (statusSelect) {
+            statusSelect.value = userStatus;
+            HSSelect.getInstance(statusSelect)?.setValue(userStatus);
+        }
 
         // Ouvrir le modal
         HSOverlay.open('#hs-modal-edit-user');

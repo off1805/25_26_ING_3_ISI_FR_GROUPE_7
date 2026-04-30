@@ -18,4 +18,6 @@ public class JpaAnneeScolaireEntity {
     int anneeDebut;
     @Column(unique = true,nullable = false)
     int anneeFin;
+    @Column(nullable = false, columnDefinition = "boolean DEFAULT false")
+    boolean active = false;
 }

@@ -33,6 +33,8 @@ class HttpClient {
             headers: await this._buildHeaders(headers),
             ...(body !== undefined ? { body: JSON.stringify(body) } : {})
         };
+        console.log(options)
+        console.log(endpoint)
 
         const response = await fetch(this.baseURL + endpoint, options);
 
