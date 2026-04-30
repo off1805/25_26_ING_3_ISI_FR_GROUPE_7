@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool - Pointage de présence</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+</head>
+<body class="min-h-screen bg-background-1 flex items-center justify-center px-4 py-12">
+
+<div class="w-full max-w-md space-y-6">
+
+    <div class="text-center">
+        <div class="mx-auto size-16 rounded-3xl bg-primary/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8" class="text-primary">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M19 8v6"/>
+                <path d="M22 11h-6"/>
+            </svg>
+        </div>
+        <h1 class="mt-4 text-2xl font-black text-layer-foreground">Pointage de présence</h1>
+        <p class="mt-2 text-sm text-muted-foreground-2">Confirme ta présence en cours.</p>
+    </div>
+
+    <div id="feedback-box" class="hidden rounded-2xl border px-4 py-3 text-sm font-semibold"></div>
+
+    <div id="auto-scan-state" class="hidden rounded-[28px] border border-card-line bg-card px-6 py-8 text-center shadow-sm">
+        <div id="auto-scan-spinner" class="mx-auto size-10 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+        <p class="mt-4 text-sm font-semibold text-layer-foreground">Enregistrement de ta présence...</p>
+    </div>
+
+    <div id="pin-form-state" class="hidden rounded-[28px] border border-card-line bg-card px-6 py-8 shadow-sm">
+        <p class="text-xs font-bold uppercase tracking-widest text-muted-foreground-2">Code PIN</p>
+        <h2 class="mt-1 text-xl font-black text-layer-foreground">Saisis le code communiqué par ton enseignant</h2>
+        <p class="mt-1 text-sm text-muted-foreground-2">Récupère le code PIN affiché au tableau ou communiqué oralement.</p>
+
+        <form id="pin-form" class="mt-6 space-y-4">
+            <input id="pin-input" type="text" inputmode="numeric" maxlength="8"
+                   placeholder="Ex : 4821"
+                   autocomplete="off"
+                   class="w-full rounded-2xl border border-layer-line bg-layer px-4 py-3 text-center text-2xl font-black tracking-[0.4em] text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary" />
+            <button type="submit"
+                    class="w-full rounded-2xl bg-primary px-5 py-3 text-sm font-bold text-white transition-all hover:bg-primary/90 active:scale-95">
+                Confirmer ma présence
+            </button>
+        </form>
+    </div>
+
+    <div id="success-state" class="hidden rounded-[28px] border border-green-200 bg-green-50 px-6 py-8 text-center shadow-sm">
+        <div class="mx-auto size-14 rounded-full bg-green-500/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" class="text-green-600">
+                <path d="M20 6 9 17l-5-5"/>
+            </svg>
+        </div>
+        <h2 class="mt-4 text-xl font-black text-green-700">Présence enregistrée !</h2>
+        <p class="mt-2 text-sm text-green-600">Ta présence a bien été confirmée pour cette séance.</p>
+    </div>
+
+    <div id="not-logged-state" class="hidden rounded-[28px] border border-amber-200 bg-amber-50 px-6 py-8 text-center shadow-sm">
+        <h2 class="text-xl font-black text-amber-700">Connexion requise</h2>
+        <p class="mt-2 text-sm text-amber-600">Tu dois être connecté pour confirmer ta présence.</p>
+        <a href="/login"
+           class="mt-4 inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-bold text-white hover:bg-primary/90">
+            Se connecter
+        </a>
+    </div>
+
+</div>
+
+<script th:src="@{/js/preline.js}"></script>
+<script type="module" th:src="@{/js/StudentInterface/studentAttendance.js}"></script>
+</body>
+</html>

@@ -3,16 +3,19 @@ package com.projetTransversalIsi.common.web;
 
 import com.projetTransversalIsi.authentification.application.exceptions.InvalidTokenException;
 import com.projetTransversalIsi.common.domain.DomainException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ErrorResponse> handleDomainException(DomainException ex){
+        log.error("DomainException [400]: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(400,ex.getMessage(),System.currentTimeMillis()));
     }

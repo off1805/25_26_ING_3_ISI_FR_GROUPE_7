@@ -1,4 +1,4 @@
-const ADMIN_REDIRECTION_PAGE = "/admin/annee-scolaire";
+const ADMIN_REDIRECTION_PAGE = "/admin/users";
 const AP_REDIRECTION_PAGE = "/ap/classes";
 const TEACHER_REDIRECTION_PAGE = "/teacher/dashboard";
 const STUDENT_REDIRECTION_PAGE = "/student/dashboard";

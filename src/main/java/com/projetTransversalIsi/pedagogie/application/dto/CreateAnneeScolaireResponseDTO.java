@@ -4,7 +4,8 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreateAnneeScolaireResponseDTO(
         Long id,
-         int anneeDebut,
-         int anneeFin
+        int anneeDebut,
+        int anneeFin,
+        boolean active
 ) {
 }

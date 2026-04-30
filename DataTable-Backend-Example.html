@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataTable - Exemple Backend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <style>
+        :root {
+            --color-primary: #3b82f6;
+            --color-primary-hover: #2563eb;
+            --color-primary-focus: #1d4ed8;
+            --color-layer-foreground: #f3f4f6;
+            --color-layer: #1f2937;
+            --color-card: #111827;
+            --color-muted: #374151;
+            --color-muted-foreground-2: #9ca3af;
+            --color-muted-hover: #4b5563;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: #0f172a;
+            color: var(--color-layer-foreground);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .bg-card { background-color: var(--color-card); }
+        .border-card-line { border-color: #1f2937; }
+        .bg-layer { background-color: var(--color-layer); }
+        .border-layer-line { border-color: #374151; }
+        .text-layer-foreground { color: var(--color-layer-foreground); }
+        .text-muted-foreground-2 { color: var(--color-muted-foreground-2); }
+        .bg-muted { background-color: var(--color-muted); }
+        .hover\:bg-muted:hover { background-color: var(--color-muted-hover); }
+        .text-primary { color: var(--color-primary); }
+        .bg-primary { background-color: var(--color-primary); }
+        .hover\:bg-primary-hover:hover { background-color: var(--color-primary-hover); }
+        .bg-primary\/10 { background-color: rgba(59, 130, 246, 0.1); }
+        .focus\:ring-primary:focus { --tw-ring-color: var(--color-primary); }
+        .bg-blue-500\/10 { background-color: rgba(59, 130, 246, 0.1); }
+        .text-blue-500 { color: #3b82f6; }
+        .bg-indigo-500\/10 { background-color: rgba(99, 102, 241, 0.1); }
+        .text-indigo-500 { color: #6366f1; }
+        .bg-orange-500\/10 { background-color: rgba(249, 115, 22, 0.1); }
+        .text-orange-500 { color: #f97316; }
+        .bg-green-500 { background-color: #22c55e; }
+        .text-green-600 { color: #16a34a; }
+        .bg-red-500 { background-color: #ef4444; }
+        .text-red-500 { color: #ef4444; }
+        .hover\:bg-red-50:hover { background-color: rgba(239, 68, 68, 0.1); }
+        .bg-muted\/20 { background-color: rgba(55, 65, 81, 0.2); }
+        .bg-muted\/30 { background-color: rgba(55, 65, 81, 0.3); }
+
+        .code-block {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: #d1d5db;
+            margin: 1rem 0;
+        }
+
+        .example-section {
+            background: var(--color-layer);
+            border: 1px solid #374151;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="font-size: 2rem; margin-bottom: 1rem;">DataTable - Exemple Backend</h1>
+        <p style="color: var(--color-muted-foreground-2); margin-bottom: 3rem;">
+            Démonstration des appels backend automatiques pour recherche, filtres, tri et pagination
+        </p>
+
+        <!-- ════════════════════════════════════════
+             EXEMPLE 1: Utilisateurs avec Backend
+        ════════════════════════════════════════ -->
+        <div class="example-section">
+            <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Exemple 1: Utilisateurs (Backend)</h2>
+            <p style="color: var(--color-muted-foreground-2); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                Chaque changement (recherche, filtre, tri, pagination) déclenche un appel API au backend
+            </p>
+            <div id="users-table-backend"></div>
+        </div>
+
+        <!-- ════════════════════════════════════════
+             CODE - Exemple d'implémentation
+        ════════════════════════════════════════ -->
+        <div class="example-section">
+            <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Code JavaScript</h2>
+            
+            <div class="code-block">
+// Configuration du DataTable avec backend
+const table = new DataTable({
+  containerId: 'users-table-backend',
+  title: 'Gestion des utilisateurs',
+  isRemoteData: true,  // ← Mode backend activé
+  
+  columns: [
+    {
+      key: 'email',
+      label: 'Utilisateur',
+      type: 'avatar',
+      sortable: true,
+      getter: (item) => item.email,
+    },
+    {
+      key: 'roleName',
+      label: 'Rôle',
+      type: 'badge',
+      sortable: true,
+      filterable: true,
+      filterType: 'select',
+      filterOptions: [
+        { value: 'TEACHER', label: 'Enseignant' },
+        { value: 'SURVEILLANT', label: 'Surveillant' },
+        { value: 'AP', label: 'Assistant pédagogique' },
+      ],
+    },
+    // ... autres colonnes
+  ],
+  
+  // Callback de recherche
+  onSearch: async (query, filters, sort, page, itemsPerPage) => {
+    const response = await fetch('/api/users/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query,
+        filters,
+        sort,
+        page,
+        limit: itemsPerPage,
+      }),
+    });
+    
+    return await response.json();
+    // Format attendu: { data: [...], totalItems: 123 }
+  },
+  
+  // Callback de filtre
+  onFilter: async (filters, search, sort, page, itemsPerPage) => {
+    const response = await fetch('/api/users/filter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        filters,
+        search,
+        sort,
+        page,
+        limit: itemsPerPage,
+      }),
+    });
+    
+    return await response.json();
+  },
+  
+  // Callback de tri
+  onSort: async (sort, search, filters, page, itemsPerPage) => {
+    const response = await fetch('/api/users/sort', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sort: { key: sort.key, direction: sort.direction },
+        search,
+        filters,
+        page,
+        limit: itemsPerPage,
+      }),
+    });
+    
+    return await response.json();
+  },
+  
+  // Callback de changement de page
+  onPageChange: async (page, itemsPerPage, search, filters, sort) => {
+    const response = await fetch('/api/users/page', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page,
+        limit: itemsPerPage,
+        search,
+        filters,
+        sort,
+      }),
+    });
+    
+    return await response.json();
+  },
+  
+  // Callback de changement du nombre d'items par page
+  onItemsPerPageChange: async (itemsPerPage, page, search, filters, sort) => {
+    const response = await fetch('/api/users/items-per-page', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        limit: itemsPerPage,
+        page,
+        search,
+        filters,
+        sort,
+      }),
+    });
+    
+    return await response.json();
+  },
+  
+  // Actions locales (pas d'appel backend ici)
+  onAction: (actionType, user) => {
+    if (actionType === 'edit') {
+      console.log('Éditer:', user);
+    } else if (actionType === 'delete') {
+      console.log('Supprimer:', user);
+    }
+  },
+});
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════
+             ENDPOINTS BACKEND ATTENDUS
+        ════════════════════════════════════════ -->
+        <div class="example-section">
+            <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Endpoints Backend Attendus</h2>
+            
+            <h3 style="font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem;">POST /api/users/search</h3>
+            <p style="color: var(--color-muted-foreground-2); margin-bottom: 0.5rem;">Recherche globale dans les utilisateurs</p>
+            <div class="code-block">
+Request:
+{
+  "query": "alice",
+  "filters": { "role": "TEACHER", "status": "ACTIVE" },
+  "sort": { "key": "email", "direction": "asc" },
+  "page": 1,
+  "limit": 50
+}
+
+Response:
+{
+  "data": [
+    { "id": 1, "email": "alice@example.com", "roleName": "TEACHER", ... },
+    ...
+  ],
+  "totalItems": 123
+}
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem;">POST /api/users/filter</h3>
+            <p style="color: var(--color-muted-foreground-2); margin-bottom: 0.5rem;">Filtre avec les paramètres actuels</p>
+            <div class="code-block">
+Request:
+{
+  "filters": { "role": "TEACHER" },
+  "search": "alice",
+  "sort": null,
+  "page": 1,
+  "limit": 50
+}
+
+Response: { "data": [...], "totalItems": 45 }
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem;">POST /api/users/sort</h3>
+            <p style="color: var(--color-muted-foreground-2); margin-bottom: 0.5rem;">Tri avec les paramètres actuels</p>
+            <div class="code-block">
+Request:
+{
+  "sort": { "key": "email", "direction": "desc" },
+  "search": "",
+  "filters": {},
+  "page": 1,
+  "limit": 50
+}
+
+Response: { "data": [...], "totalItems": 150 }
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem;">POST /api/users/page</h3>
+            <p style="color: var(--color-muted-foreground-2); margin-bottom: 0.5rem;">Changement de page avec les paramètres actuels</p>
+            <div class="code-block">
+Request:
+{
+  "page": 2,
+  "limit": 50,
+  "search": "alice",
+  "filters": { "role": "TEACHER" },
+  "sort": { "key": "email", "direction": "asc" }
+}
+
+Response: { "data": [...], "totalItems": 45 }
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════════
+             AVANTAGES DE CETTE APPROCHE
+        ════════════════════════════════════════ -->
+        <div class="example-section">
+            <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">✨ Avantages</h2>
+            <ul style="list-style: none; padding: 0;">
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid #374151;">
+                    <strong>🚀 Performance:</strong> Chargement à la demande, gestion serveur de grandes collections
+                </li>
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid #374151;">
+                    <strong>🔍 Recherche serveur:</strong> Recherche sur la base de données complète, pas juste les données visibles
+                </li>
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid #374151;">
+                    <strong>📊 Tri serveur:</strong> Tri efficace sur le backend, optimisé par les index DB
+                </li>
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid #374151;">
+                    <strong>⚡ Pagination:</strong> Ne charge que les données nécessaires pour la page actuelle
+                </li>
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid #374151;">
+                    <strong>🔄 Cohérence:</strong> Les données sont toujours fraîches, directement du serveur
+                </li>
+                <li style="padding: 0.75rem 0;">
+                    <strong>🛠️ Flexible:</strong> Adaptez la logique backend selon vos besoins métier
+                </li>
+            </ul>
+        </div>
+
+        <!-- ════════════════════════════════════════
+             CAS D'USAGE
+        ════════════════════════════════════════ -->
+        <div class="example-section">
+            <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">📋 Cas d'Usage</h2>
+            
+            <h3 style="font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem;">Données volumineuses</h3>
+            <p style="color: var(--color-muted-foreground-2);">
+                Millions d'enregistrements: isRemoteData: true pour ne charger que ce qui est visible
+            </p>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem;">Données en temps réel</h3>
+            <p style="color: var(--color-muted-foreground-2);">
+                Les données changent souvent: le backend fournit toujours les données fraîches
+            </p>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem;">Permissions complexes</h3>
+            <p style="color: var(--color-muted-foreground-2);">
+                Les données filtrées dépendent des permissions de l'utilisateur: le serveur gère la logique
+            </p>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem;">Calculs complexes</h3>
+            <p style="color: var(--color-muted-foreground-2);">
+                Les résultats nécessitent des calculs serveur: onSort/onFilter exécute la logique métier
+            </p>
+        </div>
+    </div>
+
+    <script src="DataTable.js"></script>
+    <script>
+        // Simulation d'une API - remplacer par vos endpoints réels
+        const mockUsers = [
+            { id: 1, email: 'alice.dupont@example.com', roleName: 'TEACHER', status: 'ACTIVE' },
+            { id: 2, email: 'bob.martin@example.com', roleName: 'SURVEILLANT', status: 'ACTIVE' },
+            { id: 3, email: 'carol.durand@example.com', roleName: 'AP', status: 'BLOCKED' },
+            { id: 4, email: 'david.bernard@example.com', roleName: 'TEACHER', status: 'ACTIVE' },
+            { id: 5, email: 'emma.petit@example.com', roleName: 'SURVEILLANT', status: 'ACTIVE' },
+            { id: 6, email: 'frank.michel@example.com', roleName: 'AP', status: 'BLOCKED' },
+            { id: 7, email: 'grace.thomas@example.com', roleName: 'TEACHER', status: 'ACTIVE' },
+            { id: 8, email: 'henry.robert@example.com', roleName: 'TEACHER', status: 'ACTIVE' },
+        ];
+
+        // Fonction mock pour simuler une API
+        async function mockFetch(path, options) {
+            const body = JSON.parse(options.body);
+            let filtered = [...mockUsers];
+
+            // Appliquer la recherche
+            if (body.search && body.search.trim()) {
+                const query = body.search.toLowerCase();
+                filtered = filtered.filter(u => u.email.toLowerCase().includes(query));
+            }
+
+            // Appliquer les filtres
+            if (body.filters?.role && body.filters.role !== 'ALL') {
+                filtered = filtered.filter(u => u.roleName === body.filters.role);
+            }
+            if (body.filters?.status && body.filters.status !== 'ALL') {
+                filtered = filtered.filter(u => u.status === body.filters.status);
+            }
+
+            // Appliquer le tri
+            if (body.sort) {
+                filtered.sort((a, b) => {
+                    const aVal = a[body.sort.key];
+                    const bVal = b[body.sort.key];
+                    const cmp = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+                    return body.sort.direction === 'asc' ? cmp : -cmp;
+                });
+            }
+
+            const totalItems = filtered.length;
+            const start = (body.page - 1) * body.limit;
+            const data = filtered.slice(start, start + body.limit);
+
+            // Simuler un délai réseau
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            return {
+                ok: true,
+                json: async () => ({ data, totalItems }),
+            };
+        }
+
+        // Redéfinir fetch pour les tests
+        const originalFetch = window.fetch;
+        window.fetch = async (path, options) => {
+            if (path.includes('/api/users/')) {
+                return mockFetch(path, options);
+            }
+            return originalFetch(path, options);
+        };
+
+        // Initialiser le DataTable
+        const table = new DataTable({
+            containerId: 'users-table-backend',
+            title: 'Gestion des utilisateurs',
+            description: 'Chaque changement déclenche un appel backend. Ouvrez la console pour voir les logs.',
+            
+            isRemoteData: true,  // ← Mode backend
+            data: [],  // Sera rempli par les callbacks
+            searchableFields: ['email'],
+            itemsPerPage: 3,  // Petit nombre pour voir la pagination
+            
+            columns: [
+                {
+                    key: 'email',
+                    label: 'Utilisateur',
+                    type: 'avatar',
+                    sortable: true,
+                    getter: (item) => item.email,
+                },
+                {
+                    key: 'roleName',
+                    label: 'Rôle',
+                    type: 'badge',
+                    sortable: true,
+                    filterable: true,
+                    filterType: 'select',
+                    filterOptions: [
+                        { value: 'TEACHER', label: 'Enseignant' },
+                        { value: 'SURVEILLANT', label: 'Surveillant' },
+                        { value: 'AP', label: 'Assistant pédagogique' },
+                    ],
+                },
+                {
+                    key: 'status',
+                    label: 'Statut',
+                    type: 'status',
+                    sortable: true,
+                    filterable: true,
+                    filterType: 'select',
+                    filterOptions: [
+                        { value: 'ACTIVE', label: 'Actif' },
+                        { value: 'BLOCKED', label: 'Bloqué' },
+                    ],
+                },
+            ],
+            
+            actions: [
+                {
+                    type: 'edit',
+                    label: 'Modifier',
+                    icon: 'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7',
+                    className: 'text-layer-foreground hover:bg-muted',
+                },
+                {
+                    type: 'delete',
+                    label: 'Supprimer',
+                    icon: 'M3 6h18',
+                    className: 'text-red-500 hover:bg-red-50',
+                },
+            ],
+            
+            // ════════════════════════════════════
+            // CALLBACKS BACKEND
+            // ════════════════════════════════════
+            onSearch: async (query, filters, sort, page, itemsPerPage) => {
+                console.log('🔍 Recherche:', { query, filters, sort, page, itemsPerPage });
+                
+                const response = await fetch('/api/users/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, filters, sort, page, limit: itemsPerPage }),
+                });
+                
+                const result = await response.json();
+                console.log('📊 Résultat:', result);
+                return result;
+            },
+            
+            onFilter: async (filters, search, sort, page, itemsPerPage) => {
+                console.log('🔽 Filtre:', { filters, search, sort, page, itemsPerPage });
+                
+                const response = await fetch('/api/users/filter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filters, search, sort, page, limit: itemsPerPage }),
+                });
+                
+                return await response.json();
+            },
+            
+            onSort: async (sort, search, filters, page, itemsPerPage) => {
+                console.log('↕️ Tri:', { sort, search, filters, page, itemsPerPage });
+                
+                const response = await fetch('/api/users/sort', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sort, search, filters, page, limit: itemsPerPage }),
+                });
+                
+                return await response.json();
+            },
+            
+            onPageChange: async (page, itemsPerPage, search, filters, sort) => {
+                console.log('📄 Page:', { page, itemsPerPage, search, filters, sort });
+                
+                const response = await fetch('/api/users/page', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ page, limit: itemsPerPage, search, filters, sort }),
+                });
+                
+                return await response.json();
+            },
+            
+            onItemsPerPageChange: async (itemsPerPage, page, search, filters, sort) => {
+                console.log('📦 Items/page:', { itemsPerPage, page, search, filters, sort });
+                
+                const response = await fetch('/api/users/items-per-page', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ limit: itemsPerPage, page, search, filters, sort }),
+                });
+                
+                return await response.json();
+            },
+            
+            onAction: (actionType, user) => {
+                console.log(`Action ${actionType}:`, user);
+            },
+        });
+
+        // Charger les données initiales
+        table.config.onSearch('', {}, null, 1, 3).then(result => {
+            table.config.data = result.data;
+            table.state.totalItems = result.totalItems;
+            table.render();
+        });
+    </script>
+</body>
+</html>
