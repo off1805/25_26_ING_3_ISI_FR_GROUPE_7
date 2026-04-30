@@ -1,6 +1,7 @@
 package com.projetTransversalIsi.user.services;
 
 
+import com.projetTransversalIsi.common.application.services.EmailService;
 import com.projetTransversalIsi.user.profil.services.InitProfile;
 import com.projetTransversalIsi.user.profil.services.ProfileSelectionStrategy;
 import com.projetTransversalIsi.user.profil.domain.Profile;
@@ -29,6 +30,7 @@ public class CreateUserUCImpl implements CreateUserUC {
     private final FindRoleByIdAccessPort getRoleById;
     private final FindAllPermissionByIdsAccessPort getAllPermById;
     private final PasswordHasherAC passwordHasher;
+    private final EmailService emailService;
 
     @Transactional
     @Override
@@ -55,7 +57,13 @@ public class CreateUserUCImpl implements CreateUserUC {
         user.setPassword(hashPassword);
         user.setProfile(newProfile);
         user.setPermissions(permissions);
-        return userRepo.registerNewUser(user);
+        User savedUser = userRepo.registerNewUser(user);
 
+        // Send emails
+        String fullName = newProfile.getPrenom() + " " + newProfile.getNom();
+        emailService.sendInitPassword(savedUser.getEmail(), "password", fullName);
+        emailService.sendConfirmationEmail(savedUser.getEmail(), fullName);
+
+        return savedUser;
     }
 }

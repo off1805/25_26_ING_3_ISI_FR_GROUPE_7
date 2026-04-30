@@ -274,6 +274,70 @@
                         </a>
                     </li>
 
+                    <!-- STUDENT -->
+                    <li data-role="STUDENT">
+                        <a th:href="@{/student/dashboard}"
+                           th:classappend="${activePage == 'dashboard'} ?
+                           'bg-primary text-white hover:bg-primary/90' :
+                           'text-sidebar-nav-foreground hover:bg-sidebar-nav-hover focus:bg-sidebar-nav-focus'"
+                           class="group w-full flex items-center gap-x-3 py-2 px-2.5 text-sm font-medium rounded-xl
+                                  focus:outline-none transition-colors hs-overlay-minified:justify-center hs-overlay-minified:w-fit">
+                            <span th:classappend="${activePage == 'dashboard'} ? 'bg-white/20' : 'bg-muted group-hover:bg-primary/10'"
+                                  class="size-8 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <rect x="3" y="3" width="7" height="7" rx="2"/>
+                                    <rect x="14" y="3" width="7" height="4" rx="2"/>
+                                    <rect x="14" y="10" width="7" height="11" rx="2"/>
+                                    <rect x="3" y="13" width="7" height="8" rx="2"/>
+                                </svg>
+                            </span>
+                            <span class="hs-overlay-minified:hidden">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li data-role="STUDENT">
+                        <a th:href="@{/student/schedule}"
+                           th:classappend="${activePage == 'schedule'} ?
+                           'bg-primary text-white hover:bg-primary/90' :
+                           'text-sidebar-nav-foreground hover:bg-sidebar-nav-hover focus:bg-sidebar-nav-focus'"
+                           class="group w-full flex items-center gap-x-3 py-2 px-2.5 text-sm font-medium rounded-xl
+                                  focus:outline-none transition-colors hs-overlay-minified:justify-center hs-overlay-minified:w-fit">
+                            <span th:classappend="${activePage == 'schedule'} ? 'bg-white/20' : 'bg-muted group-hover:bg-primary/10'"
+                                  class="size-8 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="17" rx="2"/>
+                                    <path d="M8 2v4"/>
+                                    <path d="M16 2v4"/>
+                                    <path d="M3 10h18"/>
+                                </svg>
+                            </span>
+                            <span class="hs-overlay-minified:hidden">Emploi du temps</span>
+                        </a>
+                    </li>
+
+                    <li data-role="STUDENT">
+                        <a th:href="@{/student/absences}"
+                           th:classappend="${activePage == 'absences'} ?
+                           'bg-primary text-white hover:bg-primary/90' :
+                           'text-sidebar-nav-foreground hover:bg-sidebar-nav-hover focus:bg-sidebar-nav-focus'"
+                           class="group w-full flex items-center gap-x-3 py-2 px-2.5 text-sm font-medium rounded-xl
+                                  focus:outline-none transition-colors hs-overlay-minified:justify-center hs-overlay-minified:w-fit">
+                            <span th:classappend="${activePage == 'absences'} ? 'bg-white/20' : 'bg-muted group-hover:bg-primary/10'"
+                                  class="size-8 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <path d="M9 12h6m-6 4h6m5-9a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </span>
+                            <span class="hs-overlay-minified:hidden">Absences</span>
+                        </a>
+                    </li>
+
                 </ul>
             </div>
         </nav>

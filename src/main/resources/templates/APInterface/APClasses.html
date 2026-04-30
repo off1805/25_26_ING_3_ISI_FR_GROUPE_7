@@ -21,60 +21,29 @@
         <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
-            <header class="flex-none flex flex-row justify-between lg:justify-start lg:flex-nowrap py-2 lg:py-1 bg-navbar relative w-full lg:items-center px-4 md:px-6 lg:px-8 mx-auto border-b border-navbar-line">
+            <header class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
                 <div class="flex items-center gap-3">
-                    <button type="button"
-                        class="lg:hidden size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover"
-                        data-hs-overlay="#hs-app-sidebar">
-                        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <line x1="3" x2="21" y1="6" y2="6" />
-                            <line x1="3" x2="21" y1="12" y2="12" />
-                            <line x1="3" x2="21" y1="18" y2="18" />
-                        </svg>
+                    <button type="button" class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors" data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                     </button>
                     <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
-                        <span class="text-muted-foreground-2">AP Panel</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="m9 18 6-6-6-6" />
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+                        <span>AP Panel</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6l-6 6"/></svg>
                         <span class="font-semibold text-layer-foreground">Classes</span>
                     </nav>
                 </div>
                 <div class="flex items-center gap-2">
-                    <div class="relative hidden md:block">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.34-4.34" />
-                        </svg>
-                        <input type="text" placeholder="Recherche globale..."
-                            class="pl-9 pr-4 py-1.5 text-sm bg-layer border border-layer-line rounded-lg w-52 focus:outline-none focus:ring-1 focus:ring-primary text-layer-foreground placeholder:text-muted-foreground-2" />
-                    </div>
-                    <button type="button" data-theme-toggle
-                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
-                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
-                        </svg>
-                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17"
-                            height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                            <circle cx="12" cy="12" r="4" />
-                            <path
-                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-                        </svg>
+                    <button type="button" data-theme-toggle class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/></svg>
+                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
                     </button>
-                    <button type="button"
-                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.75">
-                            <path
-                                d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
-                            <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
-                        </svg>
+                    <button type="button" class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg>
+                        <span class="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-navbar"></span>
                     </button>
+                    <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm"
+                         th:text="${ap != null and ap.profile != null and ap.profile.nom != null ? #strings.toUpperCase(#strings.substring(ap.profile.nom, 0, 1)) : 'A'}">A</div>
                 </div>
             </header>
 
