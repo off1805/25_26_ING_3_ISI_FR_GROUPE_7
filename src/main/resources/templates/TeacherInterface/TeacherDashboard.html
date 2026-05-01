@@ -36,7 +36,7 @@
                     <span class="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-navbar"></span>
                 </button>
                 <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm"
-                     th:text="${teacher != null and teacher.profile != null and teacher.profile.prenom != null ? #strings.toUpperCase(#strings.substring(teacher.profile.prenom, 0, 1)) : 'P'}">P</div>
+                     th:text="${teacher != null and teacher.profile != null and teacher.profile.nom != null ? #strings.toUpperCase(#strings.substring(teacher.profile.nom, 0, 1)) : 'T'}">T</div>
             </div>
         </header>
 
