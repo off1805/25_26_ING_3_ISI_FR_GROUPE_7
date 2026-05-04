@@ -29,6 +29,13 @@ public class StudentControllerWeb {
         return "StudentInterface/StudentSchedule";
     }
 
+    @GetMapping("/attendance")
+    public String attendanceView(Model model) {
+        UserDetailsResponseDTO student = getFakeStudent();
+        model.addAttribute("student", student);
+        return "StudentInterface/StudentAttendance";
+    }
+
     @GetMapping("/absences")
     public String absencesView(Model model) {
         UserDetailsResponseDTO student = getFakeStudent();

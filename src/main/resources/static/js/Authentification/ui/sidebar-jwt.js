@@ -11,6 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn('Aucun token JWT trouvé');
         showDefaultSidebar();
     }
+
+    const logoutBtn = document.getElementById('sidebar-logout-btn');
+    if (logoutBtn) logoutBtn.addEventListener('click', performLogout);
 });
 
 /**
@@ -142,4 +145,36 @@ function showDefaultSidebar() {
 
     const nameTarget = document.getElementById("sidebar-display-name");
     if (nameTarget) nameTarget.textContent = "Utilisateur";
+}
+
+/**
+ * Déconnecte l'utilisateur : appelle POST /logout, vide le localStorage, redirige vers auth/login
+ */
+function performLogout() {
+    const refreshToken = getRefreshTokenFromStorage();
+
+    const finalize = () => {
+        // Vider uniquement le localStorage
+        localStorage.clear();
+        window.location.href = '/auth/login';
+    };
+
+    if (refreshToken) {
+        fetch('/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken })
+        }).catch(() => {}).finally(finalize);
+    } else {
+        finalize();
+    }
+}
+
+function getRefreshTokenFromStorage() {
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'refreshToken') return decodeURIComponent(value || '');
+    }
+    return localStorage.getItem('refreshToken');
 }

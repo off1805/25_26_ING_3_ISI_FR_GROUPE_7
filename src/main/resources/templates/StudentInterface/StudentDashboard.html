@@ -124,58 +124,80 @@
                 </div>
 
                 <!-- ═══ ACTIONS RAPIDES ═══ -->
-                <div class="mt-4 sm:mt-6">
-                    <h2 class="text-base sm:text-lg font-bold text-layer-foreground mb-3 sm:mb-4">Actions rapides</h2>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 items-start pb-8">
+                <div class="mt-4 sm:mt-6 pb-8">
+                    <h2 class="text-base sm:text-lg font-bold text-layer-foreground mb-3">Actions rapides</h2>
+
+                    <!-- Groupe présence -->
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-muted-foreground-2 mb-2">Marquer présent</p>
+                    <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
 
                         <!-- QR Code -->
                         <button type="button" data-hs-overlay="#hs-modal-qr"
-                                class="group flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-5 bg-card border border-card-line rounded-xl sm:rounded-2xl hover:border-primary/40 hover:shadow-md transition-all active:scale-95">
-                            <div class="size-10 sm:size-12 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary sm:w-[22px] sm:h-[22px]"><path d="M3 3h6v6H3z"/><path d="M15 3h6v6h-6z"/><path d="M3 15h6v6H3z"/><path d="M7 7h0"/><path d="M19 7h0"/><path d="M7 19h0"/><path d="M15 15h2v2h-2z"/><path d="M19 15h2"/><path d="M15 19v2"/><path d="M19 19h2v2h-2z"/></svg>
+                                class="group flex flex-col items-center gap-2 p-3 sm:p-4 bg-primary/5 border border-primary/20 rounded-xl sm:rounded-2xl hover:bg-primary/10 hover:border-primary/40 hover:shadow-sm transition-all active:scale-95">
+                            <div class="size-9 sm:size-11 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary sm:w-[20px] sm:h-[20px]"><path d="M3 3h6v6H3z"/><path d="M15 3h6v6h-6z"/><path d="M3 15h6v6H3z"/><path d="M7 7h0"/><path d="M19 7h0"/><path d="M7 19h0"/><path d="M15 15h2v2h-2z"/><path d="M19 15h2"/><path d="M15 19v2"/><path d="M19 19h2v2h-2z"/></svg>
                             </div>
                             <div class="text-center">
-                                <p class="text-xs sm:text-sm font-bold text-layer-foreground">Scanner QR</p>
-                                <p class="text-[10px] sm:text-xs text-muted-foreground-2 mt-0.5">Marquer présent</p>
+                                <p class="text-xs font-bold text-primary">Scanner QR</p>
+                                <p class="text-[9px] sm:text-[10px] text-primary/60 mt-0.5 hidden sm:block">Ouvrir caméra</p>
                             </div>
                         </button>
 
                         <!-- PIN Code -->
                         <button type="button" data-hs-overlay="#hs-modal-pin"
-                                class="group flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-5 bg-card border border-card-line rounded-xl sm:rounded-2xl hover:border-blue-400/40 hover:shadow-md transition-all active:scale-95">
-                            <div class="size-10 sm:size-12 rounded-lg sm:rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/15 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-blue-500 sm:w-[22px] sm:h-[22px]"><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M10 11l2 2l4-4"/><path d="M3 5h4"/><path d="M7 3v2"/></svg>
+                                class="group flex flex-col items-center gap-2 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl sm:rounded-2xl hover:bg-blue-100/70 hover:border-blue-300 hover:shadow-sm transition-all active:scale-95">
+                            <div class="size-9 sm:size-11 rounded-lg sm:rounded-xl bg-blue-100 flex items-center justify-center group-hover:bg-blue-200/70 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-blue-600 sm:w-[20px] sm:h-[20px]"><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M10 11l2 2l4-4"/><path d="M3 5h4"/><path d="M7 3v2"/></svg>
                             </div>
                             <div class="text-center">
-                                <p class="text-xs sm:text-sm font-bold text-layer-foreground">Code PIN</p>
-                                <p class="text-[10px] sm:text-xs text-muted-foreground-2 mt-0.5">Saisir le code</p>
+                                <p class="text-xs font-bold text-blue-700">Code PIN</p>
+                                <p class="text-[9px] sm:text-[10px] text-blue-500 mt-0.5 hidden sm:block">Saisir le code</p>
                             </div>
                         </button>
 
-                        <!-- Emploi du temps -->
-                        <a th:href="@{/student/schedule}"
-                           class="group flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-5 bg-card border border-card-line rounded-xl sm:rounded-2xl hover:border-green-400/40 hover:shadow-md transition-all active:scale-95">
-                            <div class="size-10 sm:size-12 rounded-lg sm:rounded-xl bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/15 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-green-600 sm:w-[22px] sm:h-[22px]"><path d="M8 7V3"/><path d="M16 7V3"/><path d="M3 11h18"/><rect x="3" y="5" width="18" height="16" rx="2"/></svg>
+                        <!-- Présence page -->
+                        <a th:href="@{/student/attendance}"
+                           class="group flex flex-col items-center gap-2 p-3 sm:p-4 bg-violet-50 border border-violet-200 rounded-xl sm:rounded-2xl hover:bg-violet-100/70 hover:border-violet-300 hover:shadow-sm transition-all active:scale-95">
+                            <div class="size-9 sm:size-11 rounded-lg sm:rounded-xl bg-violet-100 flex items-center justify-center group-hover:bg-violet-200/70 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-violet-600 sm:w-[20px] sm:h-[20px]"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
                             </div>
                             <div class="text-center">
-                                <p class="text-xs sm:text-sm font-bold text-layer-foreground">Mon EDT</p>
-                                <p class="text-[10px] sm:text-xs text-muted-foreground-2 mt-0.5">Voir la semaine</p>
+                                <p class="text-xs font-bold text-violet-700">Présence</p>
+                                <p class="text-[9px] sm:text-[10px] text-violet-500 mt-0.5 hidden sm:block">Page dédiée</p>
                             </div>
+                        </a>
+                    </div>
+
+                    <!-- Groupe navigation -->
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-muted-foreground-2 mb-2">Navigation</p>
+                    <div class="grid grid-cols-2 gap-2 sm:gap-3">
+
+                        <!-- Emploi du temps -->
+                        <a th:href="@{/student/schedule}"
+                           class="group flex items-center gap-3 p-3 sm:p-4 bg-card border border-card-line rounded-xl sm:rounded-2xl hover:border-green-300 hover:shadow-sm transition-all active:scale-95">
+                            <div class="size-9 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0 group-hover:bg-green-500/20 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-green-600"><path d="M8 7V3"/><path d="M16 7V3"/><path d="M3 11h18"/><rect x="3" y="5" width="18" height="16" rx="2"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-layer-foreground">Mon EDT</p>
+                                <p class="text-[10px] sm:text-xs text-muted-foreground-2 truncate">Voir la semaine</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 ml-auto shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"><path d="m9 18 6-6-6-6"/></svg>
                         </a>
 
                         <!-- Absences -->
                         <a th:href="@{/student/absences}"
-                           class="group flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-5 bg-card border border-card-line rounded-xl sm:rounded-2xl hover:border-orange-400/40 hover:shadow-md transition-all active:scale-95">
-                            <div class="size-10 sm:size-12 rounded-lg sm:rounded-xl bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500/15 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-orange-500 sm:w-[22px] sm:h-[22px]"><path d="M9 12h6m-6 4h6m5-9a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                           class="group flex items-center gap-3 p-3 sm:p-4 bg-card border border-card-line rounded-xl sm:rounded-2xl hover:border-orange-300 hover:shadow-sm transition-all active:scale-95">
+                            <div class="size-9 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0 group-hover:bg-orange-500/20 transition-colors relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-orange-500"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+                                <span class="absolute -top-1 -right-1 size-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-black text-white leading-none">2</span>
                             </div>
-                            <div class="text-center">
-                                <p class="text-xs sm:text-sm font-bold text-layer-foreground">Absences</p>
-                                <p class="text-[10px] sm:text-xs text-muted-foreground-2 mt-0.5">Justifier</p>
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-layer-foreground">Absences</p>
+                                <p class="text-[10px] sm:text-xs text-orange-500 font-semibold truncate">2 en attente</p>
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 ml-auto shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"><path d="m9 18 6-6-6-6"/></svg>
                         </a>
-
                     </div>
                 </div>
 

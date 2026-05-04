@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>KemOSchool — Mon emploi du temps</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}"/>
+</head>
+<body class="h-screen bg-background-1">
+<section class="flex flex-row h-full">
+
+    <!-- SIDEBAR -->
+    <section th:replace="~{common/AppSidebar :: app-sidebar('schedule', null)}"></section>
+    <section class="flex-1 flex flex-col overflow-hidden">
+
+        <!-- NAVBAR -->
+        <header class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
+            <div class="flex items-center gap-3">
+                <button type="button"
+                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
+                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+                    <span>Student Panel</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6l-6 6"/></svg>
+                    <span class="font-semibold text-layer-foreground">Emploi du temps</span>
+                </nav>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" data-theme-toggle
+                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/></svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                </button>
+                <button type="button" class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg>
+                    <span class="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-navbar"></span>
+                </button>
+                <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm"
+                     th:text="${student != null and student.profile != null and student.profile.nom != null ? #strings.toUpperCase(#strings.substring(student.profile.nom, 0, 1)) : 'S'}">S</div>
+            </div>
+        </header>
+
+        <!-- CONTENU -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- BARRE NAVIGATION SEMAINE -->
+            <div class="flex-none flex items-center gap-3 px-4 sm:px-5 py-2.5 bg-card border-b border-card-line">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-sm font-bold text-layer-foreground">Mon emploi du temps</h1>
+                    <p class="text-xs text-muted-foreground-2 truncate" id="week-label">—</p>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                    <button type="button" id="prev-week"
+                            class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button type="button" id="today-btn"
+                            class="px-3 h-9 text-xs font-bold rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                        Aujourd'hui
+                    </button>
+                    <button type="button" id="next-week"
+                            class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PILLS MOBILES -->
+            <div class="sm:hidden flex-none overflow-x-auto no-scrollbar border-b border-card-line">
+                <div class="flex gap-1.5 px-4 py-2.5 min-w-max" id="day-pills"></div>
+            </div>
+
+            <!-- GRILLE SEMAINE -->
+            <div class="flex-1 overflow-auto no-scrollbar">
+                <div class="min-w-[500px] relative" id="schedule-grid">
+
+                    <!-- EN-TÊTE JOURS -->
+                    <div class="sticky top-0 z-20 flex bg-card border-b border-card-line">
+                        <div class="w-12 sm:w-14 flex-none border-r border-card-line"></div>
+                        <div id="days-header" class="flex flex-1"></div>
+                    </div>
+
+                    <!-- SLOTS HEURES + COLONNES JOURS -->
+                    <div class="flex">
+                        <div class="w-12 sm:w-14 flex-none border-r border-card-line">
+                            <div id="time-slots" class="relative"></div>
+                        </div>
+                        <div class="flex flex-1" id="day-columns"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LÉGENDE -->
+            <div class="flex-none bg-card border-t border-card-line px-4 sm:px-5 py-2.5 overflow-x-auto no-scrollbar">
+                <div class="flex items-center gap-4 min-w-max" id="legend"></div>
+            </div>
+
+        </div>
+    </section>
+</section>
+
+<!-- MODAL DÉTAIL COURS -->
+<div id="hs-modal-course"
+     class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
+     role="dialog" tabindex="-1">
+    <div class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all max-w-sm sm:w-full m-3 mx-auto min-h-[calc(100%-3.5rem)] flex items-end sm:items-center">
+        <div class="pointer-events-auto w-full bg-card border border-card-line rounded-2xl shadow-2xl overflow-hidden">
+
+            <div class="flex items-center justify-between px-5 pt-5 pb-4 border-b border-card-line">
+                <div class="flex items-center gap-3">
+                    <div id="modal-color-dot" class="size-3 rounded-full bg-primary shrink-0"></div>
+                    <p id="modal-subject" class="text-base font-bold text-layer-foreground">—</p>
+                </div>
+                <button type="button" class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted" data-hs-overlay="#hs-modal-course">
+                    <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="px-5 py-4 space-y-3">
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span class="text-sm text-layer-foreground font-medium" id="modal-time">—</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span class="text-sm text-layer-foreground font-medium" id="modal-room">—</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span class="text-sm text-layer-foreground font-medium" id="modal-teacher">—</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    <span class="text-sm text-layer-foreground font-medium" id="modal-type">—</span>
+                </div>
+            </div>
+
+            <div class="px-5 pb-5">
+                <button type="button"
+                        class="w-full py-2.5 text-sm font-semibold rounded-xl bg-muted text-layer-foreground hover:bg-muted/80 transition-colors"
+                        data-hs-overlay="#hs-modal-course">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/preline.js}"></script>
+<script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+<script>
+    const HOURS_START  = 7;
+    const HOURS_END    = 20;
+    const SLOT_H_PX    = window.innerWidth < 640 ? 60 : 70;
+    const DAYS_FR      = ['Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const DAYS_FULL    = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    const MONTHS_FR    = ['jan','fév','mar','avr','mai','juin','juil','aoû','sep','oct','nov','déc'];
+    const MONTHS_FULL  = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+    // Données de démonstration — à remplacer par injection Thymeleaf depuis le backend
+    // Format : { day: 0-5 (lun-sam), start: heure, end: heure, subject, room, teacher, type, color }
+    const COURSES = [
+        { day:0, start:8,  end:10, subject:'Algorithmique',    room:'Salle A12', teacher:'M. Diallo',  type:'Cours magistral', color:'#7C3AED' },
+        { day:1, start:10, end:12, subject:'Réseaux',          room:'Labo B03',  teacher:'Mme Sow',    type:'TP',              color:'#0891b2' },
+        { day:2, start:8,  end:10, subject:'Bases de données', room:'Salle C05', teacher:'M. Ndiaye',  type:'Cours magistral', color:'#059669' },
+        { day:2, start:14, end:16, subject:'Algorithmique',    room:'Salle A12', teacher:'M. Diallo',  type:'TD',              color:'#7C3AED' },
+        { day:3, start:9,  end:11, subject:'Systèmes',         room:'Amphi D',   teacher:'Mme Sow',    type:'Cours magistral', color:'#d97706' },
+        { day:4, start:13, end:15, subject:'Réseaux',          room:'Labo B03',  teacher:'Mme Sow',    type:'TP',              color:'#0891b2' },
+    ];
+
+    const SUBJECTS_LEGEND = [...new Map(COURSES.map(c => [c.subject, { subject: c.subject, color: c.color }])).values()];
+
+    let weekOffset = 0;
+
+    function getMondayOfWeek(offset) {
+        const now  = new Date();
+        const diff = now.getDay() === 0 ? -6 : 1 - now.getDay();
+        const mon  = new Date(now);
+        mon.setDate(now.getDate() + diff + offset * 7);
+        mon.setHours(0, 0, 0, 0);
+        return mon;
+    }
+
+    function getTodayDayIndex() {
+        const d = new Date().getDay();
+        return d === 0 ? -1 : d - 1;
+    }
+
+    function render() {
+        const monday   = getMondayOfWeek(weekOffset);
+        const todayIdx = weekOffset === 0 ? getTodayDayIndex() : -1;
+        const totalH   = (HOURS_END - HOURS_START) * SLOT_H_PX;
+
+        const saturday = new Date(monday);
+        saturday.setDate(monday.getDate() + 5);
+        document.getElementById('week-label').textContent =
+            'Semaine du ' + monday.getDate() + ' ' + MONTHS_FULL[monday.getMonth()] +
+            ' au ' + saturday.getDate() + ' ' + MONTHS_FULL[saturday.getMonth()];
+
+        // Slots heures
+        const slotsEl = document.getElementById('time-slots');
+        slotsEl.innerHTML = '';
+        slotsEl.style.height = totalH + 'px';
+        for (let h = HOURS_START; h < HOURS_END; h++) {
+            const div = document.createElement('div');
+            div.className = 'h-[60px] sm:h-[70px] border-b border-card-line flex items-start justify-end pr-2 pt-0.5';
+            div.innerHTML = '<span class="text-[10px] sm:text-xs text-muted-foreground-2 font-mono">' + h + 'h</span>';
+            slotsEl.appendChild(div);
+        }
+
+        const headerEl = document.getElementById('days-header');
+        const colsEl   = document.getElementById('day-columns');
+        const pillsEl  = document.getElementById('day-pills');
+        headerEl.innerHTML = '';
+        colsEl.innerHTML   = '';
+        pillsEl.innerHTML  = '';
+
+        for (let d = 0; d < 6; d++) {
+            const date    = new Date(monday);
+            date.setDate(monday.getDate() + d);
+            const isToday = d === todayIdx;
+
+            // En-tête jour
+            const th = document.createElement('div');
+            th.className = 'flex-1 border-r border-card-line py-2 text-center ' + (isToday ? 'bg-primary/5' : '');
+            th.innerHTML =
+                '<p class="text-[10px] sm:text-xs font-bold uppercase tracking-widest ' + (isToday ? 'text-primary' : 'text-muted-foreground-2') + '">' + DAYS_FR[d] + '</p>' +
+                '<p class="text-sm font-bold mt-0.5 ' + (isToday ? 'text-primary' : 'text-layer-foreground') + '">' + date.getDate() + '</p>';
+            headerEl.appendChild(th);
+
+            // Colonne jour
+            const col = document.createElement('div');
+            col.className = 'flex-1 border-r border-card-line relative';
+            col.style.height = totalH + 'px';
+            if (isToday) col.style.backgroundColor = 'rgb(from var(--color-primary, #7C3AED) r g b / 0.04)';
+
+            for (let h = 0; h < (HOURS_END - HOURS_START); h++) {
+                const line = document.createElement('div');
+                line.className = 'absolute w-full border-b border-card-line/50';
+                line.style.top = h * SLOT_H_PX + 'px';
+                col.appendChild(line);
+            }
+
+            COURSES.filter(c => c.day === d).forEach(course => {
+                const top    = (course.start - HOURS_START) * SLOT_H_PX;
+                const height = (course.end - course.start) * SLOT_H_PX;
+                const block  = document.createElement('div');
+                block.className = 'absolute left-0.5 right-0.5 rounded-xl p-1.5 cursor-pointer transition-all duration-150 active:scale-95 overflow-hidden';
+                block.style.top             = (top + 2) + 'px';
+                block.style.height          = (height - 4) + 'px';
+                block.style.backgroundColor = course.color + '18';
+                block.style.border          = '1.5px solid ' + course.color + '44';
+                block.style.borderLeft      = '3px solid ' + course.color;
+
+                const title = document.createElement('p');
+                title.className   = 'font-bold text-xs leading-tight truncate';
+                title.style.color = course.color;
+                title.textContent = course.subject;
+                block.appendChild(title);
+
+                const teacher = document.createElement('p');
+                teacher.className   = 'text-[10px] mt-0.5 truncate';
+                teacher.style.color = course.color + '99';
+                teacher.textContent = course.teacher;
+                block.appendChild(teacher);
+
+                if (height > 90) {
+                    const time = document.createElement('p');
+                    time.className   = 'text-[10px] mt-0.5';
+                    time.style.color = course.color + '80';
+                    time.textContent = course.start + 'h–' + course.end + 'h · ' + course.room;
+                    block.appendChild(time);
+                }
+
+                block.addEventListener('click', () => openModal(course, date));
+                col.appendChild(block);
+            });
+
+            // Ligne heure actuelle
+            if (isToday) {
+                const now  = new Date();
+                const mins = (now.getHours() - HOURS_START) * 60 + now.getMinutes();
+                if (mins >= 0 && mins < (HOURS_END - HOURS_START) * 60) {
+                    const nowLine = document.createElement('div');
+                    nowLine.className = 'absolute left-0 right-0 z-10 pointer-events-none';
+                    nowLine.style.cssText = 'top:' + (mins / 60 * SLOT_H_PX) + 'px;height:2px;background:var(--color-primary,#7C3AED);';
+                    const dot = document.createElement('div');
+                    dot.className = 'absolute -left-0.5 -top-1 size-2.5 rounded-full';
+                    dot.style.background = 'var(--color-primary,#7C3AED)';
+                    nowLine.appendChild(dot);
+                    col.appendChild(nowLine);
+                }
+            }
+
+            colsEl.appendChild(col);
+
+            // Pill mobile
+            const pill = document.createElement('button');
+            pill.type      = 'button';
+            pill.className = 'flex flex-col items-center px-3 py-2 rounded-xl border-2 transition-all ' +
+                (isToday ? 'bg-primary text-white border-primary' : 'bg-card border-card-line text-muted-foreground-2');
+            const ds = document.createElement('span');
+            ds.className   = 'text-[10px] font-bold uppercase tracking-widest';
+            ds.textContent = DAYS_FR[d];
+            const dd = document.createElement('span');
+            dd.className   = 'text-sm font-bold mt-0.5';
+            dd.textContent = date.getDate();
+            pill.appendChild(ds);
+            pill.appendChild(dd);
+            if (COURSES.some(c => c.day === d)) {
+                const dot = document.createElement('div');
+                dot.className        = 'w-1 h-1 rounded-full mt-0.5';
+                dot.style.background = isToday ? 'white' : 'var(--color-primary,#7C3AED)';
+                pill.appendChild(dot);
+            }
+            pillsEl.appendChild(pill);
+        }
+
+        // Légende
+        const legendEl = document.getElementById('legend');
+        legendEl.innerHTML = '';
+        SUBJECTS_LEGEND.forEach(s => {
+            const item   = document.createElement('div');
+            item.className = 'flex items-center gap-1.5 shrink-0';
+            const swatch = document.createElement('div');
+            swatch.className        = 'w-2.5 h-2.5 rounded-sm shrink-0';
+            swatch.style.background = s.color;
+            const label  = document.createElement('span');
+            label.className   = 'text-xs text-muted-foreground-2';
+            label.textContent = s.subject;
+            item.appendChild(swatch);
+            item.appendChild(label);
+            legendEl.appendChild(item);
+        });
+    }
+
+    function openModal(course, date) {
+        document.getElementById('modal-subject').textContent  = course.subject;
+        document.getElementById('modal-color-dot').style.background = course.color;
+        document.getElementById('modal-time').textContent    =
+            course.start + 'h00 → ' + course.end + 'h00  ·  ' +
+            DAYS_FULL[course.day] + ' ' + date.getDate() + ' ' + MONTHS_FR[date.getMonth()];
+        document.getElementById('modal-room').textContent    = course.room;
+        document.getElementById('modal-teacher').textContent = course.teacher;
+        document.getElementById('modal-type').textContent    = course.type;
+        HSOverlay.open('#hs-modal-course');
+    }
+
+    document.getElementById('prev-week').addEventListener('click', () => { weekOffset--; render(); });
+    document.getElementById('next-week').addEventListener('click', () => { weekOffset++; render(); });
+    document.getElementById('today-btn').addEventListener('click', () => { weekOffset = 0; render(); });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+        render();
+    });
+</script>
+</body>
+</html>
