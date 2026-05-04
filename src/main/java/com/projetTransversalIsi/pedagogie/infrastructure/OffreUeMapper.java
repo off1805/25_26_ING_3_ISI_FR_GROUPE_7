@@ -22,6 +22,7 @@ public interface OffreUeMapper {
         offreUe.setVolumeHoraireTotal(entity.getVolumeHoraireTotal());
         offreUe.setDescription(entity.getDescription());
         offreUe.setCouleur(entity.getCouleur());
+        offreUe.setSemestre(entity.getSemestre());
         offreUe.setSpecialiteId(entity.getSpecialiteId());
         offreUe.setEnseignantIds(entity.getEnseignantIds());
         offreUe.setCreatedAt(entity.getCreatedAt());

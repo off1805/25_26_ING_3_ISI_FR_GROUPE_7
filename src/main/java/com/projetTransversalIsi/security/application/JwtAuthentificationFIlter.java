@@ -2,12 +2,15 @@ package com.projetTransversalIsi.security.application;
 
 import com.projetTransversalIsi.authentification.application.service.token.JwtService;
 import com.projetTransversalIsi.authentification.application.exceptions.InvalidTokenException;
+import com.projetTransversalIsi.security.domain.UserPrincipal;
+
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,35 +28,44 @@ public class JwtAuthentificationFIlter extends OncePerRequestFilter {
     private final JwtService tokenService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse  response,
-                                    FilterChain filterChain)
-        throws ServletException, IOException{
-        String header= request.getHeader("Authorization");
-        if(header!=null && header.startsWith("Bearer ")){
-            String token= header.substring(7);
-            try{
-                Claims claims=tokenService.getClaimsFromJwt(token);
-                Long userId= Long.valueOf(claims.getSubject());
-                String role= claims.get("role", String.class);
-                List<String> permissions= claims.get("permissions", List.class);
-                List<GrantedAuthority> authorities= new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority("ROLE_"+role));
-                permissions.forEach(
-                        perm->authorities.add(new SimpleGrantedAuthority(perm))
-                        );
+    @SuppressWarnings("unchecked")
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain)
+            throws ServletException, IOException {
+        String token = extractToken(request);
+        if (token != null) {
+            try {
+                Claims claims = tokenService.getClaimsFromJwt(token);
+                Long userId = Long.valueOf(claims.getSubject());
+                String email = claims.get("email", String.class);
+                String role = claims.get("role", String.class);
+                List<String> permissions = claims.get("permissions", List.class);
 
-                UsernamePasswordAuthenticationToken auth=
-                        new UsernamePasswordAuthenticationToken(
-                                userId,
-                                null,
-                                authorities
-                        );
+                List<GrantedAuthority> authorities = new ArrayList<>();
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+                if (permissions != null) {
+                    permissions.forEach(perm -> authorities.add(new SimpleGrantedAuthority(perm)));
+                }
+
+                UserPrincipal principal = new UserPrincipal(userId, email, role,
+                        permissions != null ? permissions : List.of());
+
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(principal, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
-            }catch (InvalidTokenException e){
+            } catch (InvalidTokenException e) {
                 SecurityContextHolder.clearContext();
             }
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        return null;
     }
 }

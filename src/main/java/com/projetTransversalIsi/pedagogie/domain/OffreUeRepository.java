@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.pedagogie.domain;
 
+import com.projetTransversalIsi.pedagogie.application.dto.OffreUeFiltreDto;
 import com.projetTransversalIsi.pedagogie.domain.model.OffreUe;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,6 @@ public interface OffreUeRepository {
     Page<OffreUe> findByAnneeScolaireId(Long anneeScolaireId, Pageable pageable);
 
     Page<OffreUe> findByUeId(Long ueId, Pageable pageable);
+
+    Page<OffreUe> findBySpecialiteIdAndAnneeScolaireId(Long specialiteId, Long anneeScolaireId, OffreUeFiltreDto filtre, Pageable pageable);
 }

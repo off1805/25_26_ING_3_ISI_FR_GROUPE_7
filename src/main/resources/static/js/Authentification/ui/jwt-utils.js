@@ -6,17 +6,7 @@ class JWTUtils {
      * Récupère le token JWT depuis les cookies ou localStorage
      */
     static getToken() {
-        // Essayer d'abord les cookies
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-            const [name, value] = cookie.trim().split('=');
-            if (name === 'authToken' || name === 'token') {
-                return value;
-            }
-        }
-
-        // Essayer localStorage
-        return localStorage.getItem('authToken') || localStorage.getItem('token');
+        return localStorage.getItem('token');
     }
 
     /**

@@ -21,7 +21,6 @@ public class UeController {
 
     private final CreateUeUC createUeUC;
     private final FindUeByIdUC findUeByIdUC;
-    private final UpdateUeUC updateUeUC;
     private final DeleteUeUC deleteUeUC;
     private final SearchUeUC searchUeUC;
     private final com.projetTransversalIsi.pedagogie.infrastructure.UeMapper ueMapper;
@@ -37,14 +36,6 @@ public class UeController {
     public ResponseEntity<UeResponseDTO> getUeById(@PathVariable("id") Long id) {
         log.info("Requête de récupération d'UE pour l'ID : {}", id);
         Ue ue = findUeByIdUC.execute(id);
-        return ResponseEntity.ok(ueMapper.toResponseDTO(ue));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<UeResponseDTO> updateUe(@PathVariable("id") Long id,
-            @Valid @RequestBody UpdateUeRequestDTO request) {
-        log.info("Requête de mise à jour d'UE pour l'ID : {}", id);
-        Ue ue = updateUeUC.execute(id, request);
         return ResponseEntity.ok(ueMapper.toResponseDTO(ue));
     }
 

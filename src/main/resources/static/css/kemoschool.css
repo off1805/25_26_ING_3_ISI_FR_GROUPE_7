@@ -4,7 +4,7 @@
 :root[data-theme="theme-kemoschool"],
 [data-theme="theme-kemoschool"] {
 
-
+  --background:#fafafe;
   --background-1: #fafafe;
   --background-2: #F5F3FF;
   --foreground: #4C1D95;
@@ -54,7 +54,7 @@
   --layer-focus: #F5F3FF;
   --layer-active: #F5F3FF;
 
-  --surface: #F5F3FF;
+  --surface: #FFFFFF;
   --surface-1: #EDE9FE;
   --surface-2: #DDD6FE;
   --surface-3: #C4B5FD;
@@ -101,6 +101,7 @@
   --navbar-2-nav-list-divider: #EDE9FE;
 
 
+  --sidebar:#ffffff;
   --sidebar-line: #EDE9FE;
   --sidebar-divider: #EDE9FE;
   --sidebar-nav-foreground: #4C1D95;

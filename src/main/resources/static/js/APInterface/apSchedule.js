@@ -100,7 +100,6 @@ function applyCurrentFilterToStatus(status) {
 
 async function loadSchedules(status) {
     const placeholder = document.getElementById(`placeholder-${status}`);
-    const tbody = document.getElementById(`tbody-${status}`);
 
     try {
         let filters = { size: 100 };
@@ -111,18 +110,15 @@ async function loadSchedules(status) {
         }
 
         const response = await api.retrieveEmploisTemps(filters);
-        console.log(response);
 
-        // Filter by our filiere's classes
         const classIds = allClasses.map(c => c.id);
         const schedules = (response.content || []).filter(s => classIds.includes(s.classeId));
 
         schedulesByStatus[status] = schedules;
-        renderScheduleRows(status, schedules);
+        renderScheduleCards(status, schedules);
 
         if (placeholder) placeholder.classList.add('hidden');
 
-        // Apply current level filter to newly loaded data
         applyCurrentFilterToStatus(status);
 
     } catch (error) {
@@ -135,120 +131,84 @@ async function loadSchedules(status) {
     }
 }
 
-function renderScheduleRows(status, schedules) {
-    const tbody = document.getElementById(`tbody-${status}`);
-    if (!tbody) return;
+function renderScheduleCards(status, schedules) {
+    const grid = document.getElementById(`cards-grid-${status}`);
+    if (!grid) return;
 
     if (schedules.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="4" class="px-6 py-20 text-center">
-                    <div class="flex flex-col items-center gap-3">
-                        <div class="size-16 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                <line x1="16" y1="2" x2="16" y2="6" />
-                                <line x1="8" y1="2" x2="8" y2="6" />
-                                <line x1="3" y1="10" x2="21" y2="10" />
-                            </svg>
-                        </div>
-                        <p class="text-sm font-bold text-layer-foreground">Aucun emploi du temps</p>
-                        <p class="text-xs text-muted-foreground-2">Il n'y a aucun planning dans cette catégorie.</p>
-                    </div>
-                </td>
-            </tr>
-        `;
+        grid.innerHTML = `
+            <div class="col-span-full py-20 flex flex-col items-center justify-center gap-3 text-muted-foreground-2">
+                <div class="size-16 rounded-2xl bg-muted flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </div>
+                <p class="text-sm font-bold text-layer-foreground">Aucun emploi du temps</p>
+                <p class="text-xs text-muted-foreground-2">Il n'y a aucun planning dans cette catégorie.</p>
+            </div>`;
         return;
     }
 
-    tbody.innerHTML = schedules.map(et => {
+    grid.innerHTML = schedules.map(et => {
         const classe = classMap[et.classeId] || {};
         const specialite = specialiteMap[classe.specialiteId] || {};
         const levelId = specialite.niveauId;
-
+        const specialiteLibelle = specialite.libelle
+            ? specialite.libelle.charAt(0).toUpperCase() + specialite.libelle.slice(1).toLowerCase()
+            : '';
         const dateDebut = new Date(et.dateDebut).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
-        const dateFin = new Date(et.dateFin).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+        const dateFin   = new Date(et.dateFin).toLocaleDateString('fr-FR',   { day: '2-digit', month: 'short', year: 'numeric' });
 
         return `
-            <tr data-level-id="${levelId}" class="schedule-row hover:bg-muted/5 transition-colors group">
-                <td class="px-6 py-4">
-                    <div class="flex items-center gap-3">
-                        <div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                                <polyline points="9 22 9 12 15 12 15 22" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-bold text-layer-foreground">${classe.code || 'Inconnue'}</p>
-                            <p class="text-xs text-muted-foreground-2">${specialite.libelle || ''}</p>
-                        </div>
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                            <line x1="16" y1="2" x2="16" y2="6" />
-                            <line x1="8" y1="2" x2="8" y2="6" />
-                            <line x1="3" y1="10" x2="21" y2="10" />
+            <div data-level-id="${levelId}" class="schedule-card relative bg-card border border-card-line rounded-xl p-5 hover:shadow-sm transition-all">
+                <div class="absolute top-3 right-3 flex items-center gap-0.5 bg-layer border border-layer-line rounded-lg p-0.5">
+                    <a href="/ap/schedule/edit?id=${et.id}"
+                        class="size-7 inline-flex items-center justify-center text-muted-foreground-2 hover:text-primary hover:bg-primary/10 rounded-md transition-all" title="Modifier">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                         </svg>
-                        <span class="text-sm font-medium text-layer-foreground">${dateDebut} – ${dateFin}</span>
-                    </div>
-                </td>
-                <td class="px-6 py-4 text-center">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-muted text-muted-foreground-2 border border-layer-line">
-                        S${et.semaine}
-                    </span>
-                </td>
-                <td class="px-6 py-4 text-right">
-                    <div class="flex justify-end items-center gap-2">
-                        <a href="/ap/schedule/edit?id=${et.id}" class="p-2 text-muted-foreground-2 hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Modifier">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                            </svg>
-                        </a>
-                        <button type="button" onclick="deleteSchedule(${et.id})" class="p-2 text-muted-foreground-2 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Supprimer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                            </svg>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
+                    </a>
+                    <button type="button" onclick="deleteSchedule(${et.id})"
+                        class="size-7 inline-flex items-center justify-center text-muted-foreground-2 hover:text-red-500 hover:bg-red-500/10 rounded-md transition-all" title="Supprimer">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="mb-3">
+                    <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">Semaine ${et.semaine}</span>
+                </div>
+                <h3 class="mb-0.5 text-base font-bold text-layer-foreground">${classe.code || 'Classe inconnue'}</h3>
+                <p class="text-xs font-medium text-muted-foreground-1 mb-1.5">${specialiteLibelle}</p>
+                <p class="text-sm text-muted-foreground-2">du ${dateDebut} au ${dateFin}</p>
+            </div>`;
     }).join('');
 }
 
 function applyLevelFilter(status, levelId, activeBtn) {
-    console.log(`Filtering ${status} by level: ${levelId}`);
-
-    // Update buttons in all status containers to keep them in sync
     const tabs = ['ongoing', 'history', 'draft'];
     tabs.forEach(s => {
         const container = document.getElementById('container-' + s);
         if (!container) return;
+
         container.querySelectorAll('.level-filter-btn').forEach(btn => {
-            if (btn.getAttribute('data-filter-level') === levelId) {
-               
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-               
-            }
+            const isActive = btn.getAttribute('data-filter-level') === levelId;
+            btn.classList.toggle('active', isActive);
+            btn.classList.toggle('bg-surface-active', isActive);
+            btn.classList.toggle('text-foreground', isActive);
+            btn.classList.toggle('bg-transparent', !isActive);
+            btn.classList.toggle('text-muted-foreground-1', !isActive);
+            btn.classList.toggle('hover:text-layer-foreground', !isActive);
         });
 
-        // Filter rows in this container
-        const rows = container.querySelectorAll('.schedule-row');
-        rows.forEach(row => {
-            const rowLevelId = row.getAttribute('data-level-id');
-            if (levelId === 'all' || !levelId || String(rowLevelId) === String(levelId)) {
-                row.classList.remove('hidden');
-            } else {
-                row.classList.add('hidden');
-            }
+        container.querySelectorAll('.schedule-card').forEach(card => {
+            const cardLevelId = card.getAttribute('data-level-id');
+            const visible = levelId === 'all' || !levelId || String(cardLevelId) === String(levelId);
+            card.classList.toggle('hidden', !visible);
         });
     });
 }

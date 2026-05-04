@@ -2,12 +2,13 @@ package com.projetTransversalIsi.emploi_temps.web;
 
 import com.projetTransversalIsi.emploi_temps.application.dto.*;
 import com.projetTransversalIsi.emploi_temps.application.use_cases.*;
+import com.projetTransversalIsi.security.domain.UserPrincipal;
 import com.projetTransversalIsi.user.infrastructure.JpaUserEntity;
 import com.projetTransversalIsi.user.infrastructure.SpringDataUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,10 +31,9 @@ public class PresenceController {
     @GetMapping("/scan")
     public ResponseEntity<PresenceRowResponseDTO> scanQR(
             @RequestParam String code,
-            Authentication authentication) {
+            @AuthenticationPrincipal UserPrincipal principal) {
 
-        Long userId = (Long) authentication.getPrincipal();
-        JpaUserEntity user = userRepository.findById(userId)
+        JpaUserEntity user = userRepository.findById(principal.userId())
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
 
         Long etudiantId = user.getProfile().getId();

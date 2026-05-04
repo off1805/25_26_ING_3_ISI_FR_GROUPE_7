@@ -271,65 +271,72 @@
 
 
     <!-- ══════════════════════════════════════════════════════════
-         MODAL: Choisir enseignant + couleur lors du drop matière
+         MODAL PRELINE: Choisir enseignant + couleur lors du drop matière
     ══════════════════════════════════════════════════════════ -->
-    <div id="modal-subject-drop"
-        class="modal-container fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div class="bg-card rounded-2xl border border-card-line shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
-            <div class="px-6 py-5 border-b border-card-line flex items-center justify-between">
-                <div>
-                    <h3 class="font-bold text-base text-layer-foreground">Placer la matière</h3>
-                    <p class="text-xs text-muted-foreground-2 mt-0.5">Choisissez l'enseignant et la couleur du bloc</p>
+    <div id="hs-modal-subject-drop"
+        class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none">
+        <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-300 mt-0 opacity-0 ease-out transition-all sm:max-w-sm sm:w-full m-3 sm:mx-auto flex items-center min-h-[calc(100%-3.5rem)]">
+            <div class="bg-card rounded-2xl border border-card-line shadow-2xl w-full overflow-hidden pointer-events-auto">
+
+                <!-- Header -->
+                <div class="px-6 py-5 border-b border-card-line flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-base text-layer-foreground">Placer la matière</h3>
+                        <p class="text-xs text-muted-foreground-2 mt-0.5">Choisissez l'enseignant et la couleur du bloc</p>
+                    </div>
+                    <button id="btn-close-drop-modal" type="button"
+                        class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
                 </div>
-                <button
-                    class="btn-close-modal size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M18 6 6 18" />
-                        <path d="m6 6 12 12" />
-                    </svg>
-                </button>
-            </div>
 
-            <div class="p-6 space-y-5">
+                <!-- Body -->
+                <div class="p-6 space-y-5">
 
-                <!-- Teacher select -->
-                <div class="space-y-1.5">
-                    <label class="text-xs font-semibold text-layer-foreground">Enseignant</label>
-                    <div class="relative">
-                        <span
-                            class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-muted-foreground-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                                <circle cx="9" cy="7" r="4" />
-                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            </svg>
-                        </span>
-                        <select id="drop-teacher-select"
-                            class="w-full pl-9 pr-3 py-2.5 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors appearance-none">
-                        </select>
+                    <!-- Teacher select -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-semibold text-layer-foreground">Enseignant</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-muted-foreground-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                </svg>
+                            </span>
+                            <select id="drop-teacher-select"
+                                class="w-full pl-9 pr-3 py-2.5 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors appearance-none">
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Color picker -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-semibold text-layer-foreground">Couleur du bloc</label>
+                        <input type="color" id="drop-color-input" value="#3b82f6"
+                            class="p-1 h-9 w-full block bg-layer border border-layer-line rounded-xl cursor-pointer" />
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex justify-end gap-2 pt-1">
+                        <button id="btn-cancel-subject-drop" type="button"
+                            class="px-4 py-2 rounded-xl text-sm font-semibold text-muted-foreground-2 bg-muted hover:bg-muted-hover transition-colors">
+                            Annuler
+                        </button>
+                        <button id="btn-confirm-subject-drop" type="button"
+                            class="px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary/90 transition-colors">
+                            Placer le bloc
+                        </button>
                     </div>
                 </div>
 
-                <!-- Color picker -->
-                <div class="space-y-2">
-                    <label class="text-xs font-semibold text-layer-foreground">Couleur du bloc</label>
-                    <div id="drop-color-grid" class="grid grid-cols-8 gap-2"></div>
-                </div>
-
-                <div class="flex justify-end gap-2 pt-1">
-                    <button id="btn-cancel-subject-drop"
-                        class="px-4 py-2 rounded-xl text-sm font-semibold text-muted-foreground-2 bg-muted hover:bg-muted-hover transition-colors">
-                        Annuler
-                    </button>
-                    <button id="btn-confirm-subject-drop"
-                        class="px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary/90 transition-colors">
-                        Placer le bloc
-                    </button>
-                </div>
             </div>
         </div>
     </div>

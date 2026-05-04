@@ -31,6 +31,7 @@ public class OffreUe {
     private int volumeHoraireTotal;
     private String description;
     private String couleur;
+    private Integer semestre;
     private Long specialiteId;
     private Set<Long> enseignantIds = new HashSet<>();
 

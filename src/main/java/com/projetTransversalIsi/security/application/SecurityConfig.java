@@ -28,11 +28,13 @@ public class SecurityConfig {
                         session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .csrf(AbstractHttpConfigurer::disable)
+
                 .authorizeHttpRequests(
                         auth->auth
                                 .requestMatchers("/sw.js","/manifest.json","/images/**").permitAll()
 
                                 .requestMatchers("/**").permitAll()
+
 
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

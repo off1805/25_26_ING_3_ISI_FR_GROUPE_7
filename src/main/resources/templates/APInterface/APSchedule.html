@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" class="dark" data-theme="theme-kemoschool">
 
 <head>
     <meta charset="UTF-8" />
@@ -9,10 +9,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
+
 </head>
 
-<body class="h-screen bg-background-1">
+<body class="h-screen">
 
     <!-- ══════════════════════════════════════════════════════
      MAIN VIEW
@@ -23,44 +23,76 @@
         <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
-            <header class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
+            <header
+                class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
                 <div class="flex items-center gap-3">
-                    <button type="button" class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors" data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    <button type="button"
+                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
+                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
                     </button>
                     <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12l-2 0l9-9l9 9l-2 0" />
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+                        </svg>
                         <span>AP Panel</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6l-6 6"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M9 6l6 6l-6 6" />
+                        </svg>
                         <span class="font-semibold text-layer-foreground">Emplois du temps</span>
                     </nav>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button type="button" data-theme-toggle class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
-                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/></svg>
-                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    <button type="button" data-theme-toggle
+                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                        </svg>
+                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17"
+                            height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <circle cx="12" cy="12" r="4" />
+                            <path
+                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                        </svg>
                     </button>
-                    <button type="button" class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg>
-                        <span class="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-navbar"></span>
+                    <button type="button"
+                        class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.75">
+                            <path
+                                d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6" />
+                            <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                        </svg>
+                        <span
+                            class="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-navbar"></span>
                     </button>
                     <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm"
-                         th:text="${ap != null and ap.profile != null and ap.profile.nom != null ? #strings.toUpperCase(#strings.substring(ap.profile.nom, 0, 1)) : 'A'}">A</div>
+                        th:text="${ap != null and ap.profile != null and ap.profile.nom != null ? #strings.toUpperCase(#strings.substring(ap.profile.nom, 0, 1)) : 'A'}">
+                        A</div>
                 </div>
             </header>
 
             <!-- PAGE CONTENT -->
-            <div class="flex-1 overflow-y-auto">
-                <div class="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-7xl mx-auto">
+            <div class="flex-1 overflow-y-auto p-6 lg:p-10 bg-background">
+                <div class="w-full mx-auto">
                     <!-- Page Header -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                         <div>
-                            <h2 class="text-2xl font-semibold text-layer-foreground">Emplois du temps</h2>
-                            <p class="text-base text-muted-foreground-2 mt-1">Gérez les plannings par classe et par
+                            <h2 class="text-2xl font-bold text-layer-foreground">Emplois du temps</h2>
+                            <p class="text-sm text-muted-foreground-2 mt-1">Gérez les plannings par classe et par
                                 période.</p>
                         </div>
                         <button type="button" data-hs-overlay="#modal-new-schedule"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-primary text-white rounded-xl shadow-xs hover:bg-primary-hover transition-all">
+                            class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold bg-primary text-white rounded-lg hover:bg-primary-hover transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2.5">
                                 <path d="M5 12h14M12 5v14" />
@@ -70,27 +102,28 @@
                     </div>
 
                     <!-- Status Tabs -->
-                    <div class="border-b border-card-line mb-6">
-                        <nav class="flex gap-x-8" aria-label="Tabs" role="tablist">
-                            <button type="button"
-                                class="hs-tab-active:font-bold hs-tab-active:border-primary hs-tab-active:text-primary py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-muted-foreground-2 hover:text-primary focus:outline-none active"
-                                id="tab-ongoing" data-hs-tab="#pane-ongoing" aria-controls="pane-ongoing" role="tab">
-                                En cours
-
-                            </button>
-                            <button type="button"
-                                class="hs-tab-active:font-bold hs-tab-active:border-primary hs-tab-active:text-primary py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-muted-foreground-2 hover:text-primary focus:outline-none"
-                                id="tab-history" data-hs-tab="#pane-history" aria-controls="pane-history" role="tab">
-                                Historique
-
-                            </button>
-                            <button type="button"
-                                class="hs-tab-active:font-bold hs-tab-active:border-primary hs-tab-active:text-primary py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-muted-foreground-2 hover:text-primary focus:outline-none"
-                                id="tab-draft" data-hs-tab="#pane-draft" aria-controls="pane-draft" role="tab">
-                                Brouillon
-
-                            </button>
-                        </nav>
+                    <div class="flex mb-7">
+                        <div class="flex bg-surface rounded-lg transition p-1">
+                            <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                                <button type="button"
+                                    class="hs-tab-active:bg-secondary hs-tab-active:text-white py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none active"
+                                    id="tab-ongoing" data-hs-tab="#pane-ongoing" aria-controls="pane-ongoing"
+                                    role="tab">
+                                    En cours
+                                </button>
+                                <button type="button"
+                                    class="hs-tab-active:bg-secondary hs-tab-active:text-white py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none"
+                                    id="tab-history" data-hs-tab="#pane-history" aria-controls="pane-history"
+                                    role="tab">
+                                    Historique
+                                </button>
+                                <button type="button"
+                                    class="hs-tab-active:bg-secondary hs-tab-active:text-white py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none"
+                                    id="tab-draft" data-hs-tab="#pane-draft" aria-controls="pane-draft" role="tab">
+                                    Brouillon
+                                </button>
+                            </nav>
+                        </div>
                     </div>
 
                     <!-- Tab Content -->
@@ -124,15 +157,16 @@
 
     <!-- ══ MODAL: Nouvel emploi du temps (Preline) ══ -->
     <div id="modal-new-schedule"
-        class="hs-overlay hidden size-full fixed top-0 start-0 z-[60] overflow-x-hidden overflow-y-auto pointer-events-none">
+        class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none"
+        role="dialog" tabindex="-1">
+
         <div
-            class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-sm sm:w-full m-3 sm:mx-auto min-h-[calc(100%-3.5rem)] h-fit flex items-center ">
-            <div
-                class="w-full flex flex-col bg-layer border border-layer-line shadow-sm rounded-xl pointer-events-auto">
-                <div class="flex justify-between items-center py-3 px-4 border-b border-layer-line">
-                    <h3 class="font-bold text-layer-foreground">Nouvel emploi du temps</h3>
+            class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-300 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+            <div class="flex flex-col bg-layer border border-layer-line shadow-lg rounded-2xl pointer-events-auto">
+                <div class="flex justify-between items-center py-4 px-6 border-b border-layer-line">
+                    <h3 class="font-bold text-lg text-layer-foreground">Nouvel emploi du temps</h3>
                     <button type="button"
-                        class="inline-flex justify-center items-center size-8 rounded-full bg-muted text-muted-foreground-2 hover:bg-muted-hover focus:outline-none transition-all"
+                        class="size-8 inline-flex justify-center items-center rounded-full border border-transparent bg-layer-hover text-layer-foreground hover:bg-layer-focus focus:outline-none"
                         data-hs-overlay="#modal-new-schedule">
                         <span class="sr-only">Fermer</span>
                         <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -143,34 +177,40 @@
                         </svg>
                     </button>
                 </div>
-                <div class="p-4 overflow-y-auto ">
-                    <div class="space-y-4">
+                <div class="px-6 py-4 overflow-visible">
+                    <div class="space-y-5 flex gap-3">
                         <!-- Classe Selection (Advanced Select) -->
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-layer-foreground">Sélectionner une
-                                classe</label>
+                        <div class="w-44">
+                            <label class="block text-sm font-medium mb-2 text-layer-foreground">
+                                Classe</label>
+                            <!-- Select -->
                             <select id="select-modal-classe" data-hs-select='{
-                                "placeholder": "Choisir une classe...",
+                                "placeholder": "Select option...",
                                 "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
-                                "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 ps-4 pe-9 flex text-start w-full cursor-pointer bg-layer border border-layer-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary",
-                                "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-layer border border-layer-line rounded-lg overflow-hidden overflow-y-auto",
-                                "optionClasses": "py-2 px-4 w-full text-sm text-layer-foreground cursor-pointer hover:bg-muted rounded-lg focus:outline-none focus:bg-muted",
-                                "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>"
-                            }' class="hidden">
+                                "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2 ps-4 pe-9 flex text-nowrap w-full cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-lg text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                "dropdownClasses": "mt-2 z-90 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http:.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                "optgroupTag": "<div></div>",
+                                "optgroupClasses": "py-2 px-4 w-full text-xs font-semibold text-primary uppercase",
+                                "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden">
                                 <option value="">Choisir une classe...</option>
                                 <option th:each="c : ${classes}" th:value="${c.id}" th:text="${c.code}">Classe</option>
                             </select>
+                            <!-- End Select -->
+
                         </div>
 
                         <!-- Week Selection (Vanilla Calendar in Dropdown) -->
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-layer-foreground">Sélectionner la
-                                semaine</label>
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium mb-2 text-layer-foreground">Periode
+                            </label>
 
                             <div
                                 class="hs-dropdown [--auto-close:outside] [--strategy:fixed] relative inline-flex w-full ">
                                 <button id="btn-schedule-calendar" type="button"
-                                    class="hs-dropdown-toggle py-3 px-4 inline-flex items-center justify-between gap-x-2 text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-sm hover:bg-muted focus:outline-none w-full"
+                                    class="hs-dropdown-toggle py-2 px-4 inline-flex items-center justify-between gap-x-2 text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted focus:outline-none w-full"
                                     aria-haspopup="menu" aria-expanded="false">
                                     <span id="selected-week-text">Choisir une semaine...</span>
                                     <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -187,14 +227,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t border-layer-line">
+                <div class="flex justify-end items-center gap-x-2 pb-4 px-6 border-layer-line">
                     <button type="button"
-                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-layer-line bg-layer text-layer-foreground shadow-sm hover:bg-muted focus:outline-none disabled:opacity-50"
+                        class="py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-layer-line bg-layer text-layer-foreground hover:bg-muted transition-all"
                         data-hs-overlay="#modal-new-schedule">
                         Annuler
                     </button>
                     <button id="btn-modal-next" type="button"
-                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary text-white hover:bg-primary-hover focus:outline-none disabled:opacity-50">
+                        class="py-2 px-6 inline-flex items-center gap-x-2 text-xs font-semibold rounded-lg border border-transparent bg-primary text-white hover:bg-primary-hover focus:outline-none disabled:opacity-50 transition-all">
                         Suivant
                     </button>
                 </div>
