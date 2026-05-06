@@ -38,7 +38,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/login", "/refresh", "/logout")
                                                 .permitAll()
 
-                                                // REST API protected (includes /api/sidebar which requires auth)
+                                                // REST API protected (requires auth)
                                                 .requestMatchers("/api/**").authenticated()
 
                                                 // All page routes are now public — auth is enforced

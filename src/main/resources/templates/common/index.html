@@ -27,8 +27,7 @@
 
     </div>
 
-    <!-- SIDEBAR — chargée dynamiquement via sidebar-loader.js -->
-    <div id="sidebar-placeholder"></div>
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
 
 
     <section class=" flex-1">
@@ -142,12 +141,6 @@
     }
     });
 
-    </script>
-    <script src="/js/common/sidebar-loader.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSidebar('dashboard', null);
-        });
     </script>
 
 

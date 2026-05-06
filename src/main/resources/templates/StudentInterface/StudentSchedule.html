@@ -12,7 +12,7 @@
     <section class="flex flex-row h-full">
 
         <!-- SIDEBAR -->
-        <div id="sidebar-placeholder"></div>
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
         <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
@@ -215,9 +215,6 @@
 
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
-    <script th:src="@{/js/common/sidebar-loader.js}"></script>
-    <script>
-        const HOURS_START = 7;
         const HOURS_END = 20;
         const SLOT_H_PX = window.innerWidth < 640 ? 60 : 70;
         const DAYS_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
@@ -420,7 +417,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
-            loadSidebar('schedule');
             render();
         });
     </script>

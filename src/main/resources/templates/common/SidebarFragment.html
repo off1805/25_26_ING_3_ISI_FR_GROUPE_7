@@ -32,8 +32,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="font-bold text-sm text-layer-foreground leading-tight truncate">KemOSchool</p>
-                        <p class="text-xs text-muted-foreground-2 truncate"
-                            th:text="${sidebarRole != null ? sidebarRole : 'ROLE'}">ROLE</p>
+
                     </div>
                 </div>
 
@@ -351,39 +350,112 @@
             <form id="profile-nav-form" method="post" action="/profile" class="hidden">
                 <input type="hidden" name="token" id="profile-nav-token" />
             </form>
-            <a href="javascript:void(0)" onclick="navigateToProfile()" class="flex items-center gap-3 px-3 py-4 border-t border-sidebar-line
-                  hs-overlay-minified:justify-center hs-overlay-minified:px-2
-                  hover:bg-sidebar-nav-hover transition-colors cursor-pointer group">
+            <!-- Dropdown -->
 
-                <!-- Photo de profil ou icône SVG par défaut -->
-                <div th:if="${sidebarPhotoUrl != null and !#strings.isEmpty(sidebarPhotoUrl)}"
-                    class="size-9 rounded-full shrink-0 overflow-hidden border border-primary/20">
-                    <img th:src="${sidebarPhotoUrl}" alt="Photo de profil" class="w-full h-full object-cover" />
-                </div>
-                <div th:if="${sidebarPhotoUrl == null or #strings.isEmpty(sidebarPhotoUrl)}"
-                    class="size-9 rounded-full bg-primary/10 border border-primary/20 shrink-0 flex items-center justify-center text-primary group-hover:bg-primary/20 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-                        aria-hidden="true">
-                        <circle cx="12" cy="8" r="4"></circle>
-                        <path d="M4 20a8 8 0 0 1 16 0"></path>
+            <!-- End Dropdown -->
+            <div
+                class="hs-dropdown [--placement:top-right] [--strategy:absolute] relative inline-flex w-full  px-2 mb-2">
+                <button id="sidebar-profile-dropdown" type="button"
+                    class="hs-dropdown-toggle w-full flex items-center gap-3 px-3 py-2 rounded-lg hs-overlay-minified:justify-center hs-overlay-minified:px-2 hover:bg-sidebar-nav-hover transition-colors cursor-pointer group focus:outline-none"
+                    aria-haspopup="menu" aria-expanded="false" aria-label="Profile dropdown">
+
+                    <!-- Photo de profil ou icône SVG par défaut -->
+                    <div th:if="${sidebarPhotoUrl != null and !#strings.isEmpty(sidebarPhotoUrl)}"
+                        class="size-9 rounded-full shrink-0 overflow-hidden border border-primary/20">
+                        <img th:src="${sidebarPhotoUrl}" alt="Photo de profil" class="w-full h-full object-cover" />
+                    </div>
+                    <div th:if="${sidebarPhotoUrl == null or #strings.isEmpty(sidebarPhotoUrl)}"
+                        class="size-9 rounded-full bg-primary/10 border border-primary/20 shrink-0 flex items-center justify-center text-primary group-hover:bg-primary/20 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <circle cx="12" cy="8" r="4"></circle>
+                            <path d="M4 20a8 8 0 0 1 16 0"></path>
+                        </svg>
+                    </div>
+
+                    <div class="hs-overlay-minified:hidden min-w-0 flex-1 text-left">
+                        <p class="text-sm font-bold text-layer-foreground truncate"
+                            th:text="${sidebarFullName != null ? sidebarFullName : 'Utilisateur'}">Utilisateur</p>
+                        <p class="text-xs text-muted-foreground-2 truncate"
+                            th:text="${sidebarRole != null ? sidebarRole : 'ROLE'}">ROLE</p>
+                    </div>
+
+                    <!-- Chevron (caché quand minifié) -->
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-dots-vertical hs-overlay-minified:hidden hs-dropdown-open:rotate-180 size-4 text-muted-foreground-2 transition-transform">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                        <path d="M11 19a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                        <path d="M11 5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
                     </svg>
-                </div>
+                </button>
 
-                <div class="hs-overlay-minified:hidden min-w-0 flex-1">
-                    <p class="text-sm font-bold text-layer-foreground truncate"
-                        th:text="${sidebarFullName != null ? sidebarFullName : 'Utilisateur'}">Utilisateur</p>
-                    <p class="text-xs text-muted-foreground-2 truncate"
-                        th:text="${sidebarRole != null ? sidebarRole : 'ROLE'}">ROLE</p>
+                <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 shadow-sm bg-surface border border-layer-line rounded-lg   z-70"
+                    role="menu" aria-orientation="vertical" aria-labelledby="sidebar-profile-dropdown">
+                    <div class="p-1 space-y-0.25">
+                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-xs text-layer-foreground hover:bg-sidebar-nav-hover focus:outline-none focus:bg-sidebar-nav-hover"
+                            href="javascript:void(0)" onclick="navigateToProfile()">
+                            <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            Mon profil
+                        </a>
+                        <div class="h-px bg-sidebar-line my-1"></div>
+                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-xs text-layer-foreground  focus:outline-none focus:bg-red-50 cursor-pointer"
+                            href="javascript:void(0)" onclick="performLogout()">
+                            <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
+                            Déconnexion
+                        </a>
+                    </div>
                 </div>
-            </a>
-            <script>
-                function navigateToProfile() {
+            </div>
+
+            <script type="module">
+                import api from '/js/common/ClientHttp.js';
+                import { TokenService } from '/js/common/application/TokenService.js';
+
+                window.navigateToProfile = function () {
                     const token = localStorage.getItem('token');
-                    if (!token) { window.location.href = '/login'; return; }
-                    document.getElementById('profile-nav-token').value = token;
-                    document.getElementById('profile-nav-form').submit();
-                }
+                    if (!token) { window.location.href = '/auth/login'; return; }
+                    const form = document.getElementById('profile-nav-form');
+                    const tokenInput = document.getElementById('profile-nav-token');
+                    if (form && tokenInput) {
+                        tokenInput.value = token;
+                        form.submit();
+                    }
+                };
+
+                window.performLogout = async function () {
+                    const refreshToken = await TokenService.getRefreshToken();
+                    const finalize = () => {
+                        TokenService.clearClaims();
+                        window.location.href = '/auth/login';
+                    };
+
+                    if (refreshToken) {
+                        try {
+                            await api.post('/logout', { refreshToken });
+                        } catch (error) {
+                            console.error('Logout error:', error);
+                        } finally {
+                            finalize();
+                        }
+                    } else {
+                        finalize();
+                    }
+                };
             </script>
             <!-- End Profile -->
 

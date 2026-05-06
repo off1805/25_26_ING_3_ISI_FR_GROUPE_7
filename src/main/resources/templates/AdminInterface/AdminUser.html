@@ -18,7 +18,7 @@
     <section class="flex flex-row h-full">
 
         <!-- SIDEBAR -->
-        <div id="sidebar-placeholder"></div>
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
         <section class="flex-1 flex flex-col overflow-hidden">
             <!-- NAVBAR -->
             <header
@@ -749,7 +749,6 @@
     <script th:src="@{/js/other/toastify.js}"></script>
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
-    <script th:src="@{/js/common/sidebar-loader.js}"></script>
     <script type="module" th:src="@{/js/common/adminBreadcrumbs.js}"></script>
     <script type="module" th:src="@{/js/User/ui/UserController.js}"></script>
     <script>
@@ -760,7 +759,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
-            loadSidebar('users');
         });
         window.addEventListener('load', () => {
             if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();

@@ -10,7 +10,7 @@
 
 <body class="h-screen bg-background-1 flex flex-row overflow-hidden">
 
-    <div id="sidebar-placeholder"></div>
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
 
     <div class="flex-1 flex flex-col overflow-hidden">
 
@@ -102,15 +102,8 @@
     </div>
 
     <script th:src="@{/js/preline.js}"></script>
-    <script th:src="@{/js/common/sidebar-loader.js}"></script>
-    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
-        <script type="module" th:src="@{/js/AdminInterface/adminAnneeConfig.js}"></script>
+    <script type="module" th:src="@{/js/AdminInterface/adminAnneeConfig.js}"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSidebar('config');
-        });
-    </script>
 </body>
 
 </html>

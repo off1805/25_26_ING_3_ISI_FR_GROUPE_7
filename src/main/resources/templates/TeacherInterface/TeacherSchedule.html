@@ -11,8 +11,8 @@
 
 <body class="h-screen">
     <section class="flex flex-row bg-background-1 h-full">
-        <!-- SIDEBAR — chargée dynamiquement via sidebar-loader.js -->
-        <div id="sidebar-placeholder"></div>
+        <!-- SIDEBAR -->
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
 
         <!-- MAIN -->
         <section class="flex-1 flex flex-col overflow-hidden">
@@ -175,7 +175,6 @@
             </div>
 
             <script th:src="@{/js/preline.js}"></script>
-            <script th:src="@{/js/common/sidebar-loader.js}"></script>
             <script>
                 // ── Configuration ──────────────────────────────────────────
                 const HOURS_START = 7;
@@ -406,12 +405,6 @@
         </section>
     </section>
 
-    <script th:src="@{/js/common/sidebar-loader.js}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSidebar('schedule');
-        });
-    </script>
 </body>
 
 </html>

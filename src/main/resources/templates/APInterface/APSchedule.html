@@ -19,7 +19,7 @@
 ══════════════════════════════════════════════════════ -->
     <div id="view-main" class="flex h-screen overflow-hidden">
 
-        <div id="sidebar-placeholder"></div>
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
         <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
@@ -246,7 +246,6 @@
     <script th:src="@{/js/lodash.min.js}"></script>
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
-    <script th:src="@{/js/common/sidebar-loader.js}"></script>
 
 
     <script type="module" th:inline="javascript">
@@ -259,7 +258,6 @@
             if (typeof HSStaticMethods !== 'undefined') {
                 HSStaticMethods.autoInit();
             }
-            loadSidebar('schedule');
 
             // Initialize Sidebar Calendar (interactive)
             //document.getElementById("calendar-sidebar").innerHTML = getCalendar();

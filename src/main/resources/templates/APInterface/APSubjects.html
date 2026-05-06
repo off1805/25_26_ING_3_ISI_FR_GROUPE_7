@@ -14,8 +14,8 @@
 <body class="h-screen" th:attr="data-ap-page-bc=${apPageBreadcrumb}">
     <section class="flex flex-row bg-sidebar-nav-hover h-full">
 
-        <!-- SIDEBAR — chargée dynamiquement via sidebar-loader.js -->
-        <div id="sidebar-placeholder"></div>
+        <!-- SIDEBAR -->
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
         <!-- MAIN -->
         <section class="flex-1 flex flex-col overflow-hidden">
 
@@ -582,13 +582,7 @@
             classes: /*[[${classes}]]*/[]
         };
     </script>
-    <script src="/js/common/sidebar-loader.js"></script>
-    <script>
-        // Chargement de la sidebar au démarrage de la page
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSidebar('subjects');
-        });
-    </script>
+    <script th:src="@{/js/preline.js}"></script>
 </body>
 
 </html>

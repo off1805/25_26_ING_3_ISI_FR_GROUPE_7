@@ -18,7 +18,7 @@
     <section class="flex flex-row bg-sidebar-nav-hover h-full">
 
         <!-- SIDEBAR -->
-        <div id="sidebar-placeholder"></div>
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
         <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
@@ -1000,12 +1000,6 @@
                     });
             });
         }
-    </script>
-    <script th:src="@{/js/common/sidebar-loader.js}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSidebar('classes');
-        });
     </script>
     <script>
         function exporterModeleExcel() {

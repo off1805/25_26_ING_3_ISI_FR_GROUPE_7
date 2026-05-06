@@ -13,8 +13,8 @@
 
 <body class="bg-background-1">
     <section class="flex flex-row h-screen overflow-hidden">
-        <!-- SIDEBAR — chargée dynamiquement via sidebar-loader.js -->
-        <div id="sidebar-placeholder"></div>
+        <!-- SIDEBAR -->
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
 
         <!-- MAIN (existing edit view) -->
         <div id="view-edit" class="flex-1 flex overflow-hidden">
@@ -434,12 +434,7 @@
         </div>
     </section>
 
-    <script th:src="@{/js/common/sidebar-loader.js}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSidebar('schedule');
-        });
-    </script>
+    <script th:src="@{/js/preline.js}"></script>
 </body>
 
 </html>

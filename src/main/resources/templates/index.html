@@ -20,8 +20,7 @@
 <body class="h-screen">
     <section class="flex flex-row bg-gray-50 h-full">
 
-        <!-- ========== SIDEBAR — chargée dynamiquement via sidebar-loader.js ========== -->
-        <div id="sidebar-placeholder"></div>
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
 
 
         <!-- ========== MAIN CONTENT ========== -->
@@ -576,17 +575,11 @@
 
     <script type="module" th:src="@{/js/User/ui/UserController.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
-    <script src="/js/common/sidebar-loader.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof HSStaticMethods !== 'undefined') {
                 HSStaticMethods.autoInit();
                 console.log("Preline initialisé avec succès !");
             } else {
                 console.error("Erreur : Le fichier preline.js n'est pas chargé correctement.");
             }
-            // Chargement de la sidebar
-            loadSidebar('users', null);
         });
 
         window.addEventListener('load', () => {

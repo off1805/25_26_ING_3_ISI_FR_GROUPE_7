@@ -12,7 +12,7 @@
     <section class="flex flex-row h-full">
 
         <!-- SIDEBAR -->
-        <div id="sidebar-placeholder"></div>
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
         <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
@@ -181,13 +181,7 @@
     </section>
 
     <script th:src="@{/js/preline.js}"></script>
-    <script th:src="@{/js/common/sidebar-loader.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSidebar('attendance');
-        });
-    </script>
 </body>
 
 </html>

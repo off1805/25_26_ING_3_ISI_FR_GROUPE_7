@@ -11,7 +11,7 @@
 <body class="h-screen bg-background-1 flex flex-row overflow-hidden">
 
     <!-- SIDEBAR -->
-    <div id="sidebar-placeholder"></div>
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
     <!-- MAIN -->
     <div class="flex-1 flex flex-col overflow-hidden">
         <!-- NAVBAR -->
@@ -533,18 +533,7 @@
 
 
     <script th:src="@{/js/preline.js}"></script>
-    <script th:src="@{/js/common/sidebar-loader.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script th:inline="javascript">
-        window.ENSEIGNANT_ID = /*[[${enseignantId}]]*/ null;
-        window.SEANCE_ID = /*[[${seance != null ? seance.id : null}]]*/ null;
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSidebar('seance');
-        });
-    </script>
 </body>
 
 </html>
