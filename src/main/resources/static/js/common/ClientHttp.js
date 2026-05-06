@@ -28,10 +28,21 @@ class HttpClient {
     }
 
     async _request(method, endpoint, { body, headers = {}, retry = true } = {}) {
+        const isFormData = body instanceof FormData;
+        const isUrlSearch = body instanceof URLSearchParams;
+        const isRawType = isFormData || isUrlSearch;
+        let finalHeaders = await this._buildHeaders(headers);
+
+        if (isFormData) {
+            delete finalHeaders["Content-Type"];
+        } else if (isUrlSearch) {
+            finalHeaders["Content-Type"] = "application/x-www-form-urlencoded";
+        }
+
         const options = {
             method,
-            headers: await this._buildHeaders(headers),
-            ...(body !== undefined ? { body: JSON.stringify(body) } : {})
+            headers: finalHeaders,
+            ...(body !== undefined ? { body: isRawType ? body : JSON.stringify(body) } : {})
         };
         console.log(options)
         console.log(endpoint)
@@ -44,7 +55,7 @@ class HttpClient {
             if (refreshed) {
                 return await this._request(method, endpoint, { body, headers, retry: false });
             }
-            window.location.href = "/login";
+            window.location.href = "auth/login";
             return null;
         }
 

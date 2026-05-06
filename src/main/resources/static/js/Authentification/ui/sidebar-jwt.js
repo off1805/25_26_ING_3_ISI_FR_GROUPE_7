@@ -115,11 +115,10 @@ function performLogout() {
     };
 
     if (refreshToken) {
-        fetch('/logout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ refreshToken })
-        }).catch(() => {}).finally(finalize);
+        import('../../common/ClientHttp.js').then((module) => {
+            const api = module.default;
+            api.post('/logout', { refreshToken }).catch(() => {}).finally(finalize);
+        }).catch(finalize);
     } else {
         finalize();
     }

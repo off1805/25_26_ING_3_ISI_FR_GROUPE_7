@@ -35,6 +35,7 @@ const classeApi = new ClasseApi();
 document.addEventListener('DOMContentLoaded', async () => {
 
     attacherEvenements();
+    initManualAddSelects();
 });
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -141,6 +142,57 @@ function fermerModal(id) {
     }
 }
 
+function initManualAddSelects() {
+    const nivSel = document.getElementById('modal-niveau-select');
+    const classSel = document.getElementById('modal-classe-select');
+    if (!nivSel || !classSel) return;
+
+    if (window.HSSelect) {
+        try { new HSSelect(nivSel); } catch(e) {}
+    }
+
+    nivSel.addEventListener('change', async (e) => {
+        const val = e.target.value;
+        if (val) await loadClassesForModal(val);
+    });
+}
+
+async function loadClassesForModal(niveauId) {
+    const classSel = document.getElementById('modal-classe-select');
+    if (!classSel) return;
+
+    try {
+        classSel.disabled = true;
+        if (window.HSSelect) HSSelect.getInstance(classSel)?.destroy();
+    } catch (_) { }
+
+    classSel.innerHTML = `<option value="" disabled selected>Chargement...</option>`;
+
+    try {
+        const specs = await specialiteApi.getByNiveauId(niveauId);
+        const results = await Promise.all(
+            Array.from(specs).map(spec => classeApi.getBySpecialiteId(spec.id))
+        );
+        const classes = results.flat();
+
+        if (classes.length === 0) {
+            classSel.innerHTML = `<option value="" disabled selected>Aucune classe trouvée</option>`;
+            classSel.disabled = true;
+            if (window.HSSelect) new HSSelect(classSel);
+            return;
+        }
+
+        classSel.disabled = false;
+        classSel.innerHTML = `<option value="" disabled selected>Sélectionner une classe</option>` +
+            classes.map(c => `<option value="${c.id}">${c.code}</option>`).join('');
+
+        if (window.HSSelect) new HSSelect(classSel);
+    } catch (err) {
+        classSel.innerHTML = `<option value="" disabled selected>Erreur</option>`;
+        console.error("loadClassesForModal error: ", err);
+    }
+}
+
 // ── Ajout manuel ──────────────────────────────────────────────────────────────
 
 async function soumettreFormManuel(e) {
@@ -154,7 +206,7 @@ async function soumettreFormManuel(e) {
         prenom: form.prenom.value.trim(),
         matricule: form.matricule.value.trim(),
         numeroTelephone: form.numeroTelephone.value.trim(),
-        classeId: getActiveClasseId(),
+        classeId: form.classeId.value ? parseInt(form.classeId.value, 10) : getActiveClasseId(),
     };
 
     if (!data.classeId) {
@@ -166,17 +218,19 @@ async function soumettreFormManuel(e) {
     btnSubmit.textContent = 'Inscription…';
 
     try {
+        console.log(data);
         const res = await enrollStudentUC(data);
+        console.log(res);
         const msg = res.created
             ? `✓ ${res.nom} ${res.prenom} créé(e) et inscrit(e).`
             : `✓ ${res.nom} ${res.prenom} inscrit(e) dans la classe.`;
-        showToast(msg, 'success');
+        GlobalEventNotifier.eventWellDone(msg, 'success');
         form.reset();
         fermerModal('modal-manual');
         // Refresh to see the new student in the table
         setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
-        showToast(err.message, 'error');
+        GlobalEventNotifier.eventWellDone(err.message, 'error');
     } finally {
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'Inscrire';

@@ -19,7 +19,7 @@
 ══════════════════════════════════════════════════════ -->
     <div id="view-main" class="flex h-screen overflow-hidden">
 
-        <section th:replace="~{common/AppSidebar :: app-sidebar('schedule', ${subjectsFiliereId})}"></section>
+        <div id="sidebar-placeholder"></div>
         <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
@@ -92,33 +92,33 @@
                                 période.</p>
                         </div>
                         <button type="button" data-hs-overlay="#modal-new-schedule"
-                            class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold bg-primary text-white rounded-lg hover:bg-primary-hover transition-all">
+                            class="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary-hover transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2.5">
                                 <path d="M5 12h14M12 5v14" />
                             </svg>
-                            Nouvel emploi du temps
+                            Creer
                         </button>
                     </div>
 
                     <!-- Status Tabs -->
                     <div class="flex mb-7">
-                        <div class="flex bg-surface rounded-lg transition p-1">
+                        <div class="flex rounded-lg transition p-1">
                             <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
                                 <button type="button"
-                                    class="hs-tab-active:bg-secondary hs-tab-active:text-white py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none active"
+                                    class="hs-tab-active:bg-surface-active hs-tab-active:text-layer-foreground py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-full focus:outline-none disabled:opacity-50 disabled:pointer-events-none active"
                                     id="tab-ongoing" data-hs-tab="#pane-ongoing" aria-controls="pane-ongoing"
                                     role="tab">
                                     En cours
                                 </button>
                                 <button type="button"
-                                    class="hs-tab-active:bg-secondary hs-tab-active:text-white py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none"
+                                    class="hs-tab-active:bg-surface-active hs-tab-active:text-layer-foreground py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-full focus:outline-none disabled:opacity-50 disabled:pointer-events-none"
                                     id="tab-history" data-hs-tab="#pane-history" aria-controls="pane-history"
                                     role="tab">
                                     Historique
                                 </button>
                                 <button type="button"
-                                    class="hs-tab-active:bg-secondary hs-tab-active:text-white py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none"
+                                    class="hs-tab-active:bg-surface-active hs-tab-active:text-layer-foreground py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-full focus:outline-none disabled:opacity-50 disabled:pointer-events-none"
                                     id="tab-draft" data-hs-tab="#pane-draft" aria-controls="pane-draft" role="tab">
                                     Brouillon
                                 </button>
@@ -246,6 +246,8 @@
     <script th:src="@{/js/lodash.min.js}"></script>
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script th:src="@{/js/common/sidebar-loader.js}"></script>
+
 
     <script type="module" th:inline="javascript">
         import { initAPScheduleCalendar } from '/js/APInterface/apScheduleCalendar.js';
@@ -257,6 +259,7 @@
             if (typeof HSStaticMethods !== 'undefined') {
                 HSStaticMethods.autoInit();
             }
+            loadSidebar('schedule');
 
             // Initialize Sidebar Calendar (interactive)
             //document.getElementById("calendar-sidebar").innerHTML = getCalendar();

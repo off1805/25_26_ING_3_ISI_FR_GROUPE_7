@@ -23,6 +23,7 @@ public class UeController {
     private final FindUeByIdUC findUeByIdUC;
     private final DeleteUeUC deleteUeUC;
     private final SearchUeUC searchUeUC;
+    private final UpdateUeUC updateUeUC;
     private final com.projetTransversalIsi.pedagogie.infrastructure.UeMapper ueMapper;
 
     @PostMapping
@@ -47,6 +48,15 @@ public class UeController {
         return ResponseEntity.ok(ueMapper.toResponseDTO(ue));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UeResponseDTO> updateUe(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateUeRequestDTO request) {
+        log.info("Requête de mise à jour d'UE pour l'ID : {}", id);
+        Ue ue = updateUeUC.execute(id, request);
+        return ResponseEntity.ok(ueMapper.toResponseDTO(ue));
+    }
+
     @GetMapping
     public ResponseEntity<Page<UeResponseDTO>> searchUes(
             @ModelAttribute UeFiltreDto command,
@@ -54,4 +64,5 @@ public class UeController {
         Page<Ue> resultats = searchUeUC.execute(command, pageable);
         return ResponseEntity.ok(resultats.map(ueMapper::toResponseDTO));
     }
+
 }

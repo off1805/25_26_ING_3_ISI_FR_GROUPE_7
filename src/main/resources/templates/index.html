@@ -20,109 +20,8 @@
 <body class="h-screen">
     <section class="flex flex-row bg-gray-50 h-full">
 
-        <!-- ========== SIDEBAR ========== -->
-        <section id="hs-app-sidebar" class="hs-overlay [--auto-close:lg] hs-overlay-minified:w-fit lg:translate-x-0 lg:end-auto lg:bottom-0
-             w-64 hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform
-             h-full hidden lg:block z-10
-             bg-sidebar border-e border-sidebar-line" role="dialog" tabindex="-1" aria-label="Sidebar">
-
-            <!-- Minify toggle button -->
-            <div class="hidden lg:block">
-                <button type="button"
-                    class="flex justify-center items-center flex-none gap-x-3 size-9 text-sm text-muted-foreground-2 hover:bg-muted-hover rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-muted-focus bg-white absolute right-0 translate-x-1/2 top-1/2 border border-card-line"
-                    aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-app-sidebar"
-                    aria-label="Minify navigation" data-hs-overlay-minifier="#hs-app-sidebar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                        class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right hidden hs-overlay-minified:block">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M9 6l6 6l-6 6" />
-                    </svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                        class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left hs-overlay-minified:hidden">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M15 6l-6 6l6 6" />
-                    </svg>
-                    <span class="sr-only">Navigation Toggle</span>
-                </button>
-            </div>
-
-            <div class="flex flex-col h-full overflow-x-hidden">
-
-                <!-- Brand -->
-                <header class="py-4 px-2 flex justify-between items-center gap-x-2">
-                    <a class="flex flex-row justify-start w-full items-center gap-2 font-semibold text-xl text-layer-foreground focus:outline-hidden focus:opacity-80 hs-overlay-minified:justify-center"
-                        href="#" aria-label="Brand">
-                        <img th:src="@{/images/logo.png}" width="25px">
-                        <span class="flex-none hs-overlay-minified:hidden">Kamoschool</span>
-                    </a>
-                    <div class="lg:hidden">
-                        <button type="button"
-                            class="flex justify-center items-center gap-x-3 size-6 bg-layer border border-layer-line text-sm text-muted-foreground-2 hover:bg-layer-hover rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-layer-focus"
-                            data-hs-overlay="#hs-app-sidebar">
-                            <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 6 6 18" />
-                                <path d="m6 6 12 12" />
-                            </svg>
-                            <span class="sr-only">Close</span>
-                        </button>
-                    </div>
-                </header>
-
-                <!-- Nav -->
-                <nav
-                    class="h-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb">
-                    <div class="pb-0 px-2 w-full flex flex-col flex-wrap">
-                        <ul class="space-y-1">
-
-
-
-                            <!-- Enseignants -->
-                            <li>
-                                <a class="min-h-9 w-full flex items-center gap-x-3.5 py-2 px-2.5 bg-sidebar-nav-active text-sm text-sidebar-nav-foreground rounded-lg hover:bg-sidebar-nav-hover focus:outline-hidden focus:bg-sidebar-nav-focus hs-overlay-minified:w-fit"
-                                    th:href="@{/admin/users}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-users">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                                        <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                        <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
-                                    </svg>
-                                    <span class="hs-overlay-minified:hidden">Utilisateurs</span>
-                                </a>
-                            </li>
-
-                            <!-- Cycles & Filières — ACTIVE -->
-                            <li>
-                                <a class="min-h-9 w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-sidebar-nav-foreground rounded-lg hover:bg-sidebar-nav-hover focus:outline-hidden focus:bg-sidebar-nav-focus"
-                                    th:href="@{/admin/dashboard}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-hierarchy-2">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M12 5m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                        <path d="M5 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                        <path d="M19 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                        <path d="M12 7v3a2 2 0 0 1 -2 2h-2a2 2 0 0 0 -2 2v1" />
-                                        <path d="M12 7v3a2 2 0 0 0 2 2h2a2 2 0 0 1 2 2v1" />
-                                    </svg>
-                                    <span class="hs-overlay-minified:hidden">Cycles & Filières</span>
-                                </a>
-                            </li>
-
-                        </ul>
-                    </div>
-                </nav>
-
-            </div>
-        </section>
+        <!-- ========== SIDEBAR — chargée dynamiquement via sidebar-loader.js ========== -->
+        <div id="sidebar-placeholder"></div>
 
 
         <!-- ========== MAIN CONTENT ========== -->
@@ -677,6 +576,7 @@
 
     <script type="module" th:src="@{/js/User/ui/UserController.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script src="/js/common/sidebar-loader.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof HSStaticMethods !== 'undefined') {
@@ -685,6 +585,8 @@
             } else {
                 console.error("Erreur : Le fichier preline.js n'est pas chargé correctement.");
             }
+            // Chargement de la sidebar
+            loadSidebar('users', null);
         });
 
         window.addEventListener('load', () => {

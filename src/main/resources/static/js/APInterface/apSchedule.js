@@ -9,6 +9,7 @@ let classMap = {};
 let specialiteMap = {};
 let selectedWeekRange = null;
 let currentLevelId = 'all';
+let _syncingFilter = false;
 let serverToday = ''; // YYYY-MM-DD from server
 
 // State to store loaded schedules
@@ -60,15 +61,30 @@ function captureInitialOngoing() {
 }
 
 function initFilters() {
-    const filterBtns = document.querySelectorAll('.level-filter-btn');
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const status = btn.getAttribute('data-filter-status');
-            const levelId = btn.getAttribute('data-filter-level');
+    document.querySelectorAll('.level-filter-select').forEach(select => {
+        select.addEventListener('change', (e) => {
+            if (_syncingFilter) return;
+            const levelId = e.target.value;
             currentLevelId = levelId;
-            applyLevelFilter(status, levelId, btn);
+            syncAllSelectFilters(levelId);
+            applyLevelFilter(levelId);
         });
     });
+}
+
+function syncAllSelectFilters(levelId) {
+    _syncingFilter = true;
+    document.querySelectorAll('.level-filter-select').forEach(sel => {
+        if (String(sel.value) !== String(levelId)) {
+            sel.value = levelId;
+            const wrapper = sel.closest('[data-hs-select]');
+            if (wrapper && window.HSSelect) {
+                const instance = HSSelect.getInstance(wrapper);
+                if (instance) instance.setValue(levelId);
+            }
+        }
+    });
+    _syncingFilter = false;
 }
 
 function initTabListeners() {
@@ -90,12 +106,7 @@ function initTabListeners() {
 }
 
 function applyCurrentFilterToStatus(status) {
-    const container = document.getElementById('container-' + status);
-    if (!container) return;
-    const activeBtn = container.querySelector(`.level-filter-btn[data-filter-level="${currentLevelId}"]`);
-    if (activeBtn) {
-        applyLevelFilter(status, currentLevelId, activeBtn);
-    }
+    applyLevelFilter(currentLevelId);
 }
 
 async function loadSchedules(status) {
@@ -189,22 +200,11 @@ function renderScheduleCards(status, schedules) {
     }).join('');
 }
 
-function applyLevelFilter(status, levelId, activeBtn) {
+function applyLevelFilter(levelId) {
     const tabs = ['ongoing', 'history', 'draft'];
     tabs.forEach(s => {
         const container = document.getElementById('container-' + s);
         if (!container) return;
-
-        container.querySelectorAll('.level-filter-btn').forEach(btn => {
-            const isActive = btn.getAttribute('data-filter-level') === levelId;
-            btn.classList.toggle('active', isActive);
-            btn.classList.toggle('bg-surface-active', isActive);
-            btn.classList.toggle('text-foreground', isActive);
-            btn.classList.toggle('bg-transparent', !isActive);
-            btn.classList.toggle('text-muted-foreground-1', !isActive);
-            btn.classList.toggle('hover:text-layer-foreground', !isActive);
-        });
-
         container.querySelectorAll('.schedule-card').forEach(card => {
             const cardLevelId = card.getAttribute('data-level-id');
             const visible = levelId === 'all' || !levelId || String(cardLevelId) === String(levelId);

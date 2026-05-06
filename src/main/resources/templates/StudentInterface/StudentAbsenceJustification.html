@@ -1,251 +1,343 @@
 <!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KemOSchool — Justification des absences</title>
-    <link rel="stylesheet" th:href="@{/css/output.css}"/>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
 </head>
+
 <body class="h-screen bg-background-1">
-<section class="flex flex-row h-full">
+    <section class="flex flex-row h-full">
 
-    <!-- SIDEBAR -->
-    <section th:replace="~{common/AppSidebar :: app-sidebar('absences', null)}"></section>
-    <section class="flex-1 flex flex-col overflow-hidden">
+        <!-- SIDEBAR -->
+        <div id="sidebar-placeholder"></div>
+        <section class="flex-1 flex flex-col overflow-hidden">
 
-        <!-- NAVBAR -->
-        <header class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
-            <div class="flex items-center gap-3">
-                <button type="button" class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors" data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                </button>
-                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
-                    <span>Student Panel</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6l-6 6"/></svg>
-                    <span class="font-semibold text-layer-foreground">Absences</span>
-                </nav>
-            </div>
-            <div class="flex items-center gap-2">
-                <button type="button" data-theme-toggle class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
-                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/></svg>
-                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-                </button>
-                <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm"
-                     th:text="${student != null and student.profile != null and student.profile.nom != null ? #strings.toUpperCase(#strings.substring(student.profile.nom, 0, 1)) : 'S'}">S</div>
-            </div>
-        </header>
-
-        <!-- PAGE -->
-        <div class="flex-1 overflow-y-auto">
-            <div class="px-4 sm:px-6 lg:px-8 py-6 space-y-5 max-w-7xl mx-auto">
-
-                <!-- EN-TÊTE -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-layer-foreground">Absences</h1>
-                        <p class="text-sm text-muted-foreground-2 mt-0.5">Soumettez vos justificatifs d'absence</p>
-                    </div>
+            <!-- NAVBAR -->
+            <header
+                class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
+                <div class="flex items-center gap-3">
+                    <button type="button"
+                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
+                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    </button>
+                    <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12l-2 0l9-9l9 9l-2 0" />
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+                        </svg>
+                        <span>Student Panel</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M9 6l6 6l-6 6" />
+                        </svg>
+                        <span class="font-semibold text-layer-foreground">Absences</span>
+                    </nav>
                 </div>
-
-                <!-- STATS RAPIDES -->
-                <div class="grid grid-cols-3 gap-3">
-                    <div class="bg-orange-50 border border-orange-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                        <div class="size-9 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-orange-500"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-xl font-black text-orange-700 leading-none"
-                               th:text="${absences != null ? absences.?[status == 'PENDING'].size() : 0}">0</p>
-                            <p class="text-[10px] sm:text-xs font-semibold text-orange-500 mt-0.5 truncate">En attente</p>
-                        </div>
-                    </div>
-                    <div class="bg-green-50 border border-green-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                        <div class="size-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-500"><path d="M20 6 9 17l-5-5"/></svg>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-xl font-black text-green-700 leading-none"
-                               th:text="${absences != null ? absences.?[status == 'APPROVED'].size() : 0}">0</p>
-                            <p class="text-[10px] sm:text-xs font-semibold text-green-500 mt-0.5 truncate">Approuvées</p>
-                        </div>
-                    </div>
-                    <div class="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                        <div class="size-9 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-500"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-xl font-black text-red-700 leading-none"
-                               th:text="${absences != null ? absences.?[status == 'REJECTED'].size() : 0}">0</p>
-                            <p class="text-[10px] sm:text-xs font-semibold text-red-500 mt-0.5 truncate">Rejetées</p>
-                        </div>
-                    </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" data-theme-toggle
+                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                        </svg>
+                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17"
+                            height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <circle cx="12" cy="12" r="4" />
+                            <path
+                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                        </svg>
+                    </button>
+                    <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm"
+                        th:text="${student != null and student.profile != null and student.profile.nom != null ? #strings.toUpperCase(#strings.substring(student.profile.nom, 0, 1)) : 'S'}">
+                        S</div>
                 </div>
+            </header>
 
-                <!-- GRILLE PRINCIPALE -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 pb-8">
+            <!-- PAGE -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="px-4 sm:px-6 lg:px-8 py-6 space-y-5 max-w-7xl mx-auto">
 
-                    <!-- FORMULAIRE (2/3) -->
-                    <div class="lg:col-span-2">
-                        <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+                    <!-- EN-TÊTE -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-bold text-layer-foreground">Absences</h1>
+                            <p class="text-sm text-muted-foreground-2 mt-0.5">Soumettez vos justificatifs d'absence</p>
+                        </div>
+                    </div>
 
-                            <!-- Header carte -->
-                            <div class="flex items-center gap-3 px-5 sm:px-6 py-4 border-b border-card-line">
-                                <div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                                </div>
-                                <div>
-                                    <h2 class="text-sm font-bold text-layer-foreground">Nouvelle justification</h2>
-                                    <p class="text-xs text-muted-foreground-2">Remplissez tous les champs obligatoires</p>
-                                </div>
+                    <!-- STATS RAPIDES -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div
+                            class="bg-orange-50 border border-orange-200 rounded-2xl px-4 py-3 flex items-center gap-3">
+                            <div class="size-9 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" class="text-orange-500">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                </svg>
                             </div>
+                            <div class="min-w-0">
+                                <p class="text-xl font-black text-orange-700 leading-none"
+                                    th:text="${absences != null ? absences.?[status == 'PENDING'].size() : 0}">0</p>
+                                <p class="text-[10px] sm:text-xs font-semibold text-orange-500 mt-0.5 truncate">En
+                                    attente</p>
+                            </div>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-2xl px-4 py-3 flex items-center gap-3">
+                            <div class="size-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" class="text-green-500">
+                                    <path d="M20 6 9 17l-5-5" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xl font-black text-green-700 leading-none"
+                                    th:text="${absences != null ? absences.?[status == 'APPROVED'].size() : 0}">0</p>
+                                <p class="text-[10px] sm:text-xs font-semibold text-green-500 mt-0.5 truncate">
+                                    Approuvées</p>
+                            </div>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 flex items-center gap-3">
+                            <div class="size-9 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" class="text-red-500">
+                                    <path d="M18 6 6 18M6 6l12 12" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xl font-black text-red-700 leading-none"
+                                    th:text="${absences != null ? absences.?[status == 'REJECTED'].size() : 0}">0</p>
+                                <p class="text-[10px] sm:text-xs font-semibold text-red-500 mt-0.5 truncate">Rejetées
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                            <form class="px-5 sm:px-6 py-5 space-y-4">
+                    <!-- GRILLE PRINCIPALE -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 pb-8">
 
-                                <!-- Ligne date + cours -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Date de l'absence <span class="text-red-500">*</span></label>
-                                        <input type="date"
-                                               class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"/>
+                        <!-- FORMULAIRE (2/3) -->
+                        <div class="lg:col-span-2">
+                            <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+
+                                <!-- Header carte -->
+                                <div class="flex items-center gap-3 px-5 sm:px-6 py-4 border-b border-card-line">
+                                    <div
+                                        class="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            class="text-primary">
+                                            <path d="M12 20h9" />
+                                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                        </svg>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Cours concerné <span class="text-red-500">*</span></label>
-                                        <select class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
-                                            <option value="">— Sélectionner —</option>
-                                            <option>Algorithmique</option>
-                                            <option>Réseaux</option>
-                                            <option>Bases de données</option>
-                                            <option>Systèmes</option>
-                                        </select>
+                                        <h2 class="text-sm font-bold text-layer-foreground">Nouvelle justification</h2>
+                                        <p class="text-xs text-muted-foreground-2">Remplissez tous les champs
+                                            obligatoires</p>
                                     </div>
                                 </div>
 
-                                <!-- Raison -->
-                                <div>
-                                    <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Motif de l'absence <span class="text-red-500">*</span></label>
-                                    <textarea rows="3"
-                                              placeholder="Décrivez brièvement la raison de votre absence..."
-                                              class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm placeholder:text-muted-foreground-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none transition-shadow"></textarea>
-                                </div>
+                                <form class="px-5 sm:px-6 py-5 space-y-4">
 
-                                <!-- Upload -->
-                                <div>
-                                    <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Justificatif (document)</label>
-                                    <label for="file-upload" class="group flex flex-col items-center gap-3 border-2 border-dashed border-card-line rounded-xl p-5 sm:p-6 text-center hover:border-primary/50 hover:bg-primary/[0.02] transition-all cursor-pointer">
-                                        <div class="size-10 rounded-xl bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-muted-foreground-2 group-hover:text-primary transition-colors"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    <!-- Ligne date + cours -->
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label
+                                                class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Date
+                                                de l'absence <span class="text-red-500">*</span></label>
+                                            <input type="date"
+                                                class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow" />
                                         </div>
                                         <div>
-                                            <p class="text-sm font-semibold text-layer-foreground">Glisser-déposer ou <span class="text-primary">cliquer pour sélectionner</span></p>
-                                            <p class="text-xs text-muted-foreground-2 mt-0.5">PDF, JPG, PNG — 10 Mo max</p>
+                                            <label
+                                                class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Cours
+                                                concerné <span class="text-red-500">*</span></label>
+                                            <select
+                                                class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                                <option value="">— Sélectionner —</option>
+                                                <option>Algorithmique</option>
+                                                <option>Réseaux</option>
+                                                <option>Bases de données</option>
+                                                <option>Systèmes</option>
+                                            </select>
                                         </div>
-                                    </label>
-                                    <input id="file-upload" type="file" accept=".pdf,.jpg,.jpeg,.png" class="sr-only"/>
-                                </div>
+                                    </div>
 
-                                <!-- Boutons -->
-                                <div class="flex flex-col-reverse sm:flex-row gap-2.5 pt-1">
-                                    <button type="button"
+                                    <!-- Raison -->
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Motif
+                                            de l'absence <span class="text-red-500">*</span></label>
+                                        <textarea rows="3"
+                                            placeholder="Décrivez brièvement la raison de votre absence..."
+                                            class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm placeholder:text-muted-foreground-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none transition-shadow"></textarea>
+                                    </div>
+
+                                    <!-- Upload -->
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Justificatif
+                                            (document)</label>
+                                        <label for="file-upload"
+                                            class="group flex flex-col items-center gap-3 border-2 border-dashed border-card-line rounded-xl p-5 sm:p-6 text-center hover:border-primary/50 hover:bg-primary/[0.02] transition-all cursor-pointer">
+                                            <div
+                                                class="size-10 rounded-xl bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="1.75"
+                                                    class="text-muted-foreground-2 group-hover:text-primary transition-colors">
+                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                                    <polyline points="17 8 12 3 7 8" />
+                                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-semibold text-layer-foreground">Glisser-déposer
+                                                    ou <span class="text-primary">cliquer pour sélectionner</span></p>
+                                                <p class="text-xs text-muted-foreground-2 mt-0.5">PDF, JPG, PNG — 10 Mo
+                                                    max</p>
+                                            </div>
+                                        </label>
+                                        <input id="file-upload" type="file" accept=".pdf,.jpg,.jpeg,.png"
+                                            class="sr-only" />
+                                    </div>
+
+                                    <!-- Boutons -->
+                                    <div class="flex flex-col-reverse sm:flex-row gap-2.5 pt-1">
+                                        <button type="button"
                                             class="flex-1 px-4 py-2.5 rounded-xl border border-card-line bg-transparent text-layer-foreground text-sm font-semibold hover:bg-muted transition-colors">
-                                        Annuler
-                                    </button>
-                                    <button type="submit"
+                                            Annuler
+                                        </button>
+                                        <button type="submit"
                                             class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 active:scale-95 transition-all">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9l20-7z"/></svg>
-                                        Soumettre
-                                    </button>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2.5">
+                                                <path d="M22 2 11 13" />
+                                                <path d="M22 2 15 22 11 13 2 9l20-7z" />
+                                            </svg>
+                                            Soumettre
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- PANNEAU STATUTS (1/3) -->
+                        <div class="space-y-3">
+
+                            <!-- EN ATTENTE -->
+                            <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+                                <div class="flex items-center justify-between px-4 py-3 border-b border-card-line">
+                                    <div class="flex items-center gap-2">
+                                        <div class="size-2 rounded-full bg-orange-400"></div>
+                                        <span class="text-sm font-bold text-layer-foreground">En attente</span>
+                                    </div>
+                                    <span
+                                        class="inline-flex items-center justify-center size-5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-black"
+                                        th:text="${absences != null ? absences.?[status == 'PENDING'].size() : 0}">0</span>
                                 </div>
-                            </form>
+                                <div class="divide-y divide-card-line">
+                                    <th:block th:if="${absences != null}" th:each="a : ${absences}">
+                                        <div class="px-4 py-3">
+                                            <p class="text-sm font-semibold text-layer-foreground truncate"
+                                                th:text="${a.subject}">—</p>
+                                            <p class="text-xs text-muted-foreground-2 mt-0.5"
+                                                th:text="${#temporals.format(a.date, 'dd MMM yyyy')}">—</p>
+                                        </div>
+                                    </th:block>
+                                    <div th:if="${absences == null or absences.?[status == 'PENDING'].size() == 0}"
+                                        class="px-4 py-4 text-center text-xs text-muted-foreground-2">
+                                        Aucune absence en attente
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- APPROUVÉES -->
+                            <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+                                <div class="flex items-center justify-between px-4 py-3 border-b border-card-line">
+                                    <div class="flex items-center gap-2">
+                                        <div class="size-2 rounded-full bg-green-400"></div>
+                                        <span class="text-sm font-bold text-layer-foreground">Approuvées</span>
+                                    </div>
+                                    <span
+                                        class="inline-flex items-center justify-center size-5 rounded-full bg-green-100 text-green-700 text-[10px] font-black"
+                                        th:text="${absences != null ? absences.?[status == 'APPROVED'].size() : 0}">0</span>
+                                </div>
+                                <div class="divide-y divide-card-line">
+                                    <th:block th:if="${absences != null}" th:each="a : ${absences}">
+                                        <div class="px-4 py-3">
+                                            <p class="text-sm font-semibold text-layer-foreground truncate"
+                                                th:text="${a.subject}">—</p>
+                                            <p class="text-xs text-muted-foreground-2 mt-0.5"
+                                                th:text="${#temporals.format(a.date, 'dd MMM yyyy')}">—</p>
+                                            <p class="text-xs text-green-600 mt-1 font-medium" th:text="${a.reason}">—
+                                            </p>
+                                        </div>
+                                    </th:block>
+                                    <div th:if="${absences == null or absences.?[status == 'APPROVED'].size() == 0}"
+                                        class="px-4 py-4 text-center text-xs text-muted-foreground-2">
+                                        Aucune absence approuvée
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- REJETÉES -->
+                            <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+                                <div class="flex items-center justify-between px-4 py-3 border-b border-card-line">
+                                    <div class="flex items-center gap-2">
+                                        <div class="size-2 rounded-full bg-red-400"></div>
+                                        <span class="text-sm font-bold text-layer-foreground">Rejetées</span>
+                                    </div>
+                                    <span
+                                        class="inline-flex items-center justify-center size-5 rounded-full bg-red-100 text-red-700 text-[10px] font-black"
+                                        th:text="${absences != null ? absences.?[status == 'REJECTED'].size() : 0}">0</span>
+                                </div>
+                                <div class="divide-y divide-card-line">
+                                    <th:block th:if="${absences != null}" th:each="a : ${absences}">
+                                        <div class="px-4 py-3">
+                                            <p class="text-sm font-semibold text-layer-foreground truncate"
+                                                th:text="${a.subject}">—</p>
+                                            <p class="text-xs text-muted-foreground-2 mt-0.5"
+                                                th:text="${#temporals.format(a.date, 'dd MMM yyyy')}">—</p>
+                                            <p class="text-xs text-red-500 mt-1 font-medium italic"
+                                                th:text="${a.reason}">—</p>
+                                        </div>
+                                    </th:block>
+                                    <div th:if="${absences == null or absences.?[status == 'REJECTED'].size() == 0}"
+                                        class="px-4 py-4 text-center text-xs text-muted-foreground-2">
+                                        Aucune absence rejetée
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
-                    <!-- PANNEAU STATUTS (1/3) -->
-                    <div class="space-y-3">
-
-                        <!-- EN ATTENTE -->
-                        <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
-                            <div class="flex items-center justify-between px-4 py-3 border-b border-card-line">
-                                <div class="flex items-center gap-2">
-                                    <div class="size-2 rounded-full bg-orange-400"></div>
-                                    <span class="text-sm font-bold text-layer-foreground">En attente</span>
-                                </div>
-                                <span class="inline-flex items-center justify-center size-5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-black"
-                                      th:text="${absences != null ? absences.?[status == 'PENDING'].size() : 0}">0</span>
-                            </div>
-                            <div class="divide-y divide-card-line">
-                                <th:block th:if="${absences != null}" th:each="a : ${absences}" >
-                                    <div class="px-4 py-3">
-                                        <p class="text-sm font-semibold text-layer-foreground truncate" th:text="${a.subject}">—</p>
-                                        <p class="text-xs text-muted-foreground-2 mt-0.5" th:text="${#temporals.format(a.date, 'dd MMM yyyy')}">—</p>
-                                    </div>
-                                </th:block>
-                                <div th:if="${absences == null or absences.?[status == 'PENDING'].size() == 0}"
-                                     class="px-4 py-4 text-center text-xs text-muted-foreground-2">
-                                    Aucune absence en attente
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- APPROUVÉES -->
-                        <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
-                            <div class="flex items-center justify-between px-4 py-3 border-b border-card-line">
-                                <div class="flex items-center gap-2">
-                                    <div class="size-2 rounded-full bg-green-400"></div>
-                                    <span class="text-sm font-bold text-layer-foreground">Approuvées</span>
-                                </div>
-                                <span class="inline-flex items-center justify-center size-5 rounded-full bg-green-100 text-green-700 text-[10px] font-black"
-                                      th:text="${absences != null ? absences.?[status == 'APPROVED'].size() : 0}">0</span>
-                            </div>
-                            <div class="divide-y divide-card-line">
-                                <th:block th:if="${absences != null}" th:each="a : ${absences}" >
-                                    <div class="px-4 py-3">
-                                        <p class="text-sm font-semibold text-layer-foreground truncate" th:text="${a.subject}">—</p>
-                                        <p class="text-xs text-muted-foreground-2 mt-0.5" th:text="${#temporals.format(a.date, 'dd MMM yyyy')}">—</p>
-                                        <p class="text-xs text-green-600 mt-1 font-medium" th:text="${a.reason}">—</p>
-                                    </div>
-                                </th:block>
-                                <div th:if="${absences == null or absences.?[status == 'APPROVED'].size() == 0}"
-                                     class="px-4 py-4 text-center text-xs text-muted-foreground-2">
-                                    Aucune absence approuvée
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- REJETÉES -->
-                        <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
-                            <div class="flex items-center justify-between px-4 py-3 border-b border-card-line">
-                                <div class="flex items-center gap-2">
-                                    <div class="size-2 rounded-full bg-red-400"></div>
-                                    <span class="text-sm font-bold text-layer-foreground">Rejetées</span>
-                                </div>
-                                <span class="inline-flex items-center justify-center size-5 rounded-full bg-red-100 text-red-700 text-[10px] font-black"
-                                      th:text="${absences != null ? absences.?[status == 'REJECTED'].size() : 0}">0</span>
-                            </div>
-                            <div class="divide-y divide-card-line">
-                                <th:block th:if="${absences != null}" th:each="a : ${absences}" >
-                                    <div class="px-4 py-3">
-                                        <p class="text-sm font-semibold text-layer-foreground truncate" th:text="${a.subject}">—</p>
-                                        <p class="text-xs text-muted-foreground-2 mt-0.5" th:text="${#temporals.format(a.date, 'dd MMM yyyy')}">—</p>
-                                        <p class="text-xs text-red-500 mt-1 font-medium italic" th:text="${a.reason}">—</p>
-                                    </div>
-                                </th:block>
-                                <div th:if="${absences == null or absences.?[status == 'REJECTED'].size() == 0}"
-                                     class="px-4 py-4 text-center text-xs text-muted-foreground-2">
-                                    Aucune absence rejetée
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
                 </div>
-
             </div>
-        </div>
+        </section>
     </section>
-</section>
 
-<script th:src="@{/js/preline.js}"></script>
-<script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script th:src="@{/js/preline.js}"></script>
+    <script th:src="@{/js/common/sidebar-loader.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSidebar('absences');
+        });
+    </script>
 </body>
+
 </html>

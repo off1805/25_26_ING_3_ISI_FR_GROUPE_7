@@ -346,19 +346,14 @@ function initBlockInteraction() {
         }
 
         try {
-            const res = await fetch('/api/attendance-codes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    seanceId: seanceId,
-                    enseignantId: enseignantId,
-                    type: type.toUpperCase(),
-                    heuresAMarquer: 2.0,
-                    dureeVieMinutes: type === 'qr' ? 5 : 10
-                })
+            const { default: api } = await import('../common/ClientHttp.js');
+            const code = await api.post('/api/attendance-codes', {
+                seanceId: seanceId,
+                enseignantId: enseignantId,
+                type: type.toUpperCase(),
+                heuresAMarquer: 2.0,
+                dureeVieMinutes: type === 'qr' ? 5 : 10
             });
-            if (!res.ok) throw new Error('Erreur API');
-            const code = await res.json();
 
             if (display) {
                 if (type === 'qr') {

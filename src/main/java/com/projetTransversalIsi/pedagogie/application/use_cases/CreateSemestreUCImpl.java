@@ -23,23 +23,25 @@ public class CreateSemestreUCImpl implements CreateSemestreUC {
             throw new IllegalArgumentException("Le numéro du semestre doit être 1 ou 2.");
         }
 
-        boolean exists = semestreRepository.existsByAnneeScolaireIdAndSpecialiteIdAndNumero(
+        boolean exists = semestreRepository.existsByAnneeScolaireIdAndNiveauIdAndNumero(
                 request.anneeScolaireId(),
-                request.specialiteId(),
+                request.niveauId(),
                 request.numero()
         );
 
         if (exists) {
             throw new IllegalStateException(
-                    "Ce semestre existe déjà pour cette année scolaire et cette spécialité."
+                    "Ce semestre existe déjà pour cette année scolaire et ce niveau."
             );
         }
 
         Semestre semestre = new Semestre();
         semestre.setNumero(request.numero());
         semestre.setLibelle("Semestre " + request.numero());
+        semestre.setDateDebut(request.dateDebut());
+        semestre.setDateFin(request.dateFin());
         semestre.setAnneeScolaireId(request.anneeScolaireId());
-        semestre.setSpecialiteId(request.specialiteId());
+        semestre.setNiveauId(request.niveauId());
 
         JpaSemestreEntity saved = semestreRepository.save(semestreMapper.toEntity(semestre));
 

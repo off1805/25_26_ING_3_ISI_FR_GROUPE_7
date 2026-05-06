@@ -18,6 +18,7 @@ public class NiveauService {
     private final FindNiveauByIdUC findNiveauByIdUC;
     private final FindNiveauxByFiliereIdUC findNiveauxByFiliereIdUC;
     private final SearchNiveauxUC searchNiveauxUC;
+    private final UpdateNiveauSemestreUC updateNiveauSemestreUC;
 
     public NiveauResponseDTO createNiveau(CreateNiveauRequestDTO request) {
         return NiveauResponseDTO.fromDomain(createNiveauUC.execute(request));
@@ -45,5 +46,9 @@ public class NiveauService {
         return searchNiveauxUC.execute(request).stream()
                 .map(NiveauResponseDTO::fromDomain)
                 .collect(Collectors.toList());
+    }
+
+    public void updateSemestreActif(Long id, Integer semestreActif) {
+        updateNiveauSemestreUC.execute(id, semestreActif);
     }
 }

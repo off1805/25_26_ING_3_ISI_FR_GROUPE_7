@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +25,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthentificationFIlter extends OncePerRequestFilter {
     private final JwtService tokenService;
 
@@ -58,6 +60,13 @@ public class JwtAuthentificationFIlter extends OncePerRequestFilter {
                 SecurityContextHolder.clearContext();
             }
         }
+
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            log.info("UserCredentials [{} {}]: {}", request.getMethod(), request.getRequestURI(), SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        } else {
+            log.info("UserCredentials [{} {}]: Unauthenticated", request.getMethod(), request.getRequestURI());
+        }
+
         filterChain.doFilter(request, response);
     }
 

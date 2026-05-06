@@ -27,6 +27,9 @@ public class JpaNiveauEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "semestre_actif")
+    private Integer semestreActif;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "filiere_id", nullable = false)
     private JpaFiliereEntity filiere;

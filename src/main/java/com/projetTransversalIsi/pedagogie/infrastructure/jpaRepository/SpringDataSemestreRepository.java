@@ -8,20 +8,20 @@ import java.util.Optional;
 
 public interface SpringDataSemestreRepository extends JpaRepository<JpaSemestreEntity, Long> {
 
-    List<JpaSemestreEntity> findByAnneeScolaireIdAndSpecialiteIdOrderByNumeroAsc(
+    List<JpaSemestreEntity> findByAnneeScolaireIdAndNiveauIdOrderByNumeroAsc(
             Long anneeScolaireId,
-            Long specialiteId
+            Long niveauId
     );
 
-    Optional<JpaSemestreEntity> findByAnneeScolaireIdAndSpecialiteIdAndNumero(
+    Optional<JpaSemestreEntity> findByAnneeScolaireIdAndNiveauIdAndNumero(
             Long anneeScolaireId,
-            Long specialiteId,
+            Long niveauId,
             Integer numero
     );
 
-    boolean existsByAnneeScolaireIdAndSpecialiteIdAndNumero(
+    boolean existsByAnneeScolaireIdAndNiveauIdAndNumero(
             Long anneeScolaireId,
-            Long specialiteId,
+            Long niveauId,
             Integer numero
     );
 }

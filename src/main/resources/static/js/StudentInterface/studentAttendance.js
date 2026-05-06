@@ -24,29 +24,19 @@ function showFeedback(message, tone = "info") {
     box.classList.remove("hidden");
 }
 
+import api from "../common/ClientHttp.js";
+
 async function markPresent(code) {
-    const token = await TokenService.getToken();
-
-    const response = await fetch(`/api/presences/scan?code=${encodeURIComponent(code)}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
+    try {
+        await api.get(`/api/presences/scan?code=${encodeURIComponent(code)}`);
+        showState("success-state");
+    } catch (error) {
+        if (error.response && error.response.status === 401) {
+            showState("not-logged-state");
+            return;
         }
-    });
-
-    if (response.status === 401) {
-        showState("not-logged-state");
-        return;
+        throw new Error(error.message || `Erreur lors de l'enregistrement.`);
     }
-
-    if (!response.ok) {
-        const payload = await response.json().catch(() => null);
-        const message = payload?.message || `Erreur ${response.status}`;
-        throw new Error(message);
-    }
-
-    showState("success-state");
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

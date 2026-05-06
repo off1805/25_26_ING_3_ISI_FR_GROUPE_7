@@ -18,7 +18,7 @@
     <section class="flex flex-row bg-sidebar-nav-hover h-full">
 
         <!-- SIDEBAR -->
-        <section th:replace="~{common/AppSidebar :: app-sidebar('classes', ${subjectsFiliereId})}"></section>
+        <div id="sidebar-placeholder"></div>
         <section class="flex-1 flex flex-col overflow-hidden">
 
             <!-- NAVBAR -->
@@ -352,9 +352,11 @@
                                                                         d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
                                                                 </svg>
                                                             </div>
-                                                            <p class="text-sm font-semibold text-layer-foreground">Aucun
+                                                            <p class="text-sm font-semibold text-layer-foreground">
+                                                                Aucun
                                                                 étudiant</p>
-                                                            <p class="text-xs text-muted-foreground-2">Cette classe n'a
+                                                            <p class="text-xs text-muted-foreground-2">Cette classe
+                                                                n'a
                                                                 pas encore d'étudiants inscrits.</p>
                                                         </div>
                                                     </td>
@@ -548,44 +550,10 @@
                 <form id="form-manual" class="p-6 space-y-4" novalidate>
                     <div class="grid grid-cols-2 gap-3">
                         <div class="space-y-1.5">
-                            <label class="text-xs font-semibold text-layer-foreground">Fichier Excel <span
+                            <label class="text-xs font-semibold text-layer-foreground">Nom <span
                                     class="text-red-500">*</span></label>
-                            <div class="flex items-center gap-2">
-                                <label
-                                    class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-muted text-layer-foreground rounded-xl hover:bg-muted-hover transition-colors border border-layer-line">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                        <polyline points="17 8 12 3 7 8" />
-                                        <line x1="12" y1="3" x2="12" y2="15" />
-                                    </svg>
-                                    Choisir un fichier
-                                    <input id="input-excel-file-2" type="file" accept=".xlsx,.xls,.ods" class="sr-only" />
-                                </label>
-                                <span id="excel-file-label"
-                                    class="text-xs text-muted-foreground-2 truncate max-w-[180px]">Aucun
-                                    fichier sélectionné</span>
-                            </div>
-                        </div>
-
-                        <!-- Configuration des colonnes -->
-                        <div
-                            class="mt-4 p-4 bg-muted/30 border border-layer-line rounded-xl flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-semibold text-layer-foreground">Modèle de fichier</p>
-                                <p class="text-xs text-muted-foreground-2">Téléchargez le format exact à respecter.</p>
-                            </div>
-                            <button type="button" onclick="exporterModeleExcel()"
-                                class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold bg-surface border border-layer-line text-layer-foreground rounded-lg hover:bg-muted transition-colors shadow-2xs">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                    <polyline points="7 10 12 15 17 10" />
-                                    <line x1="12" y1="15" x2="12" y2="3" />
-                                </svg>
-                                Exporter le modèle
-                            </button>
+                            <input name="nom" type="text" required placeholder="Ex : Dupont"
+                                class="w-full py-2.5 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-semibold text-layer-foreground">Prénom <span
@@ -594,12 +562,49 @@
                                 class="w-full py-2.5 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
                         </div>
                     </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-layer-foreground">Niveau <span
+                                    class="text-red-500">*</span></label>
+                            <select id="modal-niveau-select" name="niveauId" data-hs-select='{
+                                  "placeholder": "Sélectionner un niveau",
+                                  "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2.5 ps-3 pe-9 flex text-nowrap w-full cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-xl text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                  "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden" required>
+                                <option value="" disabled selected>Sélectionner un niveau</option>
+                                <option th:each="niv : ${niveaux}" th:value="${niv.id}"
+                                    th:text="'Niveau ' + ${niv.ordre}"></option>
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-layer-foreground">Classe <span
+                                    class="text-red-500">*</span></label>
+                            <select id="modal-classe-select" name="classeId" data-hs-select='{
+                                  "placeholder": "Sélectionner une classe",
+                                  "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2.5 ps-3 pe-9 flex text-nowrap w-full cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-xl text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                  "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden" required disabled>
+                                <option value="" disabled selected>Patientez...</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="space-y-1.5">
                         <label class="text-xs font-semibold text-layer-foreground">Email <span
                                 class="text-red-500">*</span></label>
                         <input name="email" type="email" required placeholder="jean.dupont@ecole.cm"
                             class="w-full py-2.5 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
                     </div>
+
                     <div class="grid grid-cols-2 gap-3">
                         <div class="space-y-1.5">
                             <label class="text-xs font-semibold text-layer-foreground">Matricule <span
@@ -613,6 +618,7 @@
                                 class="w-full py-2.5 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
                         </div>
                     </div>
+
                     <div class="flex items-center justify-end gap-2 pt-2 border-t border-card-line">
                         <button type="button"
                             class="px-4 py-2 text-sm font-semibold text-muted-foreground-2 hover:bg-muted rounded-xl transition-colors"
@@ -696,7 +702,7 @@
                                 sélectionné</span>
                         </div>
                     </div>
-                   
+
                     <div class="flex items-center justify-end gap-2 pt-1">
                         <button type="button"
                             class="px-4 py-2 text-sm font-semibold text-muted-foreground-2 hover:bg-muted rounded-xl"
@@ -959,17 +965,17 @@
             const list = document.getElementById('vs-history-list');
             list.innerHTML = '<p class="text-sm text-muted-foreground-2 italic">Chargement...</p>';
 
-            fetch(`/api/students/${userId}/classe-history`)
-                .then(r => r.ok ? r.json() : Promise.reject())
-                .then(history => {
-                    if (!history.length) {
-                        list.innerHTML = '<p class="text-sm text-muted-foreground-2 italic">Aucun historique disponible.</p>';
-                        document.getElementById('vs-stat-classes').textContent = '0';
-                        document.getElementById('vs-stat-annee').textContent = '—';
-                        return;
-                    }
+            import('/js/common/ClientHttp.js').then(({ default: api }) => {
+                api.get(`/api/students/${userId}/classe-history`)
+                    .then(history => {
+                        if (!history.length) {
+                            list.innerHTML = '<p class="text-sm text-muted-foreground-2 italic">Aucun historique disponible.</p>';
+                            document.getElementById('vs-stat-classes').textContent = '0';
+                            document.getElementById('vs-stat-annee').textContent = '—';
+                            return;
+                        }
 
-                    list.innerHTML = history.map(h => `
+                        list.innerHTML = history.map(h => `
                         <div class="flex items-start gap-3 py-3 border-b border-layer-line last:border-0">
                             <div class="mt-0.5 size-2 rounded-full shrink-0 ${h.estActif ? 'bg-green-500' : 'bg-muted-foreground-2'}"></div>
                             <div class="flex-1 min-w-0">
@@ -985,14 +991,21 @@
                             </div>
                         </div>`).join('');
 
-                    const current = history.find(h => h.estActif);
-                    document.getElementById('vs-stat-classes').textContent = history.length;
-                    document.getElementById('vs-stat-annee').textContent = current ? current.anneeScolaire : '—';
-                })
-                .catch(() => {
-                    list.innerHTML = '<p class="text-sm text-red-500">Erreur lors du chargement de l\'historique.</p>';
-                });
+                        const current = history.find(h => h.estActif);
+                        document.getElementById('vs-stat-classes').textContent = history.length;
+                        document.getElementById('vs-stat-annee').textContent = current ? current.anneeScolaire : '—';
+                    })
+                    .catch(() => {
+                        list.innerHTML = '<p class="text-sm text-red-500">Erreur lors du chargement de l\'historique.</p>';
+                    });
+            });
         }
+    </script>
+    <script th:src="@{/js/common/sidebar-loader.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSidebar('classes');
+        });
     </script>
     <script>
         function exporterModeleExcel() {
@@ -1021,7 +1034,7 @@
             XLSX.writeFile(workbook, "Modele_Import_Etudiants.xlsx");
         }
     </script>
-</body>
+
 
 </body>
 

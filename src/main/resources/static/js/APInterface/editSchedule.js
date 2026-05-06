@@ -142,7 +142,8 @@ export class EditScheduleController {
             api.get(`/api/ue?specialiteId=${encodeURIComponent(specialiteId)}&deleted=false&size=200`),
             api.get('/api/users?role=TEACHER&size=200'),
         ]);
-
+        console.log(uePage);
+        console.log(teachersPage);
         const teacherMap = new Map();
         (teachersPage?.content || []).forEach(t => {
             if (!t.profile?.id) return;

@@ -16,21 +16,16 @@ function showFeedback(message, tone = "info") {
     setTimeout(() => box.classList.add("hidden"), 5000);
 }
 
+import api from "../common/ClientHttp.js";
+
 async function apiRequest(url, options = {}) {
-    const token = await TokenService.getToken();
-    const response = await fetch(url, {
-        headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
-        },
-        ...options
-    });
-    if (!response.ok) {
-        const payload = await response.json().catch(() => null);
-        throw new Error(payload?.message || `Erreur ${response.status}`);
+    if (options.method === 'POST') {
+        return await api.post(url, options.body ? JSON.parse(options.body) : null);
+    } else if (options.method === 'PATCH') {
+        return await api.patch(url, options.body ? JSON.parse(options.body) : null);
+    } else {
+        return await api.get(url);
     }
-    if (response.status === 204) return null;
-    return response.json();
 }
 
 function renderAnneeItem(annee) {

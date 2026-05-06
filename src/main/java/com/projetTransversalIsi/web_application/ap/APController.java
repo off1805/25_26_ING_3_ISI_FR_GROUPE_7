@@ -1,7 +1,6 @@
 package com.projetTransversalIsi.web_application.ap;
 
 import com.projetTransversalIsi.pedagogie.application.dto.UeFiltreDto;
-import com.projetTransversalIsi.pedagogie.application.dto.UeResponseDTO;
 import com.projetTransversalIsi.pedagogie.application.use_cases.SearchUeUC;
 import com.projetTransversalIsi.pedagogie.domain.model.Ue;
 import com.projetTransversalIsi.structure_academique.application.dto.FiliereResponseDTO;
@@ -24,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -95,15 +95,17 @@ public class APController {
 
     // ── Routes ────────────────────────────────────────────────────────────────
 
-    @GetMapping("/filiere/{id}")
-    public String subjectsView(@PathVariable("id") Long id, Model model) {
+    @GetMapping("/subjects")
+    public String subjectsView(Model model) {
+        Long id = 1L;
         FiliereResponseDTO filiere = filiereService.getFiliereById(id);
         model.addAttribute("filiere", filiere);
-        
+
         List<NiveauResponseDTO> niveaux = niveauService.getNiveauxByFiliereId(id);
         model.addAttribute("niveaux", niveaux);
 
-        List<SpecialiteResponseDTO> allSpecialites = new ArrayList<>(specialiteService.getSpecialitesByNiveauId(niveaux.get(0).id()));
+        List<SpecialiteResponseDTO> allSpecialites = new ArrayList<>(
+                specialiteService.getSpecialitesByNiveauId(niveaux.get(0).id()));
         model.addAttribute("specialites", allSpecialites);
 
         List<ClasseResponseDTO> allClasses = new ArrayList<>();
@@ -113,14 +115,15 @@ public class APController {
             }
         }
         model.addAttribute("classes", allClasses);
-        Page<Ue> ue= searchUe.execute(new UeFiltreDto(null,null,allSpecialites.get(0).id(),false),PageRequest.of(0, 10, Sort.by("id").descending()));
+        Page<Ue> ue = searchUe.execute(new UeFiltreDto(null, null, allSpecialites.get(0).id(), false),
+                PageRequest.of(0, 10, Sort.by("id").descending()));
         System.out.println(ue.stream().toList());
         model.addAttribute(
                 "apPageBreadcrumb",
                 bcJoin(bcItem(filiere != null ? filiere.nom() : "Filiere", null)));
         model.addAttribute("activePage", "subjects");
         model.addAttribute("apName", "AP Name");
-        model.addAttribute("ues",ue.stream().toList());
+        model.addAttribute("ues", ue.stream().toList());
         return "APInterface/APSubjects";
     }
 
@@ -153,7 +156,8 @@ public class APController {
         model.addAttribute("specialites", allSpecialites);
         Map<Long, SpecialiteResponseDTO> specialiteMap = new LinkedHashMap<>();
         for (SpecialiteResponseDTO s : allSpecialites) {
-            if (s.id() != null) specialiteMap.put(s.id(), s);
+            if (s.id() != null)
+                specialiteMap.put(s.id(), s);
         }
         model.addAttribute("specialiteMap", specialiteMap);
 
@@ -173,18 +177,16 @@ public class APController {
         model.addAttribute("classMap", dedupClasses);
 
         LocalDate today = LocalDate.now();
-        
+
         // Fetch ONGOING schedules for these classes using the new date filters
         // Ongoing: startDateBeforeOrEqual(today) AND endDateAfterOrEqual(today)
         SearchEmploiTempsRequestDTO searchRequestParams = new SearchEmploiTempsRequestDTO(
-                null, null, null, false, null, 
-                null, null, today, today
-        );
-        
+                null, null, null, false, null,
+                null, null, today, today);
+
         Page<EmploiTempsResponseDTO> ongoingPage = emploiTempsService.searchEmploiTemps(
-                searchRequestParams, 
-                PageRequest.of(0, 100, Sort.by("semaine").descending())
-        );
+                searchRequestParams,
+                PageRequest.of(0, 100, Sort.by("semaine").descending()));
 
         List<Long> classIds = dedupClasses.values().stream().map(ClasseResponseDTO::id).toList();
         List<EmploiTempsResponseDTO> ongoingSchedules = ongoingPage.getContent().stream()
@@ -193,7 +195,7 @@ public class APController {
 
         model.addAttribute("ongoingSchedules", ongoingSchedules);
         model.addAttribute("today", today);
-        
+
         model.addAttribute("activePage", "schedule");
         model.addAttribute("apName", "AP Name");
         return "APInterface/APSchedule";
@@ -260,19 +262,17 @@ public class APController {
         // Walk filière → niveaux → spécialités → classes (dedup by id)
         List<ClasseResponseDTO> rawClasses = new ArrayList<>();
         List<NiveauResponseDTO> niveaux = niveauService.getNiveauxByFiliereId(filiereId);
-        niveaux.sort((n1,n2)->n1.ordre());
+        niveaux.sort((n1, n2) -> n1.ordre());
 
-                List<SpecialiteResponseDTO> specialites = specialiteService.getSpecialitesByNiveauId(niveaux.get(0).id());
-                for (SpecialiteResponseDTO s : specialites) {
-                    if (s == null || s.id() == null)
-                        continue;
-                    List<ClasseResponseDTO> cs = classeService.getClassesBySpecialiteId(s.id());
-                    if (cs != null)
-                        rawClasses.addAll(cs);
-
+        List<SpecialiteResponseDTO> specialites = specialiteService.getSpecialitesByNiveauId(niveaux.get(0).id());
+        for (SpecialiteResponseDTO s : specialites) {
+            if (s == null || s.id() == null)
+                continue;
+            List<ClasseResponseDTO> cs = classeService.getClassesBySpecialiteId(s.id());
+            if (cs != null)
+                rawClasses.addAll(cs);
 
         }
-
 
         model.addAttribute("niveaux", niveaux);
 
@@ -285,29 +285,54 @@ public class APController {
 
         // For each class, fetch enrolled students
         List<ClasseAvecEtudiants> classesAvecEtudiants = new ArrayList<>();
-        ClasseResponseDTO c=dedup.values().stream().toList().get(0);
+        ClasseResponseDTO c = dedup.values().stream().toList().get(0);
 
-            List<JpaStudentProfileEntity> profiles = studentProfileRepository.findByClasseId(c.id());
-            List<EtudiantVM> students = new ArrayList<>();
-            for (JpaStudentProfileEntity p : profiles) {
-                Long userId = (p.getUser() != null) ? p.getUser().getId() : null;
-                String email = (p.getUser() != null) ? p.getUser().getEmail() : null;
+        List<JpaStudentProfileEntity> profiles = studentProfileRepository.findByClasseId(c.id());
+        List<EtudiantVM> students = new ArrayList<>();
+        for (JpaStudentProfileEntity p : profiles) {
+            Long userId = (p.getUser() != null) ? p.getUser().getId() : null;
+            String email = (p.getUser() != null) ? p.getUser().getEmail() : null;
 
-                students.add(new EtudiantVM(
-                        userId,
-                        p.getNom(),
-                        p.getPrenom(),
-                        email,
-                        p.getMatricule(),
-                        p.getNumeroTelephone()));
-            }
+            students.add(new EtudiantVM(
+                    userId,
+                    p.getNom(),
+                    p.getPrenom(),
+                    email,
+                    p.getMatricule(),
+                    p.getNumeroTelephone()));
+        }
 
-            classesAvecEtudiants.add(new ClasseAvecEtudiants(c.id(), c.code(), students));
+        classesAvecEtudiants.add(new ClasseAvecEtudiants(c.id(), c.code(), students));
 
         model.addAttribute("classes", rawClasses);
         model.addAttribute("classe", classesAvecEtudiants.get(0));
         model.addAttribute("activePage", "classes");
         model.addAttribute("apName", "AP Name");
         return "APInterface/APClasses";
+    }
+
+    @GetMapping("/config")
+    public String configView(Model model) {
+        Long filiereId = 1L; // Adapting standard practice seen in APController
+        List<NiveauResponseDTO> niveaux = niveauService.getNiveauxByFiliereId(filiereId);
+        niveaux.sort((n1, n2) -> Integer.compare(n1.ordre(), n2.ordre()));
+
+        model.addAttribute("niveaux", niveaux);
+        model.addAttribute("activePage", "config");
+        model.addAttribute("apName", "AP Name"); // Stub string used in template rendering
+
+        return "APInterface/APConfig";
+    }
+
+    @PostMapping("/config/niveau/{id}/semestre")
+    public org.springframework.http.ResponseEntity<?> updateSemestre(
+            @PathVariable("id") Long id,
+            @org.springframework.web.bind.annotation.RequestParam("semestreActif") Integer semestreActif) {
+        try {
+            niveauService.updateSemestreActif(id, semestreActif);
+            return org.springframework.http.ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return org.springframework.http.ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

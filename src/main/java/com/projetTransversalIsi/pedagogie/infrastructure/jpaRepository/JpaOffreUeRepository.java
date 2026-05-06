@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
 import java.util.Optional;
 
 @Repository
@@ -46,7 +45,6 @@ public class JpaOffreUeRepository implements OffreUeRepository {
             entity.setCouleur(offreUe.getCouleur());
             entity.setSemestre(offreUe.getSemestre());
             entity.setSpecialiteId(offreUe.getSpecialiteId());
-            entity.setEnseignantIds(offreUe.getEnseignantIds() != null ? offreUe.getEnseignantIds() : new HashSet<>());
         } else {
             // CREATE : mapper l'entité complète et résoudre les associations JPA
             JpaUeEntity ueEntity = springDataUeRepository.findById(offreUe.getUeId())

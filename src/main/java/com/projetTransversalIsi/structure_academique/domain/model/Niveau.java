@@ -15,6 +15,7 @@ public class Niveau {
     private String description;
     private boolean deleted = false;
     private LocalDateTime deletedAt;
+    private Integer semestreActif;
     private Filiere filiere;
 
     public Niveau(int ordre, String description, Filiere filiere) {

@@ -12,7 +12,8 @@ const userApi = new UserApi();
 const createUeUC = new CreateUeUC(ueApi);
 
 let allNiveaux = [];
-let currentLevelId = null;
+let currentLevelSpecs = [];
+let allLevelSubjects = [];
 let currentSpecialtyId = null;
 let currentSubjects = [];
 let currentPage = 0;
@@ -34,13 +35,15 @@ export const APSubjectsController = {
         initCreateFormHandler();
         initEditFormHandler();
 
-        document.querySelector("#specialty-tabs")?.addEventListener('click', (event) => {
-            const target = event.target.closest(".specialty-tab");
-            if (target) handleSpecialtyChange(parseInt(target.getAttribute('data-specialty-id')));
+        document.getElementById('select-specialty')?.addEventListener('change', (e) => {
+            const val = e.target.value;
+            handleSpecialtyChange(val === 'all' ? 'all' : parseInt(val));
         });
 
         if (allNiveaux.length > 0) {
-            handleLevelChange(allNiveaux[0].id);
+            handleLevelChange(String(allNiveaux[0].id));
+        } else {
+            handleLevelChange('all');
         }
     }
 };
@@ -48,49 +51,50 @@ export const APSubjectsController = {
 // ── Level tabs ────────────────────────────────────────────────────────────────
 
 function initLevelTabs() {
-    document.querySelectorAll('.level-filter-btn').forEach(btn => {
+    const tabs = document.querySelectorAll('#level-tabs .level-filter-btn');
+    tabs.forEach(btn => {
         btn.addEventListener('click', () => {
-            handleLevelChange(parseInt(btn.getAttribute('data-level-id')));
+            tabs.forEach(b => {
+                b.classList.remove('bg-surface-active', 'text-layer-foreground');
+                b.classList.add('bg-transparent', 'text-muted-foreground-1');
+            });
+            btn.classList.remove('bg-transparent', 'text-muted-foreground-1');
+            btn.classList.add('bg-surface-active', 'text-layer-foreground');
+            handleLevelChange(btn.dataset.levelId);
         });
     });
 }
 
 function handleLevelChange(levelId) {
-    currentLevelId = levelId;
-    document.querySelectorAll('.level-filter-btn').forEach(btn => {
-        const isActive = parseInt(btn.getAttribute('data-level-id')) === levelId;
-        btn.classList.toggle('active', isActive);
-        btn.setAttribute('aria-selected', String(isActive));
-    });
     renderSpecialtyTabs(levelId);
 }
 
 // ── Specialty tabs ────────────────────────────────────────────────────────────
 
 async function renderSpecialtyTabs(levelId) {
-    const container = document.getElementById('specialty-tabs');
-    if (!container) return;
+    const sel = document.getElementById('select-specialty');
+    if (!sel) return;
 
     const specs = Array.from(await new SpecialiteApi().getByNiveauId(levelId));
+    currentLevelSpecs = specs;
+
+    if (window.HSSelect) HSSelect.getInstance(sel)?.destroy();
 
     if (specs.length === 0) {
-        container.innerHTML = `<span class="py-4 text-sm text-muted-foreground-2 italic">Aucune spécialité pour ce niveau.</span>`;
+        sel.innerHTML = '<option value="" disabled selected>Aucune spécialité</option>';
+        sel.disabled = true;
+        if (window.HSSelect) new HSSelect(sel);
         const grid = document.getElementById('subjects-grid');
         if (grid) grid.innerHTML = `<div class="col-span-full py-12 text-center text-muted-foreground-2"><p>Aucune spécialité trouvée pour ce niveau.</p></div>`;
         return;
     }
 
+    sel.disabled = false;
+    sel.innerHTML = `<option value="all">Toutes les spécialités</option>` +
+        specs.map(spec => `<option value="${spec.id}">${spec.code}</option>`).join('');
+    if (window.HSSelect) new HSSelect(sel);
 
-
-    container.innerHTML = specs.map((spec, i) => `
-        <button type="button" data-specialty-id="${spec.id}"
-            class="specialty-tab py-2 px-4 inline-flex items-center gap-x-2  text-xs font-medium rounded-full transition-all focus:outline-none disabled:opacity-50 disabled:pointer-events-none
-                   ${i === 0 ? 'active bg-surface-active text-foreground' : 'bg-transparent text-muted-foreground-1 hover:text-layer-foreground'}"
-            role="tab">
-            ${spec.code}
-        </button>`).join('');
-
-    handleSpecialtyChange(specs[0].id);
+    handleSpecialtyChange('all');
 }
 
 // ── Subjects table ────────────────────────────────────────────────────────────
@@ -103,18 +107,8 @@ async function handleSpecialtyChange(specialtyId) {
     const searchInput = document.getElementById('subject-search');
     if (searchInput) searchInput.value = '';
 
-    document.querySelectorAll('.specialty-tab').forEach(tab => {
-        const isActive = parseInt(tab.getAttribute('data-specialty-id')) === specialtyId;
-        tab.classList.toggle('active', isActive);
-        tab.classList.toggle('bg-surface-active', isActive);
-        tab.classList.toggle('text-foreground', isActive);
-        tab.classList.toggle('bg-transparent', !isActive);
-        tab.classList.toggle('text-muted-foreground-1', !isActive);
-        tab.classList.toggle('hover:text-layer-foreground', !isActive);
-    });
-
     const modalSpecId = document.getElementById('modal-specialite-id');
-    if (modalSpecId) modalSpecId.value = specialtyId;
+    if (modalSpecId) modalSpecId.value = specialtyId !== 'all' ? specialtyId : '';
 
     await loadSubjectsPage();
 }
@@ -128,12 +122,27 @@ async function loadSubjectsPage() {
         </div>`;
 
     try {
-        const response = await offreUeApi.getActiveBySpecialite(
-            currentSpecialtyId, currentPage, pageSize, currentFiltre
-        );
-        currentSubjects = response?.content || [];
-        totalPages = response?.totalPages ?? 0;
-        totalElements = response?.totalElements ?? 0;
+        if (currentSpecialtyId === 'all') {
+            // Page 0 = re-fetch depuis l'API (filtre ou niveau a changé)
+            if (currentPage === 0) {
+                const responses = await Promise.all(
+                    currentLevelSpecs.map(s => offreUeApi.getActiveBySpecialite(s.id, 0, 100, currentFiltre))
+                );
+                allLevelSubjects = responses.flatMap(r => r?.content || []);
+            }
+            // Pagination client-side
+            const start = currentPage * pageSize;
+            currentSubjects = allLevelSubjects.slice(start, start + pageSize);
+            totalElements = allLevelSubjects.length;
+            totalPages = Math.ceil(totalElements / pageSize) || 1;
+        } else {
+            const response = await offreUeApi.getActiveBySpecialite(
+                currentSpecialtyId, currentPage, pageSize, currentFiltre
+            );
+            currentSubjects = response?.content || [];
+            totalPages = response?.totalPages ?? 0;
+            totalElements = response?.totalElements ?? 0;
+        }
         renderSubjectsGrid();
         renderPaginationControls();
     } catch (error) {
@@ -321,6 +330,8 @@ function initCreateFormHandler() {
     const form = document.getElementById('addUeForm');
     if (!form) return;
 
+    // Initialiser les selects avancés du modal (Niveau -> Spécialité)
+    initCreateModalSelects();
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = document.getElementById('btn-create-ue');
@@ -359,6 +370,73 @@ function initCreateFormHandler() {
             }
         }
     });
+}
+
+// ── Create modal selects (Niveau -> Spécialité) ──────────────────────────────
+function initCreateModalSelects() {
+    const nivSel = document.getElementById('add-ue-niveau-select');
+    const specSel = document.getElementById('add-ue-specialite-select');
+    if (!nivSel || !specSel) return;
+
+    // Populate niveaux depuis le cache serveur (window.KEMO_DATA -> allNiveaux)
+    const niveaux = allNiveaux || [];
+
+    try {
+        if (window.HSSelect) HSSelect.getInstance(nivSel)?.destroy();
+    } catch (_) { }
+
+    nivSel.innerHTML = `<option value="" disabled selected>Sélectionner un niveau</option>` +
+        (niveaux.map(n => `<option value="${n.id}">Niveau ${n.ordre}</option>`).join(''));
+
+    if (window.HSSelect) new HSSelect(nivSel);
+
+    nivSel.addEventListener('change', async (e) => {
+        const val = e.target.value;
+        if (val) await loadAddModalSpecialties(val);
+    });
+
+    // Si on a des niveaux, précharger la première spécialité pour meilleure UX
+    if (niveaux.length > 0) {
+        const firstId = String(niveaux[0].id);
+        setTimeout(() => {
+            try {
+                nivSel.value = firstId;
+                if (window.HSSelect) HSSelect.getInstance(nivSel)?.setValue(firstId);
+            } catch (_) { }
+            loadAddModalSpecialties(firstId);
+        }, 40);
+    }
+}
+
+async function loadAddModalSpecialties(niveauId) {
+    const specSel = document.getElementById('add-ue-specialite-select');
+    if (!specSel) return;
+
+    try {
+        specSel.disabled = true;
+        if (window.HSSelect) HSSelect.getInstance(specSel)?.destroy();
+    } catch (_) { }
+
+    specSel.innerHTML = `<option value="" disabled selected>Chargement...</option>`;
+
+    try {
+        const specs = Array.from(await new SpecialiteApi().getByNiveauId(niveauId));
+        if (!specs || specs.length === 0) {
+            specSel.innerHTML = `<option value="" disabled selected>Aucune spécialité</option>`;
+            specSel.disabled = true;
+            if (window.HSSelect) new HSSelect(specSel);
+            return;
+        }
+
+        specSel.disabled = false;
+        specSel.innerHTML = `<option value="" disabled selected>Sélectionner une spécialité</option>` +
+            specs.map(s => `<option value="${s.id}">${escapeHtml(s.libelle || s.code || s.id)}</option>`).join('');
+
+        if (window.HSSelect) new HSSelect(specSel);
+    } catch (err) {
+        GlobalErrorHandler.handle(err);
+        specSel.innerHTML = `<option value="" disabled selected>Erreur</option>`;
+    }
 }
 
 // ── View modal ────────────────────────────────────────────────────────────────
@@ -702,24 +780,26 @@ function wireAddButtons() {
 async function updateOffreEnseignants(enseignantId, action) {
     if (!currentViewOffre) return;
 
-    const currentIds = new Set(currentViewOffre.enseignantIds || []);
-    if (action === 'add') currentIds.add(enseignantId);
-    else currentIds.delete(enseignantId);
-
-    const payload = {
-        libelle: currentViewOffre.libelle,
-        code: currentViewOffre.code,
-        credit: currentViewOffre.credit,
-        volumeHoraireTotal: currentViewOffre.volumeHoraireTotal,
-        description: currentViewOffre.description || '',
-        couleur: currentViewOffre.couleur || '#7c3aed',
-        semestre: currentViewOffre.semestre,
-        specialiteId: currentViewOffre.specialiteId,
-        enseignantIds: [...currentIds],
-    };
-
     try {
-        const updated = await offreUeApi.updateOffreUe(currentViewOffre.id, payload);
+        const ue = await ueApi.getUeById(currentViewOffre.ueId);
+
+        const currentIds = new Set(ue.enseignantIds || []);
+        if (action === 'add') currentIds.add(enseignantId);
+        else currentIds.delete(enseignantId);
+
+        const payload = {
+            libelle: ue.libelle,
+            code: ue.code,
+            credit: ue.credit,
+            volumeHoraireTotal: ue.volumeHoraireTotal,
+            description: ue.description || '',
+            couleur: ue.couleur || '#7c3aed',
+            semestre: ue.semestre,
+            specialiteId: ue.specialiteId,
+            enseignantIds: [...currentIds],
+        };
+
+        const updated = await ueApi.updateUe(currentViewOffre.ueId, payload);
         currentViewOffre = { ...currentViewOffre, enseignantIds: updated.enseignantIds ?? [...currentIds] };
 
         // Sync page courante

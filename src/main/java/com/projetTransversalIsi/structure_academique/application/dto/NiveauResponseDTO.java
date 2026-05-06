@@ -9,6 +9,7 @@ public record NiveauResponseDTO(
         String description,
         boolean deleted,
         LocalDateTime deletedAt,
+        Integer semestreActif,
         Long filiereId,
         String filiereNom
 ) {
@@ -19,6 +20,7 @@ public record NiveauResponseDTO(
                 niveau.getDescription(),
                 niveau.isDeleted(),
                 niveau.getDeletedAt(),
+                niveau.getSemestreActif(),
                 niveau.getFiliere() != null ? niveau.getFiliere().getId() : null,
                 niveau.getFiliere() != null ? niveau.getFiliere().getNom() : null
         );

@@ -3,8 +3,12 @@ package com.projetTransversalIsi.pedagogie.infrastructure;
 import com.projetTransversalIsi.pedagogie.application.dto.OffreUeResponseDTO;
 import com.projetTransversalIsi.pedagogie.domain.model.OffreUe;
 import com.projetTransversalIsi.pedagogie.infrastructure.entity.JpaOffreUeEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaTeacherProfileEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface OffreUeMapper {
@@ -24,7 +28,13 @@ public interface OffreUeMapper {
         offreUe.setCouleur(entity.getCouleur());
         offreUe.setSemestre(entity.getSemestre());
         offreUe.setSpecialiteId(entity.getSpecialiteId());
-        offreUe.setEnseignantIds(entity.getEnseignantIds());
+        offreUe.setEnseignantIds(
+            entity.getUe() != null && entity.getUe().getEnseignants() != null
+                ? entity.getUe().getEnseignants().stream()
+                        .map(JpaTeacherProfileEntity::getId)
+                        .collect(Collectors.toSet())
+                : new HashSet<>()
+        );
         offreUe.setCreatedAt(entity.getCreatedAt());
         return offreUe;
     }

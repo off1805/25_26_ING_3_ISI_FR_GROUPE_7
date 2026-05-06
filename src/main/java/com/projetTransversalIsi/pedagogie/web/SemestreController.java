@@ -28,12 +28,12 @@ public class SemestreController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SemestreResponseDTO>> findByAnneeAndSpecialite(
+    public ResponseEntity<List<SemestreResponseDTO>> findByAnneeAndNiveau(
             @RequestParam Long anneeScolaireId,
-            @RequestParam Long specialiteId
+            @RequestParam Long niveauId
     ) {
         return ResponseEntity.ok(
-                semestreService.getSemestresByAnneeScolaireAndSpecialite(anneeScolaireId, specialiteId)
+                semestreService.getSemestresByAnneeScolaireAndNiveau(anneeScolaireId, niveauId)
         );
     }
 }
