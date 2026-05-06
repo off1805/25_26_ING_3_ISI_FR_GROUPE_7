@@ -7,6 +7,7 @@ import com.projetTransversalIsi.security.domain.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -71,9 +72,19 @@ public class JwtAuthentificationFIlter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request) {
+        // Priorité 1 : header Authorization (appels AJAX/API)
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             return header.substring(7);
+        }
+        // Priorité 2 : cookie HttpOnly (navigation directe navigateur)
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("access_token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
         }
         return null;
     }

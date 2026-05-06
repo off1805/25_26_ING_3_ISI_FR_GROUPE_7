@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.user.profil.infrastructure;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -9,5 +10,8 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name="ap_profile")
-public class JpaAPProfileEntity extends JpaProfileEntity{
+public class JpaAPProfileEntity extends JpaProfileEntity {
+
+    @Column(name = "filiere_id")
+    private Long filiereId;
 }

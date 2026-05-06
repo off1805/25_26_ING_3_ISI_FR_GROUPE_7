@@ -17,6 +17,7 @@ public class APProfileProvider implements ProfileProvider {
         profile.setNom(profileJson.getNom());
         profile.setPrenom(profileJson.getPrenom());
         profile.setNumeroTelephone(profileJson.getNumeroTelephone());
+        profile.setFiliereId(profileJson.getFiliereId());
         return profile;
     }
 }

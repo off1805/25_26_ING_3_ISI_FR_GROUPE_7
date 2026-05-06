@@ -15,4 +15,5 @@ public class ProfilCreationDTO {
     private String matricule;
     @NotBlank
     private String numeroTelephone;
+    private Long filiereId;
 }
