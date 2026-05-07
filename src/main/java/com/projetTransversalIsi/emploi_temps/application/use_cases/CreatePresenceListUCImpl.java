@@ -16,7 +16,7 @@ public class CreatePresenceListUCImpl implements CreatePresenceListUC {
     @Override
     public PresenceListResponseDTO execute(CreatePresenceListDTO dto) {
         PresenceList presenceList = new PresenceList(
-                dto.seanceId(), dto.classeId(), dto.ueId(), dto.enseignantId(), dto.date(), 0.0f
+                dto.seanceId(), dto.classeId(), dto.ueId(), dto.enseignantId(), dto.date()
         );
         return PresenceListResponseDTO.fromDomain(presenceListRepo.save(presenceList));
     }
