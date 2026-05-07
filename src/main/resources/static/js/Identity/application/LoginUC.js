@@ -19,7 +19,7 @@ export class LoginUC {
 
         await TokenService.setToken(token);
         await TokenService.setRefreshToken(refreshToken);
-        localStorage.setItem("role", role);
+        TokenService.decodeAndStoreClaims(token);
         if (displayName) localStorage.setItem("displayName", displayName);
 
         window.location.href = MapperRoleRedirectionPage(role);

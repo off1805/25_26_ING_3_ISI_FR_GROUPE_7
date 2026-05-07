@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.user.profil.infrastructure;
 
+import com.projetTransversalIsi.pedagogie.infrastructure.entity.JpaAnneeScolaireEntity;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaClasseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,6 +25,10 @@ public class JpaStudentClasseHistoryEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classe_id", nullable = false)
     private JpaClasseEntity classe;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "annee_scolaire_id", nullable = false)
+    private JpaAnneeScolaireEntity anneeScolaire;
 
     @Column(name = "date_debut", nullable = false)
     private LocalDate dateDebut;

@@ -4,12 +4,15 @@ import com.projetTransversalIsi.pedagogie.infrastructure.entity.JpaOffreUeEntity
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface SpringDataOffreUeRepository extends JpaRepository<JpaOffreUeEntity, Long> {
+public interface SpringDataOffreUeRepository extends JpaRepository<JpaOffreUeEntity, Long>, JpaSpecificationExecutor<JpaOffreUeEntity> {
 
     boolean existsByUe_IdAndAnneeScolaire_Id(Long ueId, Long anneeScolaireId);
 
     Page<JpaOffreUeEntity> findByAnneeScolaire_Id(Long anneeScolaireId, Pageable pageable);
 
     Page<JpaOffreUeEntity> findByUe_Id(Long ueId, Pageable pageable);
+
+    Page<JpaOffreUeEntity> findBySpecialiteIdAndAnneeScolaire_Id(Long specialiteId, Long anneeScolaireId, Pageable pageable);
 }

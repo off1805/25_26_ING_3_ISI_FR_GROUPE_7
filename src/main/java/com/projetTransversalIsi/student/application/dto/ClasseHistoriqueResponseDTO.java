@@ -10,5 +10,6 @@ public record ClasseHistoriqueResponseDTO(
         String specialiteLibelle,
         LocalDate dateDebut,
         LocalDate dateFin,
-        boolean estActif
+        boolean estActif,
+        String anneeScolaire
 ) {}

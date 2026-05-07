@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "app.upload.dir",
+      "type": "java.lang.String",
+      "description": "Répertoire filesystem où sont stockées les photos de profil uploadées.",
+      "defaultValue": "uploads/photos"
+    }
+  ]
+}

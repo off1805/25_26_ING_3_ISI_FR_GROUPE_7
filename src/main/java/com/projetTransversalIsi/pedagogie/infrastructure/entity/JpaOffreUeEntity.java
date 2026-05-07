@@ -50,6 +50,9 @@ public class JpaOffreUeEntity {
     @Column(nullable = false, columnDefinition = "varchar(255) default '#ffffff'")
     private String couleur;
 
+    @Column(name = "semestre")
+    private Integer semestre;
+
     @Column(name = "specialite_id")
     private Long specialiteId;
 

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface SemestreService {
     SemestreResponseDTO createSemestre(CreateSemestreRequestDTO request);
-    List<SemestreResponseDTO> getSemestresByAnneeScolaireAndSpecialite(Long anneeScolaireId, Long specialiteId);
+    List<SemestreResponseDTO> getSemestresByAnneeScolaireAndNiveau(Long anneeScolaireId, Long niveauId);
 }

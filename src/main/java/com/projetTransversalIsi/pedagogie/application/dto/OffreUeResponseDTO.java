@@ -13,6 +13,7 @@ public record OffreUeResponseDTO(
         int volumeHoraireTotal,
         String description,
         String couleur,
+        Integer semestre,
         Long specialiteId,
         Set<Long> enseignantIds,
         LocalDateTime createdAt) {

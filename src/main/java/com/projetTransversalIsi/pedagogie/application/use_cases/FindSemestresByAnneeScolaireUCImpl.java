@@ -17,9 +17,9 @@ public class FindSemestresByAnneeScolaireUCImpl implements FindSemestresByAnneeS
     private final SemestreMapper semestreMapper;
 
     @Override
-    public List<SemestreResponseDTO> execute(Long anneeScolaireId, Long specialiteId) {
+    public List<SemestreResponseDTO> execute(Long anneeScolaireId, Long niveauId) {
         List<Semestre> semestres = semestreRepository
-                .findByAnneeScolaireIdAndSpecialiteIdOrderByNumeroAsc(anneeScolaireId, specialiteId)
+                .findByAnneeScolaireIdAndNiveauIdOrderByNumeroAsc(anneeScolaireId, niveauId)
                 .stream()
                 .map(semestreMapper::toDomain)
                 .toList();

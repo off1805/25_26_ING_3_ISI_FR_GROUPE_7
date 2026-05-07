@@ -1,9 +1,11 @@
 package com.projetTransversalIsi.student.web;
 
+import com.projetTransversalIsi.student.application.dto.ClasseHistoriqueResponseDTO;
 import com.projetTransversalIsi.student.application.dto.EnrollStudentRequestDTO;
 import com.projetTransversalIsi.student.application.dto.EnrollStudentResponseDTO;
 import com.projetTransversalIsi.student.application.dto.FilterStudent;
 import com.projetTransversalIsi.student.application.use_cases.EnrollStudentUC;
+import com.projetTransversalIsi.student.application.use_cases.GetStudentClasseHistoryUC;
 import com.projetTransversalIsi.user.services.GetAllStudent;
 import com.projetTransversalIsi.student.application.use_cases.RemoveStudentFromClasseUC;
 import com.projetTransversalIsi.student.domain.exceptions.StudentAlreadyEnrolledException;
@@ -17,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/students")
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class StudentController {
     private final EnrollStudentUC enrollStudentUC;
     private final RemoveStudentFromClasseUC removeStudentFromClasseUC;
     private final GetAllStudent getStudent;
+    private final GetStudentClasseHistoryUC getStudentClasseHistoryUC;
 
     @PostMapping("/enroll")
     public ResponseEntity<?> enroll(@Valid @RequestBody EnrollStudentRequestDTO request) {
@@ -55,5 +60,14 @@ public class StudentController {
     @GetMapping("/classes/{classeId}")
     public ResponseEntity<Page<EnrollStudentResponseDTO>> getStudentFromClass(@PathVariable("classeId") Long classId, @PageableDefault(size=10) Pageable page){
         return ResponseEntity.ok(getStudent.execute(FilterStudent.builder().classeId(classId).build(),page));
+    }
+
+    @GetMapping("/{userId}/classe-history")
+    public ResponseEntity<List<ClasseHistoriqueResponseDTO>> getClasseHistory(@PathVariable Long userId) {
+        try {
+            return ResponseEntity.ok(getStudentClasseHistoryUC.execute(userId));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

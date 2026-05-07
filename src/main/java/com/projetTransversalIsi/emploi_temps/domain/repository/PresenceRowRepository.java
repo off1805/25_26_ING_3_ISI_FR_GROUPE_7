@@ -10,5 +10,6 @@ public interface PresenceRowRepository {
     Optional<PresenceRow> findById(Long id);
     List<PresenceRow> findByPresenceListId(Long presenceListId);
     List<PresenceRow> findByEtudiantId(Long etudiantId);
+    Optional<PresenceRow> findByPresenceListIdAndEtudiantId(Long listId, Long studentId);
     void delete(PresenceRow presenceRow);
 }

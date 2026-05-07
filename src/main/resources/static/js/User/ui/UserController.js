@@ -58,6 +58,7 @@ export class UserController {
             if (modal.classList.contains('hidden')) {
                 this.currentUserCreateInfo = {};
                 this.currentPermissions = [];
+                document.getElementById('filiere-select-wrapper')?.classList.add('hidden');
             } else {
                 if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
             }
@@ -236,13 +237,22 @@ export class UserController {
                 ? checkedPermissions
                 : this.currentPermissions.map(p => p.id)
         };
-       
 
         if (!userData.idPermissions || userData.idPermissions.length === 0) {
             alert("Veuillez sélectionner au moins une permission.");
             return;
         }
-         this.currentUserCreateInfo=userData;
+
+        if (userData.idRole === 'AP') {
+            const filiereId = document.getElementById('user-filiere')?.value;
+            if (!filiereId) {
+                alert("Veuillez sélectionner une filière pour l'assistant pédagogique.");
+                return;
+            }
+            userData.filiereId = parseInt(filiereId, 10);
+        }
+
+        this.currentUserCreateInfo = userData;
 
         const tabItemCompte = document.querySelector(SELECTORS.createUserTabItemCompte);
         const tabItemProfil = document.querySelector(SELECTORS.createUserTabItemProfil);
@@ -258,13 +268,14 @@ export class UserController {
     async handleCreateUser(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
-         const profilData = {
+        const profilData = {
             nom: formData.get('noms'),
-           prenom: formData.get('prenoms'),
-           matricule: formData.get('matricule'),
-           numeroTelephone: formData.get('telephone'),
+            prenom: formData.get('prenoms'),
+            matricule: formData.get('matricule'),
+            numeroTelephone: formData.get('telephone'),
+            filiereId: this.currentUserCreateInfo.filiereId ?? null
         };
-        this.currentUserCreateInfo["profile"]=profilData;
+        this.currentUserCreateInfo["profile"] = profilData;
         console.log("Données complètes pour création :", this.currentUserCreateInfo);
 
 
@@ -454,6 +465,12 @@ export class UserController {
     async handleRoleChange(event) {
         const roleName = event.target.value;
         if (!roleName) return;
+
+        const filiereWrapper = document.getElementById('filiere-select-wrapper');
+        if (filiereWrapper) {
+            filiereWrapper.classList.toggle('hidden', roleName !== 'AP');
+        }
+
         try {
             const permissions = await this.userApi.getPermissionsByRole(roleName);
             this.currentPermissions = permissions || [];

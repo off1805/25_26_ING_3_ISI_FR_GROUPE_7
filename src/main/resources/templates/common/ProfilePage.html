@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Mon profil</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+</head>
+
+<body class="h-screen">
+    <section class="flex flex-row bg-sidebar-nav-hover h-full">
+
+        <!-- SIDEBAR -->
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
+
+        <section class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- NAVBAR -->
+            <header
+                class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
+                <div class="flex items-center gap-3">
+                    <button type="button"
+                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
+                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    </button>
+                    <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12l-2 0l9-9l9 9l-2 0" />
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+                        </svg>
+                        <span>Panel</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M9 6l6 6l-6 6" />
+                        </svg>
+                        <span class="font-semibold text-layer-foreground">Mon profil</span>
+                    </nav>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" data-theme-toggle
+                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                        </svg>
+                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17"
+                            height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <circle cx="12" cy="12" r="4" />
+                            <path
+                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- PAGE -->
+            <div class="flex-1 overflow-y-auto bg-background p-6 lg:p-10">
+                <div class="max-w-3xl mx-auto">
+
+                    <!-- Hero -->
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-layer-foreground">Mon profil</h2>
+                        <p class="text-sm text-muted-foreground-2 mt-1">Consultez et mettez à jour vos informations.</p>
+                    </div>
+
+                    <!-- Card principale -->
+                    <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+
+                        <!-- Bandeau supérieur + avatar -->
+                        <div class="h-24 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent relative">
+                            <div class="absolute -bottom-12 left-6">
+                                <div class="relative group" th:data-profile-id="${profileId}">
+                                    <div id="avatar-container"
+                                        class="size-24 rounded-2xl border-4 border-card bg-primary/10 flex items-center justify-center overflow-hidden shadow-md">
+                                        <img th:if="${photoUrl != null}" id="avatar-img" th:src="${photoUrl}"
+                                            class="size-full object-cover" alt="Photo de profil" />
+                                        <span th:unless="${photoUrl != null}" id="avatar-initiale" th:text="${initiale}"
+                                            class="text-3xl font-bold text-primary">U</span>
+                                    </div>
+                                    <label for="photo-input"
+                                        class="absolute inset-0 rounded-2xl bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                                            viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                            <polyline points="17 8 12 3 7 8" />
+                                            <line x1="12" y1="3" x2="12" y2="15" />
+                                        </svg>
+                                        <input id="photo-input" type="file" accept="image/*" class="sr-only" />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Infos nom + badge rôle -->
+                        <div class="pt-16 pb-5 px-6 flex items-end justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold text-layer-foreground" th:text="${fullName}">Nom Prénom
+                                </h3>
+                                <p class="text-sm text-muted-foreground-2 mt-0.5" th:text="${email}">email@example.com
+                                </p>
+                            </div>
+                            <span
+                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary"
+                                th:text="${role}">ROLE</span>
+                        </div>
+
+                        <div class="border-t border-card-line mx-6"></div>
+
+                        <!-- Champs de profil -->
+                        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                            <div class="space-y-1.5">
+                                <label
+                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Nom</label>
+                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
+                                    th:text="${nom}">—</p>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label
+                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Prénom</label>
+                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
+                                    th:text="${prenom}">—</p>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label
+                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Email</label>
+                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
+                                    th:text="${email}">—</p>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label
+                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Matricule</label>
+                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
+                                    th:text="${matricule}">—</p>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label
+                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Téléphone</label>
+                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
+                                    th:text="${telephone}">—</p>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label
+                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Rôle</label>
+                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
+                                    th:text="${role}">—</p>
+                            </div>
+
+                        </div>
+
+                        <!-- Footer : bouton changer photo -->
+                        <div class="px-6 pb-6">
+                            <label for="photo-input"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-primary text-white rounded-xl hover:bg-primary/90 active:scale-95 transition-all cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                                Changer la photo de profil
+                            </label>
+                            <p id="upload-status" class="mt-2 text-xs text-muted-foreground-2 hidden"></p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <script th:src="@{/js/preline.js}"></script>
+    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+
+    <script th:inline="javascript">
+        const profileId = /*[[${profileId}]]*/ null;
+    </script>
+
+    <script>
+        document.getElementById('photo-input')?.addEventListener('change', async (e) => {
+            if (!profileId) return;
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const statusEl = document.getElementById('upload-status');
+            statusEl.textContent = 'Envoi en cours…';
+            statusEl.classList.remove('hidden', 'text-red-500', 'text-green-600');
+            statusEl.classList.add('text-muted-foreground-2');
+
+            const token = localStorage.getItem('token');
+            const formData = new FormData();
+            formData.append('photo', file);
+
+            try {
+                const { default: api } = await import('/js/common/ClientHttp.js');
+                const res = await api.post(`/api/profils/${profileId}/photo`, formData);
+
+                const photoUrl = res.photoUrl;
+
+                const container = document.getElementById('avatar-container');
+                let initiale = container.querySelector('#avatar-initiale');
+                let img = container.querySelector('#avatar-img');
+
+                if (!img) {
+                    img = document.createElement('img');
+                    img.id = 'avatar-img';
+                    img.className = 'size-full object-cover';
+                    img.alt = 'Photo de profil';
+                    container.prepend(img);
+                }
+                if (initiale) initiale.classList.add('hidden');
+                img.src = photoUrl + '?t=' + Date.now();
+                img.classList.remove('hidden');
+
+                statusEl.textContent = 'Photo mise à jour avec succès.';
+                statusEl.classList.replace('text-muted-foreground-2', 'text-green-600');
+            } catch {
+                statusEl.textContent = 'Erreur lors de l\'envoi. Réessayez.';
+                statusEl.classList.replace('text-muted-foreground-2', 'text-red-500');
+            }
+        });
+    </script>
+</body>
+
+</html>

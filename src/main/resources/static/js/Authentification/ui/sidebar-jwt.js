@@ -1,6 +1,3 @@
-/**
- * Gestion de la sidebar avec le système JWT
- */
 document.addEventListener("DOMContentLoaded", () => {
     const userInfo = getUserInfoFromToken();
 
@@ -16,11 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (logoutBtn) logoutBtn.addEventListener('click', performLogout);
 });
 
-/**
- * Récupère les informations utilisateur depuis le token JWT
- */
 function getUserInfoFromToken() {
-    const token = getTokenFromStorage();
+    const token = localStorage.getItem('token');
     if (!token) return null;
 
     const decoded = decodeJWT(token);
@@ -32,36 +26,15 @@ function getUserInfoFromToken() {
     };
 }
 
-/**
- * Récupère le token depuis les cookies ou localStorage
- */
-function getTokenFromStorage() {
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
-        const [name, value] = cookie.trim().split('=');
-        if (name === 'authToken' || name === 'token') {
-            return value;
-        }
-    }
-    return localStorage.getItem('authToken') || localStorage.getItem('token');
-}
-
-/**
- * Décode un token JWT
- */
 function decodeJWT(token) {
     try {
-        const payload = token.split('.')[1];
-        return JSON.parse(atob(payload));
+        return JSON.parse(atob(token.split('.')[1]));
     } catch (error) {
         console.error('Erreur décodage token:', error);
         return null;
     }
 }
 
-/**
- * Construit le nom d'affichage
- */
 function buildDisplayName(decoded) {
     const prenoms = decoded.prenoms || decoded.firstName;
     const nom = decoded.nom || decoded.lastName;
@@ -75,9 +48,6 @@ function buildDisplayName(decoded) {
     return 'Utilisateur';
 }
 
-/**
- * Normalise le rôle
- */
 function normalizeRole(role) {
     if (!role) return null;
     if (Array.isArray(role)) role = role[0];
@@ -94,19 +64,12 @@ function normalizeRole(role) {
     return roleMap[role.toUpperCase()] || role.toUpperCase();
 }
 
-/**
- * Met à jour la sidebar avec les informations utilisateur
- */
 function updateSidebarWithUserInfo(userInfo) {
-    console.log('JWT User Info:', userInfo);
-
-    // Debug
     const debugRole = document.getElementById("sidebar-debug-role");
     const debugName = document.getElementById("sidebar-debug-name");
     if (debugRole) debugRole.textContent = "currentRole = " + (userInfo.role || "NULL");
     if (debugName) debugName.textContent = "displayName = " + (userInfo.displayName || "NULL");
 
-    // Labels
     const roleLabelTop = document.getElementById("sidebar-role-label");
     if (roleLabelTop) roleLabelTop.textContent = userInfo.role || "UTILISATEUR";
 
@@ -117,21 +80,13 @@ function updateSidebarWithUserInfo(userInfo) {
     if (nameTarget) nameTarget.textContent = userInfo.displayName || "Utilisateur";
 }
 
-/**
- * Filtre les menus selon le rôle
- */
 function filterMenuByRole(userRole) {
-    console.log('Filtering menu for role:', userRole);
-
     document.querySelectorAll("[data-role]").forEach((el) => {
         const allowedRole = (el.getAttribute("data-role") || "").trim();
         el.style.display = (userRole && allowedRole === userRole) ? "" : "none";
     });
 }
 
-/**
- * Affiche la sidebar par défaut
- */
 function showDefaultSidebar() {
     document.querySelectorAll("[data-role]").forEach((el) => {
         el.style.display = "none";
@@ -160,11 +115,10 @@ function performLogout() {
     };
 
     if (refreshToken) {
-        fetch('/logout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ refreshToken })
-        }).catch(() => {}).finally(finalize);
+        import('../../common/ClientHttp.js').then((module) => {
+            const api = module.default;
+            api.post('/logout', { refreshToken }).catch(() => {}).finally(finalize);
+        }).catch(finalize);
     } else {
         finalize();
     }

@@ -30,6 +30,7 @@ public interface UeMapper {
         ue.setDescription(entity.getDescription());
         ue.setSpecialiteId(entity.getSpecialiteId());
         ue.setCouleur(entity.getCouleur());
+        ue.setSemestre(entity.getSemestre());
         ue.setCreatedAt(entity.getCreatedAt());
         ue.setDeletedAt(entity.getDeletedAt());
         ue.setIsDeleted(entity.getIsDeleted());

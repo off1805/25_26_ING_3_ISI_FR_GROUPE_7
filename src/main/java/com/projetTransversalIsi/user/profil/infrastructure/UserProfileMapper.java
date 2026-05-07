@@ -27,9 +27,11 @@ public interface UserProfileMapper {
 
     JpaStudentProfileEntity studentProfilToStudentEntity(StudentProfile student);
     JpaTeacherProfileEntity teacherProfileToTeacherEntity(TeacherProfile teacher);
+    JpaAPProfileEntity aPProfileToJpaAPProfileEntity(APProfile apProfile);
 
     StudentProfile jpaStudentProfileToStudentDomain(JpaStudentProfileEntity entity);
     TeacherProfile jpaTeacherProfileToTeacherDomain(JpaTeacherProfileEntity entity);
+    APProfile jpaAPProfileEntityToAPProfile(JpaAPProfileEntity entity);
 
 
     @ObjectFactory

@@ -136,19 +136,36 @@ export class EditScheduleController {
     async _loadSubjectsForClass(classId) {
         const classe = await api.get(`/api/classes/${classId}`);
         const specialiteId = classe?.specialiteId;
-        if (!specialiteId) {
-            this.SUBJECTS = [];
-            return;
-        }
-        const page = await api.get(`/api/ue?specialiteId=${encodeURIComponent(specialiteId)}&deleted=false&size=200`);
-        const ues = page?.content || [];
-        this.SUBJECTS = ues.map((ue) => ({
-            id: ue.id,
-            name: ue.libelle,
-            code: ue.code,
-            defaultColor: (typeof ue.couleur === 'string' && ue.couleur.startsWith('#') && ue.couleur.length === 7) ? ue.couleur : '#3b82f6',
-            teachers: [],
+        if (!specialiteId) { this.SUBJECTS = []; return; }
+
+        const [uePage, teachersPage] = await Promise.all([
+            api.get(`/api/ue?specialiteId=${encodeURIComponent(specialiteId)}&deleted=false&size=200`),
+            api.get('/api/users?role=TEACHER&size=200'),
+        ]);
+        console.log(uePage);
+        console.log(teachersPage);
+        const teacherMap = new Map();
+        (teachersPage?.content || []).forEach(t => {
+            if (!t.profile?.id) return;
+            const name     = `${t.profile.prenom || ''} ${t.profile.nom || ''}`.trim() || t.email || 'Enseignant';
+            const initials = `${(t.profile.prenom?.[0] || '').toUpperCase()}${(t.profile.nom?.[0] || '').toUpperCase()}` || 'EN';
+            teacherMap.set(t.profile.id, { id: t.profile.id, name, initials });
+        });
+
+        this.SUBJECTS = (uePage?.content || []).map(ue => ({
+            id:           ue.id,
+            name:         ue.libelle,
+            code:         ue.code,
+            defaultColor: (typeof ue.couleur === 'string' && ue.couleur.startsWith('#') && ue.couleur.length === 7)
+                              ? ue.couleur : '#3b82f6',
+            teachers:     (ue.enseignantIds || []).map(id => teacherMap.get(id)).filter(Boolean),
         }));
+    }
+
+    _toHex(colorIdOrHex) {
+        if (typeof colorIdOrHex === 'string' && colorIdOrHex.startsWith('#')) return colorIdOrHex;
+        const p = PALETTE.find(p => p.id === colorIdOrHex);
+        return p ? p.border : '#3b82f6';
     }
 
     _bindControls() {
@@ -175,82 +192,62 @@ export class EditScheduleController {
         });
     }
 
-    _bindSubjectDropModal() {
-        const modal = document.getElementById('modal-subject-drop');
-        const confirmButton = document.getElementById('btn-confirm-subject-drop');
-        const cancelButton = document.getElementById('btn-cancel-subject-drop');
-        if (!modal) return;
+    _closeDropModal() {
+        const el = document.getElementById('hs-modal-subject-drop');
+        if (window.HSOverlay && el) HSOverlay.close(el);
+        this._pendingDrop = null;
+    }
 
-        confirmButton?.addEventListener('click', () => this._confirmSubjectDrop());
-        cancelButton?.addEventListener('click', () => {
-            this.hideModal('modal-subject-drop');
-            this._pendingDrop = null;
+    _bindSubjectDropModal() {
+        document.getElementById('btn-confirm-subject-drop')?.addEventListener('click', () => this._confirmSubjectDrop());
+        document.getElementById('btn-cancel-subject-drop')?.addEventListener('click', () => this._closeDropModal());
+        document.getElementById('btn-close-drop-modal')?.addEventListener('click', () => this._closeDropModal());
+        document.getElementById('drop-color-input')?.addEventListener('input', e => {
+            if (this._pendingDrop) this._pendingDrop.colorId = e.target.value;
         });
-        modal.querySelectorAll('.btn-close-modal').forEach(button =>
-            button.addEventListener('click', () => {
-                this.hideModal('modal-subject-drop');
-                this._pendingDrop = null;
-            })
-        );
     }
 
     _openSubjectDropModal(hourIndex, dayIndex, subject) {
         this._pendingDrop = { hourIndex, dayIndex, subject };
+
         const teacherSelect = document.getElementById('drop-teacher-select');
         if (teacherSelect) {
-            const options = subject.teachers.length
-                ? subject.teachers.map(teacher =>
-                    `<option value="${teacher.id}">${teacher.name}</option>`
-                ).join('')
-                : `<option value="1">Enseignant par défaut (id 1)</option>`;
-            teacherSelect.innerHTML = options;
+            teacherSelect.innerHTML = subject.teachers.length
+                ? subject.teachers.map(t => `<option value="${t.id}">${t.name}</option>`).join('')
+                : `<option value="">Aucun enseignant assigné</option>`;
         }
 
-        const currentSubjectColorId = this.selectedColors[`s${subject.id}`] || subject.defaultColor;
-        const colorGrid = document.getElementById('drop-color-grid');
-        if (colorGrid) {
-            colorGrid.innerHTML = PALETTE.map(color => `
-                <button type="button"
-                    class="drop-color-btn size-8 rounded-xl border-2 hover:scale-110 transition-all ${currentSubjectColorId === color.id ? 'ring-2 ring-offset-1 ring-primary shadow-sm' : ''}"
-                    data-color="${color.id}" title="${color.id}"
-                    style="background:${color.bg};border-color:${color.border}"></button>`
-            ).join('');
-            colorGrid.querySelectorAll('.drop-color-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    colorGrid.querySelectorAll('.drop-color-btn').forEach(b => b.classList.remove('ring-2', 'ring-offset-1', 'ring-primary', 'shadow-sm'));
-                    button.classList.add('ring-2', 'ring-offset-1', 'ring-primary', 'shadow-sm');
-                    if (this._pendingDrop) this._pendingDrop.colorId = button.dataset.color;
-                });
-            });
-        }
+        const hexColor = this._toHex(this.selectedColors[`s${subject.id}`] || subject.defaultColor);
+        const colorInput = document.getElementById('drop-color-input');
+        if (colorInput) colorInput.value = hexColor;
+        this._pendingDrop.colorId = hexColor;
 
-        this._pendingDrop.colorId = currentSubjectColorId;
-        this.showModal('modal-subject-drop');
+        const el = document.getElementById('hs-modal-subject-drop');
+        if (window.HSOverlay && el) HSOverlay.open(el);
     }
 
     _confirmSubjectDrop() {
         if (!this._pendingDrop) return;
-        const { hourIndex, dayIndex, subject, colorId } = this._pendingDrop;
+        const { hourIndex, dayIndex, subject } = this._pendingDrop;
+
         const teacherSelect = document.getElementById('drop-teacher-select');
-        const teacherId = teacherSelect ? parseInt(teacherSelect.value) || 1 : (subject.teachers[0]?.id || 1);
-        const teacher = subject.teachers.find(t => t.id === teacherId) || subject.teachers[0] || { id: 1, name: 'Enseignant', initials: 'PR' };
+        const teacherId     = teacherSelect?.value ? parseInt(teacherSelect.value) : null;
+        const teacher       = subject.teachers.find(t => t.id === teacherId) || subject.teachers[0] || { id: null, name: 'Enseignant', initials: 'EN' };
+
+        const colorInput = document.getElementById('drop-color-input');
+        const colorId    = colorInput?.value || subject.defaultColor || '#3b82f6';
 
         this.selectedColors[`s${subject.id}`] = colorId;
         this._refreshSubjectCard(subject.id, colorId);
 
         const dropData = {
-            type: 'teacher',
-            subjectId: subject.id,
-            subjectName: subject.name,
-            subjectCode: subject.code,
-            teacherId: teacherId,
-            teacherName: teacher?.name || 'Enseignant',
-            teacherInitials: teacher?.initials || 'PR',
-            itemKey: `s${subject.id}`,
-            fromBlock: false,
+            type: 'teacher', subjectId: subject.id, subjectName: subject.name, subjectCode: subject.code,
+            teacherId: teacher.id, teacherName: teacher.name, teacherInitials: teacher.initials,
+            itemKey: `s${subject.id}`, fromBlock: false,
         };
 
-        this.hideModal('modal-subject-drop');
+        const el = document.getElementById('hs-modal-subject-drop');
+        if (window.HSOverlay && el) HSOverlay.close(el);
         this._pendingDrop = null;
         this.undoStack.push(this.placeBlock(hourIndex, dayIndex, dropData, colorId));
     }
@@ -386,7 +383,7 @@ export class EditScheduleController {
                href="#">
                 <div class="py-2 ">
                     <div class="flex gap-x-3">
-                        <div class="mt-0.5 relative shrink-0 size-8 rounded-lg flex items-center justify-center" style="background:${paletteColor.bg};color:${paletteColor.border}">
+                        <div id="swatch-s${subject.id}" class="mt-0.5 relative shrink-0 size-8 rounded-lg flex items-center justify-center" style="background:${paletteColor.bg};color:${paletteColor.border}">
                             ${ICON_SVG.books}
                             <span class="inline-flex absolute bottom-1 translate-y-1/2 right-1 translate-x-1/2 items-center size-2 rounded-full ${isScheduled ? 'bg-emerald-500' : 'bg-muted'}"></span>
                         </div>

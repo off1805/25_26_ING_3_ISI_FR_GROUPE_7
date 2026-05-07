@@ -28,13 +28,11 @@ export class LoginUC {
 
             await TokenService.setToken(token);
             await TokenService.setRefreshToken(refreshToken);
-
-            console.log("ROLE AVANT STOCKAGE =", role);
+            TokenService.decodeAndStoreClaims(token);
 
             if (!role) {
                 throw new Error("Le backend n'a pas renvoyé le rôle.");
             }
-            localStorage.setItem("role", role);
 
             if (displayName) {
                 localStorage.setItem("displayName", displayName);

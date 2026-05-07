@@ -11,6 +11,6 @@ export const StudentApi = {
      * @returns {Promise<{userId, email, nom, prenom, matricule, classeId, created}>}
      */
     enroll: (data) => api.post(`${ENDPOINT}/enroll`, data),
-    getStudentOfClass: (classId) => api.get(`${ENDPOINT_USERS}?classId=${classId}`),
+    getStudentOfClass: (classId, page = 0, size = 10) => api.get(`${ENDPOINT_USERS}?classId=${classId}&page=${page}&size=${size}`),
     removeFromClass: (userId, classeId) => api.delete(`${ENDPOINT}/${userId}/classes/${classeId}`),
 };

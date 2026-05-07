@@ -5,5 +5,5 @@ import com.projetTransversalIsi.pedagogie.application.dto.SemestreResponseDTO;
 import java.util.List;
 
 public interface FindSemestresByAnneeScolaireUC {
-    List<SemestreResponseDTO> execute(Long anneeScolaireId, Long specialiteId);
+    List<SemestreResponseDTO> execute(Long anneeScolaireId, Long niveauId);
 }

@@ -23,6 +23,7 @@ export class CreateUeUC {
       volumeHoraireTotal: Number(ueData.volumeHoraireTotal),
       description: ueData.description ? String(ueData.description).trim() : null,
       couleur: ueData.couleur ? String(ueData.couleur) : "#ffffff",
+      semestre: ueData.semestre != null ? Number(ueData.semestre) : null,
       specialiteId: Number(ueData.specialiteId),
       enseignantIds: Array.isArray(ueData.enseignantIds) ? ueData.enseignantIds.map(Number) : [],
     };

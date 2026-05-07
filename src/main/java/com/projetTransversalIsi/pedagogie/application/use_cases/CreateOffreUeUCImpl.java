@@ -49,6 +49,7 @@ public class CreateOffreUeUCImpl implements CreateOffreUeUC {
         offreUe.setVolumeHoraireTotal(ue.getVolumeHoraireTotal());
         offreUe.setDescription(ue.getDescription());
         offreUe.setCouleur(ue.getCouleur());
+        offreUe.setSemestre(ue.getSemestre());
         offreUe.setSpecialiteId(ue.getSpecialiteId());
         offreUe.setEnseignantIds(ue.getEnseignantIds());
         offreUe.setCreatedAt(LocalDateTime.now());

@@ -1,4 +1,10 @@
 package com.projetTransversalIsi.user.profil.domain;
 
-public class APProfile extends Profile{
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class APProfile extends Profile {
+    private Long filiereId;
 }

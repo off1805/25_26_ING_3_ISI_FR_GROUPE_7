@@ -22,7 +22,7 @@ public class SemestreServiceImpl implements SemestreService {
     }
 
     @Override
-    public List<SemestreResponseDTO> getSemestresByAnneeScolaireAndSpecialite(Long anneeScolaireId, Long specialiteId) {
-        return findSemestresByAnneeScolaireUC.execute(anneeScolaireId, specialiteId);
+    public List<SemestreResponseDTO> getSemestresByAnneeScolaireAndNiveau(Long anneeScolaireId, Long niveauId) {
+        return findSemestresByAnneeScolaireUC.execute(anneeScolaireId, niveauId);
     }
 }

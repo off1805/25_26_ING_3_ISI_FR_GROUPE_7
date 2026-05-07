@@ -1,8 +1,12 @@
 package com.projetTransversalIsi.student.application.use_cases;
 
+import com.projetTransversalIsi.pedagogie.infrastructure.entity.JpaAnneeScolaireEntity;
+import com.projetTransversalIsi.pedagogie.infrastructure.jpaRepository.SpringDataAnneeScolaireRepository;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaClasseEntity;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataClasseRepository;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaStudentClasseHistoryEntity;
 import com.projetTransversalIsi.user.profil.infrastructure.JpaStudentProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentClasseHistoryRepository;
 import com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProfileRepository;
 import com.projetTransversalIsi.security.infrastructure.JpaRoleEntity;
 import com.projetTransversalIsi.security.services.PasswordHasherAC;
@@ -16,6 +20,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,6 +31,8 @@ public class EnrollStudentUCImpl implements EnrollStudentUC {
     private final SpringDataUserRepository userRepository;
     private final SpringDataStudentProfileRepository studentProfileRepository;
     private final SpringDataClasseRepository classeRepository;
+    private final SpringDataStudentClasseHistoryRepository historyRepository;
+    private final SpringDataAnneeScolaireRepository anneeScolaireRepository;
     private final PasswordHasherAC passwordHasher;
     private final EntityManager entityManager;
 
@@ -36,17 +43,18 @@ public class EnrollStudentUCImpl implements EnrollStudentUC {
         JpaClasseEntity classe = classeRepository.findById(command.classeId())
                 .orElseThrow(() -> new IllegalArgumentException("Classe introuvable : " + command.classeId()));
 
+        JpaAnneeScolaireEntity anneeScolaire = anneeScolaireRepository.findByActiveTrue()
+                .orElseThrow(() -> new IllegalStateException("Aucune année scolaire active."));
+
         Optional<JpaUserEntity> existingUser = userRepository.findByEmail(command.email());
 
         if (existingUser.isPresent()) {
-            // L'utilisateur existe — vérifier si son profil étudiant est déjà dans une classe
             JpaUserEntity user = existingUser.get();
 
             if (user.getProfile() == null) {
                 throw new IllegalStateException("L'utilisateur " + command.email() + " n'a pas de profil.");
             }
 
-            // Récupérer le student profile
             JpaStudentProfileEntity studentProfile = studentProfileRepository.findById(user.getProfile().getId())
                     .orElseThrow(() -> new IllegalStateException("Profil étudiant introuvable pour " + command.email()));
 
@@ -54,11 +62,12 @@ public class EnrollStudentUCImpl implements EnrollStudentUC {
                 throw new StudentAlreadyEnrolledException(command.email());
             }
 
-            // Affecter la classe
             studentProfile.setClasse(classe);
             studentProfileRepository.save(studentProfile);
 
-            return  EnrollStudentResponseDTO.builder()
+            enregistrerHistorique(studentProfile, classe, anneeScolaire);
+
+            return EnrollStudentResponseDTO.builder()
                     .userId(user.getId())
                     .nom(studentProfile.getNom())
                     .prenom(studentProfile.getPrenom())
@@ -66,9 +75,7 @@ public class EnrollStudentUCImpl implements EnrollStudentUC {
                     .classeId(studentProfile.getClasse().getId())
                     .build();
 
-
         } else {
-            // L'utilisateur n'existe pas — créer profil + user
             JpaStudentProfileEntity studentProfile = new JpaStudentProfileEntity();
             studentProfile.setNom(command.nom());
             studentProfile.setPrenom(command.prenom());
@@ -87,13 +94,24 @@ public class EnrollStudentUCImpl implements EnrollStudentUC {
             newUser.setPermissions(Set.of());
             JpaUserEntity savedUser = userRepository.save(newUser);
 
-            return  EnrollStudentResponseDTO.builder()
+            enregistrerHistorique(savedProfile, classe, anneeScolaire);
+
+            return EnrollStudentResponseDTO.builder()
                     .userId(savedUser.getId())
-                    .nom(studentProfile.getNom())
-                    .prenom(studentProfile.getPrenom())
-                    .matricule(studentProfile.getMatricule())
-                    .classeId(studentProfile.getClasse().getId())
+                    .nom(savedProfile.getNom())
+                    .prenom(savedProfile.getPrenom())
+                    .matricule(savedProfile.getMatricule())
+                    .classeId(savedProfile.getClasse().getId())
                     .build();
         }
+    }
+
+    private void enregistrerHistorique(JpaStudentProfileEntity student, JpaClasseEntity classe, JpaAnneeScolaireEntity anneeScolaire) {
+        JpaStudentClasseHistoryEntity history = new JpaStudentClasseHistoryEntity();
+        history.setStudent(student);
+        history.setClasse(classe);
+        history.setAnneeScolaire(anneeScolaire);
+        history.setDateDebut(LocalDate.now());
+        historyRepository.save(history);
     }
 }

@@ -1,19 +1,18 @@
+
+
+
+
 @theme theme-kemoscool inline {}
 
 
 :root[data-theme="theme-kemoschool"],
 [data-theme="theme-kemoschool"] {
 
-
+  --background: #fafafe;
   --background-1: #fafafe;
   --background-2: #F5F3FF;
   --foreground: #4C1D95;
-
-
-
-
   --inverse: #3B0764;
-
   --border: #EDE9FE;
   --border-line-1: #F5F3FF;
   --border-line-2: #EDE9FE;
@@ -23,8 +22,6 @@
   --border-line-6: #8B5CF6;
   --border-line-7: #7C3AED;
   --border-line-8: #6D28D9;
-
-
   --primary-50: #F5F3FF;
   --primary-100: #EDE9FE;
   --primary-200: #DDD6FE;
@@ -36,25 +33,21 @@
   --primary-800: #5B21B6;
   --primary-900: #4C1D95;
   --primary-950: #2E1065;
-
   --primary: #7C3AED;
   --primary-hover: #6D28D9;
   --primary-focus: #6D28D9;
   --primary-active: #6D28D9;
   --primary-checked: #7C3AED;
-
   --secondary: #4C1D95;
   --secondary-hover: #3B0764;
   --secondary-focus: #3B0764;
   --secondary-active: #3B0764;
-
   --layer-line: #EDE9FE;
   --layer-foreground: #4C1D95;
   --layer-hover: #F5F3FF;
   --layer-focus: #F5F3FF;
   --layer-active: #F5F3FF;
-
-  --surface: #F5F3FF;
+  --surface: #FFFFFF;
   --surface-1: #EDE9FE;
   --surface-2: #DDD6FE;
   --surface-3: #C4B5FD;
@@ -64,7 +57,6 @@
   --surface-hover: #EDE9FE;
   --surface-focus: #EDE9FE;
   --surface-active: #EDE9FE;
-
   --muted: #FAF9FF;
   --muted-foreground: #6B7280;
   --muted-foreground-1: #9CA3AF;
@@ -72,8 +64,6 @@
   --muted-hover: #F5F3FF;
   --muted-focus: #F5F3FF;
   --muted-active: #F5F3FF;
-
-
   --navbar-line: #EDE9FE;
   --navbar-divider: #EDE9FE;
   --navbar-nav-foreground: #4C1D95;
@@ -82,7 +72,6 @@
   --navbar-nav-active: #F5F3FF;
   --navbar-nav-list-divider: #EDE9FE;
   --navbar-inverse: #2E1065;
-
   --navbar-1: #FAF9FF;
   --navbar-1-line: #EDE9FE;
   --navbar-1-divider: #EDE9FE;
@@ -91,7 +80,6 @@
   --navbar-1-nav-focus: #EDE9FE;
   --navbar-1-nav-active: #EDE9FE;
   --navbar-1-nav-list-divider: #EDE9FE;
-
   --navbar-2: #F5F3FF;
   --navbar-2-divider: #DDD6FE;
   --navbar-2-nav-foreground: #4C1D95;
@@ -99,16 +87,13 @@
   --navbar-2-nav-focus: #EDE9FE;
   --navbar-2-nav-active: #EDE9FE;
   --navbar-2-nav-list-divider: #EDE9FE;
-
-
+  --sidebar: #ffffff;
   --sidebar-line: #EDE9FE;
   --sidebar-divider: #EDE9FE;
   --sidebar-nav-foreground: #4C1D95;
   --sidebar-nav-hover: #F5F3FF;
   --sidebar-nav-focus: #F5F3FF;
-  --sidebar-nav-active: #F5F3FF;
-  --sidebar-nav-list-divider: #EDE9FE;
-  --sidebar-inverse: #2E1065;
+  --sidebar-nav-active: #EDE9FE;
 
   --sidebar-1: #FAF9FF;
   --sidebar-1-line: #EDE9FE;
@@ -428,3 +413,8 @@
   --chart-9: #404040;
   --chart-10: #262626;
 }
+
+
+
+
+

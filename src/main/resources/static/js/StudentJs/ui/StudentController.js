@@ -16,13 +16,17 @@ import { ClasseApi } from '../../academicStructure/infrastructure/ClasseApi.js';
 import { SpecialiteApi } from '../../academicStructure/infrastructure/SpecialiteApi.js';
 import { enrollStudentUC } from '../application/EnrollStudentUC.js';
 import { EtudiantExcelParser } from '../../ExcelJs/application/infrastructure/Lecture.js';
-
+import { GlobalEventNotifier } from '../../common/GlobalEventNotifier.js';
 import api from '../../common/ClientHttp.js';
 import { StudentApi } from '../infrastructure/StudentApi.js';
 
 // ── État global ──────────────────────────────────────────────────────────────
 
 let classeSelectionneeId = null;
+let currentStudentPage  = 0;
+let totalStudentPages   = 0;
+let totalStudentElements = 0;
+const studentPageSize   = 2;
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 const specialiteApi = new SpecialiteApi();
@@ -31,6 +35,7 @@ const classeApi = new ClasseApi();
 document.addEventListener('DOMContentLoaded', async () => {
 
     attacherEvenements();
+    initManualAddSelects();
 });
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -137,6 +142,57 @@ function fermerModal(id) {
     }
 }
 
+function initManualAddSelects() {
+    const nivSel = document.getElementById('modal-niveau-select');
+    const classSel = document.getElementById('modal-classe-select');
+    if (!nivSel || !classSel) return;
+
+    if (window.HSSelect) {
+        try { new HSSelect(nivSel); } catch(e) {}
+    }
+
+    nivSel.addEventListener('change', async (e) => {
+        const val = e.target.value;
+        if (val) await loadClassesForModal(val);
+    });
+}
+
+async function loadClassesForModal(niveauId) {
+    const classSel = document.getElementById('modal-classe-select');
+    if (!classSel) return;
+
+    try {
+        classSel.disabled = true;
+        if (window.HSSelect) HSSelect.getInstance(classSel)?.destroy();
+    } catch (_) { }
+
+    classSel.innerHTML = `<option value="" disabled selected>Chargement...</option>`;
+
+    try {
+        const specs = await specialiteApi.getByNiveauId(niveauId);
+        const results = await Promise.all(
+            Array.from(specs).map(spec => classeApi.getBySpecialiteId(spec.id))
+        );
+        const classes = results.flat();
+
+        if (classes.length === 0) {
+            classSel.innerHTML = `<option value="" disabled selected>Aucune classe trouvée</option>`;
+            classSel.disabled = true;
+            if (window.HSSelect) new HSSelect(classSel);
+            return;
+        }
+
+        classSel.disabled = false;
+        classSel.innerHTML = `<option value="" disabled selected>Sélectionner une classe</option>` +
+            classes.map(c => `<option value="${c.id}">${c.code}</option>`).join('');
+
+        if (window.HSSelect) new HSSelect(classSel);
+    } catch (err) {
+        classSel.innerHTML = `<option value="" disabled selected>Erreur</option>`;
+        console.error("loadClassesForModal error: ", err);
+    }
+}
+
 // ── Ajout manuel ──────────────────────────────────────────────────────────────
 
 async function soumettreFormManuel(e) {
@@ -150,7 +206,7 @@ async function soumettreFormManuel(e) {
         prenom: form.prenom.value.trim(),
         matricule: form.matricule.value.trim(),
         numeroTelephone: form.numeroTelephone.value.trim(),
-        classeId: getActiveClasseId(),
+        classeId: form.classeId.value ? parseInt(form.classeId.value, 10) : getActiveClasseId(),
     };
 
     if (!data.classeId) {
@@ -162,17 +218,19 @@ async function soumettreFormManuel(e) {
     btnSubmit.textContent = 'Inscription…';
 
     try {
+        console.log(data);
         const res = await enrollStudentUC(data);
+        console.log(res);
         const msg = res.created
             ? `✓ ${res.nom} ${res.prenom} créé(e) et inscrit(e).`
             : `✓ ${res.nom} ${res.prenom} inscrit(e) dans la classe.`;
-        showToast(msg, 'success');
+        GlobalEventNotifier.eventWellDone(msg, 'success');
         form.reset();
         fermerModal('modal-manual');
         // Refresh to see the new student in the table
         setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
-        showToast(err.message, 'error');
+        GlobalEventNotifier.eventWellDone(err.message, 'error');
     } finally {
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'Inscrire';
@@ -217,7 +275,7 @@ async function lancerImportExcel() {
     const classeId = getActiveClasseId();
 
     if (!fichier) {
-        showToast('Veuillez sélectionner un fichier Excel.', 'warning');
+        GlobalEventNotifier.eventWellDone('Veuillez sélectionner un fichier Excel.', 'warning');
         return;
     }
     if (!classeId) {
@@ -242,11 +300,12 @@ async function lancerImportExcel() {
         showToast('Lecture du fichier : ' + err.message, 'error');
         return;
     }
+    console.log(etudiants);
 
     // Validation préliminaire
     const erreursValidation = etudiants.flatMap(et => EtudiantExcelParser.validerEtudiant(et));
     if (erreursValidation.length > 0) {
-        showToast(`${erreursValidation.length} erreur(s) de format dans le fichier. Corrigez-les avant d'importer.`, 'warning');
+        GlobalEventNotifier.eventWellDone(`${erreursValidation.length} erreur(s) de format dans le fichier. Corrigez-les avant d'importer.`, 'warning');
         afficherErreursValidation(erreursValidation);
         return;
     }
@@ -359,36 +418,38 @@ async function handleNiveauChange(levelId) {
     classes = results.flat();
 
     container.innerHTML = classes.map((spec, index) => `
-        <button type="button" 
+        <button type="button"
             data-classe-id="${spec.id}"
-            class="classe-tab-btn hs-tab-active:bg-primary/20 specialty-tab hs-tab-active:text-primary px-5 py-1.5 text-xs font-semibold rounded-full text-muted-foreground-2 hover:bg-layer/60 transition-all ${index === 0 ? 'active' : ''}"
+            class="classe-tab-btn specialty-tab py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full transition-all focus:outline-none disabled:opacity-50 disabled:pointer-events-none hover:text-layer-foreground ${index === 0 ? 'active bg-surface-active text-foreground' : 'bg-transparent text-muted-foreground-1'}"
             role="tab"
-            data-hs-tab="#panel-ue-specialite-${spec.code}"
-            aria-controls="panel-ue-specialite-${spec.code}"
-            aria-selected="${index === 0 ? true : false}">
+            aria-selected="${index === 0}">
             ${spec.code}
         </button>
     `).join('');
 
     container.querySelectorAll('.classe-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            // Désactiver tous les boutons
             container.querySelectorAll('.classe-tab-btn').forEach(b => {
-                b.classList.remove('active', 'bg-primary/20', 'text-primary');
-                b.classList.add('text-muted-foreground-2');
+                b.classList.remove('active', 'bg-surface-active', 'text-foreground');
+                b.classList.add('bg-transparent', 'text-muted-foreground-1');
                 b.setAttribute('aria-selected', 'false');
             });
 
-            // Activer le bouton cliqué
-            btn.classList.add('active', 'bg-primary/20', 'text-primary');
-            btn.classList.remove('text-muted-foreground-2');
+            btn.classList.add('active', 'bg-surface-active', 'text-foreground');
+            btn.classList.remove('bg-transparent', 'text-muted-foreground-1');
             btn.setAttribute('aria-selected', 'true');
 
-            // Mettre à jour classeSelectionneeId si besoin
             classeSelectionneeId = btn.dataset.classeId;
-            handleClasseChange(classeSelectionneeId);
+            currentStudentPage = 0;
+            handleClasseChange(classeSelectionneeId, 0);
         });
     });
+
+    if (classes.length > 0) {
+        classeSelectionneeId = classes[0].id;
+        currentStudentPage = 0;
+        handleClasseChange(classes[0].id, 0);
+    }
 
     requestAnimationFrame(() => {
         if (window.HSStaticMethods) {
@@ -408,12 +469,15 @@ async function handleNiveauChange(levelId) {
 
 }
 
- async function handleClasseChange(classeId) {
+ async function handleClasseChange(classeId, page = 0) {
+        currentStudentPage = page;
         const container = document.getElementById("student-table");
-        const response = await StudentApi.getStudentOfClass(classeId);
-        container.innerHTML = response.content.map((student, index) => ` <tr 
-                                                    class="student-row hover:bg-muted/20 transition-colors group"
-                                                    attr="data-user-id=${student.id}">
+        const response = await StudentApi.getStudentOfClass(classeId, page, studentPageSize);
+        totalStudentPages    = response?.totalPages    ?? 0;
+        totalStudentElements = response?.totalElements ?? 0;
+        container.innerHTML = response.content.map((student, index) => ` <tr
+                                                    class="student-row bg-white hover:bg-muted/10 transition-colors group"
+                                                    data-user-id="${student.id}">
 
 
                                                     <!-- Nom & Prénom - avatar avec 6 couleurs variées -->
@@ -474,25 +538,92 @@ async function handleNiveauChange(levelId) {
                                                             >${student.profile.numeroTelephone != null ? student.profile.numeroTelephone : '—'}</span>
                                                     </td>
 
-                                                    <!-- Bouton retrait individuel (visible au hover) -->
+                                                    <!-- Actions (visible au hover) -->
                                                     <td class="pr-4 sm:pr-5 pl-2 py-3.5 text-right">
-                                                        <button type="button"
-                                                            class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100 ml-auto"
-                                                            attr="data-user-id=${student.id}"
-                                                            onclick="removeSingle(this)" title="Retirer de la classe">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="15"
-                                                                height="15" viewBox="0 0 24 24" fill="none"
-                                                                stroke="currentColor" stroke-width="2">
-                                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                                                <circle cx="9" cy="7" r="4" />
-                                                                <line x1="17" y1="8" x2="23" y2="14" />
-                                                                <line x1="23" y1="8" x2="17" y2="14" />
-                                                            </svg>
-                                                        </button>
+                                                        <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <button type="button"
+                                                                class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                                                data-user-id="${student.id}"
+                                                                data-nom="${(student.profile?.nom || '').replace(/"/g, '&quot;')}"
+                                                                data-prenom="${(student.profile?.prenom || '').replace(/"/g, '&quot;')}"
+                                                                data-email="${(student.email || '').replace(/"/g, '&quot;')}"
+                                                                data-matricule="${(student.profile?.matricule || '').replace(/"/g, '&quot;')}"
+                                                                data-telephone="${(student.profile?.numeroTelephone || '').replace(/"/g, '&quot;')}"
+                                                                onclick="viewStudent(this)" title="Voir le profil">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+                                                                    <circle cx="12" cy="12" r="3"/>
+                                                                </svg>
+                                                            </button>
+                                                            <button type="button"
+                                                                class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10 transition-colors"
+                                                                data-user-id="${student.id}"
+                                                                onclick="removeSingle(this)" title="Retirer de la classe">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                                                    <circle cx="9" cy="7" r="4" />
+                                                                    <line x1="17" y1="8" x2="23" y2="14" />
+                                                                    <line x1="23" y1="8" x2="17" y2="14" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>`).join('');
 
+        renderStudentPagination(classeId);
     }
+
+function renderStudentPagination(classeId) {
+    const container = document.getElementById('pagination-container');
+    if (!container) return;
+
+    if (totalStudentPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const activeClass   = 'bg-foreground border-layer-line text-white';
+    const inactiveClass = 'bg-layer border-layer-line text-muted-foreground-1 hover:bg-layer-hover';
+    const disabledClass = 'bg-layer border-layer-line text-muted-foreground-2 opacity-40 pointer-events-none';
+    const btnBase = 'inline-flex items-center justify-center min-w-[2rem] h-8 px-2 text-xs font-medium rounded-lg border transition-all cursor-pointer';
+
+    let pageNums = [];
+    if (totalStudentPages <= 7) {
+        pageNums = Array.from({ length: totalStudentPages }, (_, i) => i);
+    } else {
+        const rangeStart = Math.max(0, currentStudentPage - 1);
+        const rangeEnd   = Math.min(totalStudentPages - 1, currentStudentPage + 1);
+        if (rangeStart > 0) { pageNums.push(0); if (rangeStart > 1) pageNums.push('...'); }
+        for (let i = rangeStart; i <= rangeEnd; i++) pageNums.push(i);
+        if (rangeEnd < totalStudentPages - 1) { if (rangeEnd < totalStudentPages - 2) pageNums.push('...'); pageNums.push(totalStudentPages - 1); }
+    }
+
+    container.innerHTML = `
+        <div class="flex flex-col items-center gap-3">
+            <div class="flex items-center gap-1" id="pagination-btns">
+                <button data-page="${currentStudentPage - 1}" class="${btnBase} ${currentStudentPage === 0 ? disabledClass : inactiveClass}" ${currentStudentPage === 0 ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-left text-xs"></i>
+                </button>
+                ${pageNums.map(p => p === '...'
+                    ? `<span class="${btnBase} border-transparent text-muted-foreground-2 cursor-default">…</span>`
+                    : `<button data-page="${p}" class="${btnBase} ${p === currentStudentPage ? activeClass : inactiveClass}">${p + 1}</button>`
+                ).join('')}
+                <button data-page="${currentStudentPage + 1}" class="${btnBase} ${currentStudentPage >= totalStudentPages - 1 ? disabledClass : inactiveClass}" ${currentStudentPage >= totalStudentPages - 1 ? 'disabled' : ''}>
+                    <i class="bi bi-chevron-right text-xs"></i>
+                </button>
+            </div>
+            <p class="text-xs text-muted-foreground-2">${totalStudentElements} étudiant(s) &middot; Page ${currentStudentPage + 1} sur ${totalStudentPages}</p>
+        </div>`;
+
+    container.querySelector('#pagination-btns')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-page]');
+        if (!btn || btn.disabled || btn.tagName === 'SPAN') return;
+        const page = parseInt(btn.dataset.page);
+        if (!isNaN(page) && page >= 0 && page < totalStudentPages) {
+            handleClasseChange(classeId, page);
+        }
+    });
+}
 
 function afficherResultat(total, echecs) {
     afficherEtape('excel-step-result');

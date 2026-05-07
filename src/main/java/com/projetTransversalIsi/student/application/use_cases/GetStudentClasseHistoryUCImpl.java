@@ -41,6 +41,9 @@ public class GetStudentClasseHistoryUCImpl implements GetStudentClasseHistoryUC 
         return history.stream().map(h -> {
             JpaClasseEntity classe = h.getClasse();
             JpaSpecialiteEntity specialite = classe.getSpecialite();
+            String anneeScolaire = h.getAnneeScolaire() != null
+                    ? h.getAnneeScolaire().getAnneeDebut() + "/" + h.getAnneeScolaire().getAnneeFin()
+                    : "—";
             return new ClasseHistoriqueResponseDTO(
                     classe.getId(),
                     classe.getCode(),
@@ -49,7 +52,8 @@ public class GetStudentClasseHistoryUCImpl implements GetStudentClasseHistoryUC 
                     specialite != null ? specialite.getLibelle() : null,
                     h.getDateDebut(),
                     h.getDateFin(),
-                    h.getDateFin() == null
+                    h.getDateFin() == null,
+                    anneeScolaire
             );
         }).toList();
     }

@@ -1,6 +1,8 @@
 package com.projetTransversalIsi.student.application.use_cases;
 
+import com.projetTransversalIsi.user.profil.infrastructure.JpaStudentClasseHistoryEntity;
 import com.projetTransversalIsi.user.profil.infrastructure.JpaStudentProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentClasseHistoryRepository;
 import com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProfileRepository;
 import com.projetTransversalIsi.user.infrastructure.JpaUserEntity;
 import com.projetTransversalIsi.user.infrastructure.SpringDataUserRepository;
@@ -8,12 +10,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class RemoveStudentFromClasseUCImpl implements RemoveStudentFromClasseUC {
 
     private final SpringDataUserRepository userRepository;
     private final SpringDataStudentProfileRepository studentProfileRepository;
+    private final SpringDataStudentClasseHistoryRepository historyRepository;
 
     @Override
     @Transactional
@@ -31,6 +37,12 @@ public class RemoveStudentFromClasseUCImpl implements RemoveStudentFromClasseUC 
         if (profile.getClasse() == null || !profile.getClasse().getId().equals(classeId)) {
             throw new IllegalStateException("L'étudiant " + userId + " n'est pas dans la classe " + classeId);
         }
+
+        Optional<JpaStudentClasseHistoryEntity> openHistory = historyRepository.findByStudentIdAndDateFinIsNull(profile.getId());
+        openHistory.ifPresent(h -> {
+            h.setDateFin(LocalDate.now());
+            historyRepository.save(h);
+        });
 
         profile.setClasse(null);
         studentProfileRepository.save(profile);

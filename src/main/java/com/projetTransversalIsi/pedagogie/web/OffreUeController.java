@@ -1,7 +1,9 @@
 package com.projetTransversalIsi.pedagogie.web;
 
 import com.projetTransversalIsi.pedagogie.application.dto.CreateOffreUeRequestDTO;
+import com.projetTransversalIsi.pedagogie.application.dto.OffreUeFiltreDto;
 import com.projetTransversalIsi.pedagogie.application.dto.OffreUeResponseDTO;
+import com.projetTransversalIsi.pedagogie.application.dto.UpdateOffreUeRequestDTO;
 import com.projetTransversalIsi.pedagogie.application.use_cases.*;
 import com.projetTransversalIsi.pedagogie.domain.model.OffreUe;
 import com.projetTransversalIsi.pedagogie.infrastructure.OffreUeMapper;
@@ -25,6 +27,7 @@ public class OffreUeController {
     private final FindOffreUeByIdUC findOffreUeByIdUC;
     private final DeleteOffreUeUC deleteOffreUeUC;
     private final SearchOffreUeUC searchOffreUeUC;
+    private final UpdateOffreUeUC updateOffreUeUC;
     private final OffreUeMapper offreUeMapper;
 
     @PostMapping
@@ -49,6 +52,25 @@ public class OffreUeController {
         log.info("Suppression de l'offre UE id={}", id);
         deleteOffreUeUC.execute(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OffreUeResponseDTO> updateOffreUe(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateOffreUeRequestDTO request) {
+        log.info("Mise à jour de l'offre UE id={}", id);
+        OffreUe offreUe = updateOffreUeUC.execute(id, request);
+        return ResponseEntity.ok(offreUeMapper.toResponseDTO(offreUe));
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<Page<OffreUeResponseDTO>> getActiveBySpecialite(
+            @ModelAttribute OffreUeFiltreDto filtre,
+            @PageableDefault(size = 5) Pageable pageable) {
+        log.info("OffreUe année active, specialiteId={}, semestre={}, libelle={}",
+                filtre.getSpecialiteId(), filtre.getSemestre(), filtre.getLibelle());
+        Page<OffreUe> resultats = searchOffreUeUC.executeBySpecialiteActiveYear(filtre, pageable);
+        return ResponseEntity.ok(resultats.map(offreUeMapper::toResponseDTO));
     }
 
     @GetMapping
