@@ -868,7 +868,7 @@ export class EditScheduleController {
     }
 
     _formatHour(hour) {
-        return `${String(hour).padStart(2, '0')}:00:00`;
+        return `${String(hour).padStart(2, '0')}:00`;
     }
 
     _computeWeekOffsetFrom(dateStr) {
