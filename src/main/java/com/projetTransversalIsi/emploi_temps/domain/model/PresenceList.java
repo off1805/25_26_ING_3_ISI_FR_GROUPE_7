@@ -19,15 +19,17 @@ public class PresenceList {
     private Long enseignantId;
     private LocalDate date;
     private LocalDateTime createdAt;
+    private float heuresMarquer;
     private boolean deleted = false;
     private LocalDateTime deletedAt;
 
-    public PresenceList(Long seanceId, Long classeId, Long ueId, Long enseignantId, LocalDate date) {
+    public PresenceList(Long seanceId, Long classeId, Long ueId, Long enseignantId, LocalDate date, float heuresMarquer) {
         this.seanceId = seanceId;
         this.classeId = classeId;
         this.ueId = ueId;
         this.enseignantId = enseignantId;
         this.date = date;
+        this.heuresMarquer = heuresMarquer;
         this.createdAt = LocalDateTime.now();
         this.deleted = false;
     }

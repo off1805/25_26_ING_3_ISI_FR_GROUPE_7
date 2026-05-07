@@ -38,6 +38,11 @@ public class JpaPresenceRowRepository implements PresenceRowRepository {
     }
 
     @Override
+    public Optional<PresenceRow> findByPresenceListIdAndEtudiantId(Long listId, Long studentId) {
+        return springData.findByPresenceListIdAndEtudiantId(listId, studentId).map(mapper::toDomain);
+    }
+
+    @Override
     public void delete(PresenceRow presenceRow) {
         springData.deleteById(presenceRow.getId());
     }

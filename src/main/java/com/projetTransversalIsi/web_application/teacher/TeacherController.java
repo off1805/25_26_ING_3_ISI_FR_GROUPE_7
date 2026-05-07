@@ -3,6 +3,7 @@ package com.projetTransversalIsi.web_application.teacher;
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
 import com.projetTransversalIsi.user.dto.ProfileResponseDTO;
 import com.projetTransversalIsi.user.dto.UserDetailsResponseDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,11 +15,19 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/teacher")
+@RequiredArgsConstructor
 public class TeacherController {
 
+    private final com.projetTransversalIsi.emploi_temps.application.service.SeanceService seanceService;
+    private final com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProfileRepository studentProfileRepo;
+    private final com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository.SpringDataEmploiTempsRepository emploiTempsRepo;
+    private final com.projetTransversalIsi.user.infrastructure.SpringDataUserRepository userRepository;
+    private final com.projetTransversalIsi.emploi_temps.domain.repository.PresenceListRepository presenceListRepo;
+
     @GetMapping("/dashboard")
-    public String dashboardView(Model model) {
+    public String dashboardView(@org.springframework.security.core.annotation.AuthenticationPrincipal com.projetTransversalIsi.security.domain.UserPrincipal principal, Model model) {
         UserDetailsResponseDTO teacher = getFakeTeacher();
+        
         List<DashboardSeanceViewModel> seancesJour = getFakeDashboardSeancesJour();
 
         DashboardNextCourseViewModel nextCourse = seancesJour.stream()
@@ -50,16 +59,61 @@ public class TeacherController {
     }
 
     @GetMapping("/seance")
-    public String seanceView(Model model) {
-        UserDetailsResponseDTO teacher = getFakeTeacher();
-        SeanceViewModel seance = getFakeCurrentSeance();
-        List<StudentViewModel> etudiants = getFakeStudents();
+    public String seanceView(@org.springframework.security.core.annotation.AuthenticationPrincipal com.projetTransversalIsi.security.domain.UserPrincipal principal, Model model) {
+        if (principal == null) return "redirect:/auth/login";
 
-        model.addAttribute("teacher", teacher);
-        model.addAttribute("seance", seance);
-        model.addAttribute("etudiants", etudiants);
-        model.addAttribute("enseignantId", teacher.profile() != null ? teacher.profile().getId() : null);
+        // 1. Récupérer le profile de l'enseignant
+        var user = userRepository.findById(principal.userId()).orElse(null);
+        if (user == null || user.getProfile() == null) {
+            return "redirect:/auth/login";
+        }
+        Long teacherProfileId = user.getProfile().getId();
 
+        // 2. Trouver la séance en cours (aujourd'hui)
+        List<com.projetTransversalIsi.emploi_temps.domain.model.Seance> seancesAujourdhui = 
+                seanceService.getSeancesTodayByEnseignant(teacherProfileId, false);
+        
+        java.time.LocalTime now = java.time.LocalTime.now();
+        com.projetTransversalIsi.emploi_temps.domain.model.Seance currentSeance = seancesAujourdhui.stream()
+                .filter(s -> !now.isBefore(s.getHeureDebut()) && !now.isAfter(s.getHeureFin()))
+                .findFirst()
+                .orElse(null);
+
+        if (currentSeance != null) {
+            float totalHours = java.time.Duration.between(currentSeance.getHeureDebut(), currentSeance.getHeureFin()).toMinutes() / 60.0f;
+            float markedHours = presenceListRepo.findBySeanceId(currentSeance.getId()).stream()
+                    .findFirst()
+                    .map(com.projetTransversalIsi.emploi_temps.domain.model.PresenceList::getHeuresMarquer)
+                    .orElse(0.0f);
+
+            SeanceViewModel seanceVM = new SeanceViewModel(
+                    currentSeance.getId(),
+                    currentSeance.getLibelle(),
+                    currentSeance.getSalle(),
+                    currentSeance.getDateSeance(),
+                    currentSeance.getHeureDebut(),
+                    currentSeance.getHeureFin(),
+                    currentSeance.getCoursId(),
+                    totalHours,
+                    markedHours
+            );
+            
+            // 3. Trouver les étudiants via l'EmploiTemps
+            List<StudentViewModel> students = emploiTempsRepo.findBySeanceId(currentSeance.getId())
+                    .map(emploi -> studentProfileRepo.findByClasseId(emploi.getClasseId()))
+                    .map(list -> list.stream()
+                            .map(p -> new StudentViewModel(p.getId(), p.getPrenom(), p.getNom(), p.getMatricule(), p.getPhotoUrl()))
+                            .collect(java.util.stream.Collectors.toList()))
+                    .orElse(java.util.Collections.emptyList());
+
+            model.addAttribute("seance", seanceVM);
+            model.addAttribute("etudiants", students);
+        } else {
+            model.addAttribute("seance", null);
+            model.addAttribute("etudiants", java.util.Collections.emptyList());
+        }
+
+        model.addAttribute("enseignantId", teacherProfileId);
         return "TeacherInterface/TeacherSeance";
     }
 
@@ -91,7 +145,9 @@ public class TeacherController {
                 LocalDate.now(),
                 LocalTime.of(23, 0),
                 LocalTime.of(23, 50),
-                11L
+                11L,
+                4.0f,
+                0.0f
         );
     }
 
@@ -104,7 +160,9 @@ public class TeacherController {
                         LocalDate.now(),
                         LocalTime.of(8, 0),
                         LocalTime.of(12, 0),
-                        11L
+                        11L,
+                        4.0f,
+                        0.0f
                 ),
                 new SeanceViewModel(
                         2L,
@@ -113,7 +171,9 @@ public class TeacherController {
                         LocalDate.now().plusDays(1),
                         LocalTime.of(10, 0),
                         LocalTime.of(12, 0),
-                        12L
+                        12L,
+                        2.0f,
+                        0.0f
                 ),
                 new SeanceViewModel(
                         3L,
@@ -122,7 +182,9 @@ public class TeacherController {
                         LocalDate.now().plusDays(2),
                         LocalTime.of(14, 0),
                         LocalTime.of(16, 0),
-                        13L
+                        13L,
+                        2.0f,
+                        0.0f
                 ),
                 new SeanceViewModel(
                         4L,
@@ -131,7 +193,9 @@ public class TeacherController {
                         LocalDate.now().plusDays(3),
                         LocalTime.of(9, 0),
                         LocalTime.of(11, 0),
-                        14L
+                        14L,
+                        2.0f,
+                        0.0f
                 ),
                 new SeanceViewModel(
                         5L,
@@ -140,7 +204,9 @@ public class TeacherController {
                         LocalDate.now().plusDays(4),
                         LocalTime.of(13, 0),
                         LocalTime.of(15, 0),
-                        15L
+                        15L,
+                        2.0f,
+                        0.0f
                 ),
                 new SeanceViewModel(
                         6L,
@@ -149,21 +215,23 @@ public class TeacherController {
                         LocalDate.now().plusDays(5),
                         LocalTime.of(8, 0),
                         LocalTime.of(10, 0),
-                        16L
+                        16L,
+                        2.0f,
+                        0.0f
                 )
         );
     }
 
     private List<StudentViewModel> getFakeStudents() {
         return List.of(
-                new StudentViewModel(1L, "Aminata", "Bah", "23L3I001"),
-                new StudentViewModel(2L, "Kevin", "Foka", "23L3I002"),
-                new StudentViewModel(3L, "Sarah", "Njoya", "23L3I003"),
-                new StudentViewModel(4L, "Merveille", "Tchoumi", "23L3I004"),
-                new StudentViewModel(5L, "Jordan", "Essomba", "23L3I005"),
-                new StudentViewModel(6L, "Prisca", "Ngassa", "23L3I006"),
-                new StudentViewModel(7L, "Blaise", "Mvondo", "23L3I007"),
-                new StudentViewModel(8L, "Esther", "Kouam", "23L3I008")
+                new StudentViewModel(1L, "Aminata", "Bah", "23L3I001", null),
+                new StudentViewModel(2L, "Kevin", "Foka", "23L3I002", null),
+                new StudentViewModel(3L, "Sarah", "Njoya", "23L3I003", null),
+                new StudentViewModel(4L, "Merveille", "Tchoumi", "23L3I004", null),
+                new StudentViewModel(5L, "Jordan", "Essomba", "23L3I005", null),
+                new StudentViewModel(6L, "Prisca", "Ngassa", "23L3I006", null),
+                new StudentViewModel(7L, "Blaise", "Mvondo", "23L3I007", null),
+                new StudentViewModel(8L, "Esther", "Kouam", "23L3I008", null)
         );
     }
 
@@ -195,7 +263,6 @@ public class TeacherController {
                 )
         );
     }
-
     public record SeanceViewModel(
             Long id,
             String libelle,
@@ -203,7 +270,9 @@ public class TeacherController {
             LocalDate dateSeance,
             LocalTime heureDebut,
             LocalTime heureFin,
-            Long coursId
+            Long coursId,
+            float totalHours,
+            float markedHours
     ) {
     }
 
@@ -211,7 +280,8 @@ public class TeacherController {
             Long id,
             String prenom,
             String nom,
-            String matricule
+            String matricule,
+            String photoUrl
     ) {
     }
 
