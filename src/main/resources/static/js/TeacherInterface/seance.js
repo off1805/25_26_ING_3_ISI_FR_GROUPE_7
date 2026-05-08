@@ -1,7 +1,8 @@
-const HEURE_DEBUT_STR = /*[[${seance != null ? #temporals.format(seance.heureDebut,'HH:mm') : '23:00'}]]*/ '23:00';
-    const HEURE_FIN_STR   = /*[[${seance != null ? #temporals.format(seance.heureFin,'HH:mm') : '00:00'}]]*/ '23:50';
-    const SEANCE_ID       = /*[[${seance != null ? seance.id : null}]]*/ null;
-    const TOTAL_STUDENTS  = /*[[${#lists.size(etudiants)}]]*/ 0;
+    // Ces valeurs sont injectées par TeacherSeance.html via window.*
+    const HEURE_DEBUT_STR = window.HEURE_DEBUT_STR || '08:00';
+    const HEURE_FIN_STR   = window.HEURE_FIN_STR   || '12:00';
+    const SEANCE_ID       = window.SEANCE_ID        || null;
+    const TOTAL_STUDENTS  = window.TOTAL_STUDENTS   || 0;
 
     // studentId → [status_h0, status_h1, status_h2, status_h3]
     // 'empty' | 'present' | 'late' | 'absent'
@@ -259,19 +260,24 @@ function initBlockInteraction() {
                 }
             }
         });
-        document.getElementById('count-present').textContent = p;
-        document.getElementById('count-late').textContent    = l;
-        document.getElementById('count-absent').textContent  = a;
-        
+        const elP = document.getElementById('count-present');
+        if (elP) elP.textContent = p;
+        const elL = document.getElementById('count-late');
+        if (elL) elL.textContent = l;
+        const elA = document.getElementById('count-absent');
+        if (elA) elA.textContent = a;
+
         const cp2 = document.getElementById('count-present-2');
         if (cp2) cp2.textContent = p;
         const ca2 = document.getElementById('count-absent-2');
         if (ca2) ca2.textContent = a;
 
         const total = TOTAL_STUDENTS || Object.keys(blockStatuses).length;
-        document.getElementById('progress-text').textContent = done + ' / ' + total + ' étudiants traités';
-        const pct = total > 0 ? done/total*100 : 0;
-        document.getElementById('attendance-progress').style.width = pct + '%';
+        const elPT = document.getElementById('progress-text');
+        if (elPT) elPT.textContent = done + ' / ' + total + ' étudiants traités';
+        const pct = total > 0 ? done / total * 100 : 0;
+        const elPB = document.getElementById('attendance-progress');
+        if (elPB) elPB.style.width = pct + '%';
     }
 
     function markAllBlocks(status) {
@@ -488,10 +494,10 @@ function initBlockInteraction() {
 
         const warn = document.getElementById('final-warning');
         const warnMsg = document.getElementById('final-warning-msg');
-        if (notDone > 0) {
-            warn.classList.remove('hidden');
-            warnMsg.textContent = notDone + ' étudiant(s) sans statut seront marqués absents.';
-        } else { warn.classList.add('hidden'); }
+        if (warn) {
+            warn.style.display = notDone > 0 ? 'flex' : 'none';
+            if (warnMsg && notDone > 0) warnMsg.textContent = notDone + ' étudiant(s) sans statut seront marqués absents.';
+        }
 
         HSOverlay.open('#modal-end-session');
     }

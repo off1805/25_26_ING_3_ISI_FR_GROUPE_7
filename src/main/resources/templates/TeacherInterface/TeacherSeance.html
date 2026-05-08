@@ -106,91 +106,56 @@
                     <div class="w-full  mx-auto">
                         <!-- Grid -->
                         <div
-                            class="grid md:grid-cols-3 bg-layer border border-layer-line shadow-2xs rounded-xl overflow-hidden">
-                            <!-- Card -->
-                            <a class="block p-4 md:p-5 relative bg-layer hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus before:absolute before:top-0 before:start-0 before:w-full before:h-px md:before:h-full before:border-s before:border-layer-line first:before:bg-transparent"
-                                href="#">
-                                <div class="flex md:flex flex-col lg:flex-row gap-y-3 gap-x-5">
-                                    <svg class="shrink-0 size-5 text-muted-foreground"
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                                        <circle cx="9" cy="7" r="4" />
-                                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            class="grid grid-cols-2 md:grid-cols-4 bg-layer border border-layer-line shadow-2xs rounded-xl overflow-hidden">
+                            <!-- Total -->
+                            <div class="p-4 md:p-5 relative before:absolute before:top-0 before:start-0 before:w-full before:h-px md:before:h-full before:border-s before:border-layer-line first:before:bg-transparent">
+                                <div class="flex flex-col gap-y-2">
+                                    <svg class="shrink-0 size-5 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+                                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
                                     </svg>
-
-                                    <div class="grow">
-                                        <p class="text-xs uppercase font-medium text-foreground">
-                                            Total users
-                                        </p>
-                                        <h3 class="mt-1 text-xl sm:text-2xl font-semibold text-primary"
-                                            th:text="${#lists.size(etudiants)}" id="count-total">
-                                            0
-                                        </h3>
-
+                                    <div>
+                                        <p class="text-xs uppercase font-medium text-muted-foreground-2">Total</p>
+                                        <h3 class="mt-0.5 text-xl font-semibold text-layer-foreground" th:text="${#lists.size(etudiants)}" id="count-total">0</h3>
                                     </div>
                                 </div>
-                            </a>
-                            <!-- End Card -->
-
-                            <!-- Card -->
-                            <a class="block p-4 md:p-5 relative bg-layer hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus before:absolute before:top-0 before:start-0 before:w-full before:h-px md:before:h-full before:border-s before:border-layer-line first:before:bg-transparent"
-                                href="#">
-                                <div class="flex md:flex flex-col lg:flex-row gap-y-3 gap-x-5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="#3b3b3b" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-user-check">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-                                        <path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
-                                        <path d="M15 19l2 2l4 -4" />
+                            </div>
+                            <!-- Présents -->
+                            <div class="p-4 md:p-5 relative before:absolute before:top-0 before:start-0 before:w-full before:h-px md:before:h-full before:border-s before:border-layer-line">
+                                <div class="flex flex-col gap-y-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-green-500">
+                                        <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /><path d="M15 19l2 2l4 -4" />
                                     </svg>
-                                    <div class="grow">
-                                        <p class="text-xs uppercase font-medium text-foreground">
-                                            Presents
-                                        </p>
-                                        <h3 class="mt-1 text-xl sm:text-2xl font-semibold text-primary"
-                                            id="count-present">
-                                            0
-                                        </h3>
-
+                                    <div>
+                                        <p class="text-xs uppercase font-medium text-muted-foreground-2">Présents</p>
+                                        <h3 class="mt-0.5 text-xl font-semibold text-green-600" id="count-present">0</h3>
                                     </div>
                                 </div>
-                            </a>
-                            <!-- End Card -->
-
-                            <!-- Card -->
-                            <a class="block p-4 md:p-5 relative bg-layer hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus before:absolute before:top-0 before:start-0 before:w-full before:h-px md:before:h-full before:border-s before:border-layer-line first:before:bg-transparent"
-                                href="#">
-                                <div class="flex md:flex flex-col lg:flex-row gap-y-3 gap-x-5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="#3b3b3b" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-user-x">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-                                        <path d="M6 21v-2a4 4 0 0 1 4 -4h3.5" />
-                                        <path d="M22 22l-5 -5" />
-                                        <path d="M17 22l5 -5" />
+                            </div>
+                            <!-- En retard -->
+                            <div class="p-4 md:p-5 relative before:absolute before:top-0 before:start-0 before:w-full before:h-px md:before:h-full before:border-s before:border-layer-line">
+                                <div class="flex flex-col gap-y-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-amber-500">
+                                        <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" />
                                     </svg>
-                                    <div class="grow">
-                                        <p class="text-xs uppercase font-medium text-foreground">
-                                            Absents
-                                        </p>
-                                        <h3 class="mt-1 text-xl sm:text-2xl font-semibold text-primary"
-                                            id="count-absent">
-                                            0
-                                        </h3>
-
+                                    <div>
+                                        <p class="text-xs uppercase font-medium text-muted-foreground-2">En retard</p>
+                                        <h3 class="mt-0.5 text-xl font-semibold text-amber-600" id="count-late">0</h3>
                                     </div>
                                 </div>
-                            </a>
-                            <!-- End Card -->
-
-
+                            </div>
+                            <!-- Absents -->
+                            <div class="p-4 md:p-5 relative before:absolute before:top-0 before:start-0 before:w-full before:h-px md:before:h-full before:border-s before:border-layer-line">
+                                <div class="flex flex-col gap-y-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-red-500">
+                                        <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h3.5" /><path d="M22 22l-5 -5" /><path d="M17 22l5 -5" />
+                                    </svg>
+                                    <div>
+                                        <p class="text-xs uppercase font-medium text-muted-foreground-2">Absents</p>
+                                        <h3 class="mt-0.5 text-xl font-semibold text-red-600" id="count-absent">0</h3>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <!-- End Grid -->
                     </div>
@@ -198,6 +163,14 @@
                     <!-- Barre de progression -->
 
 
+
+                    <!-- Barre de progression appel -->
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-muted-foreground-2 whitespace-nowrap" id="progress-text">0 / 0 étudiants traités</span>
+                        <div class="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div id="attendance-progress" class="h-full bg-primary rounded-full transition-all duration-300" style="width:0%"></div>
+                        </div>
+                    </div>
 
                     <!-- Toolbar table -->
                     <div class="flex-none  flex flex-col sm:flex-row gap-4 items-center justify-between">
@@ -302,7 +275,7 @@
                                                     <div th:each="h : ${#numbers.sequence(0, 3)}"
                                                         class="attendance-slot">
                                                         <label
-                                                            class="relative flex items-center cursor-pointer shrink-0 transition-all duration-150 group active:scale-95"
+                                                            class="attendance-label relative flex items-center cursor-pointer shrink-0 transition-all duration-150 group active:scale-95"
                                                             data-status="empty"
                                                             th:attr="data-hour=${h}, data-student-id=${etudiant.id}">
                                                             <input type="checkbox"
@@ -411,27 +384,6 @@
                             </button>
                         </div>
                     </div>
-                    <button type="button"
-                        class="hs-collapse-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium  text-primary-foreground  focus:outline-hidden  disabled:opacity-50 disabled:pointer-events-none"
-                        id="hs-collapse" aria-expanded="false" aria-controls="hs-collapse-heading"
-                        data-hs-collapse="#hs-collapse-heading">
-                        Methode d'appel
-                        <svg class="hs-collapse-open:rotate-180 shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
-                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m6 9 6 6 6-6" />
-                        </svg>
-                    </button>
-                    <div id="hs-collapse-heading"
-                        class="hs-collapse hidden w-full overflow-hidden transition-[height] duration-300"
-                        aria-labelledby="hs-collapse" role="region">
-                        <div class="mt-5">
-
-                        </div>
-                    </div>
-
-
-
                     <!-- Méthodes d'enregistrement -->
 
                 </div>
@@ -484,7 +436,7 @@
 
                     <!-- Non traités warning -->
                     <div id="final-warning"
-                        class="hidden mb-4 flex items-center gap-2.5 px-3.5 py-2.5 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-400/20 rounded-xl">
+                        class="hidden mb-4 items-center gap-2.5 px-3.5 py-2.5 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-400/20 rounded-xl" style="display:none">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" class="text-amber-600 shrink-0">
                             <path
@@ -532,7 +484,18 @@
     </div>
 
 
+    <!-- Variables Thymeleaf injectées pour seance.js -->
+    <script th:inline="javascript">
+        window.SEANCE_ID       = /*[[${seance != null ? seance.id : null}]]*/ null;
+        window.ENSEIGNANT_ID   = /*[[${enseignantId}]]*/ null;
+        window.HEURE_DEBUT_STR = /*[[${seance != null ? #temporals.format(seance.heureDebut,'HH:mm') : '08:00'}]]*/ '08:00';
+        window.HEURE_FIN_STR   = /*[[${seance != null ? #temporals.format(seance.heureFin,'HH:mm') : '12:00'}]]*/ '12:00';
+        window.TOTAL_STUDENTS  = /*[[${#lists.size(etudiants)}]]*/ 0;
+    </script>
+
     <script th:src="@{/js/preline.js}"></script>
+    <script th:src="@{/js/qrcode.min.js}"></script>
+    <script th:src="@{/js/TeacherInterface/seance.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
 </body>
 

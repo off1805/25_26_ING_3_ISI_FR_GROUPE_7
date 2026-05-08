@@ -1,8 +1,10 @@
 package com.projetTransversalIsi.web_application.teacher;
 
+import com.projetTransversalIsi.user.domain.UserRepository;
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
 import com.projetTransversalIsi.user.dto.ProfileResponseDTO;
 import com.projetTransversalIsi.user.dto.UserDetailsResponseDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +16,9 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/teacher")
+@RequiredArgsConstructor
 public class TeacherController {
-
+    private final UserRepository userRepository;
     @GetMapping("/dashboard")
     public String dashboardView(Model model) {
         UserDetailsResponseDTO teacher = getFakeTeacher();
