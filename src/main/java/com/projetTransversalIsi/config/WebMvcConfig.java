@@ -16,8 +16,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Dossier photos (profils, justificatifs…)
         Path absoluteUploadPath = Paths.get(uploadDir).toAbsolutePath();
         registry.addResourceHandler("/uploads/photos/**")
                 .addResourceLocations("file:" + absoluteUploadPath + "/");
+
+        // Racine uploads/ — sert les fichiers communs (logo école, etc.)
+        Path absoluteUploadsRoot = Paths.get("uploads").toAbsolutePath();
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:" + absoluteUploadsRoot + "/");
     }
 }

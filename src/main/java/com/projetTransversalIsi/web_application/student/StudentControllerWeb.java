@@ -3,6 +3,7 @@ package com.projetTransversalIsi.web_application.student;
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
 import com.projetTransversalIsi.user.dto.ProfileResponseDTO;
 import com.projetTransversalIsi.user.dto.UserDetailsResponseDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,11 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/student")
+@RequiredArgsConstructor
 public class StudentControllerWeb {
+
+    private final com.projetTransversalIsi.user.infrastructure.SpringDataUserRepository userRepository;
+    private final com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProfileRepository studentProfileRepo;
 
     @GetMapping("/dashboard")
     public String dashboardView(Model model) {
@@ -23,9 +28,22 @@ public class StudentControllerWeb {
     }
 
     @GetMapping("/schedule")
-    public String scheduleView(Model model) {
-        UserDetailsResponseDTO student = getFakeStudent();
-        model.addAttribute("student", student);
+    public String scheduleView(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal
+            com.projetTransversalIsi.security.domain.UserPrincipal principal,
+            Model model) {
+
+        if (principal != null) {
+            var user = userRepository.findById(principal.userId()).orElse(null);
+            if (user != null && user.getProfile() != null) {
+                studentProfileRepo.findById(user.getProfile().getId()).ifPresent(sp -> {
+                    if (sp.getClasse() != null) {
+                        model.addAttribute("classId",   sp.getClasse().getId());
+                        model.addAttribute("className", sp.getClasse().getCode());
+                    }
+                });
+            }
+        }
         return "StudentInterface/StudentSchedule";
     }
 

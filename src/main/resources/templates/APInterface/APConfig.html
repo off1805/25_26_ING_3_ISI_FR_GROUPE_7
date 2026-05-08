@@ -65,7 +65,7 @@
                     </button>
                     <!-- User Avatar -->
                     <div
-                        class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm">
+                        class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer">
                         A
                     </div>
                 </div>
@@ -77,66 +77,70 @@
 
                     <!-- HERO -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-7">
-                        <div>
-                            <h2 class="text-2xl font-bold text-layer-foreground">Configuration Semestre</h2>
-                            <p class="text-sm text-muted-foreground-2 mt-0.5">
-                                Gérer et modifier le semestre en cours pour chaque niveau.
-                            </p>
-                        </div>
+                       
+                            <h2 class="text-2xl font-bold text-layer-foreground">Configuration</h2>
+                           
+                      
                     </div>
 
-                    <!-- CARD LIST -->
-                    <div class="grid gap-6">
-                        <div th:each="niveau : ${niveaux}"
-                            class="bg-card border border-card-line shadow-sm rounded-2xl p-6 flex items-center justify-between">
+                    <!-- LIST DE NIVEAUX (style list-group, description unique) -->
+                    <div class="grid gap-4">
+                        <p class="text-lg font-semibold ">Semestre actif
+                            </p>
 
-                            <div class="flex flex-col">
-                                <h3 class="text-lg font-bold text-layer-foreground"
-                                    th:text="${'Niveau ' + niveau.ordre}">
-                                    Niveau
-                                </h3>
-                                <p class="text-xs text-muted-foreground-2 mt-1">
-                                    Définir le semestre actif lors de l'enregistrement des cours et emplois du temps.
-                                </p>
-                            </div>
+                        <ul class="max-w-full w-full flex flex-col bg-card ">
+                            <li th:each="niveau,iterStat : ${niveaux}"
+                                class="inline-flex items-center gap-x-4 py-2 px-6 text-sm font-medium text-layer-foreground  border border-layer-line -mt-px first:rounded-t-2xl first:mt-0 last:rounded-b-2xl">
 
-                            <!-- TOGGLE SEMESTRE -->
-                            <div class="flex rounded-xl bg-surface p-1 shadow-sm border border-card-line">
-                                <button type="button" th:onclick="updateSemestre([[${niveau.id}]], 1, this)"
-                                    th:classappend="${niveau.semestreActif == 1} ? 'bg-primary text-white shadow-sm' : 'text-muted-foreground-2 hover:bg-muted'"
-                                    class="semestre-btn-1 relative px-5 py-2 text-sm font-semibold rounded-lg transition-all focus:outline-none">
-                                    Semestre 1
-                                </button>
-                                <button type="button" th:onclick="updateSemestre([[${niveau.id}]], 2, this)"
-                                    th:classappend="${niveau.semestreActif == 2} ? 'bg-primary text-white shadow-sm' : 'text-muted-foreground-2 hover:bg-muted'"
-                                    class="semestre-btn-2 relative px-5 py-2 text-sm font-semibold rounded-lg transition-all focus:outline-none">
-                                    Semestre 2
-                                </button>
-                            </div>
+                                <div class="flex flex-col">
+                                    <h3 th:text="${'Niveau ' + niveau.ordre}">Niveau</h3>
+                                </div>
 
-                        </div>
+                                <div class="ms-auto flex items-center gap-3">
 
-                        <!-- EMPTY STATE -->
-                        <div th:if="${niveaux == null or #lists.isEmpty(niveaux)}"
-                            class="flex flex-col items-center justify-center text-center py-24 gap-4 bg-card border border-card-line rounded-2xl">
-                            <div class="size-16 rounded-2xl bg-muted flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="1.25"
-                                    class="text-muted-foreground-2">
-                                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-layer-foreground">Aucun Niveau</p>
-                                <p class="text-xs text-muted-foreground-2 mt-1">Vous n'avez aucun niveau assigné.</p>
-                            </div>
-                        </div>
+                                   
+                                        <div class="flex  p-1 px-2 py-0.5 ">
+
+                                            <button type="button" th:onclick="updateSemestre([[${niveau.id}]], 1, this)"
+                                                th:classappend="${niveau.semestreActif == 1} ? 'bg-surface-active text-primary' : 'text-muted-foreground-2 hover:bg-muted'"
+                                                class="semestre-btn-1 relative px-5 py-1.5 text-xs  rounded-full transition-all focus:outline-none">
+                                                1
+                                            </button>
+                                            <button type="button" th:onclick="updateSemestre([[${niveau.id}]], 2, this)"
+                                                th:classappend="${niveau.semestreActif == 2} ? 'bg-surface-active text-primary' : 'text-muted-foreground-2 hover:bg-muted'"
+                                                class="semestre-btn-2 relative px-5 py-1.5 text-xs  rounded-full transition-all focus:outline-none">
+                                                2
+                                            </button>
+                                        </div>
+
+                                    
+
+                                </div>
+                            </li>
+
+                            <!-- EMPTY STATE -->
+                            <li th:if="${niveaux == null or #lists.isEmpty(niveaux)}"
+                                class="flex flex-col items-center justify-center text-center py-12 gap-4">
+                                <div class="size-16 rounded-2xl bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.25"
+                                        class="text-muted-foreground-2">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-layer-foreground">Aucun Niveau</p>
+                                    <p class="text-xs text-muted-foreground-2 mt-1">Vous n'avez aucun niveau assigné.
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </section>
     </section>
-     <script th:src="@{/js/preline.js}"></script>
+    <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -158,17 +162,17 @@
             const btn1 = parent.querySelector('.semestre-btn-1');
             const btn2 = parent.querySelector('.semestre-btn-2');
 
-            // Optimistic UI update
-            btn1.classList.remove('bg-primary', 'text-white', 'shadow-sm');
+            // Optimistic UI update (no shadow classes)
+            btn1.classList.remove('bg-primary', 'text-white');
             btn1.classList.add('text-muted-foreground-2', 'hover:bg-muted');
-            btn2.classList.remove('bg-primary', 'text-white', 'shadow-sm');
+            btn2.classList.remove('bg-primary', 'text-white');
             btn2.classList.add('text-muted-foreground-2', 'hover:bg-muted');
 
             if (semestreActif === 1) {
-                btn1.classList.add('bg-primary', 'text-white', 'shadow-sm');
+                btn1.classList.add('bg-primary', 'text-white');
                 btn1.classList.remove('text-muted-foreground-2', 'hover:bg-muted');
             } else {
-                btn2.classList.add('bg-primary', 'text-white', 'shadow-sm');
+                btn2.classList.add('bg-primary', 'text-white');
                 btn2.classList.remove('text-muted-foreground-2', 'hover:bg-muted');
             }
 

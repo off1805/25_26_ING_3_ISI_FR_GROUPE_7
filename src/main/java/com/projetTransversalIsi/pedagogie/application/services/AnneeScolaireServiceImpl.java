@@ -30,20 +30,23 @@ public class AnneeScolaireServiceImpl implements AnneeScolaireService {
 
         List<JpaNiveauEntity> niveaux = niveauRepository.findAll();
         for (JpaNiveauEntity niveau : niveaux) {
-            JpaSemestreEntity s1 = new JpaSemestreEntity();
-            s1.setNumero(1);
-            s1.setLibelle("Semestre 1");
-            s1.setAnneeScolaireId(saved.getId());
-            s1.setNiveauId(niveau.getId());
-            // dateDebut and dateFin are left null initially
-            semestreRepository.save(s1);
+            if (!semestreRepository.existsByAnneeScolaireIdAndNiveauIdAndNumero(saved.getId(), niveau.getId(), 1)) {
+                JpaSemestreEntity s1 = new JpaSemestreEntity();
+                s1.setNumero(1);
+                s1.setLibelle("Semestre 1");
+                s1.setAnneeScolaireId(saved.getId());
+                s1.setNiveauId(niveau.getId());
+                semestreRepository.save(s1);
+            }
 
-            JpaSemestreEntity s2 = new JpaSemestreEntity();
-            s2.setNumero(2);
-            s2.setLibelle("Semestre 2");
-            s2.setAnneeScolaireId(saved.getId());
-            s2.setNiveauId(niveau.getId());
-            semestreRepository.save(s2);
+            if (!semestreRepository.existsByAnneeScolaireIdAndNiveauIdAndNumero(saved.getId(), niveau.getId(), 2)) {
+                JpaSemestreEntity s2 = new JpaSemestreEntity();
+                s2.setNumero(2);
+                s2.setLibelle("Semestre 2");
+                s2.setAnneeScolaireId(saved.getId());
+                s2.setNiveauId(niveau.getId());
+                semestreRepository.save(s2);
+            }
         }
 
         return saved;
