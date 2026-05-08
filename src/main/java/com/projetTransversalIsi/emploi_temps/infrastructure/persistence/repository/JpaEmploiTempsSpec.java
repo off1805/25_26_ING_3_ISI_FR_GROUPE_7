@@ -10,7 +10,7 @@ public class JpaEmploiTempsSpec {
     }
 
     public static Specification<JpaEmploiTempsEntity> isForClasse(Long id){
-        return (root,criteriaQuery,criteriaBuilder)->id==null?null: criteriaBuilder.equal(root.get("classe_id"),id);
+        return (root,criteriaQuery,criteriaBuilder)->id==null?null: criteriaBuilder.equal(root.get("classeId"),id);
     }
 
     public static Specification<JpaEmploiTempsEntity> startDateAfter(LocalDate date){

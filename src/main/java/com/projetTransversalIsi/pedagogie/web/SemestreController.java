@@ -36,4 +36,17 @@ public class SemestreController {
                 semestreService.getSemestresByAnneeScolaireAndNiveau(anneeScolaireId, niveauId)
         );
     }
+
+    /**
+     * Retourne le semestre dont la période couvre aujourd'hui pour un niveau donné.
+     * Utilisé par le frontend pour afficher le semestre actif dans l'en-tête PDF.
+     *
+     * GET /api/semestres/actif?niveauId={id}
+     */
+    @GetMapping("/actif")
+    public ResponseEntity<SemestreResponseDTO> getActiveSemestre(@RequestParam Long niveauId) {
+        return semestreService.getActiveSemestre(niveauId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
+    }
 }

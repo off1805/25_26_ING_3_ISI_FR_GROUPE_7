@@ -101,7 +101,61 @@ export function fmtShort(date) {
 
 
 
-export async function generatePDF(elementId, showToastFn) {
+/**
+ * Charge une image same-origin et retourne { dataUrl, width, height }.
+ *
+ * Pipeline : fetch → Blob → ObjectURL → Image.onload → Canvas → toDataURL
+ *
+ * Pourquoi ce pipeline ?
+ * - fetch same-origin : pas de CORS, pas de canvas tainté
+ * - On dessine soi-même dans un canvas offscreen → toDataURL('image/png') produit
+ *   un PNG standard que jsPDF 2.x digère parfaitement
+ * - Évite le parseur PNG interne de jsPDF (source de l'erreur .data undefined)
+ *
+ * @param {string} url URL relative same-origin (ex: "/uploads/download.png")
+ * @returns {Promise<{dataUrl: string, width: number, height: number}>}
+ */
+async function _loadLogoImage(url) {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} en chargeant le logo : ${url}`);
+
+    const blob   = await resp.blob();
+    const objUrl = URL.createObjectURL(blob);
+
+    const img = await new Promise((resolve, reject) => {
+        const i    = new Image();
+        i.onload  = () => { URL.revokeObjectURL(objUrl); resolve(i); };
+        i.onerror = () => { URL.revokeObjectURL(objUrl); reject(new Error(`Image non chargée : ${url}`)); };
+        i.src = objUrl;
+    });
+
+    // Canvas offscreen : same-origin → non tainté → toDataURL OK
+    const canvas = document.createElement('canvas');
+    canvas.width  = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    canvas.getContext('2d').drawImage(img, 0, 0);
+
+    return {
+        dataUrl: canvas.toDataURL('image/png'),
+        width:   img.naturalWidth,
+        height:  img.naturalHeight,
+    };
+}
+
+/**
+ * Génère un PDF A4 paysage de la grille de planning avec un en-tête.
+ *
+ * @param {string}   elementId   ID du conteneur racine (ex: "main-page")
+ * @param {Function} showToastFn Callback d’affichage des notifications
+ * @param {object}   pdfMeta     Métadonnées du header PDF :
+ *   - logoUrl          {string}         URL du logo (ex: "/images/logo.png")
+ *   - anneeAcademique  {string}         "2025/2026"
+ *   - semestre         {number|string}  1 ou 2
+ *   - className        {string}         Libellé de la classe
+ *   - weekLabel        {string}         "05/05 – 10/05"
+ *   - semaine          {number|string}  Numéro de semaine ISO
+ */
+export async function generatePDF(elementId, showToastFn, pdfMeta = {}) {
     const root = document.getElementById(elementId);
     if (!root) return;
 
@@ -123,74 +177,47 @@ export async function generatePDF(elementId, showToastFn) {
     }
 
     const injectExportStyles = (doc) => {
-        
-    doc.documentElement.classList.remove("dark");
-
-        // Ajoute les styles nécessaires pour PDF
+        doc.documentElement.classList.remove("dark");
         const style = doc.createElement("style");
         style.textContent = `
-         #page-content {
-            background: #ffffff !important;
-        }
-           
-        .schedule-block p, .schedule-block span {
-            overflow: visible !important;
-            text-overflow: clip !important;
-            white-space: normal !important; /* Désactive le truncate */
-            line-height: 1.4 !important;    /* Donne de l'air au texte */
-            display: block !important;
-        }
-
-      
-        .schedule-block div {
-            overflow: visible !important;
-            height: auto !important; /* Laisse le bloc respirer */
-        }
-
-      
-        .btn-delete-block, [data-r="s"], [data-r="e"] {
-            display: none !important;
-        }
-
-        #day-headers { position: static !important; top: auto !important; }
-        .time-cell { position: static !important; left: auto !important; }
-    `;
+            #page-content { background: #ffffff !important; }
+            .schedule-block p, .schedule-block span {
+                overflow: visible !important;
+                text-overflow: clip !important;
+                white-space: normal !important;
+                line-height: 1.4 !important;
+                display: block !important;
+            }
+            .schedule-block div { overflow: visible !important; height: auto !important; }
+            .btn-delete-block, [data-r="s"], [data-r="e"] { display: none !important; }
+            #day-headers { position: static !important; top: auto !important; }
+            .time-cell { position: static !important; left: auto !important; }
+        `;
         doc.head.appendChild(style);
 
-        // Parcours tous les éléments pour corriger uniquement les couleurs non supportées
-        const allElements = doc.querySelectorAll("*");
-        allElements.forEach((el) => {
+        doc.querySelectorAll("*").forEach((el) => {
             const computed = window.getComputedStyle(el);
-
-            // Fonction pour transformer okLab ou autres en rgb
             const safeColor = (color) => {
-                console.log("Couleur originale:", color);
                 if (!color) return color;
-                // Si c’est déjà rgb ou hex, on garde
                 if (color.startsWith("rgb") || color.startsWith("#")) return color;
-                // Sinon, on met fallback noir (ou blanc si c’est bg)
                 if (color.startsWith("oklch")) return oklchStringToRgb(color);
                 if (color.startsWith("oklab")) return oklabStringToRgb(color);
-
-                return color; // fallback, on espère que jsPDF gérera une couleur valide ou ignorera
+                return color;
             };
-
-            // Texte
             if (computed.color) el.style.color = safeColor(computed.color);
-            // Background
             if (computed.backgroundColor && computed.backgroundColor !== "rgba(0, 0, 0, 0)")
                 el.style.backgroundColor = safeColor(computed.backgroundColor);
-            // Border
             if (computed.borderColor) el.style.borderColor = safeColor(computed.borderColor);
         });
     };
+
     const rootStyle = root.style.cssText;
     const wrapStyle = wrapper.style.cssText;
 
     try {
         showToastFn?.("Génération du PDF…");
 
-        // Capture l'élément directement
+        // ── Capture de la grille ──────────────────────────────────────────
         const canvas = await html2canvas(wrapper, {
             scale: 2,
             useCORS: true,
@@ -200,29 +227,74 @@ export async function generatePDF(elementId, showToastFn) {
             onclone: injectExportStyles,
         });
 
-        const imgData = canvas.toDataURL("image/png");
+        // ── Création du PDF ───────────────────────────────────────────────
+        const pdf    = new jsPDFCtor({ orientation: "landscape", unit: "mm", format: "a4" });
+        const pageW  = pdf.internal.pageSize.getWidth();  // 297 mm
+        const pageH  = pdf.internal.pageSize.getHeight(); // 210 mm
+        const margin = 8;   // marge horizontale et verticale
+        let   yPos   = margin;
 
-        // Création du PDF
-        const pdf = new jsPDFCtor({ orientation: "landscape", unit: "mm", format: "a4" });
-        const pageW = pdf.internal.pageSize.getWidth();
-        const pageH = pdf.internal.pageSize.getHeight();
+        // ── LOGO centré (ratio naturel conservé) ─────────────────────────
+        if (pdfMeta.logoUrl) {
+            try {
+                // _loadLogoImage retourne { dataUrl, width, height }
+                // dataUrl = canvas.toDataURL(‘image/png’) → PNG standard, jsPDF l’accepte toujours
+                const logo  = await _loadLogoImage(pdfMeta.logoUrl);
+                const maxH  = 22;   // hauteur max (mm)
+                const maxW  = 60;   // largeur max (mm)
+                const ratio = logo.width / logo.height;
 
-        const imgRatio = canvas.width / canvas.height;
-        const pageRatio = pageW / pageH;
+                let logoH = maxH;
+                let logoW = logoH * ratio;
+                if (logoW > maxW) { logoW = maxW; logoH = logoW / ratio; }
 
-        let imgPrintW, imgPrintH;
-        if (imgRatio > pageRatio) {
-            imgPrintW = pageW;
-            imgPrintH = pageW / imgRatio;
-        } else {
-            imgPrintH = pageH;
-            imgPrintW = pageH * imgRatio;
+                pdf.addImage(logo.dataUrl, 'PNG', (pageW - logoW) / 2, yPos, logoW, logoH);
+                yPos += logoH + 4;
+            } catch (e) {
+                console.warn("PDF : logo non charge :", e.message);
+                yPos += 4;
+            }
         }
 
-        const offsetX = (pageW - imgPrintW) / 2;
-        const offsetY = (pageH - imgPrintH) / 2;
+        // ── Ligne d’en-tête ───────────────────────────────────────────────
+        const parts = [];
+        if (pdfMeta.anneeAcademique) parts.push(`Annee academique ${pdfMeta.anneeAcademique}`);
+        if (pdfMeta.semestre != null) parts.push(`Semestre ${pdfMeta.semestre}`);
+        if (pdfMeta.className)        parts.push(`Classe : ${pdfMeta.className}`);
 
-        pdf.addImage(imgData, "PNG", offsetX, offsetY, imgPrintW, imgPrintH);
+        // Semaine au format "du DD/MM au DD/MM" (dates debut - fin uniquement)
+        if (pdfMeta.weekLabel) parts.push(`Semaine du ${pdfMeta.weekLabel}`);
+
+        if (parts.length) {
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(9);
+            pdf.setTextColor(120, 120, 120);
+            pdf.text(parts.join("   |   "), pageW / 2, yPos + 5, { align: "center" });
+            yPos += 9;
+        }
+
+        // Pas de séparateur — la grille commence directement après le texte
+        yPos += 2;
+
+        // ── Grille du planning ────────────────────────────────────────────
+        const imgData   = canvas.toDataURL("image/png");
+        const availW    = pageW - margin * 2;
+        const availH    = pageH - yPos - margin;
+        const imgRatio  = canvas.width / canvas.height;
+        const availRatio = availW / availH;
+
+        let imgPrintW, imgPrintH;
+        if (imgRatio > availRatio) {
+            imgPrintW = availW;
+            imgPrintH = availW / imgRatio;
+        } else {
+            imgPrintH = availH;
+            imgPrintW = availH * imgRatio;
+        }
+
+        const imgX = margin + (availW - imgPrintW) / 2;
+        pdf.addImage(imgData, "PNG", imgX, yPos, imgPrintW, imgPrintH);
+
         pdf.save("Emploi_du_temps.pdf");
         showToastFn?.("PDF exporté ✓");
     } catch (error) {

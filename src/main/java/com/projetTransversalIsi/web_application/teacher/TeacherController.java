@@ -39,12 +39,19 @@ public class TeacherController {
     }
 
     @GetMapping("/schedule")
-    public String scheduleView(Model model) {
-        UserDetailsResponseDTO teacher = getFakeTeacher();
-        List<SeanceViewModel> seances = getFakeSchedule();
+    public String scheduleView(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal
+            com.projetTransversalIsi.security.domain.UserPrincipal principal,
+            Model model) {
 
-        model.addAttribute("teacher", teacher);
-        model.addAttribute("seances", seances);
+        if (principal != null) {
+            var user = userRepository.findById(principal.userId()).orElse(null);
+            if (user != null && user.getProfile() != null) {
+                model.addAttribute("teacherId", user.getProfile().getId());
+                String displayName = user.getProfile().getPrenom() + " " + user.getProfile().getNom();
+                model.addAttribute("className", displayName.trim());
+            }
+        }
 
         return "TeacherInterface/TeacherSchedule";
     }

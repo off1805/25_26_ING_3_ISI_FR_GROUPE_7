@@ -43,6 +43,10 @@ public class EmploiTemps {
 
     public void addSeance(Seance seance) {
         // Vérifier que la séance est dans la période de l'emploi du temps
+        System.out.println("Date debut planning: "+dateDebut);
+        System.out.println("Date fin planning: "+dateFin);
+        System.out.println("Date seance: "+seance.getDateSeance());
+
         if (seance.getDateSeance().isBefore(dateDebut) ||
                 seance.getDateSeance().isAfter(dateFin)) {
             throw new IllegalArgumentException(
