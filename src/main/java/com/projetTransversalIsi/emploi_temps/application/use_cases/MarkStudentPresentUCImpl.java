@@ -52,8 +52,7 @@ public class MarkStudentPresentUCImpl implements MarkStudentPresentUC {
 
         // 4. Mettre à jour ou créer la ligne
         if (row != null) {
-            row.setPresent(true);
-            // On ne touche pas aux heuresAbsence déjà accumulées
+            row.update(true, 0f);
         } else {
             row = new PresenceRow(presenceList.getId(), command.idStudent(), true);
         }

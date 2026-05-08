@@ -1,240 +1,349 @@
 <!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>KemOSchool — Mon profil</title>
-    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/output.css}"/>
 </head>
+<body class="h-screen bg-background-1">
+<section class="flex flex-row h-full">
 
-<body class="h-screen">
-    <section class="flex flex-row bg-sidebar-nav-hover h-full">
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
 
-        <!-- SIDEBAR -->
-        <section th:replace="~{common/SidebarFragment :: content}"></section>
+    <section class="flex-1 flex flex-col overflow-hidden">
 
-        <section class="flex-1 flex flex-col overflow-hidden">
-
-            <!-- NAVBAR -->
-            <header
-                class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
-                <div class="flex items-center gap-3">
-                    <button type="button"
+        <!-- NAVBAR -->
+        <header class="flex-none flex justify-between items-center px-5 sm:px-7 py-3 bg-navbar border-b border-navbar-line">
+            <div class="flex items-center gap-3">
+                <button type="button"
                         class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
                         data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <line x1="3" y1="12" x2="21" y2="12" />
-                            <line x1="3" y1="18" x2="21" y2="18" />
-                        </svg>
-                    </button>
-                    <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.5">
-                            <path d="M5 12l-2 0l9-9l9 9l-2 0" />
-                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
-                        </svg>
-                        <span>Panel</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M9 6l6 6l-6 6" />
-                        </svg>
-                        <span class="font-semibold text-layer-foreground">Mon profil</span>
-                    </nav>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" data-theme-toggle
-                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
-                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
-                        </svg>
-                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17"
-                            height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                            <circle cx="12" cy="12" r="4" />
-                            <path
-                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-                        </svg>
-                    </button>
-                </div>
-            </header>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-xs text-muted-foreground">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+                    <span>Panel</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6l-6 6"/></svg>
+                    <span class="font-semibold text-layer-foreground">Mon profil</span>
+                </nav>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" data-theme-toggle class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/></svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                </button>
+            </div>
+        </header>
 
-            <!-- PAGE -->
-            <div class="flex-1 overflow-y-auto bg-background p-6 lg:p-10">
-                <div class="max-w-3xl mx-auto">
+        <!-- PAGE -->
+        <div class="flex-1 overflow-y-auto">
+            <div class="px-4 sm:px-6 lg:px-8 py-7 max-w-4xl mx-auto space-y-5">
 
-                    <!-- Hero -->
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-layer-foreground">Mon profil</h2>
-                        <p class="text-sm text-muted-foreground-2 mt-1">Consultez et mettez à jour vos informations.</p>
-                    </div>
+                <!-- ═══ HERO PROFIL ═══ -->
+                <div class="relative overflow-hidden rounded-2xl bg-gray-950">
+                    <!-- Orbs décoratifs -->
+                    <div class="absolute -top-20 -right-20 size-64 rounded-full bg-primary/20 blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-10 left-10 size-40 rounded-full bg-violet-700/15 blur-3xl pointer-events-none"></div>
+                    <div class="absolute inset-0 opacity-[0.025] pointer-events-none bg-[linear-gradient(rgba(255,255,255,1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,1)_1px,transparent_1px)] bg-[size:36px_36px]"></div>
 
-                    <!-- Card principale -->
-                    <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+                    <div class="relative px-6 py-7 flex flex-col sm:flex-row items-start sm:items-center gap-6">
 
-                        <!-- Bandeau supérieur + avatar -->
-                        <div class="h-24 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent relative">
-                            <div class="absolute -bottom-12 left-6">
-                                <div class="relative group" th:data-profile-id="${profileId}">
-                                    <div id="avatar-container"
-                                        class="size-24 rounded-2xl border-4 border-card bg-primary/10 flex items-center justify-center overflow-hidden shadow-md">
-                                        <img th:if="${photoUrl != null}" id="avatar-img" th:src="${photoUrl}"
-                                            class="size-full object-cover" alt="Photo de profil" />
-                                        <span th:unless="${photoUrl != null}" id="avatar-initiale" th:text="${initiale}"
-                                            class="text-3xl font-bold text-primary">U</span>
-                                    </div>
-                                    <label for="photo-input"
-                                        class="absolute inset-0 rounded-2xl bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                                            viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                            <polyline points="17 8 12 3 7 8" />
-                                            <line x1="12" y1="3" x2="12" y2="15" />
-                                        </svg>
-                                        <input id="photo-input" type="file" accept="image/*" class="sr-only" />
-                                    </label>
+                        <!-- Avatar + upload -->
+                        <div class="relative group shrink-0" th:data-profile-id="${profileId}">
+                            <div id="avatar-container"
+                                 class="size-24 rounded-2xl border-4 border-white/10 bg-primary/20 flex items-center justify-center overflow-hidden shadow-xl">
+                                <img th:if="${photoUrl != null}" id="avatar-img" th:src="${photoUrl}"
+                                     class="size-full object-cover" alt="Photo de profil"/>
+                                <span th:unless="${photoUrl != null}" id="avatar-initiale"
+                                      th:text="${initiale}"
+                                      class="text-3xl font-black text-primary">U</span>
+                            </div>
+                            <!-- Hover overlay upload -->
+                            <label for="photo-input"
+                                   class="absolute inset-0 rounded-2xl bg-black/50 flex flex-col items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <span class="text-[10px] font-bold text-white">Modifier</span>
+                                <input id="photo-input" type="file" accept="image/*" class="sr-only"/>
+                            </label>
+                            <!-- Indicateur statut upload -->
+                            <div id="upload-spinner" class="hidden absolute inset-0 rounded-2xl bg-black/60 flex items-center justify-center">
+                                <svg class="size-6 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                            </div>
+                        </div>
+
+                        <!-- Identité -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="h-px w-5 bg-primary/60 rounded-full"></div>
+                                <span class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Profil utilisateur</span>
+                            </div>
+                            <h1 class="text-2xl sm:text-[1.75rem] font-black text-white leading-tight tracking-tight truncate"
+                                th:text="${fullName}">Nom Prénom</h1>
+                            <p class="text-sm text-white/40 mt-1 truncate" th:text="${email}">email@example.com</p>
+                            <div class="flex flex-wrap items-center gap-2 mt-4">
+                                <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-xs font-bold text-primary"
+                                      th:text="${role}">ROLE</span>
+                                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/15 border border-green-500/25">
+                                    <div class="size-1.5 rounded-full bg-green-400"></div>
+                                    <span class="text-xs font-semibold text-green-300">Compte actif</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Infos nom + badge rôle -->
-                        <div class="pt-16 pb-5 px-6 flex items-end justify-between">
-                            <div>
-                                <h3 class="text-xl font-bold text-layer-foreground" th:text="${fullName}">Nom Prénom
-                                </h3>
-                                <p class="text-sm text-muted-foreground-2 mt-0.5" th:text="${email}">email@example.com
-                                </p>
-                            </div>
-                            <span
-                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary"
-                                th:text="${role}">ROLE</span>
-                        </div>
-
-                        <div class="border-t border-card-line mx-6"></div>
-
-                        <!-- Champs de profil -->
-                        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-                            <div class="space-y-1.5">
-                                <label
-                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Nom</label>
-                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
-                                    th:text="${nom}">—</p>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <label
-                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Prénom</label>
-                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
-                                    th:text="${prenom}">—</p>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <label
-                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Email</label>
-                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
-                                    th:text="${email}">—</p>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <label
-                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Matricule</label>
-                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
-                                    th:text="${matricule}">—</p>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <label
-                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Téléphone</label>
-                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
-                                    th:text="${telephone}">—</p>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <label
-                                    class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide">Rôle</label>
-                                <p class="text-sm font-medium text-layer-foreground py-2.5 px-3 bg-surface rounded-xl border border-layer-line"
-                                    th:text="${role}">—</p>
-                            </div>
-
-                        </div>
-
-                        <!-- Footer : bouton changer photo -->
-                        <div class="px-6 pb-6">
+                        <!-- Bouton changer photo (desktop) -->
+                        <div class="shrink-0 hidden sm:flex flex-col items-end gap-2">
                             <label for="photo-input"
-                                class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-primary text-white rounded-xl hover:bg-primary/90 active:scale-95 transition-all cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                    <polyline points="17 8 12 3 7 8" />
-                                    <line x1="12" y1="3" x2="12" y2="15" />
-                                </svg>
-                                Changer la photo de profil
+                                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-white text-xs font-bold hover:bg-white/15 transition-colors cursor-pointer active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                Changer la photo
                             </label>
-                            <p id="upload-status" class="mt-2 text-xs text-muted-foreground-2 hidden"></p>
+                            <p id="upload-status" class="text-[10px] text-white/40 hidden text-right max-w-[160px]"></p>
                         </div>
 
                     </div>
                 </div>
+
+                <!-- Statut upload mobile -->
+                <p id="upload-status-mobile" class="hidden sm:hidden text-xs text-center"></p>
+
+                <!-- ═══ INFOS PROFIL ═══ -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+                    <!-- Informations personnelles (2/3) -->
+                    <div class="lg:col-span-2 bg-card border border-card-line rounded-2xl overflow-hidden">
+
+                        <!-- Header section -->
+                        <div class="flex items-center gap-3 px-5 py-4 border-b border-card-line">
+                            <div class="size-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+                            </div>
+                            <p class="text-sm font-bold text-layer-foreground">Informations personnelles</p>
+                        </div>
+
+                        <!-- Fields grid -->
+                        <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                            <!-- Nom -->
+                            <div class="space-y-1.5">
+                                <label class="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    Nom
+                                </label>
+                                <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1">
+                                    <p class="text-sm font-semibold text-layer-foreground" th:text="${nom}">—</p>
+                                </div>
+                            </div>
+
+                            <!-- Prénom -->
+                            <div class="space-y-1.5">
+                                <label class="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    Prénom
+                                </label>
+                                <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1">
+                                    <p class="text-sm font-semibold text-layer-foreground" th:text="${prenom}">—</p>
+                                </div>
+                            </div>
+
+                            <!-- Matricule -->
+                            <div class="space-y-1.5">
+                                <label class="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10"/><path d="M7 12h6"/></svg>
+                                    Matricule
+                                </label>
+                                <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1">
+                                    <p class="text-sm font-semibold text-layer-foreground font-mono" th:text="${matricule}">—</p>
+                                </div>
+                            </div>
+
+                            <!-- Rôle -->
+                            <div class="space-y-1.5">
+                                <label class="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                                    Rôle
+                                </label>
+                                <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1">
+                                    <span class="inline-flex items-center gap-1.5 text-xs font-bold text-primary">
+                                        <div class="size-1.5 rounded-full bg-primary"></div>
+                                        <span th:text="${role}">—</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="space-y-1.5 sm:col-span-2">
+                                <label class="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                    Email
+                                </label>
+                                <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1">
+                                    <p class="text-sm font-semibold text-layer-foreground" th:text="${email}">—</p>
+                                </div>
+                            </div>
+
+                            <!-- Téléphone -->
+                            <div class="space-y-1.5 sm:col-span-2">
+                                <label class="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.09 6.09l.97-.88a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                    Téléphone
+                                </label>
+                                <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1">
+                                    <p class="text-sm font-semibold text-layer-foreground" th:text="${telephone}">—</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Panneau droit (1/3) -->
+                    <div class="space-y-4">
+
+                        <!-- Photo de profil -->
+                        <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+                            <div class="flex items-center gap-3 px-5 py-4 border-b border-card-line">
+                                <div class="size-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                </div>
+                                <p class="text-sm font-bold text-layer-foreground">Photo de profil</p>
+                            </div>
+                            <div class="p-5 space-y-4">
+                                <!-- Preview avatar centré -->
+                                <div class="flex justify-center">
+                                    <div class="relative group">
+                                        <div class="size-20 rounded-2xl bg-primary/10 border-2 border-card-line flex items-center justify-center overflow-hidden">
+                                            <img th:if="${photoUrl != null}" th:src="${photoUrl}"
+                                                 class="size-full object-cover" alt="Avatar" id="avatar-preview"/>
+                                            <span th:unless="${photoUrl != null}" th:text="${initiale}"
+                                                  class="text-2xl font-black text-primary">U</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Upload zone -->
+                                <label for="photo-input"
+                                       class="group flex flex-col items-center gap-2 border-2 border-dashed border-card-line rounded-xl px-4 py-4 hover:border-primary/50 hover:bg-primary/[0.02] transition-all cursor-pointer">
+                                    <div class="size-9 rounded-lg bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-muted-foreground-2 group-hover:text-primary transition-colors"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs font-semibold text-layer-foreground">Cliquer pour uploader</p>
+                                        <p class="text-[10px] text-muted-foreground-2 mt-0.5">JPG, PNG · 10 Mo max</p>
+                                    </div>
+                                </label>
+                                <p id="upload-status-side" class="hidden text-xs text-center font-medium"></p>
+                            </div>
+                        </div>
+
+                        <!-- Sécurité / Compte -->
+                        <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+                            <div class="flex items-center gap-3 px-5 py-4 border-b border-card-line">
+                                <div class="size-7 rounded-lg bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                </div>
+                                <p class="text-sm font-bold text-layer-foreground">Compte</p>
+                            </div>
+                            <div class="divide-y divide-card-line">
+                                <div class="flex items-center justify-between px-5 py-3.5">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="size-7 rounded-lg bg-green-500/10 flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-600"><path d="M20 6 9 17l-5-5"/></svg>
+                                        </div>
+                                        <span class="text-xs font-medium text-layer-foreground">Statut</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="size-1.5 rounded-full bg-green-500"></div>
+                                        <span class="text-xs font-bold text-green-600">Actif</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between px-5 py-3.5">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="size-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg>
+                                        </div>
+                                        <span class="text-xs font-medium text-layer-foreground">Rôle</span>
+                                    </div>
+                                    <span class="text-xs font-bold text-primary" th:text="${role}">—</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Changer photo mobile -->
+                        <label for="photo-input"
+                               class="sm:hidden w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 active:scale-95 transition-all cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Changer la photo
+                        </label>
+
+                    </div>
+                </div>
+
             </div>
-        </section>
+        </div>
     </section>
+</section>
 
-    <script th:src="@{/js/preline.js}"></script>
-    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+<script th:src="@{/js/preline.js}"></script>
+<script type="module" th:src="@{/js/common/themeToggle.js}"></script>
 
-    <script th:inline="javascript">
-        const profileId = /*[[${profileId}]]*/ null;
-    </script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const profileId = /*[[${profileId}]]*/ null;
+    /*]]>*/
+</script>
 
-    <script>
-        document.getElementById('photo-input')?.addEventListener('change', async (e) => {
-            if (!profileId) return;
-            const file = e.target.files[0];
-            if (!file) return;
+<script>
+    document.getElementById('photo-input')?.addEventListener('change', async (e) => {
+        if (!profileId) return;
+        const file = e.target.files[0];
+        if (!file) return;
 
-            const statusEl = document.getElementById('upload-status');
-            statusEl.textContent = 'Envoi en cours…';
-            statusEl.classList.remove('hidden', 'text-red-500', 'text-green-600');
-            statusEl.classList.add('text-muted-foreground-2');
+        // Spinner
+        const spinner = document.getElementById('upload-spinner');
+        if (spinner) { spinner.classList.remove('hidden'); spinner.classList.add('flex'); }
 
-            const token = localStorage.getItem('token');
-            const formData = new FormData();
-            formData.append('photo', file);
+        // Statuts
+        const statusEls = ['upload-status','upload-status-side'].map(id=>document.getElementById(id)).filter(Boolean);
+        statusEls.forEach(el=>{ el.textContent='Envoi en cours…'; el.classList.remove('hidden','text-red-500','text-green-600'); el.classList.add('text-muted-foreground-2'); });
 
-            try {
-                const { default: api } = await import('/js/common/ClientHttp.js');
-                const res = await api.post(`/api/profils/${profileId}/photo`, formData);
+        const formData = new FormData();
+        formData.append('photo', file);
 
-                const photoUrl = res.photoUrl;
+        try {
+            const { default: api } = await import('/js/common/ClientHttp.js');
+            const res = await api.post(`/api/profils/${profileId}/photo`, formData);
+            const photoUrl = res.photoUrl;
 
-                const container = document.getElementById('avatar-container');
-                let initiale = container.querySelector('#avatar-initiale');
-                let img = container.querySelector('#avatar-img');
-
-                if (!img) {
-                    img = document.createElement('img');
-                    img.id = 'avatar-img';
-                    img.className = 'size-full object-cover';
-                    img.alt = 'Photo de profil';
-                    container.prepend(img);
+            // Mise à jour des avatars
+            ['avatar-container','avatar-preview'].forEach(id=>{
+                const container = document.getElementById(id);
+                if (!container) return;
+                let img = container.querySelector('img') || container;
+                if (container.tagName === 'IMG') {
+                    // c'est directement l'img (avatar-preview)
+                    container.src = photoUrl + '?t=' + Date.now();
+                } else {
+                    // avatar-container — remplace initiale par img
+                    let imgEl = container.querySelector('img');
+                    if (!imgEl) {
+                        imgEl = document.createElement('img');
+                        imgEl.className = 'size-full object-cover';
+                        imgEl.alt = 'Photo de profil';
+                        container.prepend(imgEl);
+                    }
+                    const initiale = container.querySelector('#avatar-initiale');
+                    if (initiale) initiale.classList.add('hidden');
+                    imgEl.src = photoUrl + '?t=' + Date.now();
                 }
-                if (initiale) initiale.classList.add('hidden');
-                img.src = photoUrl + '?t=' + Date.now();
-                img.classList.remove('hidden');
+            });
 
-                statusEl.textContent = 'Photo mise à jour avec succès.';
-                statusEl.classList.replace('text-muted-foreground-2', 'text-green-600');
-            } catch {
-                statusEl.textContent = 'Erreur lors de l\'envoi. Réessayez.';
-                statusEl.classList.replace('text-muted-foreground-2', 'text-red-500');
-            }
-        });
-    </script>
+            if (spinner) { spinner.classList.add('hidden'); spinner.classList.remove('flex'); }
+            statusEls.forEach(el=>{ el.textContent='Photo mise à jour avec succès.'; el.classList.remove('text-muted-foreground-2'); el.classList.add('text-green-600'); });
+
+        } catch {
+            if (spinner) { spinner.classList.add('hidden'); spinner.classList.remove('flex'); }
+            statusEls.forEach(el=>{ el.textContent='Erreur lors de l\'envoi. Réessayez.'; el.classList.remove('text-muted-foreground-2'); el.classList.add('text-red-500'); });
+        }
+    });
+</script>
 </body>
-
 </html>

@@ -18,9 +18,6 @@ public interface SpringDataEmploiTempsRepository extends JpaRepository<JpaEmploi
     List<JpaEmploiTempsEntity> findByClasseId(Long classeId);
     List<JpaEmploiTempsEntity> findBySemaine(Integer semaine);
 
-    @Query("SELECT e FROM JpaEmploiTempsEntity e JOIN e.seances s WHERE s.id = :seanceId")
-    Optional<JpaEmploiTempsEntity> findBySeanceId(@Param("seanceId") Long seanceId);
-
     @Query("SELECT e FROM JpaEmploiTempsEntity e WHERE " +
             ":date BETWEEN e.dateDebut AND e.dateFin")
     List<JpaEmploiTempsEntity> findByPeriode(@Param("date") LocalDate date);

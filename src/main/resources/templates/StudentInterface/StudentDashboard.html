@@ -1,546 +1,526 @@
 <!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>KemOSchool — Tableau de bord étudiant</title>
-    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/output.css}"/>
 </head>
-
 <body class="h-screen bg-background-1">
-    <section class="flex flex-row h-full">
+<section class="flex flex-row h-full">
 
-        <!-- SIDEBAR -->
-        <section th:replace="~{common/SidebarFragment :: content}"></section>
-        <section class="flex-1 flex flex-col overflow-hidden">
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
 
-            <!-- NAVBAR -->
-            <header
-                class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
-                <div class="flex items-center gap-3">
-                    <button type="button"
+    <section class="flex-1 flex flex-col overflow-hidden">
+
+        <!-- NAVBAR -->
+        <header class="flex-none flex justify-between items-center px-5 sm:px-7 py-3 bg-navbar border-b border-navbar-line">
+            <div class="flex items-center gap-3">
+                <button type="button"
                         class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
                         data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <line x1="3" y1="12" x2="21" y2="12" />
-                            <line x1="3" y1="18" x2="21" y2="18" />
-                        </svg>
-                    </button>
-                    <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.5">
-                            <path d="M5 12l-2 0l9-9l9 9l-2 0" />
-                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
-                        </svg>
-                        <span>Student Panel</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M9 6l6 6l-6 6" />
-                        </svg>
-                        <span class="font-semibold text-layer-foreground">Tableau de bord</span>
-                    </nav>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" data-theme-toggle
-                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
-                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
-                        </svg>
-                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17"
-                            height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                            <circle cx="12" cy="12" r="4" />
-                            <path
-                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-                        </svg>
-                    </button>
-                    <button type="button"
-                        class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.75">
-                            <path
-                                d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6" />
-                            <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
-                        </svg>
-                        <span
-                            class="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-navbar"></span>
-                    </button>
-                    <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm"
-                        th:text="${student != null and student.profile != null and student.profile.nom != null ? #strings.toUpperCase(#strings.substring(student.profile.nom, 0, 1)) : 'S'}">
-                        S</div>
-                </div>
-            </header>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-xs text-muted-foreground">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+                    <span>Student Panel</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6l-6 6"/></svg>
+                    <span class="font-semibold text-layer-foreground">Tableau de bord</span>
+                </nav>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" data-theme-toggle class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/></svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                </button>
+                <button type="button" class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted relative transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg>
+                    <span class="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border border-navbar"></span>
+                </button>
+                <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm"
+                     th:text="${student != null and student.profile != null and student.profile.nom != null ? #strings.toUpperCase(#strings.substring(student.profile.nom, 0, 1)) : 'S'}">S</div>
+            </div>
+        </header>
 
-            <!-- PAGE -->
-            <div class="flex-1 overflow-y-auto">
-                <div class="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-7xl mx-auto">
+        <!-- PAGE -->
+        <div class="flex-1 overflow-y-auto">
+            <div class="px-4 sm:px-6 lg:px-8 py-7 max-w-7xl mx-auto space-y-5">
 
-                    <!-- ═══ HERO — greeting ═══ -->
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                            <p class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-widest mb-1"
-                                id="hero-date">—</p>
-                            <h1 class="text-2xl sm:text-3xl font-bold text-layer-foreground">
-                                Bonjour, <span class="text-primary"
-                                    th:text="${student != null and student.profile != null and student.profile.nom != null ? student.profile.nom : 'Étudiant'}">Dupont</span>
-                                👋
+                <!-- ═══ HERO ═══ -->
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+
+                    <!-- Greeting — 3 cols -->
+                    <div class="lg:col-span-3 relative overflow-hidden rounded-2xl bg-gray-950 px-6 py-7">
+                        <div class="absolute -top-16 -right-16 size-60 rounded-full bg-primary/20 blur-3xl pointer-events-none"></div>
+                        <div class="absolute -bottom-12 left-6 size-44 rounded-full bg-violet-700/15 blur-3xl pointer-events-none"></div>
+                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(rgba(255,255,255,1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,1)_1px,transparent_1px)] bg-[size:36px_36px]"></div>
+                        <div class="relative">
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="h-px w-5 bg-primary/60 rounded-full"></div>
+                                <span class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]" id="hero-date">—</span>
+                            </div>
+                            <h1 class="text-2xl sm:text-[1.75rem] font-black text-white leading-tight tracking-tight">
+                                Bonjour, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-violet-400"
+                                               th:text="${student != null and student.profile != null and student.profile.nom != null ? student.profile.nom : 'Étudiant'}">Dupont</span>
                             </h1>
-                            <p class="text-sm text-muted-foreground-2 mt-1">
-                                Bienvenue dans votre espace étudiant
-                            </p>
+                            <p class="text-sm text-white/40 mt-1.5 mb-6">Bienvenue dans votre espace étudiant.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-white/6 rounded-full border border-white/10">
+                                    <div class="size-4 rounded-full bg-green-500/20 flex items-center justify-center"><div class="size-1.5 rounded-full bg-green-400"></div></div>
+                                    <span class="text-xs font-semibold text-white/70">142 présences</span>
+                                </div>
+                                <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-white/6 rounded-full border border-white/10">
+                                    <div class="size-4 rounded-full bg-yellow-500/20 flex items-center justify-center"><div class="size-1.5 rounded-full bg-yellow-400"></div></div>
+                                    <span class="text-xs font-semibold text-white/70">5 retards</span>
+                                </div>
+                                <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-red-500/15 rounded-full border border-red-500/25">
+                                    <div class="size-4 rounded-full bg-red-500/20 flex items-center justify-center"><div class="size-1.5 rounded-full bg-red-400"></div></div>
+                                    <span class="text-xs font-bold text-red-400">2 absences</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- ═══ STATS GRID ═══ -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start pb-10">
-
-                        <!-- Card 1 — Présence -->
-                        <div
-                            class="rounded-2xl sm:rounded-3xl p-4 sm:p-5 relative overflow-hidden col-span-1 bg-gradient-to-br from-green-50 to-green-100 border border-green-200">
-                            <div
-                                class="absolute -top-6 -right-6 size-20 sm:size-24 rounded-full opacity-25 bg-green-500 blur-3xl">
-                            </div>
-                            <div class="relative">
-                                <div class="flex items-center justify-between mb-2 sm:mb-3">
-                                    <span
-                                        class="text-[10px] sm:text-xs font-bold text-green-700/60 uppercase tracking-widest">Présence</span>
-                                    <div
-                                        class="size-6 sm:size-7 rounded-lg bg-green-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            class="text-green-600">
-                                            <polyline points="20 6 9 17 4 12" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-3xl sm:text-5xl font-black text-green-700 leading-none">142</p>
-                                <p class="text-[10px] sm:text-xs text-green-700/50 mt-1.5 sm:mt-2 font-semibold">Jours
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Card 2 — Retards -->
-                        <div
-                            class="rounded-2xl sm:rounded-3xl p-4 sm:p-5 relative overflow-hidden col-span-1 bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200">
-                            <div
-                                class="absolute -bottom-6 -left-4 size-16 sm:size-20 rounded-full opacity-40 bg-yellow-400 blur-3xl">
-                            </div>
-                            <div class="relative">
-                                <div class="flex items-center justify-between mb-2 sm:mb-3">
-                                    <span
-                                        class="text-[10px] sm:text-xs font-bold text-yellow-700/60 uppercase tracking-widest">Retards</span>
-                                    <div
-                                        class="size-6 sm:size-7 rounded-lg bg-yellow-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            class="text-yellow-600">
-                                            <circle cx="12" cy="12" r="10" />
-                                            <polyline points="12 6 12 12 16 14" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-2xl sm:text-5xl font-black text-yellow-700 leading-none">05</p>
-                                <p class="text-[10px] sm:text-xs text-yellow-700/50 mt-1.5 sm:mt-2 font-semibold">Ce
-                                    trimestre</p>
-                            </div>
-                        </div>
-
-                        <!-- Card 3 — Absences -->
-                        <div
-                            class="rounded-2xl sm:rounded-3xl p-4 sm:p-5 relative overflow-hidden col-span-1 bg-gradient-to-br from-red-50 to-red-100 border border-red-200">
-                            <div class="absolute -top-8 -right-8 size-32 rounded-full opacity-20 bg-red-500 blur-3xl">
-                            </div>
-                            <div class="relative">
-                                <div class="flex items-center justify-between mb-2 sm:mb-3">
-                                    <span
-                                        class="text-[10px] sm:text-xs font-bold text-red-700/60 uppercase tracking-widest">Absences</span>
-                                    <div
-                                        class="size-6 sm:size-7 rounded-lg bg-red-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            class="text-red-600">
-                                            <path d="M18 6 6 18M6 6l12 12" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-2xl sm:text-5xl font-black text-red-700 leading-none">02</p>
-                                <p class="text-[10px] sm:text-xs text-red-700/50 mt-1.5 sm:mt-2 font-semibold">
-                                    Justification requise</p>
-                            </div>
-                        </div>
-
-                        <!-- Card 4 — Deadline -->
-                        <div
-                            class="rounded-2xl sm:rounded-3xl p-4 sm:p-5 relative overflow-hidden col-span-1 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
-                            <div
-                                class="absolute -bottom-6 -right-4 size-16 sm:size-20 rounded-full opacity-40 bg-purple-400 blur-3xl">
-                            </div>
-                            <div class="relative">
-                                <div class="flex items-center justify-between mb-2 sm:mb-3">
-                                    <span
-                                        class="text-[10px] sm:text-xs font-bold text-purple-700/60 uppercase tracking-widest">Deadline</span>
-                                    <div
-                                        class="size-6 sm:size-7 rounded-lg bg-purple-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            class="text-purple-600">
-                                            <circle cx="12" cy="12" r="10" />
-                                            <polyline points="12 6 12 12 16 14" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-2xl sm:text-5xl font-black text-purple-700 leading-none">12</p>
-                                <p class="text-[10px] sm:text-xs text-purple-700/50 mt-1.5 sm:mt-2 font-semibold">Jours
-                                    restants</p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- ═══ ACTIONS RAPIDES ═══ -->
-                    <div class="mt-4 sm:mt-6 pb-8">
-                        <h2 class="text-base sm:text-lg font-bold text-layer-foreground mb-3">Actions rapides</h2>
-
-                        <!-- Groupe présence -->
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-muted-foreground-2 mb-2">Marquer
-                            présent</p>
-                        <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
-
-                            <!-- QR Code -->
-                            <button type="button" data-hs-overlay="#hs-modal-qr"
-                                class="group flex flex-col items-center gap-2 p-3 sm:p-4 bg-primary/5 border border-primary/20 rounded-xl sm:rounded-2xl hover:bg-primary/10 hover:border-primary/40 hover:shadow-sm transition-all active:scale-95">
-                                <div
-                                    class="size-9 sm:size-11 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.75"
-                                        class="text-primary sm:w-[20px] sm:h-[20px]">
-                                        <path d="M3 3h6v6H3z" />
-                                        <path d="M15 3h6v6h-6z" />
-                                        <path d="M3 15h6v6H3z" />
-                                        <path d="M7 7h0" />
-                                        <path d="M19 7h0" />
-                                        <path d="M7 19h0" />
-                                        <path d="M15 15h2v2h-2z" />
-                                        <path d="M19 15h2" />
-                                        <path d="M15 19v2" />
-                                        <path d="M19 19h2v2h-2z" />
-                                    </svg>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-xs font-bold text-primary">Scanner QR</p>
-                                    <p class="text-[9px] sm:text-[10px] text-primary/60 mt-0.5 hidden sm:block">Ouvrir
-                                        caméra</p>
-                                </div>
-                            </button>
-
-                            <!-- PIN Code -->
-                            <button type="button" data-hs-overlay="#hs-modal-pin"
-                                class="group flex flex-col items-center gap-2 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl sm:rounded-2xl hover:bg-blue-100/70 hover:border-blue-300 hover:shadow-sm transition-all active:scale-95">
-                                <div
-                                    class="size-9 sm:size-11 rounded-lg sm:rounded-xl bg-blue-100 flex items-center justify-center group-hover:bg-blue-200/70 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.75"
-                                        class="text-blue-600 sm:w-[20px] sm:h-[20px]">
-                                        <rect x="3" y="8" width="18" height="9" rx="2" />
-                                        <path d="M10 11l2 2l4-4" />
-                                        <path d="M3 5h4" />
-                                        <path d="M7 3v2" />
-                                    </svg>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-xs font-bold text-blue-700">Code PIN</p>
-                                    <p class="text-[9px] sm:text-[10px] text-blue-500 mt-0.5 hidden sm:block">Saisir le
-                                        code</p>
-                                </div>
-                            </button>
-
-                            <!-- Présence page -->
-                            <a th:href="@{/student/attendance}"
-                                class="group flex flex-col items-center gap-2 p-3 sm:p-4 bg-violet-50 border border-violet-200 rounded-xl sm:rounded-2xl hover:bg-violet-100/70 hover:border-violet-300 hover:shadow-sm transition-all active:scale-95">
-                                <div
-                                    class="size-9 sm:size-11 rounded-lg sm:rounded-xl bg-violet-100 flex items-center justify-center group-hover:bg-violet-200/70 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.75"
-                                        class="text-violet-600 sm:w-[20px] sm:h-[20px]">
-                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                                        <circle cx="9" cy="7" r="4" />
-                                        <path d="M19 8v6" />
-                                        <path d="M22 11h-6" />
-                                    </svg>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-xs font-bold text-violet-700">Présence</p>
-                                    <p class="text-[9px] sm:text-[10px] text-violet-500 mt-0.5 hidden sm:block">Page
-                                        dédiée</p>
-                                </div>
-                            </a>
-                        </div>
-
-                        <!-- Groupe navigation -->
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-muted-foreground-2 mb-2">
-                            Navigation</p>
-                        <div class="grid grid-cols-2 gap-2 sm:gap-3">
-
-                            <!-- Emploi du temps -->
-                            <a th:href="@{/student/schedule}"
-                                class="group flex items-center gap-3 p-3 sm:p-4 bg-card border border-card-line rounded-xl sm:rounded-2xl hover:border-green-300 hover:shadow-sm transition-all active:scale-95">
-                                <div
-                                    class="size-9 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0 group-hover:bg-green-500/20 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.75" class="text-green-600">
-                                        <path d="M8 7V3" />
-                                        <path d="M16 7V3" />
-                                        <path d="M3 11h18" />
-                                        <rect x="3" y="5" width="18" height="16" rx="2" />
-                                    </svg>
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-bold text-layer-foreground">Mon EDT</p>
-                                    <p class="text-[10px] sm:text-xs text-muted-foreground-2 truncate">Voir la semaine
-                                    </p>
-                                </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2"
-                                    class="text-muted-foreground-2 ml-auto shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <path d="m9 18 6-6-6-6" />
+                    <!-- Right panels — 2 cols -->
+                    <div class="lg:col-span-2 flex flex-col gap-4">
+                        <!-- Taux de présence -->
+                        <div class="flex-1 rounded-2xl bg-card border border-card-line px-5 py-4 flex items-center gap-4">
+                            <div class="relative shrink-0 size-[72px]">
+                                <svg class="size-full -rotate-90" viewBox="0 0 72 72">
+                                    <circle cx="36" cy="36" r="30" fill="none" stroke-width="6" class="stroke-muted"/>
+                                    <circle cx="36" cy="36" r="30" fill="none" stroke-width="6" stroke-linecap="round"
+                                            stroke-dasharray="188.5" stroke-dashoffset="24" class="stroke-green-500"/>
                                 </svg>
-                            </a>
-
-                            <!-- Absences -->
-                            <a th:href="@{/student/absences}"
-                                class="group flex items-center gap-3 p-3 sm:p-4 bg-card border border-card-line rounded-xl sm:rounded-2xl hover:border-orange-300 hover:shadow-sm transition-all active:scale-95">
-                                <div
-                                    class="size-9 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0 group-hover:bg-orange-500/20 transition-colors relative">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.75" class="text-orange-500">
-                                        <path
-                                            d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
-                                        <rect x="9" y="3" width="6" height="4" rx="1" />
-                                        <line x1="9" y1="12" x2="15" y2="12" />
-                                        <line x1="9" y1="16" x2="13" y2="16" />
-                                    </svg>
-                                    <span
-                                        class="absolute -top-1 -right-1 size-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-black text-white leading-none">2</span>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="text-sm font-black text-layer-foreground">87%</span>
                                 </div>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-bold text-layer-foreground">Absences</p>
-                                    <p class="text-[10px] sm:text-xs text-orange-500 font-semibold truncate">2 en
-                                        attente</p>
-                                </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2"
-                                    class="text-muted-foreground-2 ml-auto shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <path d="m9 18 6-6-6-6" />
-                                </svg>
-                            </a>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-0.5">Taux de présence</p>
+                                <p class="text-xl font-black text-layer-foreground leading-none">142 <span class="text-sm font-medium text-muted-foreground-2">/ 163j</span></p>
+                                <p class="text-xs text-green-600 font-semibold mt-1.5">↑ Bon niveau ce trimestre</p>
+                            </div>
+                        </div>
+                        <!-- Deadline -->
+                        <div class="rounded-2xl bg-amber-50 border border-amber-200 px-5 py-4 flex items-center gap-3">
+                            <div class="size-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-amber-600"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Deadline</p>
+                                <p class="text-sm font-black text-amber-900">12 jours restants</p>
+                                <p class="text-xs text-amber-700/70 truncate">Remise du projet final</p>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- ═══ COURS D'AUJOURD'HUI ═══ -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
-
-                        <!-- Cours du jour (2/3) -->
-                        <div class="lg:col-span-2">
-                            <div
-                                class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-2 sm:gap-3 mb-3 sm:mb-4">
-                                <h2
-                                    class="text-xs sm:text-sm font-bold text-muted-foreground-2 uppercase tracking-widest">
-                                    Cours aujourd'hui</h2>
-                                <a th:href="@{/student/schedule}"
-                                    class="text-xs sm:text-sm font-bold text-primary hover:underline">Voir la semaine
-                                    →</a>
-                            </div>
-
-                            <!-- État vide -->
-                            <div class="bg-card border border-card-line rounded-2xl p-8 sm:p-10 text-center">
-                                <div
-                                    class="size-10 sm:size-12 rounded-xl bg-muted flex items-center justify-center mx-auto mb-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.5"
-                                        class="text-muted-foreground-2">
-                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                                    </svg>
-                                </div>
-                                <p class="text-sm font-semibold text-layer-foreground">Pas de cours aujourd'hui</p>
-                                <p class="text-xs text-muted-foreground-2 mt-1">Profitez de votre temps libre</p>
-                            </div>
-                        </div>
-
-                        <!-- Panneau droit (1/3) -->
-                        <div class="space-y-3 sm:space-y-4">
-
-                            <!-- Card Prochains cours -->
-                            <div class="bg-card border border-card-line rounded-2xl p-4 sm:p-5 space-y-2 sm:space-y-3">
-                                <p
-                                    class="text-[10px] sm:text-xs font-bold text-muted-foreground-2 uppercase tracking-widest">
-                                    Prochains cours</p>
-                                <div class="space-y-2">
-                                    <div class="flex items-start gap-3 py-2 border-b border-card-line last:border-b-0">
-                                        <div
-                                            class="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                            <span class="text-xs font-bold text-primary">📚</span>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-xs sm:text-sm font-semibold text-layer-foreground truncate">
-                                                Mathématiques</p>
-                                            <p class="text-[10px] text-muted-foreground-2">Lun 08:00 - 10:00</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-start gap-3 py-2 border-b border-card-line last:border-b-0">
-                                        <div
-                                            class="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-                                            <span class="text-xs font-bold text-blue-500">🔬</span>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-xs sm:text-sm font-semibold text-layer-foreground truncate">
-                                                Physique</p>
-                                            <p class="text-[10px] text-muted-foreground-2">Mar 14:00 - 16:00</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Avertissement absence -->
-                            <div class="bg-red-50 border border-red-200 rounded-2xl p-4 sm:p-5">
-                                <div class="flex gap-3">
-                                    <div
-                                        class="size-10 rounded-xl bg-red-500/10 flex items-center justify-center shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            class="text-red-600">
-                                            <path
-                                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                                            <line x1="12" y1="9" x2="12" y2="13" />
-                                            <line x1="12" y1="17" x2="12.01" y2="17" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-bold text-red-900">Justifications en attente</p>
-                                        <p class="text-xs text-red-700 mt-0.5">Vous avez 2 absences à justifier</p>
-                                        <a th:href="@{/student/absences}"
-                                            class="inline-block mt-2 text-xs font-bold text-red-600 hover:text-red-700">Justifier
-                                            →</a>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
                 </div>
+
+                <!-- ═══ STATS GRID ═══ -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+
+                    <!-- Présence -->
+                    <div class="rounded-2xl p-4 sm:p-5 bg-card border border-card-line hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="size-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-600"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">+3 cette sem.</span>
+                        </div>
+                        <p class="text-3xl sm:text-4xl font-black text-layer-foreground leading-none">142</p>
+                        <p class="text-xs text-muted-foreground-2 font-medium mt-1.5">Jours de présence</p>
+                        <div class="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div class="h-full bg-green-500 rounded-full w-11/12"></div>
+                        </div>
+                    </div>
+
+                    <!-- Retards -->
+                    <div class="rounded-2xl p-4 sm:p-5 bg-card border border-card-line hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="size-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-yellow-600"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </div>
+                            <span class="text-[10px] font-bold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">Ce trimestre</span>
+                        </div>
+                        <p class="text-3xl sm:text-4xl font-black text-layer-foreground leading-none">05</p>
+                        <p class="text-xs text-muted-foreground-2 font-medium mt-1.5">Retards enregistrés</p>
+                        <div class="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div class="h-full bg-yellow-400 rounded-full w-2/12"></div>
+                        </div>
+                    </div>
+
+                    <!-- Absences -->
+                    <div class="rounded-2xl p-4 sm:p-5 bg-card border border-red-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="size-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-600"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                            </div>
+                            <span class="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">⚠ En attente</span>
+                        </div>
+                        <p class="text-3xl sm:text-4xl font-black text-red-600 leading-none">02</p>
+                        <p class="text-xs text-muted-foreground-2 font-medium mt-1.5">Absences non justifiées</p>
+                        <div class="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div class="h-full bg-red-500 rounded-full w-1/12"></div>
+                        </div>
+                    </div>
+
+                    <!-- Deadline -->
+                    <div class="rounded-2xl p-4 sm:p-5 bg-gray-950 hover:shadow-md transition-shadow relative overflow-hidden">
+                        <div class="absolute -bottom-6 -right-4 size-20 rounded-full bg-primary/30 blur-2xl pointer-events-none"></div>
+                        <div class="relative">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="size-8 rounded-lg bg-white/10 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/70"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                </div>
+                            </div>
+                            <p class="text-3xl sm:text-4xl font-black text-white leading-none">12</p>
+                            <p class="text-xs text-white/40 font-medium mt-1.5">Jours avant deadline</p>
+                            <div class="mt-3 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-primary rounded-full w-4/12"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ ACTIONS RAPIDES ═══ -->
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="h-px w-4 bg-primary/50 rounded-full"></div>
+                        <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-[0.18em]">Marquer ma présence</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <!-- QR -->
+                        <button type="button" id="btn-open-qr"
+                                class="group flex items-center gap-4 px-5 py-4 bg-card border border-card-line rounded-2xl hover:border-primary/50 hover:shadow-[0_0_0_3px_rgba(124,58,237,0.07)] transition-all active:scale-[0.98] text-left">
+                            <div class="size-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="6" y="6" width="2" height="2"/><rect x="17" y="6" width="2" height="2"/><rect x="6" y="17" width="2" height="2"/><path d="M14 14h2v2h-2z"/><path d="M18 14h3"/><path d="M14 18v3"/><path d="M19 19h2v2h-2z"/></svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-layer-foreground">Scanner QR Code</p>
+                                <p class="text-xs text-muted-foreground-2 mt-0.5">Ouvrir la caméra</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                        <!-- PIN -->
+                        <button type="button" id="btn-open-pin"
+                                class="group flex items-center gap-4 px-5 py-4 bg-card border border-card-line rounded-2xl hover:border-blue-400/50 hover:shadow-[0_0_0_3px_rgba(59,130,246,0.07)] transition-all active:scale-[0.98] text-left">
+                            <div class="size-11 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0 group-hover:bg-blue-500/15 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-blue-600"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><path d="M10 17h4M12 17v4"/></svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-layer-foreground">Code PIN</p>
+                                <p class="text-xs text-muted-foreground-2 mt-0.5">Saisir 6 chiffres</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                        <!-- Présence page -->
+                        <a th:href="@{/student/attendance}"
+                           class="group flex items-center gap-4 px-5 py-4 bg-card border border-card-line rounded-2xl hover:border-violet-400/50 hover:shadow-[0_0_0_3px_rgba(139,92,246,0.07)] transition-all active:scale-[0.98]">
+                            <div class="size-11 rounded-xl bg-violet-500/10 flex items-center justify-center shrink-0 group-hover:bg-violet-500/15 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-violet-600"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1.5"/><path d="M9 12l2 2 4-4"/></svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-layer-foreground">Mes présences</p>
+                                <p class="text-xs text-muted-foreground-2 mt-0.5">Voir l'historique</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 group-hover:text-violet-500 group-hover:translate-x-0.5 transition-all shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="flex items-center gap-2 mt-4 mb-3">
+                        <div class="h-px w-4 bg-primary/50 rounded-full"></div>
+                        <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-[0.18em]">Navigation</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <a th:href="@{/student/schedule}"
+                           class="group flex items-center gap-3 px-4 py-3.5 bg-card border border-card-line rounded-2xl hover:border-green-300 hover:shadow-sm transition-all active:scale-[0.98]">
+                            <div class="size-9 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0 group-hover:bg-green-500/15 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-green-600"><path d="M8 7V3"/><path d="M16 7V3"/><path d="M3 11h18"/><rect x="3" y="5" width="18" height="16" rx="2"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-layer-foreground">Mon EDT</p>
+                                <p class="text-xs text-muted-foreground-2 truncate">Voir la semaine</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 ml-auto shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-green-500 transition-all"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                        <a th:href="@{/student/absences}"
+                           class="group flex items-center gap-3 px-4 py-3.5 bg-card border border-card-line rounded-2xl hover:border-orange-300 hover:shadow-sm transition-all active:scale-[0.98]">
+                            <div class="size-9 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0 group-hover:bg-orange-500/15 transition-colors relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-orange-500"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+                                <span class="absolute -top-1 -right-1 size-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-black text-white leading-none">2</span>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-layer-foreground">Absences</p>
+                                <p class="text-xs text-orange-500 font-semibold truncate">2 en attente</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 ml-auto shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-orange-500 transition-all"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ═══ COURS + PANNEAU DROIT ═══ -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+                    <!-- Cours aujourd'hui (2 cols) -->
+                    <div class="lg:col-span-2">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="h-px w-4 bg-primary/50 rounded-full"></div>
+                                <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-[0.18em]">Cours aujourd'hui</p>
+                            </div>
+                            <a th:href="@{/student/schedule}" class="flex items-center gap-1 text-xs font-bold text-primary hover:text-primary/70 transition-colors">
+                                Voir la semaine <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+                            </a>
+                        </div>
+                        <!-- Empty state -->
+                        <div class="bg-card border border-card-line rounded-2xl flex flex-col items-center justify-center py-12 px-6 text-center">
+                            <div class="size-12 rounded-2xl bg-muted flex items-center justify-center mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-muted-foreground-2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            </div>
+                            <p class="text-sm font-semibold text-layer-foreground">Pas de cours aujourd'hui</p>
+                            <p class="text-xs text-muted-foreground-2 mt-1">Profitez de votre temps libre</p>
+                        </div>
+                    </div>
+
+                    <!-- Panneau droit -->
+                    <div class="space-y-3">
+
+                        <!-- Alerte absences -->
+                        <div class="rounded-2xl border border-red-200 bg-red-50 overflow-hidden">
+                            <div class="flex items-start gap-3 px-4 py-4">
+                                <div class="size-9 rounded-xl bg-red-100 flex items-center justify-center shrink-0 mt-0.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-600"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-bold text-red-900">Justifications en attente</p>
+                                    <p class="text-xs text-red-700/80 mt-0.5 leading-relaxed">Vous avez <strong>2 absences</strong> non justifiées.</p>
+                                </div>
+                            </div>
+                            <a th:href="@{/student/absences}" class="flex items-center justify-center gap-1.5 w-full py-2.5 bg-red-600 text-white text-xs font-bold hover:bg-red-700 transition-colors">
+                                Justifier mes absences
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            </a>
+                        </div>
+
+                        <!-- Prochains cours -->
+                        <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+                            <div class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-card-line">
+                                <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest">Prochains cours</p>
+                                <a th:href="@{/student/schedule}" class="text-[10px] font-bold text-primary hover:underline">Tout voir</a>
+                            </div>
+                            <div class="divide-y divide-card-line">
+                                <!-- Maths -->
+                                <div class="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors">
+                                    <div class="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary"><path d="M4 19l8-14 8 14"/><path d="M7.2 14.4h9.6"/></svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs font-semibold text-layer-foreground">Mathématiques</p>
+                                        <p class="text-[10px] text-muted-foreground-2 mt-0.5">Lun · 08:00–10:00</p>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-primary bg-primary/8 px-2 py-0.5 rounded-full shrink-0">2h</span>
+                                </div>
+                                <!-- Physique -->
+                                <div class="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors">
+                                    <div class="size-9 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-blue-600"><circle cx="12" cy="12" r="2"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs font-semibold text-layer-foreground">Physique-Chimie</p>
+                                        <p class="text-[10px] text-muted-foreground-2 mt-0.5">Mar · 14:00–16:00</p>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-blue-600 bg-blue-500/8 px-2 py-0.5 rounded-full shrink-0">2h</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- EDT link -->
+                        <a th:href="@{/student/schedule}"
+                           class="group flex items-center gap-3 px-4 py-3.5 bg-card border border-card-line rounded-2xl hover:border-green-300 hover:shadow-sm transition-all">
+                            <div class="size-9 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0 group-hover:bg-green-500/15 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-green-600"><path d="M8 7V3"/><path d="M16 7V3"/><path d="M3 11h18"/><rect x="3" y="5" width="18" height="16" rx="2"/></svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-layer-foreground">Mon emploi du temps</p>
+                                <p class="text-xs text-muted-foreground-2">Voir la semaine complète</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 group-hover:text-green-500 group-hover:translate-x-0.5 transition-all shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </div>
+                </div>
+
             </div>
-        </section>
+        </div>
     </section>
+</section>
 
 
-    <!-- MODAL QR CODE -->
-    <div id="hs-modal-qr"
-        class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
-        role="dialog" tabindex="-1">
-        <div
-            class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all max-w-sm sm:w-full m-3 mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
-            <div
-                class="pointer-events-auto w-full bg-card border border-card-line rounded-2xl shadow-2xl overflow-hidden">
-                <div class="flex items-center justify-between px-5 pt-5 pb-4 border-b border-card-line">
-                    <div class="flex items-center gap-3">
-                        <div class="size-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" class="text-primary">
-                                <path d="M3 3h6v6H3z" />
-                                <path d="M15 3h6v6h-6z" />
-                                <path d="M3 15h6v6H3z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-bold text-layer-foreground">Scanner QR Code</p>
-                            <p class="text-xs text-muted-foreground-2">Marquez-vous présent</p>
-                        </div>
-                    </div>
-                    <button type="button"
-                        class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted"
-                        data-hs-overlay="#hs-modal-qr">
-                        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M18 6 6 18" />
-                            <path d="m6 6 12 12" />
-                        </svg>
-                    </button>
+<!-- ═══ MODAL QR — VRAIE CAMÉRA ═══ -->
+<div id="modal-qr" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div id="qr-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-sm bg-card border border-card-line rounded-2xl shadow-2xl overflow-hidden z-10">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-card-line">
+            <div class="flex items-center gap-3">
+                <div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                 </div>
-                <div class="p-6 flex flex-col items-center gap-5">
-                    <input type="text" placeholder="Placez le QR code en face de votre caméra"
-                        class="w-full px-4 py-3 rounded-xl border border-card-line bg-background-1 text-layer-foreground placeholder-muted-foreground-2 focus:outline-none focus:ring-2 focus:ring-primary" />
-                    <div class="flex gap-3 w-full">
-                        <button type="button"
-                            class="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-muted text-layer-foreground">Annuler</button>
-                        <button type="button"
-                            class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-primary text-white hover:bg-primary/90 active:scale-95 transition-all">Valider</button>
+                <div>
+                    <p class="text-sm font-bold text-layer-foreground">Scanner QR Code</p>
+                    <p class="text-xs text-muted-foreground-2" id="qr-status-text">Pointez votre caméra</p>
+                </div>
+            </div>
+            <button type="button" id="btn-close-qr" class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+        <!-- Viewfinder -->
+        <div class="relative bg-black overflow-hidden" style="aspect-ratio:1/1">
+            <video id="qr-video" class="w-full h-full object-cover hidden" autoplay playsinline muted></video>
+            <div id="qr-placeholder" class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gray-950">
+                <div class="size-14 rounded-2xl bg-white/8 border border-white/10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-white/30"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                </div>
+                <p id="qr-placeholder-text" class="text-xs text-white/30 text-center px-8 leading-relaxed">Initialisation de la caméra…</p>
+            </div>
+            <!-- Scan overlay -->
+            <div id="qr-overlay" class="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-500 flex items-center justify-center">
+                <div class="relative" style="width:200px;height:200px">
+                    <div class="absolute top-0 left-0 w-9 h-9 border-t-[3px] border-l-[3px] border-primary rounded-tl-xl"></div>
+                    <div class="absolute top-0 right-0 w-9 h-9 border-t-[3px] border-r-[3px] border-primary rounded-tr-xl"></div>
+                    <div class="absolute bottom-0 left-0 w-9 h-9 border-b-[3px] border-l-[3px] border-primary rounded-bl-xl"></div>
+                    <div class="absolute bottom-0 right-0 w-9 h-9 border-b-[3px] border-r-[3px] border-primary rounded-br-xl"></div>
+                    <div id="scan-beam" class="absolute left-2 right-2 h-px" style="top:0px">
+                        <div class="w-full h-full bg-gradient-to-r from-transparent via-primary to-transparent opacity-90 shadow-[0_0_8px_2px_rgba(124,58,237,0.4)]"></div>
+                    </div>
+                </div>
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center">
+                    <div class="px-3 py-1.5 bg-black/60 rounded-full backdrop-blur-sm">
+                        <p class="text-[11px] text-white/70 font-medium">Centrez le QR code dans le cadre</p>
                     </div>
                 </div>
             </div>
+            <!-- Success -->
+            <div id="qr-success" class="absolute inset-0 bg-green-950/95 flex flex-col items-center justify-center gap-3 opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="size-16 rounded-full bg-green-500/20 border-2 border-green-400 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-green-400"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <p class="text-sm font-bold text-white">Présence enregistrée !</p>
+            </div>
+        </div>
+        <div class="px-5 py-4 border-t border-card-line flex gap-3">
+            <button type="button" id="btn-cancel-qr" class="flex-1 py-2.5 rounded-xl bg-muted text-sm font-semibold text-layer-foreground hover:bg-muted/70 transition-colors">Annuler</button>
+            <button type="button" id="btn-validate-qr" disabled class="flex-1 py-2.5 rounded-xl bg-primary text-sm font-bold text-white hover:bg-primary/90 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">Valider</button>
         </div>
     </div>
+</div>
 
-    <!-- MODAL PIN -->
-    <div id="hs-modal-pin"
-        class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
-        role="dialog" tabindex="-1">
-        <div
-            class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all max-w-sm sm:w-full m-3 mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
-            <div
-                class="pointer-events-auto w-full bg-card border border-card-line rounded-2xl shadow-2xl overflow-hidden">
-                <div class="flex items-center justify-between px-5 pt-5 pb-4 border-b border-card-line">
-                    <div class="flex items-center gap-3">
-                        <div class="size-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" class="text-blue-500">
-                                <rect x="3" y="8" width="18" height="9" rx="2" />
-                                <path d="M10 11l2 2l4-4" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-bold text-layer-foreground">Code PIN</p>
-                            <p class="text-xs text-muted-foreground-2">Entrez le code fourni par le professeur</p>
-                        </div>
-                    </div>
-                    <button type="button"
-                        class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted"
-                        data-hs-overlay="#hs-modal-pin">
-                        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M18 6 6 18" />
-                            <path d="m6 6 12 12" />
-                        </svg>
-                    </button>
+<!-- ═══ MODAL PIN — 6 CHIFFRES ═══ -->
+<div id="modal-pin" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div id="pin-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-sm bg-card border border-card-line rounded-2xl shadow-2xl overflow-hidden z-10">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-card-line">
+            <div class="flex items-center gap-3">
+                <div class="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-500"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </div>
-                <div class="p-6 flex flex-col items-center gap-5">
-                    <input type="text" placeholder="0000" maxlength="4"
-                        class="w-full px-4 py-3 text-center text-2xl font-mono rounded-xl border border-card-line bg-background-1 text-layer-foreground placeholder-muted-foreground-2 focus:outline-none focus:ring-2 focus:ring-primary tracking-widest" />
-                    <div class="flex gap-3 w-full">
-                        <button type="button"
-                            class="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-muted text-layer-foreground">Annuler</button>
-                        <button type="button"
-                            class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-blue-500 text-white hover:bg-blue-600 active:scale-95 transition-all">Valider</button>
-                    </div>
+                <div>
+                    <p class="text-sm font-bold text-layer-foreground">Code PIN</p>
+                    <p class="text-xs text-muted-foreground-2">6 chiffres fournis par votre professeur</p>
                 </div>
+            </div>
+            <button type="button" id="btn-close-pin" class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+        <div class="px-5 py-6 space-y-5">
+            <div id="pin-boxes" class="flex items-center justify-center gap-2">
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" data-index="0" autocomplete="off" class="pin-input w-11 rounded-xl border-2 border-card-line bg-background-1 text-layer-foreground text-xl font-black text-center font-mono focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all caret-transparent" style="height:52px"/>
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" data-index="1" autocomplete="off" class="pin-input w-11 rounded-xl border-2 border-card-line bg-background-1 text-layer-foreground text-xl font-black text-center font-mono focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all caret-transparent" style="height:52px"/>
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" data-index="2" autocomplete="off" class="pin-input w-11 rounded-xl border-2 border-card-line bg-background-1 text-layer-foreground text-xl font-black text-center font-mono focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all caret-transparent" style="height:52px"/>
+                <div class="w-3 flex justify-center shrink-0"><div class="w-2 h-0.5 bg-card-line rounded-full"></div></div>
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" data-index="3" autocomplete="off" class="pin-input w-11 rounded-xl border-2 border-card-line bg-background-1 text-layer-foreground text-xl font-black text-center font-mono focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all caret-transparent" style="height:52px"/>
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" data-index="4" autocomplete="off" class="pin-input w-11 rounded-xl border-2 border-card-line bg-background-1 text-layer-foreground text-xl font-black text-center font-mono focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all caret-transparent" style="height:52px"/>
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" data-index="5" autocomplete="off" class="pin-input w-11 rounded-xl border-2 border-card-line bg-background-1 text-layer-foreground text-xl font-black text-center font-mono focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all caret-transparent" style="height:52px"/>
+            </div>
+            <p id="pin-hint" class="text-center text-xs text-muted-foreground-2">Entrez les 6 chiffres du code</p>
+            <div id="pin-error" class="hidden flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-500 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                <p class="text-xs text-red-600 font-semibold">Code incorrect. Vérifiez avec votre professeur.</p>
+            </div>
+            <div class="flex gap-3">
+                <button type="button" id="btn-cancel-pin" class="flex-1 py-2.5 rounded-xl bg-muted text-sm font-semibold text-layer-foreground hover:bg-muted/70 transition-colors">Annuler</button>
+                <button type="button" id="btn-validate-pin" disabled class="flex-1 py-2.5 rounded-xl bg-blue-500 text-sm font-bold text-white hover:bg-blue-600 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">Valider</button>
             </div>
         </div>
     </div>
+</div>
 
 
-    <script th:src="@{/js/preline.js}"></script>
-    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
-    <script>
-        // Afficher la date du jour
-        const now = new Date();
-        const monthsFr = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-        const daysFr = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
-        const dateStr = `${daysFr[now.getDay()]} ${now.getDate()} ${monthsFr[now.getMonth()]}`;
-        document.getElementById('hero-date').textContent = dateStr;
-    </script>
+<script th:src="@{/js/preline.js}"></script>
+<script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+<script>
+    // Date
+    (function(){
+        const n=new Date();
+        const M=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+        const D=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+        document.getElementById('hero-date').textContent=`${D[n.getDay()]} ${n.getDate()} ${M[n.getMonth()]} ${n.getFullYear()}`;
+    })();
+
+    // ─── Modal helpers ────────────────────────────────────────
+    const $=id=>document.getElementById(id);
+    function openModal(id){$(id).classList.remove('hidden');document.body.style.overflow='hidden';}
+    function closeModal(id){$(id).classList.add('hidden');document.body.style.overflow='';}
+
+    // ─── QR SCANNER ───────────────────────────────────────────
+    let qrStream=null,scanRaf=null,beamPos=0,beamDir=1;
+    async function startCamera(){
+        $('qr-placeholder').classList.remove('hidden');
+        $('qr-placeholder-text').textContent='Initialisation de la caméra…';
+        $('qr-video').classList.add('hidden');
+        $('qr-overlay').style.opacity='0';
+        $('qr-success').style.opacity='0';
+        $('qr-success').style.pointerEvents='none';
+        $('btn-validate-qr').disabled=true;
+        $('qr-status-text').textContent='Pointez votre caméra';
+        try{
+            qrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:720},height:{ideal:720}}});
+            const v=$('qr-video');
+            v.srcObject=qrStream;
+            v.onloadedmetadata=()=>{v.play();$('qr-placeholder').classList.add('hidden');v.classList.remove('hidden');$('qr-overlay').style.opacity='1';animateBeam();};
+        }catch(e){$('qr-placeholder-text').textContent=e.name==='NotAllowedError'?'Accès caméra refusé. Autorisez-le dans les paramètres.':'Impossible d\'accéder à la caméra.';}
+    }
+    function animateBeam(){
+        const max=196;
+        if(scanRaf)cancelAnimationFrame(scanRaf);
+        function step(){beamPos+=beamDir*1.8;if(beamPos>=max||beamPos<=0)beamDir*=-1;$('scan-beam').style.top=beamPos+'px';scanRaf=requestAnimationFrame(step);}
+        step();
+    }
+    function stopCamera(){if(qrStream){qrStream.getTracks().forEach(t=>t.stop());qrStream=null;}if(scanRaf){cancelAnimationFrame(scanRaf);scanRaf=null;}}
+    function onQrDetected(){if(scanRaf){cancelAnimationFrame(scanRaf);scanRaf=null;}$('qr-overlay').style.opacity='0';$('qr-success').style.opacity='1';$('qr-success').style.pointerEvents='auto';$('qr-status-text').textContent='QR Code détecté !';$('btn-validate-qr').disabled=false;}
+
+    $('btn-open-qr').addEventListener('click',()=>{openModal('modal-qr');startCamera();});
+    $('btn-close-qr').addEventListener('click',()=>{stopCamera();closeModal('modal-qr');});
+    $('btn-cancel-qr').addEventListener('click',()=>{stopCamera();closeModal('modal-qr');});
+    $('qr-backdrop').addEventListener('click',()=>{stopCamera();closeModal('modal-qr');});
+    $('btn-validate-qr').addEventListener('click',()=>{stopCamera();closeModal('modal-qr');});
+    $('qr-video').addEventListener('click',onQrDetected);
+
+    // ─── PIN (6 chiffres) ─────────────────────────────────────
+    const pinInputs=[...document.querySelectorAll('.pin-input')];
+    const getPin=()=>pinInputs.map(i=>i.value).join('');
+    function resetPin(){pinInputs.forEach(i=>{i.value='';i.classList.remove('border-red-400');});$('pin-error').classList.add('hidden');$('pin-hint').classList.remove('hidden');$('btn-validate-pin').disabled=true;pinInputs[0]?.focus();}
+    pinInputs.forEach((inp,idx)=>{
+        inp.addEventListener('focus',()=>inp.select());
+        inp.addEventListener('input',e=>{const v=e.target.value.replace(/\D/g,'').slice(0,1);inp.value=v;if(v&&idx<5)pinInputs[idx+1].focus();$('btn-validate-pin').disabled=getPin().length<6;});
+        inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!inp.value&&idx>0){pinInputs[idx-1].value='';pinInputs[idx-1].focus();}if(e.key==='ArrowLeft'&&idx>0)pinInputs[idx-1].focus();if(e.key==='ArrowRight'&&idx<5)pinInputs[idx+1].focus();});
+        inp.addEventListener('paste',e=>{e.preventDefault();const d=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,6);d.split('').forEach((c,i)=>{if(pinInputs[i])pinInputs[i].value=c;});const ne=pinInputs.find(i=>!i.value);(ne||pinInputs[5]).focus();$('btn-validate-pin').disabled=getPin().length<6;});
+    });
+    $('btn-open-pin').addEventListener('click',()=>{openModal('modal-pin');resetPin();});
+    $('btn-close-pin').addEventListener('click',()=>closeModal('modal-pin'));
+    $('btn-cancel-pin').addEventListener('click',()=>closeModal('modal-pin'));
+    $('pin-backdrop').addEventListener('click',()=>closeModal('modal-pin'));
+    $('btn-validate-pin').addEventListener('click',()=>{pinInputs.forEach(i=>i.classList.add('border-red-400'));$('pin-error').classList.remove('hidden');$('pin-hint').classList.add('hidden');$('pin-boxes').animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:350,easing:'ease-out'});});
+</script>
 </body>
-
 </html>

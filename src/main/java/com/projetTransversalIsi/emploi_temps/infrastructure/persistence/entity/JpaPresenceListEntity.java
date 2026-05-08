@@ -33,9 +33,6 @@ public class JpaPresenceListEntity {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "heures_marquer", nullable = false)
-    private float heuresMarquer;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
