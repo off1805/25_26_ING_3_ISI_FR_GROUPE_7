@@ -21,6 +21,8 @@ public class AttendanceCodeController {
     private final GetAttendanceCodeUC getAttendanceCodeUC;
     private final DeleteAttendanceCodeUC deleteAttendanceCodeUC;
 
+    // POST /api/attendance-codes — l'enseignant génère un code QR ou PIN pour sa séance.
+    // La réponse inclut scanUrl (QR) ou valeur (PIN) selon le type choisi.
     @PostMapping
     public ResponseEntity<AttendanceCodeResponseDTO> create(@RequestBody CreateAttendanceCodeDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(createAttendanceCodeUC.execute(dto));
@@ -31,11 +33,14 @@ public class AttendanceCodeController {
         return ResponseEntity.ok(getAttendanceCodeUC.getById(id));
     }
 
+    // GET /api/attendance-codes/seance/{seanceId} — liste tous les codes d'une séance.
+    // Permet au frontend d'afficher lequel est encore actif (expired=false) ou révoqué.
     @GetMapping("/seance/{seanceId}")
     public ResponseEntity<List<AttendanceCodeResponseDTO>> getBySeance(@PathVariable Long seanceId) {
         return ResponseEntity.ok(getAttendanceCodeUC.getBySeanceId(seanceId));
     }
 
+    // DELETE /api/attendance-codes/{id} — hard delete du code (révocation manuelle par l'enseignant).
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         deleteAttendanceCodeUC.execute(id);

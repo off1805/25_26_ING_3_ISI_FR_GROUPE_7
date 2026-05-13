@@ -13,16 +13,17 @@ import java.util.Optional;
 @Repository
 public interface SpringDataSeanceRepository extends JpaRepository<JpaSeanceEntity, Long> {
 
-    // Recherches simples
     List<JpaSeanceEntity> findByDateSeance(LocalDate date);
     List<JpaSeanceEntity> findByEnseignantId(Long enseignantId);
     List<JpaSeanceEntity> findByCoursId(Long coursId);
 
-    // Soft delete
     Optional<JpaSeanceEntity> findByIdAndDeletedFalse(Long id);
     List<JpaSeanceEntity> findByDeletedFalse();
     List<JpaSeanceEntity> findByDeletedTrue();
 
+    // Détecte un chevauchement horaire pour un enseignant sur une même journée.
+    // Algorithme d'overlap standard : deux intervalles [A,B] et [C,D] se chevauchent
+    // si et seulement si A < D ET B > C. Exclut les séances supprimées (deleted=false).
     @Query("SELECT COUNT(s) > 0 FROM JpaSeanceEntity s " +
             "WHERE s.enseignantId = :enseignantId " +
             "AND s.dateSeance = :date " +

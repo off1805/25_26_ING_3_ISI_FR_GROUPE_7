@@ -15,6 +15,11 @@ public class GetCurrentSeanceUCImpl implements GetCurrentSeanceUC {
 
     private final SeanceRepository seanceRepo;
 
+    // Retourne la séance en cours pour un enseignant donné à l'instant t.
+    // Toutes les séances de l'enseignant sont chargées en mémoire depuis la DB (pas de filtre SQL
+    // sur la date/heure) ; acceptable si le volume par enseignant reste faible.
+    // La condition de chevauchement : heureDebut <= maintenant <= heureFin.
+    // findFirst() retourne la première séance active si plusieurs se chevauchent (cas rare en pratique).
     @Override
     public Optional<SeanceResponseDTO> execute(Long enseignantId) {
         LocalDate today = LocalDate.now();

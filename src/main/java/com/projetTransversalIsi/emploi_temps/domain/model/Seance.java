@@ -7,6 +7,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+// Entité de domaine représentant un créneau dans un emploi du temps.
+// Le type discrimine deux comportements : SEANCE (cours avec enseignant/salle/cours)
+// et EVENEMENT (entrée calendaire visuelle sans contrainte d'enseignant).
+// La détection de conflit côté service ne s'applique qu'aux SEANCE (enseignantId non null).
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,11 +27,12 @@ public class Seance {
     private LocalTime heureDebut;
     private LocalTime heureFin;
 
-    // Nullable pour les événements
+    // Null pour les EVENEMENT — la vérification de conflit horaire ignore ces lignes.
     private Long coursId;
     private Long enseignantId;
 
-    // Nouveaux champs pour supporter les événements
+    // type, couleur, iconKey ajoutés pour supporter les événements visuels dans le calendrier
+    // sans modifier le schéma des séances de cours existantes.
     private TypeSeance type = TypeSeance.SEANCE;
     private String couleur;
     private String iconKey;
@@ -35,7 +40,7 @@ public class Seance {
     private boolean deleted = false;
     private LocalDateTime deletedAt;
 
-    /** Constructeur pour une séance de cours (usage existant) */
+    // Constructeur SEANCE : enseignantId requis pour la détection de conflit horaire.
     public Seance(String libelle, String salle, LocalDate dateSeance, LocalTime heureDebut,
                   LocalTime heureFin, Long coursId, Long enseignantId) {
         this.libelle = libelle;
@@ -49,7 +54,8 @@ public class Seance {
         this.deleted = false;
     }
 
-    /** Constructeur pour un événement (pas de cours ni d'enseignant) */
+    // Constructeur EVENEMENT : salle/cours/enseignant laissés null intentionnellement ;
+    // couleur et iconKey permettent l'affichage personnalisé dans le calendrier frontend.
     public Seance(String libelle, LocalDate dateSeance, LocalTime heureDebut,
                   LocalTime heureFin, String couleur, String iconKey) {
         this.libelle = libelle;
@@ -65,6 +71,8 @@ public class Seance {
         this.deleted = false;
     }
 
+    // update ne modifie que les horaires : la date et la salle sont fixées à la création
+    // pour ne pas invalider les listes de présence déjà ouvertes sur cette séance.
     public void update(LocalTime heureDebut, LocalTime heureFin) {
         this.heureDebut = heureDebut;
         this.heureFin = heureFin;
@@ -90,6 +98,7 @@ public class Seance {
         return deleted;
     }
 
+    // Prédicat utilitaire utilisé dans GetCurrentSeanceUCImpl pour filtrer sans cast.
     public boolean isEvenement() {
         return TypeSeance.EVENEMENT.equals(this.type);
     }

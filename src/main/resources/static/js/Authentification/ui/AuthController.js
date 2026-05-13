@@ -1,7 +1,8 @@
 import { LoginUC } from "../application/LoginUC.js";
 import { AuthApi } from "../infrastructure/AuthApi.js";
 import { UserCredentials } from "../domain/UserCredentials.js";
-
+import { GlobalErrorHandler } from "../../common/GlobalErrorHandler.js";
+import { GlobalEventNotifier } from "../../common/GlobalEventNotifier.js";
 export class AuthController {
     constructor(loginUc) {
         this.loginUC = loginUc;
@@ -33,6 +34,9 @@ export class AuthController {
             }
 
         } catch (e) {
+            alert(e);
+
+            GlobalErrorHandler.handle(e);
             console.log("Erreur de connexion.", e.message);
         }
     }

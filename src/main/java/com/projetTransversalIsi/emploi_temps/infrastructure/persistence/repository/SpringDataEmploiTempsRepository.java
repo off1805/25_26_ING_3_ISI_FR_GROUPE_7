@@ -18,6 +18,7 @@ public interface SpringDataEmploiTempsRepository extends JpaRepository<JpaEmploi
     List<JpaEmploiTempsEntity> findByClasseId(Long classeId);
     List<JpaEmploiTempsEntity> findBySemaine(Integer semaine);
 
+    // Retourne les emplois dont la fenêtre [dateDebut, dateFin] englobe la date donnée.
     @Query("SELECT e FROM JpaEmploiTempsEntity e WHERE " +
             ":date BETWEEN e.dateDebut AND e.dateFin")
     List<JpaEmploiTempsEntity> findByPeriode(@Param("date") LocalDate date);
@@ -26,6 +27,8 @@ public interface SpringDataEmploiTempsRepository extends JpaRepository<JpaEmploi
     List<JpaEmploiTempsEntity> findByDeletedFalse();
     List<JpaEmploiTempsEntity> findByDeletedTrue();
 
+    // Détecte un chevauchement de période pour une classe : empêche deux emplois du temps
+    // d'une même classe de se superposer (même logique d'overlap que pour les séances).
     @Query("SELECT COUNT(e) > 0 FROM JpaEmploiTempsEntity e " +
             "WHERE e.classeId = :classeId " +
             "AND ((e.dateDebut <= :dateFin AND e.dateFin >= :dateDebut)) " +
@@ -35,4 +38,8 @@ public interface SpringDataEmploiTempsRepository extends JpaRepository<JpaEmploi
             @Param("dateDebut") LocalDate dateDebut,
             @Param("dateFin") LocalDate dateFin
     );
+
+    // Remonte l'emploi du temps propriétaire d'une séance via la jointure sur la collection seances.
+    @Query("SELECT e FROM JpaEmploiTempsEntity e JOIN e.seances s WHERE s.id = :seanceId AND e.deleted = false")
+    Optional<JpaEmploiTempsEntity> findBySeanceId(@Param("seanceId") Long seanceId);
 }

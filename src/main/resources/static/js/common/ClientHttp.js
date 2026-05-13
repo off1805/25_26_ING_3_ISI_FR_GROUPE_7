@@ -1,4 +1,5 @@
 import { TokenService } from "./application/TokenService.js";
+import { BASE_URL } from "./config.js";
 
 class HttpClient {
 
@@ -90,6 +91,10 @@ class HttpClient {
         return this._request("DELETE", endpoint, { headers });
     }
 
+    patch(endpoint, body = {}, headers = {}) {
+        return this._request("PATCH", endpoint, { body, headers });
+    }
+
     /**
      * Cette méthode permet de rafraîchir le token d'authentification.
      * @returns {Promise<boolean>}
@@ -117,8 +122,6 @@ class HttpClient {
         return true;
     }
 }
-
-const BASE_URL = "http://localhost:8080";
 
 const api = new HttpClient(BASE_URL);
 

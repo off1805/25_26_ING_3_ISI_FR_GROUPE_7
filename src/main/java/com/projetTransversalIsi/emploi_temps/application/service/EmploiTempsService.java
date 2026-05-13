@@ -29,6 +29,9 @@ public class EmploiTempsService {
     private final EmploiTempsRepository emploiTempsRepo;
     private final SeanceRepository seanceRepo;
 
+    // Crée un emploi du temps vide (sans séances) pour une classe.
+    // Double garde : pas de chevauchement de période ET pas de date passée.
+    // Le status UPCOMING est fixé ici ; un job ou la couche de lecture recalcule PAST/ONGOING dynamiquement.
     @Transactional
     public EmploiTempsResponseDTO createEmploiTemps(CreateEmploiTempsRequestDTO request) {
         if (emploiTempsRepo.existsEmploiForPeriode(
@@ -50,6 +53,9 @@ public class EmploiTempsService {
         return EmploiTempsResponseDTO.fromDomain(emploiTempsRepo.save(emploiTemps));
     }
 
+    // Mise à jour simple des métadonnées (période, semaine, classe) sans toucher aux séances.
+    // Attention : si la nouvelle période exclut des séances existantes, EmploiTemps.addSeance()
+    // lancera une exception lors du prochain ajout, mais pas rétroactivement ici.
     @Transactional
     public EmploiTempsResponseDTO updateEmploiTemps(UpdateEmploiTempsRequestDTO request) {
         EmploiTemps emploiTemps = emploiTempsRepo.findById(request.id())
@@ -64,6 +70,8 @@ public class EmploiTempsService {
         return EmploiTempsResponseDTO.fromDomain(emploiTempsRepo.save(emploiTemps));
     }
 
+    // Soft-delete : l'emploi reste en base avec deleted=true pour l'historique.
+    // La garde dans EmploiTemps.delete() évite un double-delete accidentel.
     @Transactional
     public void deleteEmploiTemps(Long id) {
         EmploiTemps emploiTemps = emploiTempsRepo.findById(id)
@@ -82,11 +90,15 @@ public class EmploiTempsService {
                 .orElseThrow(() -> new EmploiTempsNotFoundException(id));
     }
 
+    // Délègue la construction de la Specification JPA à JpaEmploiTempsRepository.findAll(),
+    // qui compose les prédicats de JpaEmploiTempsSpec selon les critères non-null du DTO.
     public Page<EmploiTempsResponseDTO> searchEmploiTemps(SearchEmploiTempsRequestDTO criteria, Pageable page) {
         return emploiTempsRepo.findAll(criteria,page).map(EmploiTempsResponseDTO::fromDomain);
     }
 
-
+    // Crée l'emploi du temps ET ses séances en une seule transaction.
+    // Chaque séance est persistée via seanceRepo.save() avant d'être ajoutée à l'agrégat,
+    // car JPA a besoin de l'id pour construire la relation OneToMany via @JoinColumn.
     @Transactional
     public EmploiTempsResponseDTO createEmploiTempsWithSeances(CreateEmploiTempsWithSeancesDTO command) {
         if (emploiTempsRepo.existsEmploiForPeriode(
@@ -106,6 +118,8 @@ public class EmploiTempsService {
         command.seances().forEach(seanceDTO -> {
             Seance.TypeSeance type = seanceDTO.resolvedType();
 
+            // La vérification de conflit ne s'applique qu'aux SEANCE avec enseignant.
+            // Les EVENEMENT n'ont pas d'enseignant, donc pas de contrainte d'unicité horaire.
             if (Seance.TypeSeance.SEANCE.equals(type) && seanceDTO.enseignantId() != null) {
                 if (seanceRepo.existsConflict(
                         seanceDTO.enseignantId(),
@@ -127,6 +141,7 @@ public class EmploiTempsService {
                         seanceDTO.iconKey()
                 );
             } else {
+                // Valeurs par défaut pour libelle/salle afin d'éviter une contrainte NOT NULL en base.
                 seance = new Seance(
                         seanceDTO.libelle() != null ? seanceDTO.libelle() : "Séance",
                         seanceDTO.salle() != null ? seanceDTO.salle() : "Salle 1",
@@ -139,17 +154,22 @@ public class EmploiTempsService {
                 seance.setCouleur(seanceDTO.couleur());
             }
 
+            // Persiste d'abord la séance pour obtenir son id, puis l'ajoute à l'agrégat.
             emploiTemps.addSeance(seanceRepo.save(seance));
         });
 
         return EmploiTempsResponseDTO.fromDomain(emploiTempsRepo.save(emploiTemps));
     }
 
+    // Stratégie replace-all : supprime toutes les anciennes séances (hard delete) puis recrée.
+    // Plus simple qu'un diff individuel séance-par-séance ; acceptable car l'éditeur drag-drop
+    // envoie toujours le lot complet lors d'une sauvegarde.
     @Transactional
     public EmploiTempsResponseDTO updateEmploiTempsWithSeances(UpdateEmploiTempsWithSeancesDTO command) {
         EmploiTemps emploi = emploiTempsRepo.findById(command.id())
                 .orElseThrow(() -> new EmploiTempsNotFoundException(command.id()));
 
+        // Hard-delete des séances existantes avant de les remplacer.
         emploi.getSeances().forEach(seanceRepo::delete);
         emploi.getSeances().clear();
 
@@ -197,6 +217,8 @@ public class EmploiTempsService {
         return EmploiTempsResponseDTO.fromDomain(emploiTempsRepo.save(emploi));
     }
 
+    // Lie une séance déjà existante (créée séparément) à un emploi du temps.
+    // La validation de période est assurée par EmploiTemps.addSeance().
     @Transactional
     public EmploiTempsResponseDTO addSeanceToEmploi(AddSeanceToEmploiDTO command) {
         EmploiTemps emploiTemps = emploiTempsRepo.findById(command.emploiTempsId())
@@ -209,6 +231,7 @@ public class EmploiTempsService {
         return EmploiTempsResponseDTO.fromDomain(emploiTempsRepo.save(emploiTemps));
     }
 
+    // Retire la séance de l'emploi du temps (retire le lien FK emploi_temps_id) sans la supprimer.
     @Transactional
     public EmploiTempsResponseDTO removeSeanceFromEmploi(AddSeanceToEmploiDTO command) {
         log.info("Retrait de la séance {} de l'emploi du temps {}", command.seanceId(), command.emploiTempsId());

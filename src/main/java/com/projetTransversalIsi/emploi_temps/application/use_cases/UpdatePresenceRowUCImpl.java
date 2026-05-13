@@ -17,7 +17,7 @@ public class UpdatePresenceRowUCImpl implements UpdatePresenceRowUC {
     public PresenceRowResponseDTO execute(UpdatePresenceRowDTO dto) {
         PresenceRow row = presenceRowRepo.findById(dto.id())
                 .orElseThrow(() -> new IllegalArgumentException("Ligne de présence introuvable : " + dto.id()));
-        row.update(dto.present(), dto.heuresAbsence());
+        row.update(dto.present());
         return PresenceRowResponseDTO.fromDomain(presenceRowRepo.save(row));
     }
 }

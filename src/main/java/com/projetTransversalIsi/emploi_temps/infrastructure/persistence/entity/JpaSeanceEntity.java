@@ -31,14 +31,16 @@ public class JpaSeanceEntity {
     @Column(name = "heure_fin", nullable = false)
     private LocalTime heureFin;
 
-    // Nullable : null pour les événements
+    // coursId/enseignantId : null pour les EVENEMENT (pas de lien vers cours ni enseignant).
+    // Stockés comme simples Long (pas de @ManyToOne) pour ne pas créer de dépendance JPA
+    // vers des entités d'autres modules (découplage inter-bounded-contexts).
     @Column(name = "cours_id")
     private Long coursId;
 
-    // Nullable : null pour les événements
     @Column(name = "enseignant_id")
     private Long enseignantId;
 
+    // EnumType.STRING pour lisibilité en base (SEANCE / EVENEMENT) et robustesse aux reordres d'enum.
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private Seance.TypeSeance type = Seance.TypeSeance.SEANCE;

@@ -7,6 +7,10 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+// Représente la feuille de présence ouverte par un enseignant pour une séance donnée.
+// Un seul PresenceList par seanceId est attendu en pratique (MarkStudentPresentUCImpl
+// prend le premier de la liste). Une seanceId peut théoriquement en avoir plusieurs
+// si l'enseignant rouvre une feuille, mais le code client ne gère pas ce cas multi-liste.
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,6 +21,7 @@ public class PresenceList {
     private Long classeId;
     private Long ueId;
     private Long enseignantId;
+    // date de la séance, dupliquée ici pour faciliter les requêtes de reporting sans jointure.
     private LocalDate date;
     private LocalDateTime createdAt;
     private boolean deleted = false;

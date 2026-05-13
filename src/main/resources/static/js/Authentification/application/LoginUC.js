@@ -1,6 +1,6 @@
 import { TokenService } from "../../common/application/TokenService.js";
 import { MapperRoleRedirectionPage } from "./MapperRoleRedirectionPage.js";
-
+import { GlobalErrorHandler } from "../../common/GlobalErrorHandler.js";
 export class LoginUC {
     constructor(authApi) {
         this.authAPi = authApi;
@@ -44,6 +44,7 @@ export class LoginUC {
 
             return response;
         } catch (e) {
+            GlobalErrorHandler.handle(e);
             throw new Error(e.message || "Erreur lors de la connexion.");
         }
     }

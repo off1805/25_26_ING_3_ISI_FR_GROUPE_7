@@ -26,8 +26,9 @@ public class PresenceController {
     private final MarkStudentPresentUC markStudentPresentUC;
     private final SpringDataUserRepository userRepository;
 
-    // Scan QR — l'étudiant doit être connecté (JWT), son profileId est récupéré depuis le token
-
+    // GET /api/presences/scan?code=<uuid> — point d'entrée du scan QR côté étudiant.
+    // L'étudiant doit être authentifié (JWT) ; son profileId est résolu depuis le token Spring Security.
+    // idCode=null car le scan QR identifie le code par sa valeur (codeValeur), pas par son id.
     @GetMapping("/scan")
     public ResponseEntity<PresenceRowResponseDTO> scanQR(
             @RequestParam String code,
@@ -36,15 +37,15 @@ public class PresenceController {
         JpaUserEntity user = userRepository.findById(principal.userId())
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
 
+        // Résolution de l'étudiant : userId (compte) → profile.id (identité métier de l'étudiant).
         Long etudiantId = user.getProfile().getId();
 
         return ResponseEntity.ok(markStudentPresentUC.execute(
-                new MarkStudentPresentCommand(etudiantId, null, code)
+                new MarkStudentPresentCommand(etudiantId, null, code, null)
         ));
     }
 
-    // PresenceList
-
+    // POST /api/presences — l'enseignant ouvre une feuille de présence pour une séance.
     @PostMapping
     public ResponseEntity<PresenceListResponseDTO> create(@RequestBody CreatePresenceListDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(createPresenceListUC.execute(dto));
@@ -55,9 +56,17 @@ public class PresenceController {
         return ResponseEntity.ok(getPresenceListUC.getById(id));
     }
 
+    // GET /api/presences/{id}/rows — retourne toutes les lignes (étudiants) d'une feuille.
     @GetMapping("/{id}/rows")
     public ResponseEntity<List<PresenceRowResponseDTO>> getRows(@PathVariable Long id) {
         return ResponseEntity.ok(getPresenceListUC.getRows(id));
+    }
+
+    // GET /api/presences/{id}/info-rows — retourne toutes les InfoPresenceRow de la feuille.
+    // Utilisé par le frontend pour afficher le statut par-appel (isPresent null/true/false).
+    @GetMapping("/{id}/info-rows")
+    public ResponseEntity<List<InfoPresenceRowResponseDTO>> getInfoRows(@PathVariable Long id) {
+        return ResponseEntity.ok(getPresenceListUC.getInfoRows(id));
     }
 
     @DeleteMapping("/{id}")
@@ -66,13 +75,13 @@ public class PresenceController {
         return ResponseEntity.noContent().build();
     }
 
-    // PresenceRow
-
+    // POST /api/presences/rows — ajout manuel d'un étudiant à une feuille (par l'enseignant).
     @PostMapping("/rows")
     public ResponseEntity<PresenceRowResponseDTO> addRow(@RequestBody CreatePresenceRowDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(addPresenceRowUC.execute(dto));
     }
 
+    // PUT /api/presences/rows — correction manuelle de la présence/heures d'absence par l'enseignant.
     @PutMapping("/rows")
     public ResponseEntity<PresenceRowResponseDTO> updateRow(@RequestBody UpdatePresenceRowDTO dto) {
         return ResponseEntity.ok(updatePresenceRowUC.execute(dto));
