@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+// Adaptateur secondaire (driven adapter) : traduit les appels du port EmploiTempsRepository
+// en appels Spring Data JPA via SpringDataEmploiTempsRepository.
+// Chaque méthode : domaine → JPA entity (via mapper), persistance, retour domaine.
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -37,6 +40,8 @@ public class JpaEmploiTempsRepository implements EmploiTempsRepository {
         return jpaRepo.findById(id).map(mapper::toDomain);
     }
 
+    // Compose la Specification JPA à partir des critères du DTO :
+    // les prédicats null retournés par JpaEmploiTempsSpec sont ignorés par Specification.and().
     @Override
     public Page<EmploiTemps> findAll(SearchEmploiTempsRequestDTO comand, Pageable page){
         Specification<JpaEmploiTempsEntity> spec= Specification

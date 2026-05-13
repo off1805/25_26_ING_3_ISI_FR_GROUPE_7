@@ -13,6 +13,9 @@ public class CreatePresenceListUCImpl implements CreatePresenceListUC {
 
     private final PresenceListRepository presenceListRepo;
 
+    // L'enseignant ouvre manuellement la feuille avant de lancer le scan.
+    // createdAt est fixé dans le constructeur PresenceList ; pas de vérification de doublon
+    // (une séance peut avoir plusieurs feuilles si l'enseignant recrée — MarkStudentPresentUC prend la première).
     @Override
     public PresenceListResponseDTO execute(CreatePresenceListDTO dto) {
         PresenceList presenceList = new PresenceList(

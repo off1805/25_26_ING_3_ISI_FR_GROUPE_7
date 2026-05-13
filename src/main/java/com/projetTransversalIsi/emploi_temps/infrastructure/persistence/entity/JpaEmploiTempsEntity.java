@@ -27,7 +27,10 @@ public class   JpaEmploiTempsEntity {
     @Column(name = "classe_id", nullable = false)
     private Long classeId;
 
-    // Unidirectional: emploi connaît ses séances; FK dans seance table
+    // Relation unidirectionnelle : la FK emploi_temps_id est dans la table seance.
+    // LAZY pour éviter de charger toutes les séances lors d'une liste d'emplois du temps.
+    // Cascade MERGE uniquement : la création de séances passe par seanceRepo.save() avant addSeance().
+    // Pas de CascadeType.REMOVE ici ; la suppression des séances est gérée explicitement dans le service.
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "emploi_temps_id")
     private Set<JpaSeanceEntity> seances = new HashSet<>();

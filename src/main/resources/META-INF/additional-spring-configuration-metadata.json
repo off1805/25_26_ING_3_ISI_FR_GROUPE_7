@@ -5,6 +5,12 @@
       "type": "java.lang.String",
       "description": "Répertoire filesystem où sont stockées les photos de profil uploadées.",
       "defaultValue": "uploads/photos"
+    },
+    {
+      "name": "app.ip_address",
+      "type": "java.lang.String",
+      "description": "Adresse IP du serveur utilisée pour construire les URLs de scan QR. Mettre l'IP réseau locale pour les scans depuis d'autres appareils.",
+      "defaultValue": "127.0.0.1"
     }
   ]
 }

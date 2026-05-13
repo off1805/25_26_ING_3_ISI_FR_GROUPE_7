@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sL \"https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js\" -o \"/home/off1805/Desktop/Ing 3 ISI/Semestre 2/Projet-transversal-isi/25_26_ING_3_ISI_FR_GROUPE_7/src/main/resources/static/js/qrcode.min.js\")",
+      "Bash(curl -s \"https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js\" -o \"/home/off1805/Desktop/Ing 3 ISI/Semestre 2/Projet-transversal-isi/25_26_ING_3_ISI_FR_GROUPE_7/src/main/resources/static/js/jsQR.js\")"
+    ]
+  }
+}

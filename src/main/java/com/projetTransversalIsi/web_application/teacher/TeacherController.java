@@ -1,8 +1,15 @@
 package com.projetTransversalIsi.web_application.teacher;
 
+import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository.SpringDataEmploiTempsRepository;
+import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository.SpringDataPresenceListRepository;
+import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository.SpringDataSeanceRepository;
+import com.projetTransversalIsi.security.domain.UserPrincipal;
+import com.projetTransversalIsi.user.domain.UserRepository;
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
 import com.projetTransversalIsi.user.dto.ProfileResponseDTO;
 import com.projetTransversalIsi.user.dto.UserDetailsResponseDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +21,12 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/teacher")
+@RequiredArgsConstructor
 public class TeacherController {
-
+    private final UserRepository userRepository;
+    private final SpringDataEmploiTempsRepository emploiTempsRepository;
+    private final SpringDataPresenceListRepository presenceListRepository;
+    private final SpringDataSeanceRepository seanceRepository;
     @GetMapping("/dashboard")
     public String dashboardView(Model model) {
         UserDetailsResponseDTO teacher = getFakeTeacher();
@@ -57,15 +68,69 @@ public class TeacherController {
     }
 
     @GetMapping("/seance")
-    public String seanceView(Model model) {
-        UserDetailsResponseDTO teacher = getFakeTeacher();
-        SeanceViewModel seance = getFakeCurrentSeance();
-        List<StudentViewModel> etudiants = getFakeStudents();
+    public String seanceView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
 
+        // ── Enseignant authentifié ─────────────────────────────────────────
+        UserDetailsResponseDTO teacher = getFakeTeacher();
+        Long enseignantProfileId = null;
+
+        if (principal != null) {
+            var user = userRepository.findById(principal.userId()).orElse(null);
+            if (user != null && user.getProfile() != null) {
+                enseignantProfileId = user.getProfile().getId();
+            }
+        }
+        // Fallback sur le profil fake si pas d'auth (dev)
+        if (enseignantProfileId == null && teacher.profile() != null) {
+            enseignantProfileId = teacher.profile().getId();
+        }
+
+        // ── Séance en cours (today, heure actuelle, cet enseignant) ───────
+        final Long finalEnseignantId = enseignantProfileId;
+        LocalDate today = LocalDate.now();
+        LocalTime now   = LocalTime.now();
+
+        SeanceViewModel seance = (finalEnseignantId == null) ? null :
+                seanceRepository.findByEnseignantId(finalEnseignantId).stream()
+                        .filter(s -> !s.isDeleted()
+                                && s.getDateSeance().equals(today)
+                                && !s.getHeureDebut().isAfter(now)
+                                && !s.getHeureFin().isBefore(now))
+                        .findFirst()
+                        .map(s -> new SeanceViewModel(
+                                s.getId(), s.getLibelle(), s.getSalle(),
+                                s.getDateSeance(), s.getHeureDebut(), s.getHeureFin(),
+                                s.getCoursId()))
+                        .orElse(null);
+
+        // ── Résolution de la classeId via emploi du temps ou liste de présence ──
+        Long classeId = null;
+        Long presenceListId = null;
+        boolean hasListePresence = false;
+
+        if (seance != null) {
+            var presenceLists = presenceListRepository.findBySeanceId(seance.id());
+            hasListePresence = !presenceLists.isEmpty();
+
+            if (!presenceLists.isEmpty()) {
+                presenceListId = presenceLists.get(0).getId();
+                classeId = presenceLists.get(0).getClasseId();
+            } else {
+                classeId = emploiTempsRepository
+                        .findBySeanceId(seance.id())
+                        .map(et -> et.getClasseId())
+                        .orElse(null);
+            }
+        }
+
+        // Les étudiants sont chargés côté client via /api/students/classes/{classeId}
         model.addAttribute("teacher", teacher);
         model.addAttribute("seance", seance);
-        model.addAttribute("etudiants", etudiants);
-        model.addAttribute("enseignantId", teacher.profile() != null ? teacher.profile().getId() : null);
+        model.addAttribute("classeId", classeId);
+        model.addAttribute("enseignantId", finalEnseignantId);
+        model.addAttribute("hasListePresence", hasListePresence);
+        model.addAttribute("presenceListId", presenceListId);
+        model.addAttribute("coursId", seance != null ? seance.coursId() : null);
 
         return "TeacherInterface/TeacherSeance";
     }
@@ -89,18 +154,6 @@ public class TeacherController {
         );
     }
 
-
-    private SeanceViewModel getFakeCurrentSeance() {
-        return new SeanceViewModel(
-                1L,
-                "Architecture des ordinateurs",
-                "Salle B12",
-                LocalDate.now(),
-                LocalTime.of(23, 0),
-                LocalTime.of(23, 50),
-                11L
-        );
-    }
 
     private List<SeanceViewModel> getFakeSchedule() {
         return List.of(
@@ -158,19 +211,6 @@ public class TeacherController {
                         LocalTime.of(10, 0),
                         16L
                 )
-        );
-    }
-
-    private List<StudentViewModel> getFakeStudents() {
-        return List.of(
-                new StudentViewModel(1L, "Aminata", "Bah", "23L3I001"),
-                new StudentViewModel(2L, "Kevin", "Foka", "23L3I002"),
-                new StudentViewModel(3L, "Sarah", "Njoya", "23L3I003"),
-                new StudentViewModel(4L, "Merveille", "Tchoumi", "23L3I004"),
-                new StudentViewModel(5L, "Jordan", "Essomba", "23L3I005"),
-                new StudentViewModel(6L, "Prisca", "Ngassa", "23L3I006"),
-                new StudentViewModel(7L, "Blaise", "Mvondo", "23L3I007"),
-                new StudentViewModel(8L, "Esther", "Kouam", "23L3I008")
         );
     }
 

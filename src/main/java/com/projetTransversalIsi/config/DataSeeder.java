@@ -245,7 +245,7 @@ public class DataSeeder implements ApplicationRunner {
 
         // AP
         createUser("ap@saintjean.sn", pwd, apRole,
-                createAPProfile("AP001", "Ba", "Aminata", "774444444"));
+                createAPProfile("AP001", "Ba", "Aminata", "774444444",1L));
 
         // Surveillant
         createUser("surveillant@saintjean.sn", pwd, surveillantRole,
@@ -310,9 +310,9 @@ public class DataSeeder implements ApplicationRunner {
         return teacherProfileRepo.save(p);
     }
 
-    private JpaAPProfileEntity createAPProfile(String mat, String nom, String prenom, String tel) {
+    private JpaAPProfileEntity createAPProfile(String mat, String nom, String prenom, String tel,Long filiereId) {
         JpaAPProfileEntity p = new JpaAPProfileEntity();
-        p.setMatricule(mat); p.setNom(nom); p.setPrenom(prenom); p.setNumeroTelephone(tel);
+        p.setMatricule(mat); p.setNom(nom); p.setPrenom(prenom); p.setNumeroTelephone(tel);p.setFiliereId(filiereId);
         return apProfileRepo.save(p);
     }
 

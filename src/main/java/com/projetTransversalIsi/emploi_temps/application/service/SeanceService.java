@@ -21,6 +21,9 @@ public class SeanceService {
 
     private final SeanceRepository seanceRepo;
 
+    // Crée une séance de cours autonome (hors flux createEmploiTempsWithSeances).
+    // Vérifie le conflit horaire de l'enseignant avant insertion.
+    // Normalise libelle et salle pour respecter la contrainte NOT NULL en base.
     @Transactional
     public SeanceResponseDTO createSeance(CreateSeanceRequestDTO request) {
         if (seanceRepo.existsConflict(
@@ -54,6 +57,8 @@ public class SeanceService {
         return SeanceResponseDTO.fromDomain(seanceRepo.save(seance));
     }
 
+    // update ne modifie que les horaires (voir Seance.update) ; dateSeance et salle sont fixes
+    // pour ne pas invalider les présences déjà enregistrées sur cette séance.
     @Transactional
     public SeanceResponseDTO updateSeance(UpdateSeanceRequestDTO request) {
         Seance seance = seanceRepo.findById(request.id())
@@ -86,6 +91,9 @@ public class SeanceService {
                 .orElseThrow(() -> new SeanceNotFoundException(id));
     }
 
+    // Recherche par critère unique avec priorité : date > enseignant > cours > tout.
+    // Le filtre includeDeleted est appliqué en mémoire après la requête SQL car le repo
+    // ne supporte pas encore ce filtre en JPQL sur ces méthodes de recherche.
     public List<SeanceResponseDTO> searchSeances(SearchSeanceRequestDTO criteria) {
         List<Seance> resultats;
 
@@ -110,6 +118,9 @@ public class SeanceService {
                 .collect(Collectors.toList());
     }
 
+    // Utilisé par TeacherController pour afficher les séances du jour d'un enseignant.
+    // Le filtre par enseignantId est appliqué en mémoire sur le résultat de findByDate
+    // car le repo n'expose pas de méthode combinant date ET enseignantId.
     public List<Seance> getSeancesTodayByEnseignant(Long enseignantId, Boolean includeDeleted) {
         if (enseignantId == null) {
             return Collections.emptyList();
@@ -130,4 +141,3 @@ public class SeanceService {
         return result;
     }
 }
-

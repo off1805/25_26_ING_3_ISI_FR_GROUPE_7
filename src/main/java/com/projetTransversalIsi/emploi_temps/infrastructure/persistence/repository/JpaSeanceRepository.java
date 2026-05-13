@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+// Adaptateur secondaire pour les séances. Même pattern que JpaEmploiTempsRepository :
+// domaine → entité JPA (mapper.toEntity), persistance, retour domaine (mapper.toDomain).
 @Slf4j
 @Repository
 @RequiredArgsConstructor

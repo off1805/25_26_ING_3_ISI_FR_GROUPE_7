@@ -24,6 +24,8 @@ public class EmploiTempsController {
 
     private final EmploiTempsService emploiTempsService;
 
+    // POST /api/emplois-temps — crée un emploi du temps vide (sans séances).
+    // Retourne 201 Created avec le DTO de l'emploi créé.
     @PostMapping
     public ResponseEntity<?> createEmploiTemps(@Valid @RequestBody CreateEmploiTempsRequestDTO request) {
         log.info("Création d'un emploi du temps pour classe {}", request.classeId());
@@ -31,6 +33,8 @@ public class EmploiTempsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // POST /api/emplois-temps/with-seances — création atomique emploi + séances.
+    // Endpoint privilégié par le frontend éditeur drag-drop qui envoie tout en un seul appel.
     @PostMapping("/with-seances")
     public ResponseEntity<?> createEmploiTempsWithSeances(@Valid @RequestBody CreateEmploiTempsWithSeancesDTO request) {
         log.info("Création d'un emploi du temps avec {} séances pour la classe {}",
@@ -40,6 +44,8 @@ public class EmploiTempsController {
 
     }
 
+    // PUT /api/emplois-temps/{id}/with-seances — remplace complètement les séances (replace-all).
+    // La vérification id == request.id() protège contre un corps JSON mal formé.
     @PutMapping("/{id}/with-seances")
     public ResponseEntity<?> updateEmploiTempsWithSeances(
             @PathVariable Long id,
@@ -52,6 +58,7 @@ public class EmploiTempsController {
         return ResponseEntity.ok(response);
     }
 
+    // PUT /api/emplois-temps/{id} — met à jour uniquement les métadonnées (période, semaine, classe).
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEmploiTemps(
             @PathVariable Long id,
@@ -65,6 +72,7 @@ public class EmploiTempsController {
         return ResponseEntity.ok(response);
     }
 
+    // DELETE /api/emplois-temps/{id} — soft-delete ; retourne 204 No Content.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmploiTemps(@PathVariable Long id) {
         log.info("Suppression de l'emploi du temps ID: {}", id);
@@ -79,6 +87,8 @@ public class EmploiTempsController {
         return ResponseEntity.ok(response);
     }
 
+    // GET /api/emplois-temps?classeId=&status=&... — recherche paginée via @ModelAttribute.
+    // @PageableDefault fixe la taille à 10 si le client n'envoie pas de paramètre `size`.
     @GetMapping
     public ResponseEntity<Page<EmploiTempsResponseDTO>> searchEmploisTemps(
             @ModelAttribute SearchEmploiTempsRequestDTO comand,
@@ -88,6 +98,7 @@ public class EmploiTempsController {
         return ResponseEntity.ok(results);
     }
 
+    // POST /api/emplois-temps/seances — lie une séance existante à un emploi du temps.
     @PostMapping("/seances")
     public ResponseEntity<EmploiTempsResponseDTO> addSeanceToEmploiTemps(
             @Valid @RequestBody AddSeanceToEmploiDTO request) {
@@ -97,6 +108,7 @@ public class EmploiTempsController {
         return ResponseEntity.ok(response);
     }
 
+    // DELETE /api/emplois-temps/seances — retire le lien FK sans supprimer la séance.
     @DeleteMapping("/seances")
     public ResponseEntity<EmploiTempsResponseDTO> removeSeanceFromEmploiTemps(
             @Valid @RequestBody AddSeanceToEmploiDTO request) {

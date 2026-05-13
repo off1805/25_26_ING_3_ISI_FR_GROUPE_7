@@ -18,9 +18,6 @@ public class JpaPresenceRowEntity {
     @Column(name = "etudiant_id", nullable = false)
     private Long etudiantId;
 
-    @Column(name = "present", nullable = false)
-    private boolean present;
-
-    @Column(name = "heures_absence", nullable = false)
-    private float heuresAbsence = 0f;
+    @Column(name = "present")
+    private Boolean present;
 }
