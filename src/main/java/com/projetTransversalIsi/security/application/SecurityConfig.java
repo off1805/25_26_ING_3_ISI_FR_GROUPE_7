@@ -31,7 +31,7 @@ public class SecurityConfig {
                                 auth -> auth
                                                 // Static resources always public
                                                 .requestMatchers("/sw.js", "/manifest.json", "/images/**",
-                                                                "/css/**", "/js/**", "/webjars/**")
+                                                                "/css/**", "/js/**", "/webjars/**", "/ws/**")
                                                 .permitAll()
 
                                                 // Auth endpoints public

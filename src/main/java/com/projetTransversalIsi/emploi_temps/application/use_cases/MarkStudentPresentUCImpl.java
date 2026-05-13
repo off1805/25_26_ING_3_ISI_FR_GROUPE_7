@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.emploi_temps.application.use_cases;
 
+import com.projetTransversalIsi.emploi_temps.application.PresenceNotificationService;
 import com.projetTransversalIsi.emploi_temps.application.dto.PresenceRowResponseDTO;
 import com.projetTransversalIsi.emploi_temps.domain.model.Appel;
 import com.projetTransversalIsi.emploi_temps.domain.model.AttendanceCode;
@@ -25,6 +26,7 @@ public class MarkStudentPresentUCImpl implements MarkStudentPresentUC {
     private final PresenceListRepository presenceListRepo;
     private final PresenceRowRepository presenceRowRepo;
     private final InfoPresenceRowRepository infoPresenceRowRepo;
+    private final PresenceNotificationService notificationService;
 
     @Override
     public PresenceRowResponseDTO execute(MarkStudentPresentCommand command) {
@@ -75,6 +77,8 @@ public class MarkStudentPresentUCImpl implements MarkStudentPresentUC {
         row.recalculatePresent(infoPresenceRowRepo.findByPresenceRowId(row.getId()));
         row = presenceRowRepo.save(row);
 
+        notificationService.notifyStudentPresent(command.idStudent(), presenceList.getId());
+
         return PresenceRowResponseDTO.fromDomain(row);
     }
 
@@ -90,6 +94,7 @@ public class MarkStudentPresentUCImpl implements MarkStudentPresentUC {
         }
 
         AttendanceCode code;
+        System.out.println(command.codeValeur());
         if (command.codeValeur() != null) {
             code = attendanceCodeRepo.findByValeur(command.codeValeur())
                     .orElseThrow(() -> new IllegalArgumentException("Code QR invalide"));

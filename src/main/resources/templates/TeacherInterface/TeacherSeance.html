@@ -6,6 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KemOSchool — Séance de cours</title>
     <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <style>
+        @keyframes presence-rise {
+            0%   { transform: translateY(0);      opacity: 1; }
+            70%  { transform: translateY(-75vh);  opacity: 0.85; }
+            100% { transform: translateY(-95vh);  opacity: 0; }
+        }
+        #presence-toast-container {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 420px;
+            max-width: 95vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 200;
+            overflow: hidden;
+        }
+        .presence-toast {
+            position: absolute;
+            bottom: 0;
+            animation: presence-rise 4.5s ease-out forwards;
+            max-width: 300px;
+        }
+    </style>
 </head>
 
 <body class="h-screen bg-background-1 flex flex-row overflow-hidden">
@@ -749,8 +773,13 @@
     <div id="class-drawer-backdrop" onclick="closeClassDrawer()"
         class="hidden fixed inset-0 bg-black/50 z-[109]"></div>
 
+    <!-- Conteneur des toasts de présence en temps réel (WebSocket) -->
+    <div id="presence-toast-container"></div>
+
     <script th:src="@{/js/preline.js}"></script>
     <script th:src="@{/js/qrcode.min.js}"></script>
+    <script th:src="@{/webjars/sockjs-client/1.5.1/sockjs.min.js}"></script>
+    <script th:src="@{/webjars/stomp-websocket/2.3.4/stomp.min.js}"></script>
     <script th:src="@{/js/TeacherInterface/seance.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
 </body>

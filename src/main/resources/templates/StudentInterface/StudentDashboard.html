@@ -356,7 +356,7 @@
 
 
 <!-- ═══ MODAL QR — VRAIE CAMÉRA ═══ -->
-<div id="modal-qr" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+<div id="modal-qr" class="hidden fixed inset-0 z-[80] items-center justify-center p-4" role="dialog" aria-modal="true">
     <div id="qr-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="relative w-full max-w-sm bg-card border border-card-line rounded-2xl shadow-2xl overflow-hidden z-10">
         <div class="flex items-center justify-between px-5 py-4 border-b border-card-line">
@@ -415,7 +415,7 @@
 </div>
 
 <!-- ═══ MODAL PIN — 6 CHIFFRES ═══ -->
-<div id="modal-pin" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+<div id="modal-pin" class="hidden fixed inset-0 z-[80] items-center justify-center p-4" role="dialog" aria-modal="true">
     <div id="pin-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="relative w-full max-w-sm bg-card border border-card-line rounded-2xl shadow-2xl overflow-hidden z-10">
         <div class="flex items-center justify-between px-5 py-4 border-b border-card-line">
@@ -443,7 +443,7 @@
                 <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" data-index="5" autocomplete="off" class="pin-input w-11 rounded-xl border-2 border-card-line bg-background-1 text-layer-foreground text-xl font-black text-center font-mono focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all caret-transparent" style="height:52px"/>
             </div>
             <p id="pin-hint" class="text-center text-xs text-muted-foreground-2">Entrez les 6 chiffres du code</p>
-            <div id="pin-error" class="hidden flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl">
+            <div id="pin-error" class="hidden items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl">
                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-500 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                 <p class="text-xs text-red-600 font-semibold">Code incorrect. Vérifiez avec votre professeur.</p>
             </div>
@@ -457,6 +457,7 @@
 
 
 <script th:src="@{/js/preline.js}"></script>
+<script th:src="@{/js/jsQR.js}"></script>
 <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
 <script>
     // Date
@@ -469,12 +470,21 @@
 
     // ─── Modal helpers ────────────────────────────────────────
     const $=id=>document.getElementById(id);
-    function openModal(id){$(id).classList.remove('hidden');document.body.style.overflow='hidden';}
-    function closeModal(id){$(id).classList.add('hidden');document.body.style.overflow='';}
+    function openModal(id){const el=$(id);el.classList.remove('hidden');el.classList.add('flex');document.body.style.overflow='hidden';}
+    function closeModal(id){const el=$(id);el.classList.add('hidden');el.classList.remove('flex');document.body.style.overflow='';}
 
-    // ─── QR SCANNER ───────────────────────────────────────────
-    let qrStream=null,scanRaf=null,beamPos=0,beamDir=1;
+    // ─── QR SCANNER (jsQR) ────────────────────────────────────
+    // jsQR lit chaque frame du flux vidéo via un canvas et décode le QR code.
+    let qrStream=null,scanRaf=null,beamPos=0,beamDir=1,_qrScanCanvas=null,_qrScanCtx=null;
+
+    function _initScanCanvas(){
+        if(_qrScanCanvas)return;
+        _qrScanCanvas=document.createElement('canvas');
+        _qrScanCtx=_qrScanCanvas.getContext('2d',{willReadFrequently:true});
+    }
+
     async function startCamera(){
+        _initScanCanvas();
         $('qr-placeholder').classList.remove('hidden');
         $('qr-placeholder-text').textContent='Initialisation de la caméra…';
         $('qr-video').classList.add('hidden');
@@ -482,22 +492,90 @@
         $('qr-success').style.opacity='0';
         $('qr-success').style.pointerEvents='none';
         $('btn-validate-qr').disabled=true;
-        $('qr-status-text').textContent='Pointez votre caméra';
+        $('qr-status-text').textContent='Pointez votre caméra vers le QR code';
         try{
             qrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:720},height:{ideal:720}}});
             const v=$('qr-video');
             v.srcObject=qrStream;
-            v.onloadedmetadata=()=>{v.play();$('qr-placeholder').classList.add('hidden');v.classList.remove('hidden');$('qr-overlay').style.opacity='1';animateBeam();};
-        }catch(e){$('qr-placeholder-text').textContent=e.name==='NotAllowedError'?'Accès caméra refusé. Autorisez-le dans les paramètres.':'Impossible d\'accéder à la caméra.';}
+            v.onloadedmetadata=()=>{
+                v.play();
+                $('qr-placeholder').classList.add('hidden');
+                v.classList.remove('hidden');
+                $('qr-overlay').style.opacity='1';
+                _startBeam();
+                _startScanLoop();
+            };
+        }catch(e){
+            $('qr-placeholder-text').textContent=e.name==='NotAllowedError'
+                ?'Accès caméra refusé. Autorisez-le dans les paramètres.'
+                :'Impossible d\'accéder à la caméra.';
+        }
     }
-    function animateBeam(){
+
+    function _startBeam(){
         const max=196;
         if(scanRaf)cancelAnimationFrame(scanRaf);
         function step(){beamPos+=beamDir*1.8;if(beamPos>=max||beamPos<=0)beamDir*=-1;$('scan-beam').style.top=beamPos+'px';scanRaf=requestAnimationFrame(step);}
         step();
     }
-    function stopCamera(){if(qrStream){qrStream.getTracks().forEach(t=>t.stop());qrStream=null;}if(scanRaf){cancelAnimationFrame(scanRaf);scanRaf=null;}}
-    function onQrDetected(){if(scanRaf){cancelAnimationFrame(scanRaf);scanRaf=null;}$('qr-overlay').style.opacity='0';$('qr-success').style.opacity='1';$('qr-success').style.pointerEvents='auto';$('qr-status-text').textContent='QR Code détecté !';$('btn-validate-qr').disabled=false;}
+
+    // Boucle de décodage : capture un frame vidéo et le passe à jsQR.
+    function _startScanLoop(){
+        const v=$('qr-video');
+        function tick(){
+            if(!qrStream)return; // caméra arrêtée
+            if(v.readyState<v.HAVE_ENOUGH_DATA){scanRaf=requestAnimationFrame(tick);return;}
+            _qrScanCanvas.width=v.videoWidth;
+            _qrScanCanvas.height=v.videoHeight;
+            _qrScanCtx.drawImage(v,0,0);
+            const imgData=_qrScanCtx.getImageData(0,0,_qrScanCanvas.width,_qrScanCanvas.height);
+            const code=jsQR(imgData.data,imgData.width,imgData.height,{inversionAttempts:'dontInvert'});
+            if(code){_onQrDetected(code.data);}
+            else{scanRaf=requestAnimationFrame(tick);}
+        }
+        scanRaf=requestAnimationFrame(tick);
+    }
+
+    function stopCamera(){
+        if(qrStream){qrStream.getTracks().forEach(t=>t.stop());qrStream=null;}
+        if(scanRaf){cancelAnimationFrame(scanRaf);scanRaf=null;}
+    }
+
+    async function _onQrDetected(decodedCode){
+        // Stopper le scan immédiatement pour éviter les doubles détections.
+        if(scanRaf){cancelAnimationFrame(scanRaf);scanRaf=null;}
+        $('qr-overlay').style.opacity='0';
+        $('qr-success').style.opacity='1';
+        $('qr-success').style.pointerEvents='auto';
+        $('qr-status-text').textContent='QR Code détecté — vérification…';
+        $('btn-validate-qr').disabled=true;
+        try{
+            const{default:api}=await import('/js/common/ClientHttp.js');
+            await api.get(`/api/presences/scan?code=${encodeURIComponent(decodedCode)}`);
+            $('qr-status-text').textContent='Présence enregistrée !';
+            $('qr-status-text').className='text-sm font-bold text-green-600 text-center';
+            $('btn-validate-qr').textContent='Fermer';
+            $('btn-validate-qr').disabled=false;
+            $('btn-validate-qr').className='flex-1 py-2.5 rounded-xl bg-green-500 text-sm font-bold text-white hover:bg-green-600 active:scale-95 transition-all';
+            $('btn-validate-qr').onclick=()=>{stopCamera();closeModal('modal-qr');};
+            setTimeout(()=>{stopCamera();closeModal('modal-qr');},2500);
+        }catch(e){
+            const msg=e?.status===400?'Code expiré ou invalide.':e?.status===401?'Session expirée.':'Erreur de connexion.';
+            $('qr-status-text').textContent=msg;
+            $('qr-status-text').className='text-sm font-bold text-red-500 text-center';
+            // Relancer le scan après 2 s pour permettre un nouvel essai.
+            setTimeout(()=>{
+                if(!qrStream)return;
+                $('qr-overlay').style.opacity='1';
+                $('qr-success').style.opacity='0';
+                $('qr-success').style.pointerEvents='none';
+                $('qr-status-text').textContent='Pointez votre caméra vers le QR code';
+                $('qr-status-text').className='text-sm text-layer-foreground text-center';
+                _startBeam();
+                _startScanLoop();
+            },2000);
+        }
+    }
 
     $('btn-open-qr').addEventListener('click',()=>{openModal('modal-qr');startCamera();});
     $('btn-close-qr').addEventListener('click',()=>{stopCamera();closeModal('modal-qr');});
@@ -509,7 +587,27 @@
     // ─── PIN (6 chiffres) ─────────────────────────────────────
     const pinInputs=[...document.querySelectorAll('.pin-input')];
     const getPin=()=>pinInputs.map(i=>i.value).join('');
-    function resetPin(){pinInputs.forEach(i=>{i.value='';i.classList.remove('border-red-400');});$('pin-error').classList.add('hidden');$('pin-hint').classList.remove('hidden');$('btn-validate-pin').disabled=true;pinInputs[0]?.focus();}
+    const PIN_BTN_CLS = $('btn-validate-pin').className;
+
+    function resetPin() {
+        pinInputs.forEach(i => {
+            i.value = '';
+            i.classList.remove('border-red-400', 'border-green-400');
+            i.classList.add('border-card-line');
+        });
+        $('pin-error').classList.add('hidden');
+        $('pin-error').classList.remove('flex');
+        $('pin-hint').textContent = 'Entrez les 6 chiffres du code';
+        $('pin-hint').className = 'text-center text-xs text-muted-foreground-2';
+        $('pin-hint').classList.remove('hidden');
+        const btn = $('btn-validate-pin');
+        btn.disabled = true;
+        btn.textContent = 'Valider';
+        btn.className = PIN_BTN_CLS;
+        btn.onclick = null;
+        pinInputs[0]?.focus();
+    }
+
     pinInputs.forEach((inp,idx)=>{
         inp.addEventListener('focus',()=>inp.select());
         inp.addEventListener('input',e=>{const v=e.target.value.replace(/\D/g,'').slice(0,1);inp.value=v;if(v&&idx<5)pinInputs[idx+1].focus();$('btn-validate-pin').disabled=getPin().length<6;});
@@ -517,10 +615,66 @@
         inp.addEventListener('paste',e=>{e.preventDefault();const d=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,6);d.split('').forEach((c,i)=>{if(pinInputs[i])pinInputs[i].value=c;});const ne=pinInputs.find(i=>!i.value);(ne||pinInputs[5]).focus();$('btn-validate-pin').disabled=getPin().length<6;});
     });
     $('btn-open-pin').addEventListener('click',()=>{openModal('modal-pin');resetPin();});
-    $('btn-close-pin').addEventListener('click',()=>closeModal('modal-pin'));
-    $('btn-cancel-pin').addEventListener('click',()=>closeModal('modal-pin'));
-    $('pin-backdrop').addEventListener('click',()=>closeModal('modal-pin'));
-    $('btn-validate-pin').addEventListener('click',()=>{pinInputs.forEach(i=>i.classList.add('border-red-400'));$('pin-error').classList.remove('hidden');$('pin-hint').classList.add('hidden');$('pin-boxes').animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:350,easing:'ease-out'});});
+    $('btn-close-pin').addEventListener('click',()=>{closeModal('modal-pin');resetPin();});
+    $('btn-cancel-pin').addEventListener('click',()=>{closeModal('modal-pin');resetPin();});
+    $('pin-backdrop').addEventListener('click',()=>{closeModal('modal-pin');resetPin();});
+
+    // ── Validation PIN → appel backend ─────────────────────────
+    $('btn-validate-pin').addEventListener('click', async () => {
+        const pin = getPin();
+        if (pin.length < 6) return;
+
+        // État chargement
+        const btn = $('btn-validate-pin');
+        btn.disabled = true;
+        btn.textContent = 'Vérification…';
+        $('pin-error').classList.add('hidden');
+        $('pin-hint').textContent = 'Connexion au serveur…';
+        $('pin-hint').className = 'text-center text-xs text-muted-foreground-2';
+        $('pin-hint').classList.remove('hidden');
+
+        try {
+            // GET /api/presences/scan?code=<PIN> — l'étudiant est identifié via son JWT
+            const { default: api } = await import('/js/common/ClientHttp.js');
+            await api.get(`/api/presences/scan?code=${encodeURIComponent(pin)}`);
+
+            // ── Succès ──────────────────────────────────────────
+            pinInputs.forEach(i => {
+                i.classList.remove('border-card-line', 'border-red-400');
+                i.classList.add('border-green-400');
+            });
+            $('pin-hint').textContent = 'Présence enregistrée !';
+            $('pin-hint').className = 'text-center text-sm font-bold text-green-600';
+            btn.textContent = 'Fermer';
+            btn.disabled = false;
+            btn.className = 'flex-1 py-2.5 rounded-xl bg-green-500 text-sm font-bold text-white hover:bg-green-600 active:scale-95 transition-all';
+            btn.onclick = () => { closeModal('modal-pin'); resetPin(); };
+            setTimeout(() => { closeModal('modal-pin'); resetPin(); }, 2500);
+
+        } catch (e) {
+            // ── Erreur ──────────────────────────────────────────
+            pinInputs.forEach(i => {
+                i.classList.remove('border-card-line', 'border-green-400');
+                i.classList.add('border-red-400');
+            });
+            $('pin-error').classList.remove('hidden');
+            $('pin-error').classList.add('flex');
+            $('pin-hint').classList.add('hidden');
+            const errEl = $('pin-error').querySelector('p');
+            if (errEl) {
+                if (e?.status === 400)      errEl.textContent = 'Code incorrect ou expiré. Vérifiez avec votre professeur.';
+                else if (e?.status === 401) errEl.textContent = 'Session expirée. Veuillez vous reconnecter.';
+                else                        errEl.textContent = 'Erreur de connexion. Réessayez.';
+            }
+            btn.disabled = false;
+            btn.textContent = 'Valider';
+            btn.className = PIN_BTN_CLS;
+            $('pin-boxes').animate(
+                [{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],
+                {duration:350, easing:'ease-out'}
+            );
+        }
+    });
 </script>
 </body>
 </html>

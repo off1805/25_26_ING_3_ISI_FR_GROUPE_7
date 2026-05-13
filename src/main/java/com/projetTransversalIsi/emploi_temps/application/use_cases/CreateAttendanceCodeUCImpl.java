@@ -35,8 +35,8 @@ public class CreateAttendanceCodeUCImpl implements CreateAttendanceCodeUC {
         );
         // L'URL de scan est construite côté serveur pour que le QR code embarque l'adresse publique.
         // Seul le type QR génère une URL (PIN est saisi manuellement, pas scanné).
-        String baseUrl = "https://" +serverDomain+  "/api/presences/scan?code=";
-        //String baseUrl = "https://" + ipAddress + ":" + serverPort + "/api/presences/scan?code=";
+       // String baseUrl = "https://" +serverDomain+  "/api/presences/scan?code=";
+        String baseUrl = "https://" + ipAddress + ":" + serverPort + "/api/presences/scan?code=";
         return AttendanceCodeResponseDTO.fromDomain(attendanceCodeRepo.save(code), baseUrl);
     }
 

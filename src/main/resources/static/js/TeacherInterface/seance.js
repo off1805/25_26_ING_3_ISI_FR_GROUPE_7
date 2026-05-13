@@ -790,6 +790,7 @@ function initBlockInteraction() {
         });
         _presenceListId         = pl.id;
         window.PRESENCE_LIST_ID = pl.id;
+        _connectWebSocket(pl.id);
     }
 
     // Crée un Appel (session de pointage) pour la PresenceList courante.
@@ -1194,7 +1195,7 @@ function initBlockInteraction() {
                         </button>
                     </div>`;
                 const container = document.getElementById('qr-container');
-                const qrContent = appel.scanUrl || appel.valeur;
+                const qrContent = appel.valeur;
                 if (typeof QRCode !== 'undefined') {
                     new QRCode(container, { text: qrContent, width: 190, height: 190, colorDark: '#7c3aed', colorLight: '#ffffff' });
                 } else {
@@ -1419,6 +1420,113 @@ function initBlockInteraction() {
 
         HSOverlay.open('#modal-end-session');
     }
+
+    // ── WebSocket — notifications présence en temps réel ────────────────
+    // S'abonne au topic /topic/presences/{presenceListId} via STOMP/SockJS.
+    // Affiche un toast animé (bas → haut) pour chaque étudiant marqué présent.
+
+    let _stompClient = null;
+
+    function _connectWebSocket(listId) {
+        if (!listId) return;
+        if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') return;
+        if (_stompClient && _stompClient.connected) return;
+
+        const socket = new SockJS('/ws');
+        _stompClient = Stomp.over(socket);
+        _stompClient.debug = null;
+
+        _stompClient.connect({}, () => {
+            _stompClient.subscribe(`/topic/presences/${listId}`, msg => {
+                try { _showPresenceToast(JSON.parse(msg.body)); } catch (_) {}
+            });
+        }, () => {
+            // Reconnexion automatique après 5 s si la connexion échoue.
+            setTimeout(() => _connectWebSocket(listId), 5000);
+        });
+    }
+
+   function _showPresenceToast(data) {
+    const container = document.getElementById('presence-toast-container');
+    if (!container) return;
+
+    const initial = (data.prenom || '?')[0].toUpperCase();
+
+    const avatarHtml = data.photoUrl
+        ? `
+        <img 
+            src="${data.photoUrl}" 
+            alt="${data.prenom || ''}"
+            class="size-11 rounded-full object-cover border border-primary/20 shadow-sm shrink-0"
+        >
+        `
+        : `
+        <div
+            class="size-11 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold shadow-sm shrink-0">
+            ${initial}
+        </div>
+        `;
+
+    const toast = document.createElement('div');
+    toast.className = 'presence-toast';
+
+    // Position horizontale aléatoire
+    toast.style.left = (5 + Math.random() * 35) + '%';
+
+    toast.innerHTML = `
+        <div class="flex items-center gap-3">
+
+            <!-- Avatar -->
+            <div class="relative shrink-0">
+                ${avatarHtml}
+
+                <!-- Indicateur présence -->
+                <div
+                    class="absolute bottom-0 right-0 size-3 rounded-full bg-green-500 border-2 border-white">
+                </div>
+            </div>
+
+            <!-- Bubble présence -->
+            <div
+                class="relative flex items-center gap-3 px-4 py-1 rounded-[24px] bg-card border border-layer-line shadow-md hover:shadow-lg transition-all duration-300 max-w-[260px]">
+
+                <!-- Emoji SVG -->
+                <div
+                    class="size-8 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
+
+                    <img
+                        src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f44b.svg"
+                        alt="wave emoji"
+                        class="size-5">
+                </div>
+
+                <!-- Nom -->
+                <div class="min-w-0">
+                    <span class="text-sm font-semibold text-muted-foreground truncate block">
+                        ${data.prenom || ''} ${data.nom || ''}
+                    </span>
+                </div>
+
+                <!-- Queue bulle -->
+                <div
+                    class="absolute left-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-card border-l border-b border-layer-line rotate-45">
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+    container.appendChild(toast);
+
+    // Suppression auto
+    setTimeout(() => {
+        toast.remove();
+    }, 5000);
+}
+
+    // Connexion initiale si une liste est déjà ouverte (rechargement de page).
+    if (window.PRESENCE_LIST_ID) _connectWebSocket(window.PRESENCE_LIST_ID);
 
     // ── Drawer mobile : #left-container utilisé comme bottom sheet ────────
     // Sur desktop (md+) : #left-container est toujours visible, ces fonctions ne font rien.
