@@ -40,278 +40,129 @@
 
         <!-- PAGE -->
         <div class="flex-1 overflow-y-auto">
-            <div class="px-4 sm:px-6 lg:px-8 py-7 max-w-7xl mx-auto space-y-5">
+            <div class="px-4 sm:px-6 lg:px-8 py-7 max-w-7xl mx-auto space-y-6">
 
                 <!-- ═══ HERO ═══ -->
                 <div class="relative overflow-hidden rounded-2xl bg-gray-950 px-6 py-7">
-                    <div class="absolute -top-16 -right-16 size-60 rounded-full bg-orange-500/15 blur-3xl pointer-events-none"></div>
+                    <div class="absolute -top-16 -right-16 size-60 rounded-full bg-primary/15 blur-3xl pointer-events-none"></div>
                     <div class="absolute -bottom-10 left-10 size-44 rounded-full bg-red-700/10 blur-3xl pointer-events-none"></div>
                     <div class="absolute inset-0 opacity-[0.025] pointer-events-none bg-[linear-gradient(rgba(255,255,255,1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,1)_1px,transparent_1px)] bg-[size:36px_36px]"></div>
                     <div class="relative flex flex-col sm:flex-row sm:items-end justify-between gap-5">
                         <div>
                             <div class="flex items-center gap-2 mb-4">
-                                <div class="h-px w-5 bg-orange-400/60 rounded-full"></div>
+                                <div class="h-px w-5 bg-primary/60 rounded-full"></div>
                                 <span class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]" id="hero-date">—</span>
                             </div>
-                            <h1 class="text-2xl sm:text-[1.75rem] font-black text-white leading-tight tracking-tight">
-                                Mes absences
-                            </h1>
-                            <p class="text-sm text-white/40 mt-1.5">Soumettez et suivez vos justificatifs d'absence.</p>
+                            <h1 class="text-2xl sm:text-[1.75rem] font-black text-white leading-tight tracking-tight">Mes absences</h1>
+                            <p class="text-sm text-white/40 mt-1.5">Consultez et justifiez vos absences du semestre.</p>
                         </div>
-                        <!-- Résumé pills -->
                         <div class="flex flex-wrap gap-2 shrink-0">
-                            <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-orange-500/15 rounded-full border border-orange-500/25">
-                                <div class="size-1.5 rounded-full bg-orange-400"></div>
-                                <span class="text-xs font-bold text-orange-300"
-                                      th:text="${(absences != null ? absences.?[status == 'PENDING'].size() : 0) + ' en attente'}">0 en attente</span>
+                            <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-white/5 rounded-full border border-white/10">
+                                <div class="size-1.5 rounded-full bg-white/40"></div>
+                                <span class="text-xs font-bold text-white/50" id="hero-total">— absences</span>
                             </div>
                             <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-green-500/15 rounded-full border border-green-500/25">
                                 <div class="size-1.5 rounded-full bg-green-400"></div>
-                                <span class="text-xs font-semibold text-green-300"
-                                      th:text="${(absences != null ? absences.?[status == 'APPROVED'].size() : 0) + ' approuvées'}">0 approuvées</span>
+                                <span class="text-xs font-semibold text-green-300" id="hero-justifiees">0 justifiées</span>
+                            </div>
+                            <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-orange-500/15 rounded-full border border-orange-500/25">
+                                <div class="size-1.5 rounded-full bg-orange-400"></div>
+                                <span class="text-xs font-semibold text-orange-300" id="hero-en-cours">0 en cours</span>
                             </div>
                             <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-red-500/15 rounded-full border border-red-500/25">
                                 <div class="size-1.5 rounded-full bg-red-400"></div>
-                                <span class="text-xs font-semibold text-red-300"
-                                      th:text="${(absences != null ? absences.?[status == 'REJECTED'].size() : 0) + ' rejetées'}">0 rejetées</span>
+                                <span class="text-xs font-semibold text-red-300" id="hero-non-justifiees">0 non justifiées</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ═══ CATEGORY CARDS ═══ -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- ═══ FILTRES + BARRE BULK ═══ -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <!-- Tabs filtres -->
+                    <div class="flex bg-surface rounded-lg p-1 gap-x-1" id="filter-tabs">
+                        <button type="button" data-filter="TOUTES"
+                                class="filter-btn active-filter py-2 px-4 text-xs font-medium rounded-lg transition-all focus:outline-none">
+                            Toutes
+                        </button>
+                        <button type="button" data-filter="JUSTIFIEE"
+                                class="filter-btn py-2 px-4 text-xs font-medium rounded-lg transition-all focus:outline-none text-muted-foreground-1 hover:text-layer-foreground">
+                            Justifiées
+                        </button>
+                        <button type="button" data-filter="NON_JUSTIFIEE"
+                                class="filter-btn py-2 px-4 text-xs font-medium rounded-lg transition-all focus:outline-none text-muted-foreground-1 hover:text-layer-foreground">
+                            Non justifiées
+                        </button>
+                        <button type="button" data-filter="EN_COURS"
+                                class="filter-btn py-2 px-4 text-xs font-medium rounded-lg transition-all focus:outline-none text-muted-foreground-1 hover:text-layer-foreground">
+                            En cours
+                        </button>
+                    </div>
 
-                    <!-- En attente -->
-                    <button type="button" id="card-PENDING"
-                            onclick="selectCategory('PENDING')"
-                            class="category-card group relative overflow-hidden rounded-2xl p-5 text-left transition-all active:scale-[0.98] border-2 border-orange-200 bg-orange-50 hover:shadow-[0_0_0_3px_rgba(251,146,60,0.15)] hover:border-orange-400">
-                        <div class="absolute -top-6 -right-6 size-24 rounded-full bg-orange-400/20 blur-2xl pointer-events-none"></div>
-                        <div class="relative">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="size-11 rounded-xl bg-orange-100 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-orange-500"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                </div>
-                                <span class="text-3xl font-black text-orange-600" id="count-PENDING"
-                                      th:text="${absences != null ? absences.?[status == 'PENDING'].size() : 0}">0</span>
-                            </div>
-                            <p class="text-sm font-black text-orange-900">En attente</p>
-                            <p class="text-xs text-orange-600/70 mt-0.5">Justification requise</p>
-                            <div class="mt-4 flex items-center gap-1.5 text-[10px] font-bold text-orange-600 group-hover:gap-2.5 transition-all">
-                                <span>Voir les absences</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-                            </div>
-                        </div>
-                    </button>
-
-                    <!-- Approuvées -->
-                    <button type="button" id="card-APPROVED"
-                            onclick="selectCategory('APPROVED')"
-                            class="category-card group relative overflow-hidden rounded-2xl p-5 text-left transition-all active:scale-[0.98] border-2 border-green-200 bg-green-50 hover:shadow-[0_0_0_3px_rgba(34,197,94,0.15)] hover:border-green-400">
-                        <div class="absolute -top-6 -right-6 size-24 rounded-full bg-green-400/20 blur-2xl pointer-events-none"></div>
-                        <div class="relative">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="size-11 rounded-xl bg-green-100 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-green-600"><path d="M20 6 9 17l-5-5"/></svg>
-                                </div>
-                                <span class="text-3xl font-black text-green-700" id="count-APPROVED"
-                                      th:text="${absences != null ? absences.?[status == 'APPROVED'].size() : 0}">0</span>
-                            </div>
-                            <p class="text-sm font-black text-green-900">Approuvées</p>
-                            <p class="text-xs text-green-600/70 mt-0.5">Justifications acceptées</p>
-                            <div class="mt-4 flex items-center gap-1.5 text-[10px] font-bold text-green-600 group-hover:gap-2.5 transition-all">
-                                <span>Voir les absences</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-                            </div>
-                        </div>
-                    </button>
-
-                    <!-- Rejetées -->
-                    <button type="button" id="card-REJECTED"
-                            onclick="selectCategory('REJECTED')"
-                            class="category-card group relative overflow-hidden rounded-2xl p-5 text-left transition-all active:scale-[0.98] border-2 border-red-200 bg-red-50 hover:shadow-[0_0_0_3px_rgba(239,68,68,0.15)] hover:border-red-400">
-                        <div class="absolute -top-6 -right-6 size-24 rounded-full bg-red-400/20 blur-2xl pointer-events-none"></div>
-                        <div class="relative">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="size-11 rounded-xl bg-red-100 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-red-500"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                                </div>
-                                <span class="text-3xl font-black text-red-700" id="count-REJECTED"
-                                      th:text="${absences != null ? absences.?[status == 'REJECTED'].size() : 0}">0</span>
-                            </div>
-                            <p class="text-sm font-black text-red-900">Rejetées</p>
-                            <p class="text-xs text-red-500/70 mt-0.5">Justifications refusées</p>
-                            <div class="mt-4 flex items-center gap-1.5 text-[10px] font-bold text-red-500 group-hover:gap-2.5 transition-all">
-                                <span>Voir les absences</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-                            </div>
-                        </div>
-                    </button>
-
-                </div>
-
-                <!-- ═══ PANNEAU PRINCIPAL ═══ -->
-                <div id="main-panel" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-4 pb-8">
-
-                    <!-- LISTE (2/3) -->
-                    <div class="lg:col-span-2">
-
-                        <!-- Header liste -->
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-2">
-                                <div class="h-px w-4 rounded-full" id="list-accent-bar"></div>
-                                <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-[0.18em]" id="list-title">—</p>
-                            </div>
-                            <button type="button" onclick="closePanel()"
-                                    class="flex items-center gap-1.5 text-xs text-muted-foreground-2 hover:text-layer-foreground transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                                Fermer
+                    <!-- Barre bulk (masquée par défaut) -->
+                    <div id="bulk-bar" class="hidden">
+                        <div class="inline-flex items-center gap-3 px-4 py-2.5 bg-primary/10 border border-primary/20 rounded-xl">
+                            <span class="text-xs font-bold text-primary" id="bulk-count">0 sélectionnée(s)</span>
+                            <div class="w-px h-4 bg-primary/20"></div>
+                            <button type="button" onclick="justifierSelection()"
+                                    class="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                Justifier
+                            </button>
+                            <button type="button" onclick="clearSelection()"
+                                    class="text-primary/50 hover:text-primary transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                             </button>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Empty state pour la catégorie -->
-                        <div id="list-empty" class="hidden bg-card border border-card-line rounded-2xl flex flex-col items-center justify-center py-12 text-center">
-                            <div class="size-12 rounded-2xl bg-muted flex items-center justify-center mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-muted-foreground-2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
-                            </div>
-                            <p class="text-sm font-semibold text-layer-foreground" id="list-empty-text">Aucune absence</p>
-                            <p class="text-xs text-muted-foreground-2 mt-1">Cette catégorie ne contient aucune absence.</p>
-                        </div>
-
-                        <!-- Liste des absences -->
-                        <div id="absence-list" class="space-y-2"></div>
-
+                <!-- ═══ TABLEAU ═══ -->
+                <div class="bg-card rounded-xl border border-card-line overflow-hidden pb-8">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-card-line bg-surface">
+                                    <th class="px-3 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest">
+                                        <div class="flex items-center gap-3">
+                                            <label id="select-all-label" class="relative flex items-center cursor-pointer shrink-0 group">
+                                                <input type="checkbox" id="select-all-cb" class="peer sr-only" onchange="toggleSelectAll(this)"/>
+                                                <div class="size-4 rounded-[4px] border-2 border-layer-line bg-layer group-hover:border-primary/60
+                                                            peer-checked:bg-primary peer-checked:border-primary
+                                                            peer-checked:bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%223.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20%206%209%2017l-5-5%22%2F%3E%3C%2Fsvg%3E')]
+                                                            peer-checked:bg-center peer-checked:bg-no-repeat peer-checked:bg-[length:70%_70%]
+                                                            transition-all duration-150"></div>
+                                            </label>
+                                            <span>Date</span>
+                                        </div>
+                                    </th>
+                                    <th class="px-4 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest">Matière</th>
+                                    <th class="px-4 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest hidden md:table-cell">Heures</th>
+                                    <th class="px-4 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest hidden lg:table-cell">Statut</th>
+                                    <th class="pr-4 pl-2 py-3 text-right text-xs font-medium text-muted-foreground-2/60 tracking-widest">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="absence-tbody" class="divide-y divide-card-line">
+                                <!-- Rempli par JS -->
+                            </tbody>
+                        </table>
                     </div>
 
-                    <!-- PANNEAU DROIT — Formulaire / Détail (1/3) -->
-                    <div id="right-panel">
+                    <!-- Loading state -->
+                    <div id="table-loading" class="flex flex-col items-center justify-center py-16 gap-3">
+                        <div class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+                        <p class="text-sm text-muted-foreground-2">Chargement des absences…</p>
+                    </div>
 
-                        <!-- Empty state droit — invite à sélectionner -->
-                        <div id="right-empty" class="bg-card border border-card-line rounded-2xl flex flex-col items-center justify-center py-10 px-6 text-center h-full min-h-[200px]">
-                            <div class="size-10 rounded-2xl bg-muted flex items-center justify-center mb-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-muted-foreground-2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                            </div>
-                            <p class="text-sm font-semibold text-layer-foreground">Sélectionnez une absence</p>
-                            <p class="text-xs text-muted-foreground-2 mt-1 leading-relaxed">Cliquez sur une absence dans la liste pour voir les détails ou soumettre une justification.</p>
+                    <!-- Empty state -->
+                    <div id="table-empty" class="hidden flex-col items-center justify-center py-16 gap-3 text-center">
+                        <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" class="text-muted-foreground-2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
                         </div>
-
-                        <!-- Formulaire justification (PENDING) -->
-                        <div id="form-panel" class="hidden">
-                            <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
-                                <div class="flex items-center gap-3 px-5 py-4 border-b border-card-line">
-                                    <div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                                    </div>
-                                    <div class="min-w-0 flex-1">
-                                        <p class="text-sm font-bold text-layer-foreground">Justifier l'absence</p>
-                                        <p class="text-xs text-muted-foreground-2 truncate" id="form-subject-label">—</p>
-                                    </div>
-                                </div>
-                                <form class="px-5 py-5 space-y-4">
-                                    <!-- Date (readonly) -->
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Date</label>
-                                        <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-card-line bg-muted">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
-                                            <span class="text-sm text-layer-foreground font-medium" id="form-date-label">—</span>
-                                        </div>
-                                    </div>
-                                    <!-- Motif -->
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Motif <span class="text-red-500">*</span></label>
-                                        <textarea rows="3"
-                                                  placeholder="Décrivez brièvement la raison de votre absence…"
-                                                  class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm placeholder:text-muted-foreground-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none transition-shadow"></textarea>
-                                    </div>
-                                    <!-- Upload -->
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Justificatif</label>
-                                        <label for="file-upload-panel"
-                                               class="group flex items-center gap-3 border-2 border-dashed border-card-line rounded-xl px-4 py-3.5 hover:border-primary/50 hover:bg-primary/[0.02] transition-all cursor-pointer">
-                                            <div class="size-9 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-muted-foreground-2 group-hover:text-primary transition-colors"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                            </div>
-                                            <div class="min-w-0">
-                                                <p class="text-xs font-semibold text-layer-foreground">Ajouter un fichier</p>
-                                                <p class="text-[10px] text-muted-foreground-2 mt-0.5">PDF, JPG, PNG · 10 Mo max</p>
-                                            </div>
-                                        </label>
-                                        <input id="file-upload-panel" type="file" accept=".pdf,.jpg,.jpeg,.png" class="sr-only"/>
-                                    </div>
-                                    <!-- Boutons -->
-                                    <div class="flex gap-2.5 pt-1">
-                                        <button type="button" onclick="clearRightPanel()"
-                                                class="flex-1 px-3 py-2.5 rounded-xl border border-card-line bg-transparent text-layer-foreground text-sm font-semibold hover:bg-muted transition-colors">
-                                            Annuler
-                                        </button>
-                                        <button type="submit"
-                                                class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 active:scale-95 transition-all">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9l20-7z"/></svg>
-                                            Soumettre
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                        <div>
+                            <p class="text-sm font-semibold text-layer-foreground" id="empty-text">Aucune absence</p>
+                            <p class="text-xs text-muted-foreground-2 mt-1">Aucune absence ne correspond à ce filtre.</p>
                         </div>
-
-                        <!-- Détail absence approuvée -->
-                        <div id="detail-approved" class="hidden bg-card border border-card-line rounded-2xl overflow-hidden">
-                            <div class="px-5 py-4 border-b border-card-line flex items-center gap-3">
-                                <div class="size-8 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-600"><path d="M20 6 9 17l-5-5"/></svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-bold text-layer-foreground">Absence approuvée</p>
-                                    <p class="text-xs text-muted-foreground-2 truncate" id="approved-subject-label">—</p>
-                                </div>
-                            </div>
-                            <div class="px-5 py-5 space-y-4">
-                                <div>
-                                    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Date</p>
-                                    <p class="text-sm font-semibold text-layer-foreground" id="approved-date-label">—</p>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Motif accepté</p>
-                                    <div class="px-3.5 py-3 rounded-xl bg-green-50 border border-green-200">
-                                        <p class="text-sm text-green-800 leading-relaxed" id="approved-reason-label">—</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-green-50 border border-green-200">
-                                    <div class="size-1.5 rounded-full bg-green-500 shrink-0"></div>
-                                    <p class="text-xs font-bold text-green-700">Justification validée par l'administration</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Détail absence rejetée -->
-                        <div id="detail-rejected" class="hidden bg-card border border-card-line rounded-2xl overflow-hidden">
-                            <div class="px-5 py-4 border-b border-card-line flex items-center gap-3">
-                                <div class="size-8 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-500"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-bold text-layer-foreground">Absence rejetée</p>
-                                    <p class="text-xs text-muted-foreground-2 truncate" id="rejected-subject-label">—</p>
-                                </div>
-                            </div>
-                            <div class="px-5 py-5 space-y-4">
-                                <div>
-                                    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Date</p>
-                                    <p class="text-sm font-semibold text-layer-foreground" id="rejected-date-label">—</p>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Motif du rejet</p>
-                                    <div class="px-3.5 py-3 rounded-xl bg-red-50 border border-red-200">
-                                        <p class="text-sm text-red-800 leading-relaxed italic" id="rejected-reason-label">—</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-orange-50 border border-orange-200">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-orange-500 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                                    <p class="text-xs font-semibold text-orange-700">Vous pouvez soumettre une nouvelle justification.</p>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
@@ -320,218 +171,500 @@
     </section>
 </section>
 
-<!-- Données Thymeleaf — absences sérialisées pour JS -->
-<div id="absences-store" class="hidden" aria-hidden="true"
-     th:if="${absences != null}">
-    <div th:each="a,i : ${absences}"
-         class="abs-item"
-         th:data-index="${i.index}"
-         th:data-status="${a.status}"
-         th:data-subject="${a.subject}"
-         th:data-date="${#temporals.format(a.date, 'dd/MM/yyyy')}"
-         th:data-date-sort="${#temporals.format(a.date, 'yyyyMMdd')}"
-         th:data-reason="${a.reason != null ? a.reason : ''}">
+<!-- ═══ MODAL JUSTIFIER ═══ -->
+<div id="modal-justifier"
+     class="hs-overlay hs-overlay-open:opacity-100 hs-overlay-open:duration-300 hidden size-full fixed top-0 start-0 z-[80] opacity-0 overflow-x-hidden overflow-y-auto pointer-events-none"
+     role="dialog" tabindex="-1">
+    <div class="sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+        <div class="flex flex-col bg-card border border-card-line shadow-2xl rounded-2xl pointer-events-auto overflow-hidden">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-card-line">
+                <div class="flex items-center gap-3">
+                    <div class="size-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-layer-foreground">Justifier l'absence</h3>
+                        <p class="text-xs text-muted-foreground-2 truncate max-w-[220px]" id="modal-absence-label">—</p>
+                    </div>
+                </div>
+                <button type="button" class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted" data-hs-overlay="#modal-justifier">
+                    <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Formulaire -->
+            <form id="form-justifier" class="p-6 space-y-4" novalidate>
+                <!-- seanceIds et date gérés en état JS (pendingSeanceIds / pendingDate) -->
+
+                <!-- Motif -->
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-muted-foreground-2 uppercase tracking-widest">Motif <span class="text-red-500">*</span></label>
+                    <select id="select-motif"
+                            class="w-full py-2.5 px-3 text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" required>
+                        <option value="">Sélectionner un motif…</option>
+                        <option value="Maladie">Maladie</option>
+                        <option value="Problème familial">Problème familial</option>
+                        <option value="Problème de transport">Problème de transport</option>
+                        <option value="Raison administrative">Raison administrative</option>
+                        <option value="Événement académique">Événement académique</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+
+                <!-- Message -->
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-muted-foreground-2 uppercase tracking-widest">Message explicatif</label>
+                    <textarea id="field-message" rows="3" placeholder="Décrivez les circonstances de votre absence…"
+                              class="w-full px-3.5 py-2.5 rounded-xl border border-layer-line bg-layer text-layer-foreground text-sm placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-none transition-colors"></textarea>
+                </div>
+
+                <!-- Fichiers -->
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-muted-foreground-2 uppercase tracking-widest">Pièces justificatives</label>
+                    <label for="file-input"
+                           class="group flex items-center gap-3 border-2 border-dashed border-card-line rounded-xl px-4 py-3.5 hover:border-primary/50 hover:bg-primary/[0.02] transition-all cursor-pointer">
+                        <div class="size-9 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-muted-foreground-2 group-hover:text-primary transition-colors"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-xs font-semibold text-layer-foreground">Ajouter des fichiers</p>
+                            <p class="text-[10px] text-muted-foreground-2 mt-0.5">PDF, JPG, PNG, DOC · 10 Mo max par fichier</p>
+                        </div>
+                    </label>
+                    <input id="file-input" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple class="sr-only" onchange="onFilesSelected(this)"/>
+
+                    <!-- Liste fichiers sélectionnés -->
+                    <div id="file-list" class="space-y-1.5"></div>
+                </div>
+
+                <!-- Boutons -->
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-card-line">
+                    <button type="button" class="px-4 py-2 text-sm font-semibold text-muted-foreground-2 hover:bg-muted rounded-xl transition-colors" data-hs-overlay="#modal-justifier">
+                        Annuler
+                    </button>
+                    <button type="submit" id="btn-submit-justif"
+                            class="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-bold bg-primary text-white rounded-xl hover:bg-primary/90 active:scale-95 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9l20-7z"/></svg>
+                        Soumettre
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<!-- Aucune donnée sensible exposée côté client : etudiantId résolu par le principal Spring Security. -->
 
 <script th:src="@{/js/preline.js}"></script>
 <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
 <script>
-    // ─── Date hero ────────────────────────────────────────────
-    (function(){
-        const n=new Date();
-        const M=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-        const D=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
-        const el=document.getElementById('hero-date');
-        if(el) el.textContent=`${D[n.getDay()]} ${n.getDate()} ${M[n.getMonth()]} ${n.getFullYear()}`;
-    })();
+// etudiantId résolu côté serveur depuis le principal Spring Security.
 
-    // ─── Lecture des données Thymeleaf ────────────────────────
-    const ABSENCES = [...document.querySelectorAll('.abs-item')].map(el=>({
-        index:  parseInt(el.dataset.index),
-        status: el.dataset.status,
-        subject: el.dataset.subject || '—',
-        date:   el.dataset.date || '—',
-        dateSort: el.dataset.dateSort || '0',
-        reason: el.dataset.reason || ''
-    }));
+// ─── State ───────────────────────────────────────────────────────────────────
+let ABSENCES         = [];    // données brutes depuis l'API
+let activeFilter     = 'TOUTES';
+let selectedRows     = new Set();  // presenceRowIds sélectionnés
+let pendingFiles     = [];         // File[] sélectionnés dans le modal
+let pendingSeanceIds = [];         // seanceIds envoyés au backend lors de la soumission
+let pendingDate      = null;       // date de la première absence (optionnel)
 
-    // ─── State ────────────────────────────────────────────────
-    let activeCategory = null;
-    let selectedIdx    = null;
+// ─── Date hero ───────────────────────────────────────────────────────────────
+(function () {
+    const n = new Date();
+    const M = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+    const D = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+    const el = document.getElementById('hero-date');
+    if (el) el.textContent = `${D[n.getDay()]} ${n.getDate()} ${M[n.getMonth()]} ${n.getFullYear()}`;
+})();
 
-    // ─── Config par statut ────────────────────────────────────
-    const CFG = {
-        PENDING:  { label:'En attente',  accent:'bg-orange-400', title:'Absences en attente de justification', empty:'Aucune absence en attente' },
-        APPROVED: { label:'Approuvées',  accent:'bg-green-400',  title:'Absences approuvées',                  empty:'Aucune absence approuvée'   },
-        REJECTED: { label:'Rejetées',    accent:'bg-red-400',    title:'Absences rejetées',                    empty:'Aucune absence rejetée'     }
+// ─── Formatage ───────────────────────────────────────────────────────────────
+function fmtDate(iso) {
+    if (!iso) return '—';
+    const [y, m, d] = iso.split('-');
+    return `${d}/${m}/${y}`;
+}
+
+function fmtMinutes(min) {
+    if (!min || min <= 0) return '0h';
+    const h = Math.floor(min / 60);
+    const r = min % 60;
+    return r > 0 ? `${h}h${String(r).padStart(2,'0')}` : `${h}h`;
+}
+
+function fmtHeures(absent, total) {
+    return `${fmtMinutes(absent)} / ${fmtMinutes(total)}`;
+}
+
+// ─── Statut → badge HTML ─────────────────────────────────────────────────────
+function statutBadge(statut) {
+    const cfg = {
+        JUSTIFIEE:      ['bg-green-100 text-green-700',  'Justifiée'],
+        NON_JUSTIFIEE:  ['bg-red-100 text-red-600',      'Non justifiée'],
+        EN_COURS:       ['bg-orange-100 text-orange-700','En cours'],
+        REJETEE:        ['bg-rose-100 text-rose-600',    'Rejetée'],
     };
+    const [cls, label] = cfg[statut] || ['bg-muted text-muted-foreground-2', '—'];
+    return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${cls}">${label}</span>`;
+}
 
-    // ─── Icônes statut (SVG inline) ───────────────────────────
-    function statusIcon(status){
-        const cls = status==='PENDING'  ? 'text-orange-500' :
-                    status==='APPROVED' ? 'text-green-600'  : 'text-red-500';
-        const path= status==='PENDING'
-            ? '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
-            : status==='APPROVED'
-            ? '<path d="M20 6 9 17l-5-5"/>'
-            : '<path d="M18 6 6 18M6 6l12 12"/>';
-        const bg  = status==='PENDING'  ? 'bg-orange-100' :
-                    status==='APPROVED' ? 'bg-green-100'  : 'bg-red-100';
-        return `<div class="size-9 rounded-xl ${bg} flex items-center justify-center shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="${cls}">${path}</svg>
-        </div>`;
-    }
+// ─── Checkbox helper ─────────────────────────────────────────────────────────
+const CHECKBOX_CLASSES = `size-4 rounded-[4px] border-2 border-layer-line bg-layer
+    group-hover:border-primary/60
+    peer-checked:bg-primary peer-checked:border-primary
+    peer-checked:bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%223.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20%206%209%2017l-5-5%22%2F%3E%3C%2Fsvg%3E')]
+    peer-checked:bg-center peer-checked:bg-no-repeat peer-checked:bg-[length:70%_70%]
+    transition-all duration-150`.replace(/\s+/g, ' ').trim();
 
-    // ─── Badge statut ─────────────────────────────────────────
-    function statusBadge(status){
-        const map={
-            PENDING:  ['bg-orange-100 text-orange-700','En attente'],
-            APPROVED: ['bg-green-100 text-green-700',  'Approuvée' ],
-            REJECTED: ['bg-red-100 text-red-600',       'Rejetée'  ]
+// ─── Rendu tableau ────────────────────────────────────────────────────────────
+function renderTable() {
+    const tbody   = document.getElementById('absence-tbody');
+    const loading = document.getElementById('table-loading');
+    const empty   = document.getElementById('table-empty');
+
+    const filtered = activeFilter === 'TOUTES'
+        ? ABSENCES
+        : ABSENCES.filter(a => a.statutJustificatif === activeFilter);
+
+    loading.classList.add('hidden');
+
+    if (filtered.length === 0) {
+        empty.classList.remove('hidden');
+        empty.classList.add('flex');
+        const msgs = {
+            TOUTES:         'Aucune absence enregistrée',
+            JUSTIFIEE:      'Aucune absence justifiée',
+            NON_JUSTIFIEE:  'Aucune absence non justifiée',
+            EN_COURS:       'Aucune justification en cours',
         };
-        const [cls,label]=map[status]||['bg-muted text-muted-foreground-2','—'];
-        return `<span class="text-[10px] font-bold px-2.5 py-1 rounded-full ${cls} shrink-0">${label}</span>`;
+        document.getElementById('empty-text').textContent = msgs[activeFilter] || 'Aucune absence';
+        tbody.innerHTML = '';
+        return;
     }
+    empty.classList.add('hidden');
+    empty.classList.remove('flex');
 
-    // ─── Rendu liste ──────────────────────────────────────────
-    function renderList(status){
-        const list  = document.getElementById('absence-list');
-        const empty = document.getElementById('list-empty');
-        const items = ABSENCES.filter(a=>a.status===status).sort((a,b)=>b.dateSort.localeCompare(a.dateSort));
+    tbody.innerHTML = filtered.map(a => {
+        const isSelected = selectedRows.has(a.presenceRowId);
+        // Une absence rejetée ne peut PAS être re-justifiée.
+        const canJustify = a.statutJustificatif === 'NON_JUSTIFIEE';
+        const motifRejet  = a.commentaireAP ? escHtml(a.commentaireAP) : null;
+        return `
+        <tr class="absence-row bg-card hover:bg-muted/10 transition-colors group"
+            data-row-id="${a.presenceRowId}"
+            data-seance-id="${a.seanceId ?? ''}"
+            data-date="${a.dateSeance ?? ''}"
+            data-matiere="${escHtml(a.matiere)}"
+            data-statut="${a.statutJustificatif}"
+            data-justif-id="${a.justificatifId ?? ''}">
 
-        list.innerHTML='';
-
-        if(items.length===0){
-            empty.classList.remove('hidden');
-            document.getElementById('list-empty-text').textContent=CFG[status].empty;
-            return;
-        }
-        empty.classList.add('hidden');
-
-        items.forEach(a=>{
-            const isPending = a.status==='PENDING';
-            const clickable = isPending ? 'cursor-pointer hover:border-primary/40 hover:shadow-[0_0_0_2px_rgba(124,58,237,0.08)]' : 'cursor-pointer hover:border-card-line hover:shadow-sm';
-            const div=document.createElement('div');
-            div.className=`absence-row bg-card border border-card-line rounded-2xl px-4 py-3.5 flex items-center gap-3 transition-all ${clickable}`;
-            div.dataset.index=a.index;
-            div.innerHTML=`
-                ${statusIcon(a.status)}
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-bold text-layer-foreground truncate">${a.subject}</p>
-                    <p class="text-xs text-muted-foreground-2 mt-0.5">${a.date}</p>
+            <!-- Checkbox + date -->
+            <td class="px-3 py-3 min-w-0">
+                <div class="flex items-center gap-3">
+                    <label class="relative flex items-center cursor-pointer shrink-0 group">
+                        <input type="checkbox" class="peer sr-only row-checkbox"
+                               data-row-id="${a.presenceRowId}"
+                               ${isSelected ? 'checked' : ''}
+                               onchange="onRowCheck(this)"/>
+                        <div class="${CHECKBOX_CLASSES}"></div>
+                    </label>
+                    <span class="text-sm font-semibold text-layer-foreground whitespace-nowrap">${fmtDate(a.dateSeance)}</span>
                 </div>
-                ${statusBadge(a.status)}
-                ${isPending?`<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><path d="m9 18 6-6-6-6"/></svg>`:''}
-            `;
-            div.addEventListener('click',()=>selectAbsence(a));
-            list.appendChild(div);
-        });
+            </td>
+
+            <!-- Matière -->
+            <td class="px-4 py-3">
+                <span class="text-sm text-layer-foreground font-medium truncate max-w-[200px] block">${escHtml(a.matiere)}</span>
+            </td>
+
+            <!-- Heures (caché sur mobile) -->
+            <td class="px-4 py-3 hidden md:table-cell">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-gray-100 text-gray-600 whitespace-nowrap">
+                    ${fmtHeures(a.minutesAbsence, a.minutesTotales)}
+                </span>
+            </td>
+
+            <!-- Statut + motif de rejet si applicable -->
+            <td class="px-4 py-3 hidden lg:table-cell">
+                <div class="flex flex-col gap-1">
+                    ${statutBadge(a.statutJustificatif)}
+                    ${a.statutJustificatif === 'REJETEE' && motifRejet ? `
+                    <span class="text-[10px] text-rose-600 italic leading-snug max-w-[180px] block truncate"
+                          title="${motifRejet}">${motifRejet}</span>` : ''}
+                </div>
+            </td>
+
+            <!-- Actions -->
+            <td class="pr-4 pl-2 py-3 text-right">
+                <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="hs-dropdown relative inline-flex">
+                        <button type="button"
+                                class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                aria-haspopup="menu" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>
+                            </svg>
+                        </button>
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-52 bg-card border border-card-line shadow-lg rounded-xl z-20 p-1 [--placement:bottom-end]"
+                             role="menu">
+                            <div class="px-3 py-1.5 mb-1 border-b border-card-line">
+                                <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-wide">Actions</p>
+                            </div>
+                            ${canJustify ? `
+                            <button type="button" onclick="openJustifyModal(this)" data-row-id="${a.presenceRowId}"
+                                    class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                Justifier
+                            </button>` : ''}
+                            ${a.statutJustificatif === 'EN_COURS' ? `
+                            <div class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-orange-600 rounded-lg opacity-60 cursor-default">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                En attente de décision
+                            </div>` : ''}
+                            ${a.statutJustificatif === 'JUSTIFIEE' ? `
+                            <div class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-green-600 rounded-lg opacity-60 cursor-default">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+                                Justification approuvée
+                            </div>` : ''}
+                            ${a.statutJustificatif === 'REJETEE' ? `
+                            <div class="flex flex-col gap-1 w-full py-2 px-3 rounded-lg">
+                                <div class="flex items-center gap-2 text-sm text-rose-600 opacity-70 cursor-default">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                                    Justification refusée
+                                </div>
+                                ${motifRejet ? `<p class="text-[11px] text-rose-500 italic pl-5 leading-snug">${motifRejet}</p>` : ''}
+                            </div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+
+    // Réinitialiser Preline pour les nouveaux dropdowns
+    if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+    syncSelectAll();
+}
+
+function escHtml(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── Chargement données ───────────────────────────────────────────────────────
+async function loadAbsences() {
+    try {
+        const res = await fetch('/api/presences/absences/etudiant', { credentials: 'include' });
+        if (!res.ok) throw new Error('Erreur ' + res.status);
+        ABSENCES = await res.json();
+        updateHeroStats();
+        renderTable();
+    } catch (e) {
+        document.getElementById('table-loading').innerHTML = `
+            <div class="flex flex-col items-center justify-center py-16 gap-3">
+                <div class="size-12 rounded-2xl bg-red-50 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-500"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <p class="text-sm font-semibold text-layer-foreground">Impossible de charger les absences</p>
+                <p class="text-xs text-muted-foreground-2">Vérifiez votre connexion ou rechargez la page.</p>
+            </div>`;
     }
+}
 
-    // ─── Sélection catégorie ──────────────────────────────────
-    function selectCategory(status){
-        activeCategory=status;
-        selectedIdx=null;
+// ─── Stats hero ───────────────────────────────────────────────────────────────
+function updateHeroStats() {
+    document.getElementById('hero-total').textContent        = ABSENCES.length + ' absence' + (ABSENCES.length > 1 ? 's' : '');
+    document.getElementById('hero-justifiees').textContent   = ABSENCES.filter(a => a.statutJustificatif === 'JUSTIFIEE').length + ' justifiée(s)';
+    document.getElementById('hero-en-cours').textContent     = ABSENCES.filter(a => a.statutJustificatif === 'EN_COURS').length + ' en cours';
+    document.getElementById('hero-non-justifiees').textContent = ABSENCES.filter(a => a.statutJustificatif === 'NON_JUSTIFIEE' || a.statutJustificatif === 'REJETEE').length + ' non justifiée(s)';
+}
 
-        // Mise à jour visuelle des cards
-        ['PENDING','APPROVED','REJECTED'].forEach(s=>{
-            const card=document.getElementById('card-'+s);
-            card.classList.remove('ring-2','ring-offset-2','ring-orange-400','ring-green-400','ring-red-400','shadow-lg','scale-[1.01]');
+// ─── Filtres ──────────────────────────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        activeFilter = btn.dataset.filter;
+        selectedRows.clear();
+        updateBulkBar();
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active-filter', 'bg-surface-active', 'text-layer-foreground', 'font-semibold');
+            b.classList.add('text-muted-foreground-1');
         });
-        const activeCard=document.getElementById('card-'+status);
-        const ringColor= status==='PENDING'?'ring-orange-400':status==='APPROVED'?'ring-green-400':'ring-red-400';
-        activeCard.classList.add('ring-2','ring-offset-2',ringColor,'shadow-lg');
+        btn.classList.add('active-filter', 'bg-surface-active', 'text-layer-foreground', 'font-semibold');
+        btn.classList.remove('text-muted-foreground-1');
+        renderTable();
+    });
+});
 
-        // Header liste
-        const cfg=CFG[status];
-        document.getElementById('list-title').textContent=cfg.title;
-        const bar=document.getElementById('list-accent-bar');
-        bar.className=`h-px w-4 rounded-full ${cfg.accent}`;
+// Init style filtre actif
+document.querySelector('.filter-btn[data-filter="TOUTES"]').classList.add('bg-surface-active', 'text-layer-foreground', 'font-semibold');
 
-        // Panneau principal visible
-        document.getElementById('main-panel').classList.remove('hidden');
-        document.getElementById('main-panel').classList.add('grid');
+// ─── Sélection lignes ─────────────────────────────────────────────────────────
+function onRowCheck(cb) {
+    const rowId = parseInt(cb.dataset.rowId);
+    if (cb.checked) selectedRows.add(rowId);
+    else selectedRows.delete(rowId);
+    updateBulkBar();
+    syncSelectAll();
+}
 
-        // Reset panneau droit
-        clearRightPanel();
+function toggleSelectAll(cb) {
+    document.querySelectorAll('.row-checkbox').forEach(c => {
+        const rowId = parseInt(c.dataset.rowId);
+        c.checked = cb.checked;
+        if (cb.checked) selectedRows.add(rowId);
+        else selectedRows.delete(rowId);
+    });
+    updateBulkBar();
+}
 
-        // Render list
-        renderList(status);
+function syncSelectAll() {
+    const cbs = document.querySelectorAll('.row-checkbox');
+    const allChecked = cbs.length > 0 && [...cbs].every(c => c.checked);
+    document.getElementById('select-all-cb').checked = allChecked;
+}
 
-        // Scroll vers le panneau
-        document.getElementById('main-panel').scrollIntoView({behavior:'smooth',block:'start'});
+function clearSelection() {
+    selectedRows.clear();
+    document.querySelectorAll('.row-checkbox').forEach(c => c.checked = false);
+    document.getElementById('select-all-cb').checked = false;
+    updateBulkBar();
+}
+
+function updateBulkBar() {
+    const bar = document.getElementById('bulk-bar');
+    const cnt = document.getElementById('bulk-count');
+    if (selectedRows.size > 0) {
+        bar.classList.remove('hidden');
+        cnt.textContent = selectedRows.size + ' sélectionnée(s)';
+    } else {
+        bar.classList.add('hidden');
     }
+}
 
-    // ─── Sélection absence ────────────────────────────────────
-    function selectAbsence(a){
-        selectedIdx=a.index;
+function justifierSelection() {
+    // Seules les absences NON_JUSTIFIEE peuvent être justifiées (REJETEE = définitif).
+    const rows = [...selectedRows]
+        .map(rowId => document.querySelector(`.absence-row[data-row-id="${rowId}"]`))
+        .filter(row => row && row.dataset.statut === 'NON_JUSTIFIEE');
 
-        // Highlight row
-        document.querySelectorAll('.absence-row').forEach(r=>{
-            r.classList.remove('border-primary/40','bg-primary/3');
-            r.classList.add('border-card-line');
-        });
-        const rows=document.querySelectorAll('.absence-row');
-        rows.forEach(r=>{
-            if(parseInt(r.dataset.index)===a.index){
-                r.classList.remove('border-card-line');
-                r.classList.add('border-primary/40','bg-primary/3');
-            }
-        });
+    if (rows.length === 0) return;
+    if (rows.length === 1) {
+        openJustifyModalFromRow(rows[0]);
+    } else {
+        openJustifyModalForMultiple(rows);
+    }
+}
 
-        // Masquer tous les panneaux droit
-        ['right-empty','form-panel','detail-approved','detail-rejected'].forEach(id=>{
-            document.getElementById(id).classList.add('hidden');
-        });
+// ─── Modal justification ──────────────────────────────────────────────────────
+function openJustifyModal(btn) {
+    openJustifyModalFromRow(btn.closest('.absence-row'));
+}
 
-        if(a.status==='PENDING'){
-            document.getElementById('form-subject-label').textContent=`${a.subject} · ${a.date}`;
-            document.getElementById('form-date-label').textContent=a.date;
-            document.getElementById('form-panel').classList.remove('hidden');
-        } else if(a.status==='APPROVED'){
-            document.getElementById('approved-subject-label').textContent=`${a.subject} · ${a.date}`;
-            document.getElementById('approved-date-label').textContent=a.date;
-            document.getElementById('approved-reason-label').textContent=a.reason||'Aucun commentaire.';
-            document.getElementById('detail-approved').classList.remove('hidden');
-        } else if(a.status==='REJECTED'){
-            document.getElementById('rejected-subject-label').textContent=`${a.subject} · ${a.date}`;
-            document.getElementById('rejected-date-label').textContent=a.date;
-            document.getElementById('rejected-reason-label').textContent=a.reason||'Aucun motif précisé.';
-            document.getElementById('detail-rejected').classList.remove('hidden');
+function openJustifyModalFromRow(row) {
+    pendingSeanceIds = row.dataset.seanceId ? [row.dataset.seanceId] : [];
+    pendingDate      = row.dataset.date || null;
+    resetModal(`${row.dataset.matiere} · ${fmtDate(row.dataset.date)}`);
+}
+
+function openJustifyModalForMultiple(rows) {
+    // Toutes les séances sélectionnées dans un seul justificatif
+    pendingSeanceIds = rows.map(r => r.dataset.seanceId).filter(Boolean);
+    // Date la plus ancienne comme référence
+    const dates = rows.map(r => r.dataset.date).filter(Boolean).sort();
+    pendingDate = dates[0] || null;
+    resetModal(`${rows.length} absence(s) sélectionnée(s)`);
+}
+
+function resetModal(label) {
+    document.getElementById('modal-absence-label').textContent = label;
+    document.getElementById('select-motif').value = '';
+    document.getElementById('field-message').value = '';
+    pendingFiles = [];
+    renderFileList();
+    if (typeof HSOverlay !== 'undefined') {
+        HSOverlay.open(document.getElementById('modal-justifier'));
+    }
+}
+
+// ─── Gestion fichiers ─────────────────────────────────────────────────────────
+function onFilesSelected(input) {
+    for (const f of input.files) {
+        if (!pendingFiles.find(pf => pf.name === f.name && pf.size === f.size)) {
+            pendingFiles.push(f);
         }
     }
+    input.value = '';
+    renderFileList();
+}
 
-    // ─── Réinitialiser panneau droit ──────────────────────────
-    function clearRightPanel(){
-        selectedIdx=null;
-        ['right-empty','form-panel','detail-approved','detail-rejected'].forEach(id=>{
-            document.getElementById(id).classList.add('hidden');
-        });
-        document.getElementById('right-empty').classList.remove('hidden');
-        document.querySelectorAll('.absence-row').forEach(r=>{
-            r.classList.remove('border-primary/40','bg-primary/3');
-            r.classList.add('border-card-line');
-        });
+function removeFile(idx) {
+    pendingFiles.splice(idx, 1);
+    renderFileList();
+}
+
+function renderFileList() {
+    const list = document.getElementById('file-list');
+    if (pendingFiles.length === 0) { list.innerHTML = ''; return; }
+    list.innerHTML = pendingFiles.map((f, i) => `
+        <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-muted border border-card-line">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="text-xs text-layer-foreground font-medium flex-1 truncate">${escHtml(f.name)}</span>
+            <span class="text-[10px] text-muted-foreground-2 shrink-0">${(f.size / 1024).toFixed(0)} Ko</span>
+            <button type="button" onclick="removeFile(${i})" class="text-muted-foreground-2 hover:text-red-500 transition-colors shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>`).join('');
+}
+
+// ─── Soumission justification ─────────────────────────────────────────────────
+document.getElementById('form-justifier').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const motif   = document.getElementById('select-motif').value.trim();
+    const message = document.getElementById('field-message').value.trim();
+    // seanceIds et date lus depuis l'état JS — non exposés au client via des champs cachés.
+
+    if (!motif) {
+        document.getElementById('select-motif').classList.add('border-red-400', 'ring-1', 'ring-red-400');
+        return;
     }
+    document.getElementById('select-motif').classList.remove('border-red-400', 'ring-1', 'ring-red-400');
 
-    // ─── Fermer panneau principal ─────────────────────────────
-    function closePanel(){
-        activeCategory=null;
-        selectedIdx=null;
-        document.getElementById('main-panel').classList.add('hidden');
-        document.getElementById('main-panel').classList.remove('grid');
-        ['PENDING','APPROVED','REJECTED'].forEach(s=>{
-            const card=document.getElementById('card-'+s);
-            card.classList.remove('ring-2','ring-offset-2','ring-orange-400','ring-green-400','ring-red-400','shadow-lg');
-        });
+    const btn = document.getElementById('btn-submit-justif');
+    btn.disabled = true;
+    btn.innerHTML = `<svg class="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Envoi…`;
+
+    const fd = new FormData();
+    fd.append('motif', motif);
+    if (message)     fd.append('message', message);
+    if (pendingDate) fd.append('dateAbsence', pendingDate);
+    // Envoyer TOUTES les séances sélectionnées — un append par séance
+    for (const sid of pendingSeanceIds) fd.append('seanceIds', sid);
+    for (const f of pendingFiles)        fd.append('fichiers', f);
+
+    try {
+        const res = await fetch('/api/justificatifs', { method: 'POST', body: fd, credentials: 'include' });
+        if (!res.ok) throw new Error('Erreur ' + res.status);
+
+        if (typeof HSOverlay !== 'undefined') HSOverlay.close(document.getElementById('modal-justifier'));
+        await loadAbsences();
+        clearSelection();
+    } catch (err) {
+        alert('Erreur lors de la soumission. Veuillez réessayer.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9l20-7z"/></svg> Soumettre`;
     }
+});
 
-    // ─── Auto-sélection si absences en attente ────────────────
-    (function(){
-        const pendingCount=ABSENCES.filter(a=>a.status==='PENDING').length;
-        if(pendingCount>0) selectCategory('PENDING');
-    })();
+// ─── Init ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+    loadAbsences();
+});
+window.addEventListener('load', () => {
+    if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+});
 </script>
 </body>
 </html>

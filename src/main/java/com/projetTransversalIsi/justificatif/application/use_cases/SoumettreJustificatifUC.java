@@ -4,6 +4,8 @@ import com.projetTransversalIsi.justificatif.application.dto.JustificatifRespons
 import com.projetTransversalIsi.justificatif.application.dto.SoumettreJustificatifDTO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface SoumettreJustificatifUC {
-    JustificatifResponseDTO execute(SoumettreJustificatifDTO dto, MultipartFile fichier);
+    JustificatifResponseDTO execute(SoumettreJustificatifDTO dto, List<MultipartFile> fichiers);
 }

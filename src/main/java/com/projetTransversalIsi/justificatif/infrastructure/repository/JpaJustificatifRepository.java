@@ -34,6 +34,12 @@ public class JpaJustificatifRepository implements JustificatifRepository {
     }
 
     @Override
+    public List<Justificatif> findByEtudiantIdAndSeanceId(Long etudiantId, Long seanceId) {
+        return springData.findByEtudiantIdAndSeanceId(etudiantId, seanceId).stream()
+                .map(mapper::toDomain).collect(Collectors.toList());
+    }
+
+    @Override
     public List<Justificatif> findAll() {
         return springData.findAll().stream()
                 .map(mapper::toDomain).collect(Collectors.toList());

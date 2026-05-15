@@ -322,6 +322,15 @@ public class APController {
         return "APInterface/APClasses";
     }
 
+    @GetMapping("/justificatifs")
+    public String justificatifsView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        Long filiereId = resolveApFiliereId(principal);
+        FiliereResponseDTO filiere = filiereId != null ? filiereService.getFiliereById(filiereId) : null;
+        model.addAttribute("filiere", filiere);
+        model.addAttribute("activePage", "justificatifs");
+        return "APInterface/APJustificatifs";
+    }
+
     @GetMapping("/config")
     public String configView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
         Long filiereId = resolveApFiliereId(principal);

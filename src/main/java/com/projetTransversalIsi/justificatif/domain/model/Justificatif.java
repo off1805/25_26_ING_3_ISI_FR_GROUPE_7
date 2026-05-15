@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,23 +18,31 @@ public class Justificatif {
 
     private Long id;
     private Long etudiantId;
-    private Long seanceId;
+
+    // Un justificatif peut couvrir plusieurs séances (ex. certificat médical multi-jours).
+    private List<Long> seanceIds = new ArrayList<>();
+
     private String motif;
-    private String fichierUrl;
+    private String message;
+
+    // Pièces justificatives — chacune a son URL et son nom d'origine.
+    private List<JustificatifFichier> fichiers = new ArrayList<>();
+
     private LocalDate dateAbsence;
     private Statut statut = Statut.PENDING;
     private String commentaireAP;
     private LocalDateTime createdAt;
 
-    public Justificatif(Long etudiantId, Long seanceId, String motif,
-                        String fichierUrl, LocalDate dateAbsence) {
+    public Justificatif(Long etudiantId, List<Long> seanceIds, String motif, String message,
+                        List<JustificatifFichier> fichiers, LocalDate dateAbsence) {
         this.etudiantId = etudiantId;
-        this.seanceId = seanceId;
-        this.motif = motif;
-        this.fichierUrl = fichierUrl;
+        this.seanceIds  = seanceIds != null ? seanceIds : new ArrayList<>();
+        this.motif      = motif;
+        this.message    = message;
+        this.fichiers   = fichiers != null ? fichiers : new ArrayList<>();
         this.dateAbsence = dateAbsence;
-        this.statut = Statut.PENDING;
-        this.createdAt = LocalDateTime.now();
+        this.statut     = Statut.PENDING;
+        this.createdAt  = LocalDateTime.now();
     }
 
     public void approuver(String commentaire) {
