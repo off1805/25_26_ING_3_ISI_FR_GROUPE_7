@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>KemOSchool — Justificatifs</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}"/>
+</head>
+<body class="h-screen bg-background-1">
+<section class="flex flex-row h-full">
+
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
+
+    <section class="flex-1 flex flex-col overflow-hidden">
+
+        <!-- NAVBAR -->
+        <header class="flex-none flex justify-between items-center px-5 sm:px-7 py-3 bg-navbar border-b border-navbar-line">
+            <div class="flex items-center gap-3">
+                <button type="button"
+                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
+                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-xs text-muted-foreground">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+                    <span>AP Panel</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6l-6 6"/></svg>
+                    <span class="font-semibold text-layer-foreground">Justificatifs</span>
+                </nav>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" data-theme-toggle class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/></svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                </button>
+                <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm">A</div>
+            </div>
+        </header>
+
+        <!-- PAGE -->
+        <div class="flex-1 overflow-y-auto">
+            <div class="px-4 sm:px-6 lg:px-8 py-7 max-w-7xl mx-auto space-y-6">
+
+                <!-- ═══ HERO ═══ -->
+                <div class="relative overflow-hidden rounded-2xl bg-gray-950 px-6 py-7">
+                    <div class="absolute -top-16 -right-16 size-60 rounded-full bg-primary/15 blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-10 left-10 size-44 rounded-full bg-indigo-700/10 blur-3xl pointer-events-none"></div>
+                    <div class="absolute inset-0 opacity-[0.025] pointer-events-none bg-[linear-gradient(rgba(255,255,255,1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,1)_1px,transparent_1px)] bg-[size:36px_36px]"></div>
+                    <div class="relative flex flex-col sm:flex-row sm:items-end justify-between gap-5">
+                        <div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="h-px w-5 bg-primary/60 rounded-full"></div>
+                                <span class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]"
+                                      th:text="${filiere != null ? filiere.nom() : 'Filière'}">—</span>
+                            </div>
+                            <h1 class="text-2xl sm:text-[1.75rem] font-black text-white leading-tight tracking-tight">Justificatifs</h1>
+                            <p class="text-sm text-white/40 mt-1.5">Examinez et décidez des demandes de justification de vos étudiants.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 shrink-0">
+                            <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-white/5 rounded-full border border-white/10">
+                                <div class="size-1.5 rounded-full bg-white/40"></div>
+                                <span class="text-xs font-bold text-white/50" id="hero-total">— total</span>
+                            </div>
+                            <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-orange-500/15 rounded-full border border-orange-500/25">
+                                <div class="size-1.5 rounded-full bg-orange-400"></div>
+                                <span class="text-xs font-semibold text-orange-300" id="hero-pending">0 nouveau(x)</span>
+                            </div>
+                            <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-green-500/15 rounded-full border border-green-500/25">
+                                <div class="size-1.5 rounded-full bg-green-400"></div>
+                                <span class="text-xs font-semibold text-green-300" id="hero-approved">0 accepté(s)</span>
+                            </div>
+                            <div class="flex items-center gap-2 pl-2.5 pr-3 py-1.5 bg-red-500/15 rounded-full border border-red-500/25">
+                                <div class="size-1.5 rounded-full bg-red-400"></div>
+                                <span class="text-xs font-semibold text-red-300" id="hero-rejected">0 rejeté(s)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ FILTRES ═══ -->
+                <div class="flex bg-surface rounded-lg p-1 gap-x-1 w-fit" id="filter-tabs">
+                    <button type="button" data-filter="TOUS"
+                            class="filter-btn bg-surface-active text-layer-foreground font-semibold py-2 px-4 text-xs rounded-lg transition-all focus:outline-none">
+                        Tous
+                    </button>
+                    <button type="button" data-filter="PENDING"
+                            class="filter-btn text-muted-foreground-1 hover:text-layer-foreground py-2 px-4 text-xs font-medium rounded-lg transition-all focus:outline-none">
+                        Nouveaux
+                    </button>
+                    <button type="button" data-filter="APPROVED"
+                            class="filter-btn text-muted-foreground-1 hover:text-layer-foreground py-2 px-4 text-xs font-medium rounded-lg transition-all focus:outline-none">
+                        Acceptés
+                    </button>
+                    <button type="button" data-filter="REJECTED"
+                            class="filter-btn text-muted-foreground-1 hover:text-layer-foreground py-2 px-4 text-xs font-medium rounded-lg transition-all focus:outline-none">
+                        Rejetés
+                    </button>
+                </div>
+
+                <!-- ═══ TABLEAU ═══ -->
+                <div class="bg-card rounded-xl border border-card-line overflow-hidden pb-8">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-card-line bg-surface">
+                                    <th class="px-4 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest">Étudiant</th>
+                                    <th class="px-4 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest hidden md:table-cell">Absence(s)</th>
+                                    <th class="px-4 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest hidden lg:table-cell">Motif</th>
+                                    <th class="px-4 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest hidden xl:table-cell">Soumis le</th>
+                                    <th class="px-4 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest">Statut</th>
+                                    <th class="pr-4 pl-2 py-3 text-right text-xs font-medium text-muted-foreground-2/60 tracking-widest">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="justif-tbody" class="divide-y divide-card-line"></tbody>
+                        </table>
+                    </div>
+
+                    <div id="table-loading" class="flex flex-col items-center justify-center py-16 gap-3">
+                        <div class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+                        <p class="text-sm text-muted-foreground-2">Chargement des justificatifs…</p>
+                    </div>
+
+                    <div id="table-empty" class="hidden flex-col items-center justify-center py-16 gap-3 text-center">
+                        <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" class="text-muted-foreground-2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1.5"/><path d="M9 12l2 2 4-4"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-layer-foreground" id="empty-text">Aucun justificatif</p>
+                            <p class="text-xs text-muted-foreground-2 mt-1">Aucun justificatif ne correspond à ce filtre.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</section>
+
+<!-- ═══ MODAL DÉTAIL / DÉCISION ═══ -->
+<div id="modal-detail"
+     class="hs-overlay hs-overlay-open:opacity-100 hs-overlay-open:duration-300 hidden size-full fixed top-0 start-0 z-[80] opacity-0 overflow-x-hidden overflow-y-auto pointer-events-none"
+     role="dialog" tabindex="-1">
+    <div class="sm:max-w-xl sm:w-full m-3 sm:mx-auto">
+        <div class="flex flex-col bg-card border border-card-line shadow-2xl rounded-2xl pointer-events-auto overflow-hidden">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-card-line">
+                <div class="flex items-center gap-3">
+                    <div id="modal-avatar" class="size-9 rounded-xl bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">E</div>
+                    <div>
+                        <h3 class="font-bold text-sm text-layer-foreground" id="modal-name">—</h3>
+                        <p class="text-xs text-muted-foreground-2" id="modal-matricule">—</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="modal-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full"></span>
+                    <button type="button" class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted" data-hs-overlay="#modal-detail">
+                        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Corps -->
+            <div class="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
+
+                <!-- Absences couvertes -->
+                <div>
+                    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-2">Absence(s) justifiée(s)</p>
+                    <div id="modal-seances" class="space-y-1.5"></div>
+                </div>
+
+                <!-- Motif + Message -->
+                <div>
+                    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Motif</p>
+                    <p class="text-sm font-semibold text-layer-foreground" id="modal-motif">—</p>
+                </div>
+                <div id="modal-message-wrap" class="hidden">
+                    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Message de l'étudiant</p>
+                    <p class="text-sm text-layer-foreground leading-relaxed px-3.5 py-3 bg-muted rounded-xl" id="modal-message"></p>
+                </div>
+
+                <!-- Fichiers -->
+                <div id="modal-fichiers-wrap" class="hidden">
+                    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-2">Pièces justificatives</p>
+                    <div id="modal-fichiers" class="space-y-1.5"></div>
+                </div>
+
+                <!-- Commentaire AP existant (si décidé) -->
+                <div id="modal-commentaire-existant-wrap" class="hidden">
+                    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Commentaire</p>
+                    <p class="text-sm text-layer-foreground px-3.5 py-3 rounded-xl border border-card-line" id="modal-commentaire-existant"></p>
+                </div>
+
+                <!-- Zone de décision (PENDING uniquement) -->
+                <div id="decision-zone" class="hidden space-y-3 pt-2 border-t border-card-line">
+                    <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-widest">Votre décision</p>
+                    <textarea id="decision-commentaire" rows="3" placeholder="Commentaire (facultatif)…"
+                              class="w-full px-3.5 py-2.5 rounded-xl border border-layer-line bg-layer text-layer-foreground text-sm placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-none transition-colors"></textarea>
+                    <div class="flex gap-3">
+                        <button type="button" id="btn-approuver"
+                                class="flex-1 inline-flex items-center justify-center gap-2 py-2.5 text-sm font-bold rounded-xl bg-green-500 text-white hover:bg-green-600 active:scale-95 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                            Accepter
+                        </button>
+                        <button type="button" id="btn-rejeter"
+                                class="flex-1 inline-flex items-center justify-center gap-2 py-2.5 text-sm font-bold rounded-xl bg-red-500 text-white hover:bg-red-600 active:scale-95 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                            Rejeter
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/preline.js}"></script>
+<script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let JUSTIFS      = [];
+let activeFilter = 'TOUS';
+let activeId     = null;   // justificatifId courant dans le modal
+
+// ─── Formatage ────────────────────────────────────────────────────────────────
+function fmtDate(iso) {
+    if (!iso) return '—';
+    const [y, m, d] = iso.split('-');
+    return `${d}/${m}/${y}`;
+}
+function fmtDatetime(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+}
+function escHtml(s) {
+    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── Badge statut ─────────────────────────────────────────────────────────────
+const STATUT_CFG = {
+    PENDING:  { cls: 'bg-orange-100 text-orange-700', label: 'Nouveau'  },
+    APPROVED: { cls: 'bg-green-100 text-green-700',   label: 'Accepté'  },
+    REJECTED: { cls: 'bg-red-100 text-red-600',       label: 'Rejeté'   },
+};
+function statutBadge(s) {
+    const { cls, label } = STATUT_CFG[s] || { cls: 'bg-muted text-muted-foreground-2', label: '—' };
+    return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${cls}">${label}</span>`;
+}
+
+// ─── Rendu tableau ─────────────────────────────────────────────────────────────
+function renderTable() {
+    const tbody   = document.getElementById('justif-tbody');
+    const loading = document.getElementById('table-loading');
+    const empty   = document.getElementById('table-empty');
+
+    const filtered = activeFilter === 'TOUS'
+        ? JUSTIFS
+        : JUSTIFS.filter(j => j.statut === activeFilter);
+
+    loading.classList.add('hidden');
+
+    if (filtered.length === 0) {
+        empty.classList.remove('hidden');
+        empty.classList.add('flex');
+        const msgs = { TOUS: 'Aucun justificatif', PENDING: 'Aucun nouveau justificatif', APPROVED: 'Aucun justificatif accepté', REJECTED: 'Aucun justificatif rejeté' };
+        document.getElementById('empty-text').textContent = msgs[activeFilter] || 'Aucun justificatif';
+        tbody.innerHTML = '';
+        return;
+    }
+    empty.classList.add('hidden');
+    empty.classList.remove('flex');
+
+    tbody.innerHTML = filtered.map(j => {
+        const firstSeance = j.seances && j.seances.length > 0 ? j.seances[0] : null;
+        const absLabel = firstSeance
+            ? `${fmtDate(firstSeance.date)} · ${escHtml(firstSeance.libelle)}${j.seances.length > 1 ? ` <span class="text-muted-foreground-2">(+${j.seances.length-1})</span>` : ''}`
+            : '—';
+
+        return `
+        <tr class="justif-row bg-card hover:bg-muted/10 transition-colors group" data-id="${j.id}">
+            <!-- Étudiant -->
+            <td class="px-4 py-3">
+                <div class="flex items-center gap-3">
+                    <div class="size-8 rounded-xl bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                        ${escHtml((j.etudiantNom || 'E').charAt(0).toUpperCase())}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-layer-foreground truncate">${escHtml(j.etudiantNom)} ${escHtml(j.etudiantPrenom)}</p>
+                        <p class="text-xs text-muted-foreground-2">${escHtml(j.etudiantMatricule)}</p>
+                    </div>
+                </div>
+            </td>
+            <!-- Absence(s) -->
+            <td class="px-4 py-3 hidden md:table-cell">
+                <span class="text-sm text-layer-foreground">${absLabel}</span>
+            </td>
+            <!-- Motif -->
+            <td class="px-4 py-3 hidden lg:table-cell">
+                <span class="text-sm text-muted-foreground-2 truncate max-w-[160px] block">${escHtml(j.motif)}</span>
+            </td>
+            <!-- Soumis le -->
+            <td class="px-4 py-3 hidden xl:table-cell">
+                <span class="text-xs text-muted-foreground-2">${fmtDatetime(j.createdAt)}</span>
+            </td>
+            <!-- Statut -->
+            <td class="px-4 py-3">${statutBadge(j.statut)}</td>
+            <!-- Actions -->
+            <td class="pr-4 pl-2 py-3 text-right">
+                <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="hs-dropdown relative inline-flex">
+                        <button type="button"
+                                class="hs-dropdown-toggle size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                                aria-haspopup="menu" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                        </button>
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-44 bg-card border border-card-line shadow-lg rounded-xl z-20 p-1 [--placement:bottom-end]" role="menu">
+                            <div class="px-3 py-1.5 mb-1 border-b border-card-line">
+                                <p class="text-[10px] font-bold text-muted-foreground-2 uppercase tracking-wide">Actions</p>
+                            </div>
+                            <button type="button" onclick="openDetail(${j.id})"
+                                    class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                                Voir les détails
+                            </button>
+                            ${j.statut === 'PENDING' ? `
+                            <button type="button" onclick="quickDecision(${j.id},'approuver')"
+                                    class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-green-600 hover:bg-green-50 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                                Accepter
+                            </button>
+                            <button type="button" onclick="quickDecision(${j.id},'rejeter')"
+                                    class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                                Rejeter
+                            </button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+
+    if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+}
+
+// ─── Chargement ───────────────────────────────────────────────────────────────
+async function loadJustificatifs() {
+    try {
+        const res = await fetch('/api/ap/justificatifs', { credentials: 'include' });
+        if (!res.ok) throw new Error('Erreur ' + res.status);
+        JUSTIFS = await res.json();
+        updateHero();
+        renderTable();
+    } catch (e) {
+        document.getElementById('table-loading').innerHTML = `
+            <div class="flex flex-col items-center justify-center py-16 gap-3">
+                <div class="size-12 rounded-2xl bg-red-50 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-500"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <p class="text-sm font-semibold text-layer-foreground">Impossible de charger les justificatifs</p>
+            </div>`;
+    }
+}
+
+function updateHero() {
+    document.getElementById('hero-total').textContent    = JUSTIFS.length + ' total';
+    document.getElementById('hero-pending').textContent  = JUSTIFS.filter(j => j.statut === 'PENDING').length  + ' nouveau(x)';
+    document.getElementById('hero-approved').textContent = JUSTIFS.filter(j => j.statut === 'APPROVED').length + ' accepté(s)';
+    document.getElementById('hero-rejected').textContent = JUSTIFS.filter(j => j.statut === 'REJECTED').length + ' rejeté(s)';
+}
+
+// ─── Filtres ──────────────────────────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        activeFilter = btn.dataset.filter;
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('bg-surface-active', 'text-layer-foreground', 'font-semibold');
+            b.classList.add('text-muted-foreground-1');
+        });
+        btn.classList.add('bg-surface-active', 'text-layer-foreground', 'font-semibold');
+        btn.classList.remove('text-muted-foreground-1');
+        renderTable();
+    });
+});
+
+// ─── Modal détail ─────────────────────────────────────────────────────────────
+function openDetail(id) {
+    const j = JUSTIFS.find(x => x.id === id);
+    if (!j) return;
+    activeId = id;
+
+    // Header
+    document.getElementById('modal-avatar').textContent = (j.etudiantNom || 'E').charAt(0).toUpperCase();
+    document.getElementById('modal-name').textContent   = `${j.etudiantNom} ${j.etudiantPrenom}`;
+    document.getElementById('modal-matricule').textContent = j.etudiantMatricule || '—';
+
+    // Badge statut
+    const badge = document.getElementById('modal-badge');
+    const { cls, label } = STATUT_CFG[j.statut] || {};
+    badge.className = `text-[10px] font-bold px-2.5 py-1 rounded-full ${cls || ''}`;
+    badge.textContent = label || j.statut;
+
+    // Séances
+    const seancesEl = document.getElementById('modal-seances');
+    seancesEl.innerHTML = (j.seances && j.seances.length > 0)
+        ? j.seances.map(s => `
+            <div class="flex items-center gap-2.5 px-3 py-2 bg-muted rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+                <span class="text-xs font-semibold text-layer-foreground whitespace-nowrap">${fmtDate(s.date)}</span>
+                <span class="text-muted-foreground-2 text-xs">·</span>
+                <span class="text-xs text-layer-foreground truncate">${escHtml(s.libelle)}</span>
+            </div>`).join('')
+        : '<p class="text-xs text-muted-foreground-2 italic">Aucune séance renseignée</p>';
+
+    // Motif
+    document.getElementById('modal-motif').textContent = j.motif || '—';
+
+    // Message
+    const msgWrap = document.getElementById('modal-message-wrap');
+    if (j.message) {
+        msgWrap.classList.remove('hidden');
+        document.getElementById('modal-message').textContent = j.message;
+    } else {
+        msgWrap.classList.add('hidden');
+    }
+
+    // Fichiers
+    const fichiersWrap = document.getElementById('modal-fichiers-wrap');
+    const fichiersEl   = document.getElementById('modal-fichiers');
+    if (j.fichiers && j.fichiers.length > 0) {
+        fichiersWrap.classList.remove('hidden');
+        fichiersEl.innerHTML = j.fichiers.map(f => `
+            <a href="${escHtml(f.url)}" target="_blank" rel="noopener"
+               class="flex items-center gap-2.5 px-3 py-2 bg-muted rounded-lg hover:bg-muted/70 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span class="text-xs text-primary font-medium flex-1 truncate">${escHtml(f.nomOriginal || f.url)}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>`).join('');
+    } else {
+        fichiersWrap.classList.add('hidden');
+    }
+
+    // Commentaire AP existant
+    const comWrap = document.getElementById('modal-commentaire-existant-wrap');
+    if (j.commentaireAP && j.statut !== 'PENDING') {
+        comWrap.classList.remove('hidden');
+        document.getElementById('modal-commentaire-existant').textContent = j.commentaireAP;
+    } else {
+        comWrap.classList.add('hidden');
+    }
+
+    // Zone décision
+    const decisionZone = document.getElementById('decision-zone');
+    document.getElementById('decision-commentaire').value = '';
+    if (j.statut === 'PENDING') {
+        decisionZone.classList.remove('hidden');
+    } else {
+        decisionZone.classList.add('hidden');
+    }
+
+    if (typeof HSOverlay !== 'undefined') {
+        HSOverlay.open(document.getElementById('modal-detail'));
+    }
+}
+
+// ─── Décision via modal ───────────────────────────────────────────────────────
+async function sendDecision(action) {
+    if (!activeId) return;
+    const commentaire = document.getElementById('decision-commentaire').value.trim();
+    const btn = action === 'approuver' ? document.getElementById('btn-approuver') : document.getElementById('btn-rejeter');
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(`/api/ap/justificatifs/${action}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: activeId, commentaire }),
+            credentials: 'include'
+        });
+        if (!res.ok) throw new Error('Erreur ' + res.status);
+        if (typeof HSOverlay !== 'undefined') HSOverlay.close(document.getElementById('modal-detail'));
+        await loadJustificatifs();
+    } catch (e) {
+        alert('Erreur lors de la décision. Veuillez réessayer.');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+document.getElementById('btn-approuver').addEventListener('click', () => sendDecision('approuver'));
+document.getElementById('btn-rejeter').addEventListener('click',   () => sendDecision('rejeter'));
+
+// ─── Décision rapide (depuis le menu More) ────────────────────────────────────
+async function quickDecision(id, action) {
+    activeId = id;
+    document.getElementById('decision-commentaire').value = '';
+    await sendDecision(action);
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+    loadJustificatifs();
+});
+window.addEventListener('load', () => {
+    if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+});
+</script>
+</body>
+</html>

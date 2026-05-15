@@ -1,16 +1,17 @@
 package com.projetTransversalIsi.web_application.student;
 
+import com.projetTransversalIsi.security.domain.UserPrincipal;
 import com.projetTransversalIsi.user.domain.enums.UserStatus;
 import com.projetTransversalIsi.user.dto.ProfileResponseDTO;
 import com.projetTransversalIsi.user.dto.UserDetailsResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Controller
 @RequestMapping("/student")
@@ -22,15 +23,13 @@ public class StudentControllerWeb {
 
     @GetMapping("/dashboard")
     public String dashboardView(Model model) {
-        UserDetailsResponseDTO student = getFakeStudent();
-        model.addAttribute("student", student);
+        model.addAttribute("student", getFakeStudent());
         return "StudentInterface/StudentDashboard";
     }
 
     @GetMapping("/schedule")
     public String scheduleView(
-            @org.springframework.security.core.annotation.AuthenticationPrincipal
-            com.projetTransversalIsi.security.domain.UserPrincipal principal,
+            @AuthenticationPrincipal UserPrincipal principal,
             Model model) {
 
         if (principal != null) {
@@ -49,18 +48,34 @@ public class StudentControllerWeb {
 
     @GetMapping("/attendance")
     public String attendanceView(Model model) {
-        UserDetailsResponseDTO student = getFakeStudent();
-        model.addAttribute("student", student);
+        model.addAttribute("student", getFakeStudent());
         return "StudentInterface/StudentAttendance";
     }
 
     @GetMapping("/absences")
-    public String absencesView(Model model) {
-        UserDetailsResponseDTO student = getFakeStudent();
-        List<AbsenceViewModel> absences = getFakeAbsences();
-        
-        model.addAttribute("student", student);
-        model.addAttribute("absences", absences);
+    public String absencesView(
+            @AuthenticationPrincipal UserPrincipal principal,
+            Model model) {
+
+        if (principal != null) {
+            var user = userRepository.findById(principal.userId()).orElse(null);
+            if (user != null && user.getProfile() != null) {
+                var profile = user.getProfile();
+                model.addAttribute("student", new UserDetailsResponseDTO(
+                        user.getId(),
+                        user.getStatus(),
+                        user.getEmail(),
+                        "STUDENT",
+                        ProfileResponseDTO.builder()
+                                .id(profile.getId())
+                                .nom(profile.getNom())
+                                .prenom(profile.getPrenom())
+                                .build()
+                ));
+            }
+        } else {
+            model.addAttribute("student", getFakeStudent());
+        }
         return "StudentInterface/StudentAbsenceJustification";
     }
 
@@ -80,46 +95,11 @@ public class StudentControllerWeb {
         );
     }
 
-    private List<AbsenceViewModel> getFakeAbsences() {
-        return List.of(
-                new AbsenceViewModel(
-                        1L,
-                        "Mathématiques - Advanced Calculus II",
-                        LocalDate.of(2024, 9, 23),
-                        "PENDING",
-                        "Absence justifiée"
-                ),
-                new AbsenceViewModel(
-                        2L,
-                        "Advanced Calculus II",
-                        LocalDate.of(2024, 9, 20),
-                        "PENDING",
-                        "En attente d'approbation"
-                ),
-                new AbsenceViewModel(
-                        3L,
-                        "Approved Biologie Lab",
-                        LocalDate.of(2024, 9, 15),
-                        "APPROVED",
-                        "Justificatif approuvé"
-                ),
-                new AbsenceViewModel(
-                        4L,
-                        "World History",
-                        LocalDate.of(2024, 9, 10),
-                        "REJECTED",
-                        "Justificatif invalide"
-                )
-        );
-    }
-
     public record AbsenceViewModel(
             Long id,
             String subject,
             LocalDate date,
             String status,
             String reason
-    ) {
-    }
+    ) {}
 }
-

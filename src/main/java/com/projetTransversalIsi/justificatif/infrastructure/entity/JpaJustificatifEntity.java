@@ -6,6 +6,8 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -19,16 +21,26 @@ public class JpaJustificatifEntity {
     @Column(name = "etudiant_id", nullable = false)
     private Long etudiantId;
 
+    // Séances couvertes par ce justificatif (une ou plusieurs).
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "justificatif_seance",
+            joinColumns = @JoinColumn(name = "justificatif_id"))
     @Column(name = "seance_id")
-    private Long seanceId;
+    private List<Long> seanceIds = new ArrayList<>();
 
     @Column(name = "motif", nullable = false, columnDefinition = "TEXT")
     private String motif;
 
-    @Column(name = "fichier_url")
-    private String fichierUrl;
+    @Column(name = "message", columnDefinition = "TEXT")
+    private String message;
 
-    @Column(name = "date_absence", nullable = false)
+    // Pièces justificatives stockées dans une table dédiée.
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "justificatif_fichier",
+            joinColumns = @JoinColumn(name = "justificatif_id"))
+    private List<FichierEmbeddable> fichiers = new ArrayList<>();
+
+    @Column(name = "date_absence")
     private LocalDate dateAbsence;
 
     @Enumerated(EnumType.STRING)

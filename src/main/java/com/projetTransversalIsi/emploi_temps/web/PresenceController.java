@@ -24,7 +24,18 @@ public class PresenceController {
     private final AddPresenceRowUC addPresenceRowUC;
     private final UpdatePresenceRowUC updatePresenceRowUC;
     private final MarkStudentPresentUC markStudentPresentUC;
+    private final GetAbsencesEtudiantUC getAbsencesEtudiantUC;
     private final SpringDataUserRepository userRepository;
+
+    // GET /api/presences/absences/etudiant — absences agrégées de l'étudiant authentifié.
+    @GetMapping("/absences/etudiant")
+    public ResponseEntity<List<AbsenceEtudiantDTO>> getAbsencesEtudiant(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        JpaUserEntity user = userRepository.findById(principal.userId())
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+        Long etudiantId = user.getProfile().getId();
+        return ResponseEntity.ok(getAbsencesEtudiantUC.execute(etudiantId));
+    }
 
     // GET /api/presences/scan?code=<uuid> — point d'entrée du scan QR côté étudiant.
     // L'étudiant doit être authentifié (JWT) ; son profileId est résolu depuis le token Spring Security.
