@@ -25,7 +25,38 @@ public class PresenceController {
     private final UpdatePresenceRowUC updatePresenceRowUC;
     private final MarkStudentPresentUC markStudentPresentUC;
     private final GetAbsencesEtudiantUC getAbsencesEtudiantUC;
+    private final GetMatieresStatsEtudiantUC getMatieresStatsEtudiantUC;
+    private final com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProfileRepository studentProfileRepo;
     private final SpringDataUserRepository userRepository;
+
+    /**
+     * GET /api/presences/matieres/stats
+     * Retourne les statistiques de présence par matière pour l'étudiant authentifié.
+     * L'agrégation (total programmé, minutes d'absence, taux, justificatifs) est entièrement
+     * effectuée en SQL côté base de données.
+     *
+     * Paramètre : specialiteId (Long) — filtre les offre_ue de l'année scolaire active.
+     */
+    @GetMapping("/matieres/stats")
+    public ResponseEntity<List<MatiereStatsEtudiantDTO>> getMatieresStats(
+            @RequestParam Long specialiteId,
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        JpaUserEntity user = userRepository.findById(principal.userId())
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+
+        Long etudiantId = user.getProfile().getId();
+
+        Long classeId = studentProfileRepo.findById(etudiantId)
+                .map(sp -> sp.getClasse() != null ? sp.getClasse().getId() : null)
+                .orElse(null);
+
+        if (classeId == null) {
+            return ResponseEntity.ok(List.of());
+        }
+
+        return ResponseEntity.ok(getMatieresStatsEtudiantUC.execute(etudiantId, classeId, specialiteId));
+    }
 
     // GET /api/presences/absences/etudiant — absences agrégées de l'étudiant authentifié.
     @GetMapping("/absences/etudiant")

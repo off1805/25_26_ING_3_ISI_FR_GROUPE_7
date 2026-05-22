@@ -369,6 +369,25 @@
                     </a>
                 </li>
 
+                <!-- Matières Student -->
+                <li th:if="${sidebarRole == 'STUDENT'}">
+                    <a th:href="@{/student/subjects}"
+                       th:classappend="${activePage == 'subjects'} ?
+                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary [&>div]:bg-primary/15' :
+                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground [&>div]:bg-muted'"
+                       class="flex items-center gap-3 py-2 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
+                              hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
+                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="1.75">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                            </svg>
+                        </div>
+                        <span class="hs-overlay-minified:hidden truncate">Mes Matières</span>
+                    </a>
+                </li>
+
                 <!-- Absences Student -->
                 <li th:if="${sidebarRole == 'STUDENT'}">
                     <a th:href="@{/student/absences}"

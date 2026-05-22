@@ -52,6 +52,43 @@ public class StudentControllerWeb {
         return "StudentInterface/StudentAttendance";
     }
 
+    @GetMapping("/subjects")
+    public String subjectsView(
+            @AuthenticationPrincipal UserPrincipal principal,
+            Model model) {
+
+        if (principal != null) {
+            var user = userRepository.findById(principal.userId()).orElse(null);
+            if (user != null && user.getProfile() != null) {
+                studentProfileRepo.findById(user.getProfile().getId()).ifPresent(sp -> {
+                    if (sp.getClasse() != null) {
+                        model.addAttribute("classeId", sp.getClasse().getId());
+                        if (sp.getClasse().getSpecialite() != null) {
+                            model.addAttribute("specialiteId", sp.getClasse().getSpecialite().getId());
+                        }
+                    }
+                    model.addAttribute("student", new UserDetailsResponseDTO(
+                            user.getId(),
+                            user.getStatus(),
+                            user.getEmail(),
+                            "STUDENT",
+                            ProfileResponseDTO.builder()
+                                    .id(user.getProfile().getId())
+                                    .nom(user.getProfile().getNom())
+                                    .prenom(user.getProfile().getPrenom())
+                                    .build()
+                    ));
+                });
+            }
+        }
+
+        if (!model.containsAttribute("student")) {
+            model.addAttribute("student", getFakeStudent());
+        }
+
+        return "StudentInterface/StudentSubjects";
+    }
+
     @GetMapping("/absences")
     public String absencesView(
             @AuthenticationPrincipal UserPrincipal principal,
