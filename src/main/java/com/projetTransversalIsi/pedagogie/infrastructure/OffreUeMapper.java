@@ -2,6 +2,7 @@ package com.projetTransversalIsi.pedagogie.infrastructure;
 
 import com.projetTransversalIsi.pedagogie.application.dto.OffreUeResponseDTO;
 import com.projetTransversalIsi.pedagogie.domain.model.OffreUe;
+import com.projetTransversalIsi.pedagogie.infrastructure.entity.EnseignantClasseLink;
 import com.projetTransversalIsi.pedagogie.infrastructure.entity.JpaOffreUeEntity;
 import com.projetTransversalIsi.user.profil.infrastructure.JpaTeacherProfileEntity;
 import org.mapstruct.Mapper;
@@ -29,9 +30,9 @@ public interface OffreUeMapper {
         offreUe.setSemestre(entity.getSemestre());
         offreUe.setSpecialiteId(entity.getSpecialiteId());
         offreUe.setEnseignantIds(
-            entity.getUe() != null && entity.getUe().getEnseignants() != null
-                ? entity.getUe().getEnseignants().stream()
-                        .map(JpaTeacherProfileEntity::getId)
+            entity.getEnseignantAssignments() != null
+                ? entity.getEnseignantAssignments().stream()
+                        .map(EnseignantClasseLink::getEnseignantId)
                         .collect(Collectors.toSet())
                 : new HashSet<>()
         );

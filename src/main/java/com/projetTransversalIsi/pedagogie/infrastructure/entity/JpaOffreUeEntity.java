@@ -61,8 +61,7 @@ public class JpaOffreUeEntity {
         name = "offre_ue_enseignant",
         joinColumns = @JoinColumn(name = "offre_ue_id")
     )
-    @Column(name = "enseignant_id")
-    private Set<Long> enseignantIds = new HashSet<>();
+    private Set<EnseignantClasseLink> enseignantAssignments = new HashSet<>();
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
