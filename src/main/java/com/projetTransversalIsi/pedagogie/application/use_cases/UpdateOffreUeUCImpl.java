@@ -28,6 +28,9 @@ public class UpdateOffreUeUCImpl implements UpdateOffreUeUC {
         offreUe.setCouleur(command.couleur());
         offreUe.setSemestre(command.semestre());
         offreUe.setSpecialiteId(command.specialiteId());
+        if (command.enseignantIds() != null) {
+            offreUe.setEnseignantIds(command.enseignantIds());
+        }
         return offreUeRepository.save(offreUe);
     }
 }

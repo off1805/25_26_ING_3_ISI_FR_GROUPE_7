@@ -107,7 +107,7 @@
                     </div>
 
                     <!-- Grid -->
-                    <div id="cours-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div id="cours-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <!-- Loading skeleton -->
                         <div id="cours-loading" class="col-span-full flex justify-center py-16">
                             <div class="animate-spin size-6 border-[2px] border-current border-t-transparent text-primary rounded-full"></div>
@@ -126,46 +126,66 @@
     <div id="hs-modal-cours-detail"
         class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none"
         role="dialog" tabindex="-1">
-        <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-300 mt-0 opacity-0 ease-out transition-all sm:max-w-2xl sm:w-full m-3 sm:mx-auto">
-            <div class="flex flex-col bg-layer border border-layer-line shadow-lg rounded-2xl pointer-events-auto">
+        <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-300 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+            <div class="flex flex-col bg-layer border border-layer-line shadow-2xl rounded-2xl pointer-events-auto overflow-hidden">
+
+                <!-- Barre colorée en haut -->
+                <div id="modal-header-bar" class="h-[3px] w-full shrink-0" style="background:#7c3aed"></div>
 
                 <!-- Header -->
-                <div class="flex justify-between items-start pt-5 px-6">
-                    <div class="flex items-center gap-3">
-                        <div id="modal-color-dot" class="size-3 rounded-full shrink-0" style="background:#7c3aed"></div>
-                        <div>
-                            <h3 id="modal-cours-libelle" class="font-semibold text-base text-layer-foreground">—</h3>
-                            <p id="modal-cours-meta" class="text-xs text-muted-foreground-2 mt-0.5">—</p>
-                        </div>
+                <div class="flex justify-between items-start pt-4 pb-0 px-5">
+                    <div class="min-w-0 flex-1">
+                        <p id="modal-cours-meta" class="text-[11px] font-medium text-muted-foreground-2 mb-0.5 truncate">—</p>
+                        <h3 id="modal-cours-libelle" class="font-bold text-[15px] text-layer-foreground truncate">—</h3>
                     </div>
                     <button type="button"
-                        class="size-8 inline-flex justify-center items-center rounded-full border border-transparent bg-layer-hover text-layer-foreground hover:bg-layer-focus focus:outline-none"
+                        class="shrink-0 ml-3 size-7 inline-flex justify-center items-center rounded-lg bg-transparent text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground focus:outline-none transition-colors"
                         data-hs-overlay="#hs-modal-cours-detail">
-                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
+                        <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
                             <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
                         </svg>
                     </button>
                 </div>
 
-                <!-- Statistiques -->
-                <div class="px-6 py-4 overflow-y-auto" style="max-height: 60vh;">
-                    <div id="modal-stats-content" class="space-y-4">
-                        <div class="flex justify-center py-8">
+                <!-- Tabs — style APSubjects -->
+                <div class="px-5 pt-3 pb-0">
+                    <div class="flex bg-surface-2 rounded-lg p-1">
+                        <button id="modal-tab-overview"
+                            class="modal-tab-btn flex-1 py-1.5 inline-flex items-center justify-center gap-1.5 text-xs font-medium rounded-md bg-card text-layer-foreground transition-all"
+                            data-tab="overview">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="6" height="18" rx="1"/><rect x="9" y="9" width="6" height="12" rx="1"/><rect x="16" y="6" width="6" height="15" rx="1"/></svg>
+                            Vue d'ensemble
+                        </button>
+                        <button id="modal-tab-etudiants"
+                            class="modal-tab-btn flex-1 py-1.5 inline-flex items-center justify-center gap-1.5 text-xs font-medium rounded-md bg-transparent text-muted-foreground-1 transition-all"
+                            data-tab="etudiants">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            Étudiants
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Panel: Vue d'ensemble -->
+                <div id="modal-panel-overview" class="px-5 py-4 overflow-y-auto" style="max-height: 58vh;">
+                    <div id="modal-stats-content" class="space-y-3">
+                        <div class="flex justify-center py-10">
                             <div class="animate-spin size-5 border-[2px] border-current border-t-transparent text-primary rounded-full"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Footer — lien vers la liste de la classe -->
-                <div class="px-6 pb-5 pt-3 border-t border-layer-line">
-                    <a id="modal-liste-link" href="#"
-                       class="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-semibold rounded-xl bg-primary text-white hover:bg-primary/90 active:scale-[0.98] transition-all">
-                        <i class="bi bi-people"></i>
-                        Voir la liste de la classe
-                        <i class="bi bi-arrow-right-short text-base leading-none"></i>
-                    </a>
+                <!-- Panel: Étudiants -->
+                <div id="modal-panel-etudiants" class="hidden px-5 py-4 overflow-y-auto" style="max-height: 58vh;">
+                    <div id="modal-etudiants-content">
+                        <div class="flex justify-center py-10">
+                            <div class="animate-spin size-5 border-[2px] border-current border-t-transparent text-primary rounded-full"></div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Spacer bas -->
+                <div class="h-3 shrink-0"></div>
 
             </div>
         </div>

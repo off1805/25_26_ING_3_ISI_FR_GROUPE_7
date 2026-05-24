@@ -28,6 +28,7 @@
   "dependencies": {
     "@preline/datepicker": "^4.1.3",
     "@tailwindcss/vite": "^4.2.0",
+    "apexcharts": "^5.13.0",
     "lodash": "^4.17.23",
     "preline": "^4.0.1",
     "toastify-js": "^1.12.0",

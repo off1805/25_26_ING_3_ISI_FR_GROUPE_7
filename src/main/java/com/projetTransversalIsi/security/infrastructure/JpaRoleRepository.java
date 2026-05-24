@@ -38,6 +38,11 @@ public class JpaRoleRepository implements RoleRepository {
     public Long count(){
         return sprgDtRoleRepo.count();
     }
+
+    @Override
+    public Long countPermissionLinks() {
+        return sprgDtRoleRepo.countPermissionLinks();
+    }
     @Override
     public Optional<Role> getRoleById(String id){
         return sprgDtRoleRepo.findById(id).map(roleMapper::JpaRoleEntityToRole);

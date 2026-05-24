@@ -29,4 +29,9 @@ public class RoleService implements
     public Long count(){
         return roleRepo.count();
     }
+
+    @Override
+    public Long countPermissionLinks() {
+        return roleRepo.countPermissionLinks();
+    }
 }

@@ -10,6 +10,7 @@ public record JustificatifAPViewDTO(
         String etudiantNom,
         String etudiantPrenom,
         String etudiantMatricule,
+        String etudiantPhotoUrl,
         List<SeanceInfo> seances,
         String motif,
         String message,

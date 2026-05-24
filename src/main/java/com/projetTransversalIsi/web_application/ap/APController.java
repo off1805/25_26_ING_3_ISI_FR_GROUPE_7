@@ -20,6 +20,12 @@ import com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProf
 import com.projetTransversalIsi.user.services.FindUserByIdUC;
 import com.projetTransversalIsi.structure_academique.application.dto.SpecialiteResponseDTO;
 import com.projetTransversalIsi.structure_academique.application.service.SpecialiteService;
+import com.projetTransversalIsi.web_application.ap.dto.AbsenceEvolutionDTO;
+import com.projetTransversalIsi.web_application.ap.dto.APDashboardDTO;
+import com.projetTransversalIsi.web_application.ap.repository.ClasseAbsenceRow;
+import com.projetTransversalIsi.web_application.ap.repository.AbsenceEvolutionRow;
+import com.projetTransversalIsi.web_application.ap.repository.SpringDataAPDashboardRepository;
+import com.projetTransversalIsi.web_application.ap.repository.StatutCountRow;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,11 +38,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.StringJoiner;
 
 @Controller
@@ -53,6 +61,7 @@ public class APController {
     private final EmploiTempsService emploiTempsService;
     private final SearchUeUC searchUe;
     private final FindUserByIdUC findUser;
+    private final SpringDataAPDashboardRepository dashboardRepository;
 
     private Long resolveApFiliereId(UserPrincipal principal) {
         if(principal == null) System.out.println("Principal is null in resolveApFiliereId");
@@ -111,6 +120,60 @@ public class APController {
     }
 
     // ── Routes ────────────────────────────────────────────────────────────────
+
+    @GetMapping({"/", "/dashboard"})
+    public String dashboardView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        Long filiereId = resolveApFiliereId(principal);
+        FiliereResponseDTO filiere = filiereId != null ? filiereService.getFiliereById(filiereId) : null;
+
+        APDashboardDTO dashboard;
+        if (filiereId == null) {
+            dashboard = new APDashboardDTO(0, 0, 0, 100.0, List.of(), List.of(), 0, 0, 0, List.of());
+        } else {
+            long totalEtudiants = Optional.ofNullable(dashboardRepository.countEtudiantsByFiliereId(filiereId)).orElse(0L);
+
+            LocalDate today = LocalDate.now();
+            LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
+            LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+            long seancesSemaine = Optional.ofNullable(dashboardRepository.countSeancesSemaine(filiereId, startOfWeek, endOfWeek)).orElse(0L);
+
+            long justificatifsEnAttente = Optional.ofNullable(dashboardRepository.countJustificatifsEnAttente(filiereId)).orElse(0L);
+
+            double tauxPresence = Optional.ofNullable(dashboardRepository.computeTauxPresence(filiereId)).orElse(100.0);
+            double tauxArrondi = Math.round(tauxPresence * 10.0) / 10.0;
+
+            List<ClasseAbsenceRow> absenceRows = dashboardRepository.findAbsencesParClasse(filiereId);
+            List<String> absenceLabels = absenceRows.stream().map(ClasseAbsenceRow::getClasseCode).toList();
+            List<Long> absenceData = absenceRows.stream().map(ClasseAbsenceRow::getNbAbsences).toList();
+
+            long pending = 0, approved = 0, rejected = 0;
+            for (StatutCountRow row : dashboardRepository.findJustificatifsParStatut(filiereId)) {
+                switch (row.getStatut()) {
+                    case "PENDING"  -> pending  = row.getCnt();
+                    case "APPROVED" -> approved = row.getCnt();
+                    case "REJECTED" -> rejected = row.getCnt();
+                }
+            }
+
+            List<AbsenceEvolutionDTO> evolution = dashboardRepository.findAbsencesEvolution(filiereId)
+                    .stream()
+                    .map(r -> new AbsenceEvolutionDTO(r.getClasseCode(), r.getJour(), r.getNbAbsences()))
+                    .toList();
+
+            dashboard = new APDashboardDTO(
+                    totalEtudiants, seancesSemaine, justificatifsEnAttente, tauxArrondi,
+                    absenceLabels, absenceData,
+                    pending, approved, rejected,
+                    evolution
+            );
+        }
+
+        model.addAttribute("dashboard", dashboard);
+        model.addAttribute("filiere", filiere);
+        model.addAttribute("activePage", "dashboard");
+        model.addAttribute("apName", "AP Name");
+        return "APInterface/APDashboard";
+    }
 
     @GetMapping("/subjects")
     public String subjectsView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
@@ -320,6 +383,15 @@ public class APController {
         model.addAttribute("activePage", "classes");
         model.addAttribute("apName", "AP Name");
         return "APInterface/APClasses";
+    }
+
+    @GetMapping("/absences")
+    public String absencesView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        Long filiereId = resolveApFiliereId(principal);
+        FiliereResponseDTO filiere = filiereId != null ? filiereService.getFiliereById(filiereId) : null;
+        model.addAttribute("filiere", filiere);
+        model.addAttribute("activePage", "absences");
+        return "APInterface/APAbsences";
     }
 
     @GetMapping("/justificatifs")

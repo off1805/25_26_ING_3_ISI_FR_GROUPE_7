@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -29,13 +30,22 @@ public interface OffreUeMapper {
         offreUe.setCouleur(entity.getCouleur());
         offreUe.setSemestre(entity.getSemestre());
         offreUe.setSpecialiteId(entity.getSpecialiteId());
-        offreUe.setEnseignantIds(
-            entity.getEnseignantAssignments() != null
-                ? entity.getEnseignantAssignments().stream()
-                        .map(EnseignantClasseLink::getEnseignantId)
-                        .collect(Collectors.toSet())
-                : new HashSet<>()
-        );
+        // Priorité : affectations fines (offre_ue_enseignant).
+        // Fallback : enseignants de l'UE mère (ue_enseignant), car offre_ue_enseignant
+        // n'est alimentée que via ManageOffreUeEnseignantUC (non exposé en REST).
+        Set<Long> enseignantIds;
+        if (entity.getEnseignantAssignments() != null && !entity.getEnseignantAssignments().isEmpty()) {
+            enseignantIds = entity.getEnseignantAssignments().stream()
+                    .map(EnseignantClasseLink::getEnseignantId)
+                    .collect(Collectors.toSet());
+        } else if (entity.getUe() != null && entity.getUe().getEnseignants() != null) {
+            enseignantIds = entity.getUe().getEnseignants().stream()
+                    .map(JpaTeacherProfileEntity::getId)
+                    .collect(Collectors.toSet());
+        } else {
+            enseignantIds = new HashSet<>();
+        }
+        offreUe.setEnseignantIds(enseignantIds);
         offreUe.setCreatedAt(entity.getCreatedAt());
         return offreUe;
     }

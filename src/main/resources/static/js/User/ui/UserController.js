@@ -34,11 +34,13 @@ export class UserController {
         if (addUserForm) {
             addUserForm.addEventListener('submit', (e) => this.switchToProfilEdition(e));
             const roleSelect = addUserForm.querySelector('select[name="role"]');
+            console.log("role: ", roleSelect);
             if (roleSelect) {
                 roleSelect.addEventListener('change', (e) => this.handleRoleChange(e));
                 if (roleSelect.value) {
                     this.userApi.getPermissionsByRole(roleSelect.value)
                         .then(permissions => {
+                            console.log(permissions);
                             this.currentPermissions = permissions || [];
                             this.updatePermissionsUI(this.currentPermissions);
                         })
@@ -61,6 +63,7 @@ export class UserController {
                 document.getElementById('filiere-select-wrapper')?.classList.add('hidden');
             } else {
                 if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+                this._reloadPermissionsForCurrentRole();
             }
         });
 
@@ -463,7 +466,8 @@ export class UserController {
 
     // ── CHANGEMENT DE RÔLE (formulaire add) ──────────────────────────────────
     async handleRoleChange(event) {
-        const roleName = event.target.value;
+        const roleName = document.getElementById('user-role')?.value || event.target.value;
+        console.log("Role sélectionné :", roleName);
         if (!roleName) return;
 
         const filiereWrapper = document.getElementById('filiere-select-wrapper');
@@ -473,11 +477,25 @@ export class UserController {
 
         try {
             const permissions = await this.userApi.getPermissionsByRole(roleName);
+            console.log(permissions)
             this.currentPermissions = permissions || [];
             this.updatePermissionsUI(this.currentPermissions);
         } catch (e) {
             console.error("Erreur lors de la récupération des permissions", e);
         }
+    }
+
+    _reloadPermissionsForCurrentRole() {
+        const roleName = document.getElementById('user-role')?.value;
+        console.log("Reload permissions pour rôle :", roleName);
+        if (!roleName) return;
+        this.userApi.getPermissionsByRole(roleName)
+            .then(permissions => {
+                console.log(permissions);
+                this.currentPermissions = permissions || [];
+                this.updatePermissionsUI(this.currentPermissions);
+            })
+            .catch(e => console.error("Erreur chargement permissions", e));
     }
 
     // ── PERMISSIONS UI ────────────────────────────────────────────────────────
@@ -498,7 +516,7 @@ export class UserController {
     updatePermissionsUI(permissions) {
         const container = document.getElementById('permissionsContainer');
         const view = document.getElementById('permissions-view');
-        if (!container) return;
+        if (!container || !view) return;
 
         container.innerHTML = '';
         view.innerHTML = '';

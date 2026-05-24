@@ -27,6 +27,25 @@ public class TeacherController {
     private final SpringDataEmploiTempsRepository emploiTempsRepository;
     private final SpringDataPresenceListRepository presenceListRepository;
     private final SpringDataSeanceRepository seanceRepository;
+    @GetMapping("/cours")
+    public String coursView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        UserDetailsResponseDTO teacher = getFakeTeacher();
+        if (principal != null) {
+            var user = userRepository.findById(principal.userId()).orElse(null);
+            if (user != null && user.getProfile() != null) {
+                teacher = new UserDetailsResponseDTO(
+                        user.getId(), user.getStatus(), user.getEmail(), "TEACHER",
+                        ProfileResponseDTO.builder()
+                                .id(user.getProfile().getId())
+                                .nom(user.getProfile().getNom())
+                                .prenom(user.getProfile().getPrenom())
+                                .build());
+            }
+        }
+        model.addAttribute("teacher", teacher);
+        return "TeacherInterface/TeacherCours";
+    }
+
     @GetMapping("/dashboard")
     public String dashboardView(Model model) {
         UserDetailsResponseDTO teacher = getFakeTeacher();
