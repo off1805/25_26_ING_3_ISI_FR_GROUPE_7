@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     populateClasseFilter();
     renderGrid();
     bindFilters();
+    // Modal tabs
+    document.querySelectorAll(".modal-tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => switchModalTab(btn.dataset.tab));
+    });
 });
 
 // ── Chargement ─────────────────────────────────────────────────────────────────
@@ -65,63 +69,47 @@ function renderGrid() {
 }
 
 function coursCard(c) {
-    const color   = c.couleur ?? "#7c3aed";
-    const semLbl  = c.semestre ? `S${c.semestre}` : "—";
-    const nbEtu   = c.nbEtudiants   ?? 0;
+    const color     = c.couleur ?? "#7c3aed";
+    const semLbl    = c.semestre ? `S${c.semestre}` : "—";
+    const nbEtu     = c.nbEtudiants   ?? 0;
     const nbSeances = c.nbSeancesFaites ?? 0;
+    const vh        = c.volumeHoraireTotal ?? 0;
 
     return `
-    <div class="teacher-cours-card flex flex-col gap-3 p-5 bg-card border border-card-line rounded-xl
-                hover:shadow-md hover:border-primary/30 transition-all cursor-pointer"
+    <div class="teacher-cours-card flex items-center gap-4 px-5 py-4 bg-card border border-card-line rounded-xl
+                hover:shadow-sm hover:border-primary/20 transition-all cursor-pointer"
          data-offre="${c.offreUeId}" data-classe="${c.classeId}">
 
-        <!-- Header carte -->
-        <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 size-11 rounded-xl flex items-center justify-center text-xl shadow-sm"
-                 style="background-color:${color}19; color:${color};">
-                <i class="bi bi-book-half"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-layer-foreground truncate">${esc(c.libelle)}</p>
-                <p class="text-xs text-muted-foreground-2 mt-0.5 truncate">${esc(c.code ?? "")}</p>
-            </div>
-            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border shrink-0"
-                  style="background-color:${color}15; color:${color}; border-color:${color}30;">
-                ${semLbl}
-            </span>
+        <!-- Icône colorée -->
+        <div class="flex-shrink-0 size-10 rounded-xl flex items-center justify-center text-lg"
+             style="background-color:${color}19; color:${color};">
+            <i class="bi bi-journal-text"></i>
         </div>
 
-        <!-- Classe badge -->
-        <div class="flex items-center gap-2 px-3 py-2 bg-surface rounded-lg border border-layer-line">
-            <i class="bi bi-building text-muted-foreground-2 text-sm shrink-0"></i>
-            <span class="text-xs font-semibold text-layer-foreground">${esc(c.classeCode ?? "—")}</span>
-        </div>
-
-        <!-- Stats rapides -->
-        <div class="grid grid-cols-2 gap-2 text-xs text-muted-foreground-2">
-            <div class="flex items-center gap-1.5">
-                <i class="bi bi-people shrink-0"></i>
-                <span><strong class="text-layer-foreground">${nbEtu}</strong> étudiant${nbEtu > 1 ? "s" : ""}</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <i class="bi bi-calendar-check shrink-0"></i>
-                <span><strong class="text-layer-foreground">${nbSeances}</strong> séance${nbSeances > 1 ? "s" : ""}</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <i class="bi bi-clock shrink-0"></i>
-                <span>${c.volumeHoraireTotal ?? 0}h prévues</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <i class="bi bi-award shrink-0"></i>
-                <span>${c.credit ?? 0} crédit${(c.credit ?? 0) > 1 ? "s" : ""}</span>
+        <!-- Infos -->
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-layer-foreground truncate">${esc(c.libelle)}</p>
+            <p class="text-xs text-muted-foreground-2 mt-0.5 truncate">
+                ${esc(c.code ?? "")} &middot; <span class="font-medium text-layer-foreground">${esc(c.classeCode ?? "—")}</span> &middot; ${semLbl}
+            </p>
+            <div class="flex items-center gap-3 mt-1.5">
+                <span class="flex items-center gap-1 text-[11px] text-muted-foreground-2">
+                    <i class="bi bi-people shrink-0"></i>
+                    <strong class="text-layer-foreground">${nbEtu}</strong>
+                </span>
+                <span class="flex items-center gap-1 text-[11px] text-muted-foreground-2">
+                    <i class="bi bi-calendar-check shrink-0"></i>
+                    <strong class="text-layer-foreground">${nbSeances}</strong> séance${nbSeances > 1 ? "s" : ""}
+                </span>
+                <span class="flex items-center gap-1 text-[11px] text-muted-foreground-2">
+                    <i class="bi bi-clock shrink-0"></i>
+                    ${vh}h
+                </span>
             </div>
         </div>
 
-        <div class="flex justify-end">
-            <span class="text-xs text-muted-foreground-2 flex items-center gap-1 hover:text-primary transition-colors">
-                Voir détails <i class="bi bi-arrow-right text-xs"></i>
-            </span>
-        </div>
+        <!-- Chevron -->
+        <i class="bi bi-chevron-right text-muted-foreground-2 text-sm shrink-0"></i>
     </div>`;
 }
 
@@ -177,45 +165,65 @@ async function openCoursModal(card) {
     const color = card.couleur ?? "#7c3aed";
 
     // Header
-    const dot = document.getElementById("modal-color-dot");
-    if (dot) dot.style.background = color;
+    const bar = document.getElementById("modal-header-bar");
+    if (bar) bar.style.background = color;
     setText("modal-cours-libelle", card.libelle);
     setText("modal-cours-meta", `${card.code ?? ""} · Classe ${card.classeCode ?? "—"} · ${card.nbEtudiants ?? 0} étudiant(s)`);
 
-    // Stats spinner
+    // Reset to overview tab
+    switchModalTab("overview");
     setHtml("modal-stats-content", spinner());
-
-    // Lien vers la page de liste
-    const link = document.getElementById("modal-liste-link");
-    if (link) link.href = `/teacher/cours/${card.offreUeId}/classe/${card.classeId}/liste`;
+    setHtml("modal-etudiants-content", spinner());
 
     // Ouvrir
     if (window.HSOverlay) window.HSOverlay.open("#hs-modal-cours-detail");
     setTimeout(() => { if (typeof HSStaticMethods !== "undefined") HSStaticMethods.autoInit(); }, 50);
 
-    // Charger les statistiques
-    loadCoursStats(card.offreUeId, card.classeId);
+    // Charger stats + étudiants en parallèle
+    loadCoursStats(card.offreUeId, card.classeId, card);
+    loadEtudiants(card.offreUeId, card.classeId);
 }
 
-async function loadCoursStats(offreUeId, classeId) {
+// ── Tabs ───────────────────────────────────────────────────────────────────────
+function switchModalTab(tab) {
+    document.querySelectorAll(".modal-tab-btn").forEach(btn => {
+        const isActive = btn.dataset.tab === tab;
+        btn.classList.toggle("bg-card", isActive);
+        btn.classList.toggle("text-layer-foreground", isActive);
+        btn.classList.toggle("bg-transparent", !isActive);
+        btn.classList.toggle("text-muted-foreground-1", !isActive);
+    });
+    const overview   = document.getElementById("modal-panel-overview");
+    const etudiants  = document.getElementById("modal-panel-etudiants");
+    if (overview)  overview.classList.toggle("hidden", tab !== "overview");
+    if (etudiants) etudiants.classList.toggle("hidden", tab !== "etudiants");
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────────
+async function loadCoursStats(offreUeId, classeId, card) {
     try {
         const s = await api.get(`/api/teacher/cours/${offreUeId}/classe/${classeId}/stats`);
-        renderCoursStats(s);
+        renderCoursStats(s, card);
     } catch {
         setHtml("modal-stats-content", `<p class="text-xs text-red-400 text-center py-6">Impossible de charger les statistiques.</p>`);
     }
 }
 
-function renderCoursStats(s) {
-    const taux  = s.tauxPresenceGlobal ?? 0;
-    const toH   = m => ((m ?? 0) / 60).toFixed(1) + "h";
-    const color = taux >= 80 ? "#4ade80" : taux >= 60 ? "#facc15" : "#f87171";
+function renderCoursStats(s, card) {
+    const taux   = s.tauxPresenceGlobal ?? 0;
+    const toH    = m => ((m ?? 0) / 60).toFixed(1) + "h";
+    const color  = taux >= 80 ? "#4ade80" : taux >= 60 ? "#facc15" : "#f87171";
     const offset = (314 - (taux / 100) * 314).toFixed(2);
+
+    // Progression (heures effectuées vs prévues)
+    const plannedMin = (card?.volumeHoraireTotal ?? 0) * 60;
+    const doneMin    = s.totalMinutesProgrammes ?? 0;
+    const progPct    = plannedMin > 0 ? Math.min(100, Math.round((doneMin / plannedMin) * 100)) : 0;
+    const progColor  = progPct >= 80 ? "#4ade80" : progPct >= 40 ? "#60a5fa" : "#f97316";
 
     const html = `
     <!-- Jauge + KPIs -->
     <div class="flex flex-col sm:flex-row items-center gap-6 py-2">
-        <!-- Jauge circulaire -->
         <div class="relative size-28 shrink-0">
             <svg class="size-full -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="8" class="text-surface-2"/>
@@ -228,17 +236,28 @@ function renderCoursStats(s) {
                 <span class="text-[10px] text-muted-foreground-2">présence</span>
             </div>
         </div>
-        <!-- KPI cards -->
         <div class="grid grid-cols-2 gap-3 flex-1 w-full">
             ${kpiCard("bi-calendar2-check", "Séances données", s.totalSeances ?? 0, "")}
             ${kpiCard("bi-people", "Étudiants", s.nbEtudiants ?? 0, "")}
-            ${kpiCard("bi-clock", "Heures données", toH(s.totalMinutesProgrammes), "")}
+            ${kpiCard("bi-clock", "Heures données", toH(doneMin), "")}
             ${kpiCard("bi-person-check", "Présents total", s.nbPresencesTotal ?? 0, "text-green-400")}
         </div>
     </div>
 
+    <!-- Progression du cours -->
+    <div class="bg-surface-2 rounded-xl p-4">
+        <div class="flex justify-between items-center mb-2">
+            <p class="text-xs font-semibold text-layer-foreground">Avancement du cours</p>
+            <span class="text-xs font-bold" style="color:${progColor}">${progPct}%</span>
+        </div>
+        <div class="h-1.5 bg-layer rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700" style="width:${progPct}%; background:${progColor}"></div>
+        </div>
+        <p class="text-[11px] text-muted-foreground-2 mt-1.5">${toH(doneMin)} effectuées sur ${card?.volumeHoraireTotal ?? 0}h prévues</p>
+    </div>
+
     <!-- Répartition présences/absences -->
-    <div class="bg-surface rounded-xl border border-layer-line p-4 mt-2">
+    <div class="bg-surface-2 rounded-xl p-4">
         <p class="text-xs font-semibold text-layer-foreground mb-3">Répartition des présences</p>
         <div class="space-y-2.5">
             ${presenceBar("Présents", s.nbPresencesTotal ?? 0, (s.nbPresencesTotal ?? 0) + (s.nbAbsencesTotal ?? 0), "bg-green-400")}
@@ -248,8 +267,75 @@ function renderCoursStats(s) {
     setHtml("modal-stats-content", html);
 }
 
+// ── Étudiants ──────────────────────────────────────────────────────────────────
+async function loadEtudiants(offreUeId, classeId) {
+    try {
+        const list = await api.get(`/api/teacher/cours/${offreUeId}/classe/${classeId}/etudiants`);
+        renderEtudiants(list);
+    } catch {
+        setHtml("modal-etudiants-content", `<p class="text-xs text-red-400 text-center py-6">Impossible de charger les étudiants.</p>`);
+    }
+}
+
+function renderEtudiants(etudiants) {
+    if (!etudiants || etudiants.length === 0) {
+        setHtml("modal-etudiants-content", `
+            <div class="py-12 text-center text-muted-foreground-2">
+                <i class="bi bi-people text-3xl block mb-2"></i>
+                <p class="text-sm">Aucun étudiant enregistré pour ce cours.</p>
+            </div>`);
+        return;
+    }
+
+    // Sort: worst attendance first (so teacher sees at-risk students)
+    const sorted = [...etudiants].sort((a, b) => (a.tauxPresence ?? 0) - (b.tauxPresence ?? 0));
+
+    const rows = sorted.map(e => {
+        const taux   = e.tauxPresence ?? 0;
+        const color  = taux >= 80 ? "#4ade80" : taux >= 60 ? "#facc15" : "#f87171";
+        const initial = (e.nom || "E").charAt(0).toUpperCase();
+        const avatar  = e.photoUrl
+            ? `<img src="${esc(e.photoUrl)}" class="size-9 rounded-full object-cover shrink-0" alt="${esc(e.nom)}" />`
+            : `<div class="size-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">${initial}</div>`;
+
+        const offset = (100 - (100 - taux / 100) * 100).toFixed(0);
+        const circR  = 14;
+        const circC  = 2 * Math.PI * circR;
+        const dashOff = (circC - (taux / 100) * circC).toFixed(2);
+
+        return `
+        <div class="flex items-center gap-3 py-2.5 border-b border-layer-line last:border-0">
+            ${avatar}
+            <div class="flex-1 min-w-0">
+                <p class="text-xs font-semibold text-layer-foreground truncate">${esc(e.prenom)} ${esc(e.nom)}</p>
+                <p class="text-[11px] text-muted-foreground-2 mt-0.5">${esc(e.matricule ?? "")} · <span class="text-red-400">${e.nbAbsences} absence${e.nbAbsences > 1 ? "s" : ""}</span></p>
+            </div>
+            <div class="relative size-9 shrink-0">
+                <svg class="size-full -rotate-90" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" r="${circR}" fill="none" stroke="currentColor" stroke-width="3.5" class="text-surface-2"/>
+                    <circle cx="18" cy="18" r="${circR}" fill="none" stroke="${color}" stroke-width="3.5"
+                        stroke-dasharray="${circC.toFixed(2)}" stroke-dashoffset="${dashOff}" stroke-linecap="round"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-[9px] font-black" style="color:${color}">${taux}%</span>
+                </div>
+            </div>
+        </div>`;
+    }).join("");
+
+    const atRisk = etudiants.filter(e => (e.tauxPresence ?? 100) < 75).length;
+    const alertBanner = atRisk > 0
+        ? `<div class="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-red-400/10 border border-red-400/20 text-red-400 text-xs font-medium">
+               <i class="bi bi-exclamation-triangle-fill shrink-0"></i>
+               ${atRisk} étudiant${atRisk > 1 ? "s" : ""} en dessous de 75% de présence
+           </div>`
+        : "";
+
+    setHtml("modal-etudiants-content", alertBanner + `<div>${rows}</div>`);
+}
+
 function kpiCard(icon, label, value, cls) {
-    return `<div class="bg-surface rounded-xl border border-layer-line p-3">
+    return `<div class="bg-surface-2 rounded-xl p-3">
         <div class="flex items-center gap-2 mb-1">
             <i class="bi ${icon} text-muted-foreground-2 text-sm"></i>
             <span class="text-[11px] text-muted-foreground-2">${label}</span>
@@ -262,7 +348,7 @@ function presenceBar(label, count, total, barCls) {
     const pct = total > 0 ? Math.round((count / total) * 100) : 0;
     return `<div class="flex items-center gap-3">
         <span class="text-xs text-muted-foreground-2 w-20 shrink-0">${label}</span>
-        <div class="flex-1 h-2 bg-surface-2 rounded-full overflow-hidden">
+        <div class="flex-1 h-1.5 bg-surface-2 rounded-full overflow-hidden">
             <div class="h-full ${barCls} rounded-full" style="width:${pct}%; transition: width .5s ease"></div>
         </div>
         <span class="text-xs font-semibold text-layer-foreground w-8 text-right">${count}</span>

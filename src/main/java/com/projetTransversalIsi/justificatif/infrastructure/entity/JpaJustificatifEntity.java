@@ -21,7 +21,6 @@ public class JpaJustificatifEntity {
     @Column(name = "etudiant_id", nullable = false)
     private Long etudiantId;
 
-    // Séances couvertes par ce justificatif (une ou plusieurs).
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "justificatif_seance",
             joinColumns = @JoinColumn(name = "justificatif_id"))
@@ -34,7 +33,6 @@ public class JpaJustificatifEntity {
     @Column(name = "message", columnDefinition = "TEXT")
     private String message;
 
-    // Pièces justificatives stockées dans une table dédiée.
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "justificatif_fichier",
             joinColumns = @JoinColumn(name = "justificatif_id"))

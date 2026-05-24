@@ -48,8 +48,8 @@ InitRolePermissionUCImpl implements InitRolePermissionUC{
                 log.info("Permissions par défaut créées.");
             }
 
-            // 2. Création des Rôles par défaut
-            if (defaultRoleOp.count() == 0) {
+            // 2. Création des Rôles par défaut et liaisons role-permission
+            if (defaultRoleOp.count() == 0 || defaultRoleOp.countPermissionLinks() == 0) {
 
                 for(EnumRole enumRole: EnumRole.values()){
                     log.info(enumRole.name());
@@ -75,7 +75,6 @@ InitRolePermissionUCImpl implements InitRolePermissionUC{
                 pro.setNom("admin");
                 pro.setNumeroTelephone("admin");
                 pro.setPrenom("admin");
-                createUser.execute(new CreateUserRequestDTO("admin@gmail.com","ADMIN",Set.of("MANAGE_STAFF"),pro));
             }
             log.info("Initialisation terminée.");
     }

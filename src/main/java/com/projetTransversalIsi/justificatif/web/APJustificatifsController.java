@@ -125,6 +125,7 @@ public class APJustificatifsController {
                 profile.getNom(),
                 profile.getPrenom(),
                 profile.getMatricule(),
+                profile.getPhotoUrl(),
                 seances,
                 j.getMotif(),
                 j.getMessage(),
