@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.emploi_temps.application.use_cases;
 
+import com.projetTransversalIsi.emploi_temps.application.AppelExpirationScheduler;
 import com.projetTransversalIsi.emploi_temps.application.dto.AppelResponseDTO;
 import com.projetTransversalIsi.emploi_temps.application.dto.CreateAppelDTO;
 import com.projetTransversalIsi.emploi_temps.domain.model.Appel;
@@ -31,6 +32,7 @@ public class CreateAppelUCImpl implements CreateAppelUC {
     private final SeanceRepository seanceRepo;
     private final InfoPresenceRowRepository infoPresenceRowRepo;
     private final PresenceRowRepository presenceRowRepo;
+    private final AppelExpirationScheduler expirationScheduler;
 
     @Value("${server.domain:127.0.0.1}")
     private String serverDomain;
@@ -91,6 +93,8 @@ public class CreateAppelUCImpl implements CreateAppelUC {
                 ));
             }
         }
+
+        expirationScheduler.scheduleClose(savedAppel);
 
         return AppelResponseDTO.fromDomain(savedAppel, baseUrl);
     }

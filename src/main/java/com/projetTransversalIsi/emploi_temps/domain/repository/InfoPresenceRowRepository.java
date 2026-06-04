@@ -15,5 +15,7 @@ public interface InfoPresenceRowRepository {
     Optional<InfoPresenceRow> findByAppelIdAndEtudiantId(Long appelId, Long etudiantId);
     // Étudiants non encore déterminés pour un appel donné (isPresent = null).
     List<InfoPresenceRow> findByAppelIdAndIsPresentIsNull(Long appelId);
+    // Identifiants distincts des appels ayant encore des lignes en attente (isPresent = null).
+    List<Long> findDistinctAppelIdsWithPendingRows();
     void delete(Long id);
 }
