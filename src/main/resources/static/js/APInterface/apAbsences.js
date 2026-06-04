@@ -181,51 +181,59 @@ function rowHtml(r) {
     const attente = r.nbEnAttente   || 0;
     const nonJust = Math.max(0, abs - just - attente);
     const taux    = seances > 0 ? Math.round(abs / seances * 1000) / 10 : 0;
-    const tauxColor = taux >= 20 ? 'bg-red-500' : taux >= 10 ? 'bg-amber-400' : 'bg-primary';
 
     const initials = (r.prenom?.[0] ?? '') + (r.nom?.[0] ?? '');
     const avatar   = r.photoUrl
         ? `<img src="${r.photoUrl}" alt="" class="size-8 rounded-xl object-cover shrink-0"/>`
         : `<div class="size-8 rounded-xl bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">${initials.toUpperCase()}</div>`;
 
-    let statutBadge;
-    if (nonJust > 0) {
-        statutBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-600">${nonJust} non just.</span>`;
-    } else if (attente > 0) {
-        statutBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-orange-100 text-orange-700">${attente} en attente</span>`;
-    } else if (just > 0) {
-        statutBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-700">${just} justifiée${just > 1 ? 's' : ''}</span>`;
+    // Répartition — pills à fond neutre, texte coloré, zéros masqués
+    const pills = [];
+    if (just > 0)    pills.push(`<span class="px-2 py-0.5 rounded-full bg-muted text-[10px] font-medium text-green-600">${just} just.</span>`);
+    if (attente > 0) pills.push(`<span class="px-2 py-0.5 rounded-full bg-muted text-[10px] font-medium text-amber-600">${attente} att.</span>`);
+    if (nonJust > 0) pills.push(`<span class="px-2 py-0.5 rounded-full bg-muted text-[10px] font-medium text-red-600">${nonJust} n.j.</span>`);
+    const repartitionHtml = pills.length > 0
+        ? `<div class="flex items-center gap-1 flex-wrap">${pills.join('')}</div>`
+        : `<span class="text-xs text-muted-foreground-2">—</span>`;
+
+    // Indicateur de risque — texte coloré, fond neutre
+    let risqueHtml;
+    if (taux >= 20) {
+        risqueHtml = `<span class="px-2 py-0.5 rounded-full bg-muted text-[10px] font-semibold text-red-600">critique</span>`;
+    } else if (taux >= 10) {
+        risqueHtml = `<span class="px-2 py-0.5 rounded-full bg-muted text-[10px] font-semibold text-amber-600">élevé</span>`;
     } else {
-        statutBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-600">${abs} non just.</span>`;
+        risqueHtml = `<span class="text-xs text-muted-foreground-2">—</span>`;
     }
 
-    return `<tr class="bg-card hover:bg-muted/10 transition-colors group cursor-pointer"
+    return `<tr class="bg-card hover:bg-muted/10 transition-colors cursor-pointer"
                onclick="openDetailDrawer(${r.etudiantId})"
                title="Voir le détail séance par séance">
         <td class="px-4 py-3">
             <div class="flex items-center gap-3">
                 ${avatar}
-                <div class="min-w-0">
-                    <p class="text-sm font-semibold text-layer-foreground truncate">${escHtml(r.prenom)} ${escHtml(r.nom)}</p>
-                    <p class="text-xs text-muted-foreground-2">${escHtml(r.matricule)}</p>
-                </div>
+                <p class="text-sm font-semibold text-layer-foreground truncate">${escHtml(r.prenom)} ${escHtml(r.nom)}</p>
             </div>
         </td>
         <td class="px-4 py-3 hidden sm:table-cell">
-            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-muted text-layer-foreground">${escHtml(r.classeCode)}</span>
+            <span class="text-xs text-muted-foreground-2">${escHtml(r.matricule)}</span>
+        </td>
+        <td class="px-4 py-3 hidden sm:table-cell">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-muted text-[10px] font-medium text-layer-foreground">${escHtml(r.classeCode)}</span>
         </td>
         <td class="px-4 py-3 text-center">
             <span class="text-sm font-black text-layer-foreground">${abs}</span>
         </td>
-        <td class="px-4 py-3 text-center hidden md:table-cell">${statutBadge}</td>
+        <td class="px-4 py-3 hidden md:table-cell">${repartitionHtml}</td>
         <td class="px-4 py-3 hidden lg:table-cell">
             <div class="flex items-center gap-2">
                 <div class="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                    <div class="h-full rounded-full ${tauxColor} transition-all" style="width:${Math.min(taux, 100)}%"></div>
+                    <div class="h-full rounded-full bg-primary transition-all" style="width:${Math.min(taux, 100)}%"></div>
                 </div>
                 <span class="text-[11px] font-semibold text-muted-foreground-2 w-10 text-right">${taux} %</span>
             </div>
         </td>
+        <td class="px-4 py-3">${risqueHtml}</td>
     </tr>`;
 }
 
