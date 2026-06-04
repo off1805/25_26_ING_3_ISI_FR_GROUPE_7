@@ -1,4 +1,6 @@
 import { GlobalErrorHandler } from "../../common/GlobalErrorHandler.js";
+import { GlobalEventNotifier } from "../../common/GlobalEventNotifier.js";
+import { customAlert } from "../../common/CustomAlert.js";
 
 export class APSchedulePageController {
     constructor(retrieveEmploiTempsUC, deleteEmploiTempsUC) {
@@ -203,13 +205,15 @@ export class APSchedulePageController {
     _initModal() {
         document.getElementById('btn-modal-next')?.addEventListener('click', () => {
             const classId = document.getElementById('select-modal-classe')?.value;
-            if (!classId) { alert('Veuillez sélectionner une classe.'); return; }
+            if (!classId) {
+                GlobalEventNotifier.eventError('Veuillez sélectionner une classe.');
+                return;
+            }
 
-            // Si setWeekRange n'a pas encore été appelé, on lit le texte du bouton calendrier
             if (!this._selectedWeekRange) {
                 const rangeText = document.querySelector('#btn-schedule-calendar span')?.textContent?.trim();
                 if (!rangeText || !rangeText.includes('—')) {
-                    alert('Veuillez sélectionner une semaine dans le calendrier.');
+                    GlobalEventNotifier.eventError('Veuillez sélectionner une semaine dans le calendrier.');
                     return;
                 }
                 const [startStr, endStr] = rangeText.split('—').map(s => s.trim());
@@ -235,7 +239,13 @@ export class APSchedulePageController {
 
     _registerDeleteGlobal() {
         window.deleteSchedule = async (id) => {
-            if (!confirm('Êtes-vous sûr de vouloir supprimer cet emploi du temps ?')) return;
+            const confirmed = await customAlert(
+                "Supprimer l'emploi du temps",
+                "Êtes-vous sûr de vouloir supprimer cet emploi du temps ? Cette action est irréversible.",
+                "Supprimer",
+                "Annuler"
+            );
+            if (!confirmed) return;
             try {
                 await this._deleteUC.execute(id);
                 window.location.reload();

@@ -19,13 +19,11 @@ public class Justificatif {
     private Long id;
     private Long etudiantId;
 
-    // Un justificatif peut couvrir plusieurs séances (ex. certificat médical multi-jours).
     private List<Long> seanceIds = new ArrayList<>();
 
     private String motif;
     private String message;
 
-    // Pièces justificatives — chacune a son URL et son nom d'origine.
     private List<JustificatifFichier> fichiers = new ArrayList<>();
 
     private LocalDate dateAbsence;

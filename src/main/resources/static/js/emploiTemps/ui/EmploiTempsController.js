@@ -1,4 +1,5 @@
 import { GlobalErrorHandler } from "../../common/GlobalErrorHandler.js";
+import { customAlert } from "../../common/CustomAlert.js";
 import { CreateEmploiTempsUC } from "../application/CreateEmploiTempsUC.js";
 import { DeleteEmploiTempsUC } from "../application/DeleteEmploiTempsUC.js";
 import { UpdateEmploiTempsUC } from "../application/UpdateEmploiTempsUC.js";
@@ -166,15 +167,21 @@ export class EmploiTempsController {
 
 
     async handleDeleteEmploi(event) {
-        if (!confirm("Voulez-vous vraiment supprimer cet emploi du temps ?")) return;
-
         const button = event.currentTarget;
         const emploiId = button.dataset.emploiId;
 
         if (!emploiId) {
-            alert("Erreur: ID emploi du temps introuvable.");
+            GlobalEventNotifier.eventError("Erreur : ID emploi du temps introuvable.");
             return;
         }
+
+        const confirmed = await customAlert(
+            "Supprimer l'emploi du temps",
+            "Voulez-vous vraiment supprimer cet emploi du temps ? Cette action est irréversible.",
+            "Supprimer",
+            "Annuler"
+        );
+        if (!confirmed) return;
 
         try {
             await this.deleteEmploiTempsUC.execute(emploiId);
@@ -285,7 +292,7 @@ export class EmploiTempsController {
         const seanceId = formData.get('seanceId');
 
         if (!emploiTempsId || !seanceId) {
-            alert("Veuillez sélectionner une séance");
+            GlobalEventNotifier.eventError("Veuillez sélectionner une séance.");
             return;
         }
 
@@ -350,7 +357,13 @@ export class EmploiTempsController {
     }
 
     async _handleRemoveSeance(emploiId, seanceId) {
-        if (!confirm("Retirer cette séance de l'emploi du temps ?")) return;
+        const confirmed = await customAlert(
+            "Retirer la séance",
+            "Voulez-vous retirer cette séance de l'emploi du temps ?",
+            "Retirer",
+            "Annuler"
+        );
+        if (!confirmed) return;
 
         try {
             const updatedEmploi = await this.removeSeanceFromEmploiUC.execute(emploiId, seanceId);

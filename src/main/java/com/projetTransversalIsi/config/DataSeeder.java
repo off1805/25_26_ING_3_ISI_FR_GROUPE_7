@@ -7,10 +7,12 @@ import com.projetTransversalIsi.structure_academique.infrastructure.persistence.
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaFiliereEntity;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaNiveauEntity;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaSpecialiteEntity;
+import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaSchoolEntity;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataClasseRepository;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataCycleRepository;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataFiliereRepository;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataNiveauRepository;
+import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataSchoolRepository;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataSpecialiteRepository;
 import com.projetTransversalIsi.user.dto.CreateUserRequestDTO;
 import com.projetTransversalIsi.user.infrastructure.SpringDataUserRepository;
@@ -35,12 +37,22 @@ public class DataSeeder implements ApplicationRunner {
     private final SpringDataSpecialiteRepository specialiteRepo;
     private final SpringDataClasseRepository classeRepo;
     private final SpringDataUserRepository userRepo;
+    private final SpringDataSchoolRepository schoolRepo;
     private final InitRolePermissionUC initRolePermissionUC;
     private final CreateUserUC createUserUC;
 
     @Override
     public void run(ApplicationArguments args) {
         initRolePermissionUC.execute();
+        if (schoolRepo.count() == 0) {
+            log.info("Création de l'école par défaut...");
+            JpaSchoolEntity school = new JpaSchoolEntity();
+            school.setName("Saint Jean Ingénieur");
+            school.setLatitude(0.0);
+            school.setLongitude(0.0);
+            school.setRayon(200.0);
+            schoolRepo.save(school);
+        }
         if (cycleRepo.count() == 0) {
             log.info("Initialisation de la structure académique...");
             seedStructure();
