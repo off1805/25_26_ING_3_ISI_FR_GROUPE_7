@@ -40,7 +40,6 @@
                 </div>
                 <div class="min-w-0">
                     <p class="font-black text-sm text-layer-foreground leading-tight tracking-tight">KemOSchool</p>
-                    <p class="text-[10px] text-muted-foreground-2 font-medium leading-none mt-0.5">Gestion scolaire</p>
                 </div>
             </div>
 
@@ -86,14 +85,10 @@
                     [&::-webkit-scrollbar-thumb]:rounded-full
                     [&::-webkit-scrollbar-thumb]:bg-sidebar-line">
 
-            <ul class="space-y-0.5">
+            <ul >
 
                 <!-- ── ADMIN ─────────────────────────── -->
-                <li th:if="${sidebarRole == 'ADMIN'}"
-                    class="hs-overlay-minified:hidden px-2 pb-1.5 pt-0.5">
-                    <p class="text-[10px] font-black text-muted-foreground-2 uppercase tracking-widest">Administration</p>
-                </li>
-
+               
                 <!-- Users -->
                 <li th:if="${sidebarRole == 'ADMIN'}">
                     <a th:href="@{/admin/users}"
@@ -154,20 +149,17 @@
                 </li>
 
                 <!-- ── AP ─────────────────────────────── -->
-                <li th:if="${sidebarRole == 'AP'}"
-                    class="hs-overlay-minified:hidden px-2 pb-1.5 pt-0.5">
-                    <p class="text-[10px] font-black text-muted-foreground-2 uppercase tracking-widest">Programme académique</p>
-                </li>
+               
 
                 <!-- Dashboard AP -->
                 <li th:if="${sidebarRole == 'AP'}">
                     <a th:href="@{/ap/dashboard}"
                        th:classappend="${activePage == 'dashboard'} ?
-                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary [&>div]:bg-primary/15' :
-                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground [&>div]:bg-muted'"
-                       class="flex items-center gap-3 py-2 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
+                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary ' :
+                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground '"
+                       class="flex items-center gap-3 py-1.5 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
                               hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
-                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="1.75">
                                 <rect x="3" y="3" width="7" height="7" rx="1.5"/>
@@ -184,11 +176,11 @@
                 <li th:if="${sidebarRole == 'AP'}">
                     <a th:href="@{/ap/subjects}"
                        th:classappend="${activePage == 'subjects'} ?
-                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary [&>div]:bg-primary/15' :
-                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground [&>div]:bg-muted'"
-                       class="flex items-center gap-3 py-2 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
+                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary ' :
+                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground '"
+                       class="flex items-center gap-3 py-1.5 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
                               hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
-                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 ">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="1.75">
                                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
@@ -203,11 +195,11 @@
                 <li th:if="${sidebarRole == 'AP'}">
                     <a th:href="@{/ap/schedule}"
                        th:classappend="${activePage == 'schedule'} ?
-                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary [&>div]:bg-primary/15' :
-                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground [&>div]:bg-muted'"
-                       class="flex items-center gap-3 py-2 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
+                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary ' :
+                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground'"
+                       class="flex items-center gap-3 py-1.5 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
                               hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
-                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 ">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="1.75">
                                 <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -222,11 +214,11 @@
                 <li th:if="${sidebarRole == 'AP'}">
                     <a th:href="@{/ap/classes}"
                        th:classappend="${activePage == 'classes'} ?
-                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary [&>div]:bg-primary/15' :
-                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground [&>div]:bg-muted'"
-                       class="flex items-center gap-3 py-2 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
+                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary ' :
+                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground '"
+                       class="flex items-center gap-3 py-1.5 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
                               hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
-                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 ">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="1.75">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -243,11 +235,11 @@
                 <li th:if="${sidebarRole == 'AP'}">
                     <a th:href="@{/ap/justificatifs}"
                        th:classappend="${activePage == 'justificatifs'} ?
-                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary [&>div]:bg-primary/15' :
-                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground [&>div]:bg-muted'"
-                       class="flex items-center gap-3 py-2 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
+                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary ' :
+                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground'"
+                       class="flex items-center gap-3 py-1.5 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
                               hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
-                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 ">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="1.75">
                                 <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
@@ -263,9 +255,9 @@
                 <li th:if="${sidebarRole == 'AP'}">
                     <a th:href="@{/ap/absences}"
                        th:classappend="${activePage == 'absences'} ?
-                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary [&>div]:bg-primary/15' :
-                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground [&>div]:bg-muted'"
-                       class="flex items-center gap-3 py-2 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
+                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary ' :
+                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground '"
+                       class="flex items-center gap-3 py-1.5 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
                               hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
                         <div class="size-7 rounded-lg flex items-center justify-center shrink-0 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
@@ -283,9 +275,9 @@
                 <li th:if="${sidebarRole == 'AP'}">
                     <a th:href="@{/ap/config}"
                        th:classappend="${activePage == 'config'} ?
-                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary [&>div]:bg-primary/15' :
-                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground [&>div]:bg-muted'"
-                       class="flex items-center gap-3 py-2 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
+                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary' :
+                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground '"
+                       class="flex items-center gap-3 py-1.5 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
                               hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
                         <div class="size-7 rounded-lg flex items-center justify-center shrink-0 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
@@ -299,10 +291,7 @@
                 </li>
 
                 <!-- ── TEACHER ─────────────────────────── -->
-                <li th:if="${sidebarRole == 'TEACHER'}"
-                    class="hs-overlay-minified:hidden px-2 pb-1.5 pt-0.5">
-                    <p class="text-[10px] font-black text-muted-foreground-2 uppercase tracking-widest">Espace enseignant</p>
-                </li>
+               
 
                 <!-- Dashboard Teacher -->
                 <li th:if="${sidebarRole == 'TEACHER'}">
@@ -384,10 +373,7 @@
                 </li>
 
                 <!-- ── STUDENT ─────────────────────────── -->
-                <li th:if="${sidebarRole == 'STUDENT'}"
-                    class="hs-overlay-minified:hidden px-2 pb-1.5 pt-0.5">
-                    <p class="text-[10px] font-black text-muted-foreground-2 uppercase tracking-widest">Espace étudiant</p>
-                </li>
+               
 
                 <!-- Dashboard Student -->
                 <li th:if="${sidebarRole == 'STUDENT'}">
@@ -418,7 +404,7 @@
                            'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground [&>div]:bg-muted'"
                        class="flex items-center gap-3 py-2 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
                               hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
-                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="1.75">
                                 <rect x="3" y="4" width="18" height="17" rx="2"/>
@@ -480,8 +466,7 @@
             <input type="hidden" name="token" id="profile-nav-token"/>
         </form>
 
-        <!-- Divider -->
-        <div class="shrink-0 mx-3 h-px bg-sidebar-line"></div>
+       
 
         <!-- Profile trigger + dropdown -->
         <div class="hs-dropdown [--placement:top-right] [--strategy:absolute] relative shrink-0 px-2 py-3">

@@ -22,6 +22,13 @@ public class SchoolController {
         return ResponseEntity.status(HttpStatus.CREATED).body(schoolService.createSchool(request));
     }
 
+    @GetMapping("/current")
+    public ResponseEntity<SchoolResponseDTO> getCurrentSchool() {
+        SchoolResponseDTO school = schoolService.getCurrentSchool();
+        if (school == null) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(school);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<SchoolResponseDTO> getSchoolById(@PathVariable Long id) {
         return ResponseEntity.ok(schoolService.getSchoolById(id));

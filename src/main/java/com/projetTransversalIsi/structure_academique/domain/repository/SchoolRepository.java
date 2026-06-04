@@ -8,6 +8,8 @@ public interface SchoolRepository {
 
     Optional<School> findById(Long id);
 
+    Optional<School> findFirst();
+
     School save(School school);
 
     boolean existsById(Long id);

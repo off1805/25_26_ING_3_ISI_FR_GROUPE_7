@@ -8,7 +8,7 @@ public interface AbsenceEtudiantRow {
     String getPhotoUrl();
     Long getClasseId();
     String getClasseCode();
-    Long getTotalEnregistrements();
+    Long getTotalSeances();
     Long getTotalAbsences();
     Long getNbJustifiees();
     Long getNbEnAttente();

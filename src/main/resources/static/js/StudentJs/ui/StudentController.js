@@ -17,6 +17,7 @@ import { SpecialiteApi } from '../../academicStructure/infrastructure/Specialite
 import { enrollStudentUC } from '../application/EnrollStudentUC.js';
 import { EtudiantExcelParser } from '../../ExcelJs/application/infrastructure/Lecture.js';
 import { GlobalEventNotifier } from '../../common/GlobalEventNotifier.js';
+import { customAlert } from '../../common/CustomAlert.js';
 import api from '../../common/ClientHttp.js';
 import { StudentApi } from '../infrastructure/StudentApi.js';
 
@@ -54,33 +55,33 @@ function attacherEvenements() {
 
     onMainCheckboxChange();
 
-    document.getElementById("remove-all").addEventListener("click", () => {
+    document.getElementById("remove-all").addEventListener("click", async () => {
         const checkboxes = document.querySelectorAll('.checkebox-student');
         const userIds = Array.from(checkboxes)
             .filter(cb => cb.checked)
             .map(cb => cb.getAttribute('data-user-id'));
 
         if (userIds.length === 0) {
-            console.log('Aucun étudiant sélectionné.', 'warning');
+            GlobalEventNotifier.eventError('Aucun étudiant sélectionné.');
             return;
         }
 
-        if (!confirm(`Confirmer le retrait de ${userIds.length} étudiant(s) de la classe ?`)) {
-            return;
-        }
+        const confirmed = await customAlert(
+            "Retirer des étudiants",
+            `Confirmer le retrait de ${userIds.length} étudiant(s) de la classe ? Cette action est irréversible.`,
+            "Retirer",
+            "Annuler"
+        );
+        if (!confirmed) return;
 
-        // Retrait en séquence pour éviter de saturer le serveur
-        (async () => {
-            for (const userId of userIds) {
-                try {
-                    await StudentApi.removeFromClass(userId, getActiveClasseId());
-                } catch (err) {
-                    console.log(`Échec retrait ID ${userId} : ${err.message}`, 'error');
-                }
+        for (const userId of userIds) {
+            try {
+                await StudentApi.removeFromClass(userId, getActiveClasseId());
+            } catch (err) {
+                GlobalEventNotifier.eventError(`Échec retrait ID ${userId} : ${err.message}`);
             }
-            // Après tous les retraits, on rafraîchit la page pour voir les changements
-            await handleClasseChange(getActiveClasseId());
-        })();
+        }
+        await handleClasseChange(getActiveClasseId());
     });
 
     document.getElementById("level-tabs").addEventListener('click', (e) => {
@@ -210,7 +211,7 @@ async function soumettreFormManuel(e) {
     };
 
     if (!data.classeId) {
-        showToast('Erreur : impossible d\'identifier la classe active.', 'error');
+        GlobalEventNotifier.eventError("Erreur : impossible d'identifier la classe active.");
         return;
     }
 
@@ -279,7 +280,7 @@ async function lancerImportExcel() {
         return;
     }
     if (!classeId) {
-        showToast('Erreur : impossible d\'identifier la classe cible.', 'error');
+        GlobalEventNotifier.eventError("Erreur : impossible d'identifier la classe cible.");
         return;
     }
 
@@ -297,7 +298,7 @@ async function lancerImportExcel() {
     try {
         etudiants = await EtudiantExcelParser.lireFichier(fichier, debutLigne, colonnes);
     } catch (err) {
-        showToast('Lecture du fichier : ' + err.message, 'error');
+        GlobalEventNotifier.eventError('Lecture du fichier : ' + err.message);
         return;
     }
     console.log(etudiants);
@@ -305,7 +306,7 @@ async function lancerImportExcel() {
     // Validation préliminaire
     const erreursValidation = etudiants.flatMap(et => EtudiantExcelParser.validerEtudiant(et));
     if (erreursValidation.length > 0) {
-        GlobalEventNotifier.eventWellDone(`${erreursValidation.length} erreur(s) de format dans le fichier. Corrigez-les avant d'importer.`, 'warning');
+        GlobalEventNotifier.eventError(`${erreursValidation.length} erreur(s) de format dans le fichier. Corrigez-les avant d'importer.`);
         afficherErreursValidation(erreursValidation);
         return;
     }
@@ -324,7 +325,7 @@ async function lancerImportExcel() {
             await enrollStudentUC({ ...et, classeId });
         } catch (err) {
             echecs.push({ etudiant: et, raison: err.message });
-            showToast(`Échec ligne ${et.ligne} (${et.email}) : ${err.message}`, 'error');
+            GlobalEventNotifier.eventError(`Échec ligne ${et.ligne} (${et.email}) : ${err.message}`);
         }
 
         // Petite pause pour ne pas saturer le serveur

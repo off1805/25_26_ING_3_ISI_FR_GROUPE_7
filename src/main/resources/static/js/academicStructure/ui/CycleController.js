@@ -1,5 +1,6 @@
 import { GlobalErrorHandler } from "../../common/GlobalErrorHandler.js";
 import { GlobalEventNotifier } from "../../common/GlobalEventNotifier.js";
+import { customAlert } from "../../common/CustomAlert.js";
 import { CycleUseCase } from "../application/CycleUseCase.js";
 import { FiliereUseCase } from "../application/FiliereUseCase.js";
 import { NiveauUseCase } from "../application/NiveauUseCase.js";
@@ -1058,9 +1059,17 @@ export class CycleController {
     }
 
     async _handleDeleteEntity(type, id) {
-        console.log(type);
-        console.log(`id ${id} ${typeof id}`)
-        if (!confirm('Supprimer cet élément ? Cette action est irréversible.')) return;
+        const typeLabels = {
+            cycle: 'ce cycle', filiere: 'cette filière', niveau: 'ce niveau',
+            specialite: 'cette spécialité', classe: 'cette classe'
+        };
+        const confirmed = await customAlert(
+            'Confirmer la suppression',
+            `Voulez-vous supprimer ${typeLabels[type] || 'cet élément'} ? Cette action est irréversible.`,
+            'Supprimer',
+            'Annuler'
+        );
+        if (!confirmed) return;
         try {
             switch (type) {
                 case 'cycle': await this.cycleApi.deleteCycle(id); break;
