@@ -69,6 +69,14 @@ function syncInputs(lat, lng) {
 function initMap(lat, lng) {
     if (map) return;
 
+    // Fix Leaflet's default icon paths when served locally
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+        iconUrl:       "/lib/leaflet/images/marker-icon.png",
+        iconRetinaUrl: "/lib/leaflet/images/marker-icon-2x.png",
+        shadowUrl:     "/lib/leaflet/images/marker-shadow.png",
+    });
+
     map = L.map("geo-map").setView([lat, lng], DEFAULT_ZOOM);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {

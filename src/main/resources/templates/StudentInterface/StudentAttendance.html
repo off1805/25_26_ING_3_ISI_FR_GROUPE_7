@@ -90,6 +90,14 @@
                         <div id="feedback-box"
                             class="hidden rounded-2xl border px-4 py-3 text-sm font-semibold text-center"></div>
 
+                        <!-- STATE: vérification géolocalisation -->
+                        <div id="geo-check-state"
+                            class="hidden rounded-2xl border border-card-line bg-card px-5 py-7 sm:px-6 sm:py-8 text-center">
+                            <div class="mx-auto size-10 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+                            <p class="mt-4 text-sm font-semibold text-layer-foreground">Vérification de votre position…</p>
+                            <p class="mt-1 text-xs text-muted-foreground-2">Assurez-vous d'être dans l'enceinte de l'école.</p>
+                        </div>
+
                         <!-- STATE: chargement auto -->
                         <div id="auto-scan-state"
                             class="hidden rounded-2xl border border-card-line bg-card px-5 py-7 sm:px-6 sm:py-8 text-center">
@@ -182,6 +190,7 @@
 
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script type="module" th:src="@{/js/StudentInterface/studentAttendance.js}"></script>
 </body>
 
 </html>
