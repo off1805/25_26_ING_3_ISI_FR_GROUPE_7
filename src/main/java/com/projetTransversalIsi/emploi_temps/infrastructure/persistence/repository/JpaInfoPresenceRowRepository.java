@@ -57,6 +57,11 @@ public class JpaInfoPresenceRowRepository implements InfoPresenceRowRepository {
     }
 
     @Override
+    public List<Long> findDistinctAppelIdsWithPendingRows() {
+        return springData.findDistinctAppelIdsWithPendingRows();
+    }
+
+    @Override
     public void delete(Long id) {
         springData.deleteById(id);
     }
