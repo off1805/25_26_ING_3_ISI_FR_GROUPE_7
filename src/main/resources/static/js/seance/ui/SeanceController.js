@@ -1,4 +1,5 @@
 import { GlobalErrorHandler } from "../../common/GlobalErrorHandler.js";
+import { customAlert } from "../../common/CustomAlert.js";
 import { CreateSeanceUC } from "../application/CreateSeanceUC.js";
 import { DeleteSeanceUC } from "../application/DeleteSeanceUC.js";
 import { UpdateSeanceUC } from "../application/UpdateSeanceUC.js";
@@ -113,15 +114,21 @@ export class SeanceController {
 
 
     async handleDeleteSeance(event) {
-        if (!confirm("Voulez-vous vraiment supprimer cette séance ?")) return;
-
         const button = event.currentTarget;
         const seanceId = button.dataset.seanceId;
 
         if (!seanceId) {
-            alert("Erreur: ID séance introuvable.");
+            GlobalEventNotifier.eventError("Erreur : ID séance introuvable.");
             return;
         }
+
+        const confirmed = await customAlert(
+            "Supprimer la séance",
+            "Voulez-vous vraiment supprimer cette séance ? Cette action est irréversible.",
+            "Supprimer",
+            "Annuler"
+        );
+        if (!confirmed) return;
 
         try {
             await this.deleteSeanceUC.execute(seanceId);

@@ -29,6 +29,11 @@ public class JpaSchoolRepository implements SchoolRepository {
     }
 
     @Override
+    public Optional<School> findFirst() {
+        return springData.findFirstByOrderByIdAsc().map(schoolMapper::toDomain);
+    }
+
+    @Override
     public boolean existsById(Long id) {
         return springData.existsById(id);
     }

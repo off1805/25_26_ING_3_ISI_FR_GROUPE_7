@@ -8,7 +8,7 @@ public record AbsenceEtudiantDTO(
         String photoUrl,
         Long classeId,
         String classeCode,
-        Long totalEnregistrements,
+        Long totalSeances,
         Long totalAbsences,
         Long nbJustifiees,
         Long nbEnAttente

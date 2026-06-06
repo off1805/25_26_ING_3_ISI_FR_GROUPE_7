@@ -1,5 +1,7 @@
 import { ClasseApi } from "../common/application/ClasseApi.js";
 import { GlobalErrorHandler } from "../common/GlobalErrorHandler.js";
+import { GlobalEventNotifier } from "../common/GlobalEventNotifier.js";
+import { customAlert } from "../common/CustomAlert.js";
 
 let allClasses = [];
 
@@ -80,9 +82,16 @@ function updateCount(count) {
 }
 
 async function deleteClasse(id) {
-    if (!confirm("Supprimer cette classe ?")) return;
+    const confirmed = await customAlert(
+        "Supprimer la classe",
+        "Voulez-vous vraiment supprimer cette classe ? Cette action est irréversible.",
+        "Supprimer",
+        "Annuler"
+    );
+    if (!confirmed) return;
     try {
         await ClasseApi.delete(id);
+        GlobalEventNotifier.eventWellDone("Classe supprimée avec succès.");
         await loadClasses();
     } catch (e) {
         GlobalErrorHandler.handle(e);

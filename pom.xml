@@ -103,6 +103,12 @@
             <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Apache POI — génération .xlsx -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.5</version>
+        </dependency>
         <!-- (test) déjà bien -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

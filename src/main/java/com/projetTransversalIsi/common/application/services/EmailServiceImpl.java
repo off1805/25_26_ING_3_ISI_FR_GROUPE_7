@@ -3,6 +3,7 @@ package com.projetTransversalIsi.common.application.services;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import jakarta.mail.MessagingException;
@@ -20,6 +21,7 @@ public class EmailServiceImpl implements EmailService {
         this.mailSender = mailSender;
     }
 
+    @Async
     @Override
     public void sendInitPassword(String email, String password, String name) {
         try {
@@ -81,6 +83,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Async
     @Override
     public void sendConfirmationEmail(String email, String name) {
         try {

@@ -1,5 +1,8 @@
 import { Calendar } from '/js/vanilla-calendar.min.js';
 import { EmploiTempsApi } from '../emploiTemps/infrastructure/EmploiTempsApi.js';
+import { customAlert } from '../common/CustomAlert.js';
+import { customErrorAlert } from '../common/CustomErrorAlert.js';
+import { GlobalEventNotifier } from '../common/GlobalEventNotifier.js';
 
 const api = new EmploiTempsApi();
 
@@ -214,17 +217,16 @@ function applyLevelFilter(levelId) {
 }
 
 function initModal() {
-    // Modal Next Action
     const nextBtn = document.getElementById('btn-modal-next');
     if (nextBtn) {
         nextBtn.addEventListener('click', () => {
             const classId = document.getElementById('select-modal-classe')?.value;
             if (!classId) {
-                alert('Veuillez sélectionner une classe.');
+                GlobalEventNotifier.eventError('Veuillez sélectionner une classe.');
                 return;
             }
             if (!selectedWeekRange) {
-                alert('Veuillez sélectionner une semaine dans le calendrier.');
+                GlobalEventNotifier.eventError('Veuillez sélectionner une semaine dans le calendrier.');
                 return;
             }
 
@@ -241,16 +243,22 @@ function initModal() {
 
 // Global functions
 window.deleteSchedule = async (id) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet emploi du temps ?')) return;
+    const confirmed = await customAlert(
+        "Supprimer l'emploi du temps",
+        "Êtes-vous sûr de vouloir supprimer cet emploi du temps ? Cette action est irréversible.",
+        "Supprimer",
+        "Annuler"
+    );
+    if (!confirmed) return;
     try {
         const response = await fetch(`/api/emplois-temps/${id}`, { method: 'DELETE' });
         if (response.ok) {
             window.location.reload();
         } else {
-            alert('Erreur lors de la suppression.');
+            await customErrorAlert('Erreur', 'La suppression a échoué. Veuillez réessayer.');
         }
     } catch (error) {
         console.error('Delete error:', error);
-        alert('Erreur réseau.');
+        await customErrorAlert('Erreur réseau', 'Une erreur réseau s\'est produite. Vérifiez votre connexion et réessayez.');
     }
 };
