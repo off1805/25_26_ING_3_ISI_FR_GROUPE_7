@@ -15,7 +15,7 @@ public class AddPresenceRowUCImpl implements AddPresenceRowUC {
 
     @Override
     public PresenceRowResponseDTO execute(CreatePresenceRowDTO dto) {
-        PresenceRow row = new PresenceRow(dto.presenceListId(), dto.etudiantId(), dto.present());
+        PresenceRow row = new PresenceRow(dto.presenceListId(), dto.etudiantId(), dto.present(), dto.retard());
         return PresenceRowResponseDTO.fromDomain(presenceRowRepo.save(row));
     }
 }

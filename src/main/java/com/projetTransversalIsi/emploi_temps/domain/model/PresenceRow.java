@@ -6,13 +6,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-// Ligne de présence individuelle : un étudiant dans une feuille de présence.
-// La valeur de `present` est calculée depuis les InfoPresenceRow de tous les appels liés :
-//   true  → l'étudiant est présent sur TOUS les appels de la feuille (toutes isPresent=true)
-//   false → l'étudiant est absent sur TOUS les appels (toutes isPresent=false)
-//   null  → statut non entièrement résolu : certains appels sont en cours (isPresent=null),
-//            ou les résultats sont mixtes (présent sur un appel, absent sur un autre).
-//            Cet état est transitoire ; il disparaît quand tous les appels sont clôturés.
+// Ligne de presence individuelle : un etudiant dans une feuille de presence.
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,6 +16,8 @@ public class PresenceRow {
     private Long presenceListId;
     private Long etudiantId;
     private Boolean present;
+    /** true = etudiant arrive en retard (present mais tardif). */
+    private boolean retard = false;
 
     public PresenceRow(Long presenceListId, Long etudiantId, Boolean present) {
         this.presenceListId = presenceListId;
@@ -29,7 +25,14 @@ public class PresenceRow {
         this.present = present;
     }
 
-    // Recalcule `present` depuis l'ensemble des InfoPresenceRow liées à cette ligne.
+    public PresenceRow(Long presenceListId, Long etudiantId, Boolean present, boolean retard) {
+        this.presenceListId = presenceListId;
+        this.etudiantId = etudiantId;
+        this.present = present;
+        this.retard = retard;
+    }
+
+    // Recalcule present depuis l ensemble des InfoPresenceRow liees a cette ligne.
     public void recalculatePresent(List<InfoPresenceRow> infoRows) {
         if (infoRows.isEmpty()) { this.present = null; return; }
         boolean allTrue  = infoRows.stream().allMatch(r -> Boolean.TRUE.equals(r.getIsPresent()));
@@ -39,8 +42,14 @@ public class PresenceRow {
         else               this.present = null;
     }
 
-    // Correction directe par l'enseignant — court-circuite le calcul automatique.
+    // Correction directe -- court-circuite le calcul automatique.
     public void update(boolean present) {
         this.present = present;
+    }
+
+    // Marque le retard (le surveillant peut le faire apres l appel).
+    public void markRetard(boolean retard) {
+        this.retard = retard;
+        if (retard) this.present = Boolean.TRUE;
     }
 }

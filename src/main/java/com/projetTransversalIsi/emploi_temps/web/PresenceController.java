@@ -128,4 +128,14 @@ public class PresenceController {
     public ResponseEntity<PresenceRowResponseDTO> updateRow(@RequestBody UpdatePresenceRowDTO dto) {
         return ResponseEntity.ok(updatePresenceRowUC.execute(dto));
     }
+
+    // PATCH /api/presences/rows/{id}/retard -- le surveillant marque un etudiant en retard.
+    // Marque automatiquement l etudiant comme present si retard = true.
+    @PatchMapping("/rows/{id}/retard")
+    public ResponseEntity<PresenceRowResponseDTO> toggleRetard(
+            @PathVariable Long id,
+            @RequestParam boolean retard) {
+        UpdatePresenceRowDTO dto = new UpdatePresenceRowDTO(id, true, retard);
+        return ResponseEntity.ok(updatePresenceRowUC.execute(dto));
+    }
 }

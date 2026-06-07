@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title th:text="'KemOSchool — Appel ' + ${classeCode}">KemOSchool — Appel</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+</head>
+
+<body class="h-screen bg-background-1 flex flex-row overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
+
+    <!-- MAIN -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+
+        <!-- NAVBAR -->
+        <header class="flex-none flex flex-row justify-between lg:justify-start py-2 lg:py-1 bg-navbar relative w-full lg:items-center px-4 md:px-6 lg:px-8 border-b border-navbar-line">
+            <div class="flex items-center gap-3">
+                <a th:href="@{/surveillant/dashboard}"
+                   class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 5l-7 7 7 7"/>
+                    </svg>
+                </a>
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 12l-2 0l9-9l9 9l-2 0"/>
+                        <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>
+                    </svg>
+                    <span>Surveillant</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 6l6 6l-6 6"/>
+                    </svg>
+                    <span class="font-semibold text-layer-foreground" th:text="'Appel — ' + ${classeCode}">Appel</span>
+                </nav>
+            </div>
+            <div class="flex items-center gap-2 ms-auto">
+                <button type="button" data-theme-toggle
+                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/>
+                    </svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                    </svg>
+                </button>
+                <!-- Badge classe -->
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span th:text="${classeCode}">ISI-3-A</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="flex-1 overflow-y-auto bg-background-1 flex">
+
+            <!-- Panneau gauche — liste étudiants -->
+            <div class="hidden md:block w-full max-w-sm bg-sidebar border-r border-layer-line flex-shrink-0" id="left-container">
+
+                <div class="md:hidden flex items-center justify-between px-5 py-3 border-b border-layer-line">
+                    <div class="flex-1 flex justify-center">
+                        <div class="w-10 h-1 rounded-full bg-muted"></div>
+                    </div>
+                    <button type="button" onclick="closeClassDrawer()"
+                            class="size-8 flex items-center justify-center rounded-xl bg-muted text-muted-foreground-2 hover:bg-muted/80 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6l-12 12M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div th:if="${seance != null}" class="flex flex-col gap-6 p-5">
+                    <div class="bg-card overflow-hidden">
+                        <div class="">
+                            <div class="flex items-center justify-between gap-3 mb-3">
+                                <div>
+                                    <h3 class="font-semibold text-layer-foreground">Étudiants de la classe</h3>
+                                    <p class="text-muted-foreground-2 mt-0.5">
+                                        <span id="left-student-count">—</span> inscrits
+                                    </p>
+                                </div>
+                                <span class="size-8 flex items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="relative p-1">
+                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground-2 pointer-events-none"
+                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="m21 21-4.34-4.34"/>
+                                </svg>
+                                <input type="text" id="left-search" placeholder="Rechercher un étudiant…"
+                                       class="pl-9 pr-4 py-2 w-full text-sm bg-background-1 border border-layer-line rounded-xl
+                                              text-layer-foreground placeholder:text-muted-foreground-2
+                                              focus:outline-none focus:ring-1 focus:ring-primary transition-all"/>
+                            </div>
+                        </div>
+                        <div class="h-full overflow-y-auto" id="left-student-list">
+                            <div class="flex flex-col items-center justify-center gap-2 py-10 text-muted-foreground-2">
+                                <div class="size-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                <p class="text-xs">Chargement des étudiants…</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Zone centrale -->
+            <div class="w-full mx-auto px-4 py-5 flex flex-col gap-6 items-center">
+
+                <!-- ─── Carte séance ──────────────────────────────────── -->
+                <div th:if="${seance != null}" class="w-full max-w-md border rounded-xl border-layer-line bg-layer px-5 py-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <h3 class="truncate text-lg font-semibold leading-tight" th:text="${seance.libelle}">Séance</h3>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <div class="size-1.5 rounded-full bg-cyan-400"></div>
+                                        <span class="text-sm text-gray-500" th:if="${seance.salle != null}" th:text="${seance.salle}">Salle</span>
+                                        <span class="text-muted-foreground text-sm">| De</span>
+                                        <span class="text-sm text-muted-foreground" th:text="${#temporals.format(seance.heureDebut,'HH:mm')}">08:00</span>
+                                        <span class="text-gray-300 text-sm">-</span>
+                                        <span class="text-sm text-muted-foreground" th:text="${#temporals.format(seance.heureFin,'HH:mm')}">10:00</span>
+                                    </div>
+                                </div>
+                                <span class="shrink-0 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                                    <span class="inline-block size-1.5 rounded-full bg-primary animate-pulse me-1"></span>
+                                    <span id="time-elapsed"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-1 max-w-md w-full flex-col h-full">
+                    <!-- Bouton liste mobile -->
+                    <button type="button" onclick="openClassDrawer()"
+                            class="flex md:hidden w-full items-center gap-3 rounded-xl border border-layer-line bg-layer px-4 py-2.5 text-sm font-semibold text-layer-foreground hover:bg-muted transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary shrink-0">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <span>Liste de la classe</span>
+                        <span class="ml-auto text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-lg" id="drawer-count-badge">—</span>
+                    </button>
+
+                    <!-- Bouton démarrer appel -->
+                    <button type="button" onclick="openStartModal()" id="btn-start-appel"
+                            class="group w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 active:scale-[0.98]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                             class="transition-transform group-hover:rotate-6">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M14 6l7 7l-4 4"/>
+                            <path d="M5.828 18.172a2.828 2.828 0 0 0 4 0l10.586 -10.586a2 2 0 0 0 0 -2.829l-1.171 -1.171a2 2 0 0 0 -2.829 0l-10.586 10.586a2.828 2.828 0 0 0 0 4"/>
+                            <path d="M4 20l1.768 -1.768"/>
+                        </svg>
+                        Démarrer l'appel
+                    </button>
+
+                    <!-- Tabs Code PIN / QR Code -->
+                    <div id="attendance-tabs-container" class="mt-3 h-96">
+                        <div class="border-b border-layer-line">
+                            <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+                                <button type="button"
+                                        class="hs-tab-active:bg-card hs-tab-active:border border-b border-layer-line hs-tab-active:border-b-transparent hs-tab-active:text-primary -mb-px py-2.5 px-4 inline-flex items-center gap-x-2 bg-muted text-xs font-semibold text-muted-foreground-1 rounded-t-lg hover:text-layer-foreground focus:outline-none active"
+                                        id="tab-pin-btn" aria-selected="true" data-hs-tab="#attendance-tab-pin" aria-controls="attendance-tab-pin" role="tab">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="11" width="18" height="11" rx="2"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                        <circle cx="12" cy="16" r="1" fill="currentColor"/>
+                                    </svg>
+                                    Code PIN
+                                </button>
+                                <button type="button"
+                                        class="hs-tab-active:bg-card hs-tab-active:border border-b border-layer-line hs-tab-active:border-b-transparent hs-tab-active:text-primary -mb-px py-2.5 px-4 inline-flex items-center gap-x-2 bg-muted text-xs font-semibold text-muted-foreground-1 rounded-t-lg hover:text-layer-foreground focus:outline-none"
+                                        id="tab-qr-btn" aria-selected="false" data-hs-tab="#attendance-tab-qr" aria-controls="attendance-tab-qr" role="tab">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                                        <path d="M14 14h3v3h-3z"/><path d="M17 17h4v4h-4z"/><path d="M14 21h3"/>
+                                    </svg>
+                                    QR Code
+                                </button>
+                            </nav>
+                        </div>
+
+                        <div class="mt-0 bg-card rounded-b-xl border-layer-line border-x border-b h-full">
+                            <!-- Code PIN -->
+                            <div id="attendance-tab-pin" role="tabpanel" aria-labelledby="tab-pin-btn">
+                                <div class="flex flex-col gap-4">
+                                    <div id="pin-display-zone" class="flex flex-col items-center gap-4">
+                                        <div class="flex flex-col items-center justify-center py-8 gap-3 text-center">
+                                            <div class="size-12 rounded-2xl bg-muted flex items-center justify-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-muted-foreground-2">
+                                                    <rect x="3" y="11" width="18" height="11" rx="2"/>
+                                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                                    <circle cx="12" cy="16" r="1" fill="currentColor"/>
+                                                </svg>
+                                            </div>
+                                            <p class="text-sm font-semibold text-layer-foreground">Aucun code PIN en cours</p>
+                                            <p class="text-xs text-muted-foreground-2">Démarrez l'appel pour générer un code</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="confirmCodeAttendance()" id="btn-end-pin"
+                                            class="hidden w-full py-2.5 text-sm font-bold rounded-xl bg-primary text-white hover:bg-primary/90 active:scale-95 transition-all">
+                                        Terminer l'appel
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- QR Code -->
+                            <div id="attendance-tab-qr" class="hidden" role="tabpanel" aria-labelledby="tab-qr-btn">
+                                <div class="flex flex-col gap-4">
+                                    <div id="qr-display-zone" class="flex flex-col items-center gap-4">
+                                        <div class="flex flex-col items-center justify-center py-8 gap-3 text-center">
+                                            <div class="size-12 rounded-2xl bg-muted flex items-center justify-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-muted-foreground-2">
+                                                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                                                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                                                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                                                    <path d="M14 14h3v3h-3z"/><path d="M17 17h4v4h-4z"/><path d="M14 21h3"/>
+                                                </svg>
+                                            </div>
+                                            <p class="text-sm font-semibold text-layer-foreground">Aucun QR code en cours</p>
+                                            <p class="text-xs text-muted-foreground-2">Démarrez l'appel pour générer un QR code</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="confirmCodeAttendance()" id="btn-end-qr"
+                                            class="hidden w-full py-2.5 text-sm font-bold rounded-xl bg-primary text-white hover:bg-primary/90 active:scale-95 transition-all">
+                                        Terminer l'appel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── Aucune séance ──────────────────────────────── -->
+                <div th:if="${seance == null}"
+                     class="flex flex-col items-center justify-center min-h-[60vh] text-center gap-6">
+                    <div class="size-20 rounded-3xl bg-muted flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" class="text-muted-foreground-2">
+                            <rect x="3" y="5" width="18" height="16" rx="2"/>
+                            <path d="M8 7V3"/><path d="M16 7V3"/><path d="M3 11h18"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xl font-bold text-layer-foreground">Aucune séance en cours</p>
+                        <p class="text-sm text-muted-foreground-2 mt-1.5">
+                            La classe <strong th:text="${classeCode}">—</strong> n'a pas de cours actif pour le moment.
+                        </p>
+                    </div>
+                    <a th:href="@{/surveillant/dashboard}"
+                       class="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold rounded-2xl bg-primary text-white hover:bg-primary/90 active:scale-95 transition-all shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 5l-7 7 7 7"/>
+                        </svg>
+                        Retour aux classes
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ── MODAL 1 — Choix du type d'appel ──────────────────────────────── -->
+    <div id="modal-start-appel"
+         class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
+         role="dialog" tabindex="-1">
+        <div class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all max-w-md sm:w-full m-3 mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
+            <div class="pointer-events-auto w-full bg-card rounded-3xl shadow-2xl overflow-hidden">
+                <div class="px-6 pt-6 pb-5 border-b border-card-line flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-layer-foreground">Démarrer l'appel</h3>
+                        <p class="text-xs text-muted-foreground-2 mt-0.5">Choisissez la méthode et la durée</p>
+                    </div>
+                    <button type="button" data-hs-overlay="#modal-start-appel"
+                            class="size-8 flex items-center justify-center rounded-xl bg-muted text-muted-foreground-2 hover:bg-muted/80">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6l-12 12M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-6 flex flex-col gap-5">
+                    <div>
+                        <p class="text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-3">Méthode d'appel</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" id="type-card-manuel" onclick="selectAttendanceType('manuel')"
+                                    class="flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-primary bg-primary/5 transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary">
+                                    <path d="M9 11l3 3l8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/>
+                                </svg>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-primary">Manuel</span>
+                            </button>
+                            <button type="button" id="type-card-pin" onclick="selectAttendanceType('pin')"
+                                    class="flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-card-line bg-card hover:border-primary/40 transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-muted-foreground-2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    <circle cx="12" cy="16" r="1" fill="currentColor"/>
+                                </svg>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground-2">Code PIN</span>
+                            </button>
+                            <button type="button" id="type-card-qr" onclick="selectAttendanceType('qr')"
+                                    class="flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-card-line bg-card hover:border-primary/40 transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-muted-foreground-2">
+                                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                                    <path d="M14 14h3v3h-3z"/><path d="M17 17h4v4h-4z"/><path d="M14 21h3"/>
+                                </svg>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground-2">QR Code</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-3">Plage horaire couverte</p>
+                        <div class="flex items-center gap-3 bg-muted rounded-2xl px-4 py-3 mb-3">
+                            <div class="text-center">
+                                <p class="text-[10px] text-muted-foreground-2 font-medium uppercase tracking-wide">De</p>
+                                <p class="text-xl font-black text-layer-foreground font-mono" id="modal-heure-debut">08:00</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                            <div class="text-center">
+                                <p class="text-[10px] text-muted-foreground-2 font-medium uppercase tracking-wide">À</p>
+                                <p class="text-xl font-black text-primary font-mono" id="modal-heure-fin">09:00</p>
+                            </div>
+                            <div class="flex-1 text-right">
+                                <p class="text-[10px] text-muted-foreground-2 font-medium uppercase tracking-wide">Restant</p>
+                                <p class="text-sm font-bold text-layer-foreground" id="modal-heure-restant">—</p>
+                            </div>
+                        </div>
+                        <div id="duration-selector" class="hidden flex gap-2">
+                            <button type="button" id="hour-btn-1" onclick="selectHours(1)" class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-primary text-white transition-all">1h</button>
+                            <button type="button" id="hour-btn-2" onclick="selectHours(2)" class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-muted text-layer-foreground transition-all">2h</button>
+                            <button type="button" id="hour-btn-3" onclick="selectHours(3)" class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-muted text-layer-foreground transition-all">3h</button>
+                            <button type="button" id="hour-btn-4" onclick="selectHours(4)" class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-muted text-layer-foreground transition-all">4h</button>
+                        </div>
+                        <p id="manuel-duration-info" class="text-xs text-muted-foreground-2 text-center italic">Durée fixe : 1h par appel manuel</p>
+                    </div>
+                    <div class="flex gap-3 pt-1">
+                        <button type="button" data-hs-overlay="#modal-start-appel"
+                                class="flex-1 py-3 text-sm font-semibold rounded-2xl bg-muted text-layer-foreground hover:bg-muted/80 transition-colors">Annuler</button>
+                        <button type="button" id="modal-continue-btn" onclick="startAttendance()"
+                                class="flex-1 py-3 text-sm font-bold rounded-2xl bg-primary text-white hover:bg-primary/90 active:scale-95 transition-all">Continuer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── MODAL 2a — Manuel : liste étudiants ──────────────────────────── -->
+    <div id="modal-manuel"
+         class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
+         role="dialog" tabindex="-1">
+        <div class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all max-w-md sm:w-full m-3 mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
+            <div class="pointer-events-auto w-full bg-card rounded-3xl shadow-2xl overflow-hidden">
+                <div class="px-6 pt-6 pb-4 border-b border-card-line">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-layer-foreground">Appel manuel</h3>
+                            <p class="text-xs text-muted-foreground-2 mt-0.5">Cochez chaque étudiant présent — <span id="manuel-count-text">0 / 0 marqué(s)</span></p>
+                        </div>
+                        <button type="button" onclick="HSOverlay.close('#modal-manuel')"
+                                class="size-8 flex items-center justify-center rounded-xl bg-muted text-muted-foreground-2 hover:bg-muted/80 shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 6l-12 12M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="mt-3 flex items-center gap-3">
+                        <div class="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div id="manuel-progress-bar" class="h-full bg-primary rounded-full transition-all duration-300" style="width:0%"></div>
+                        </div>
+                        <span class="text-xs font-bold text-primary shrink-0" id="manuel-progress-pct">0%</span>
+                    </div>
+                </div>
+                <div class="px-6 py-3 border-b border-card-line flex items-center justify-between gap-3">
+                    <div class="relative flex-1 max-w-xs">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/>
+                        </svg>
+                        <input type="text" id="manuel-search" placeholder="Rechercher…"
+                               class="pl-9 pr-4 py-2 w-full text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary transition-all"/>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button type="button" onclick="markAllManuel(true)" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors">
+                            <span class="size-2 rounded-full bg-green-500"></span>Tous présents
+                        </button>
+                        <button type="button" onclick="markAllManuel(false)" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors">
+                            <span class="size-2 rounded-full bg-red-500"></span>Tous absents
+                        </button>
+                    </div>
+                </div>
+                <div class="max-h-[50vh] overflow-y-auto divide-y divide-card-line" id="manuel-student-list">
+                    <div class="flex flex-col items-center justify-center gap-3 py-10 text-muted-foreground-2">
+                        <div class="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        <p class="text-xs">Chargement des étudiants…</p>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-card-line flex items-center justify-between gap-4">
+                    <button type="button" onclick="HSOverlay.close('#modal-manuel')"
+                            class="px-5 py-2.5 text-sm font-semibold rounded-xl bg-muted text-layer-foreground hover:bg-muted/80 transition-colors">Retour</button>
+                    <button type="button" onclick="confirmManuelAttendance()"
+                            class="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-bold rounded-xl bg-primary text-white hover:bg-primary/90 active:scale-95 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Terminer l'appel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── MODAL 3 — Récapitulatif fin de séance ────────────────────────── -->
+    <div id="modal-end-session"
+         class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
+         role="dialog" tabindex="-1">
+        <div class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all max-w-md sm:w-full m-3 mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
+            <div class="pointer-events-auto w-full overflow-hidden rounded-3xl shadow-2xl">
+                <div class="px-6 pt-6 pb-5 text-center bg-gradient-to-br from-purple-600 to-purple-700">
+                    <div class="size-14 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Terminer l'appel</h3>
+                    <p class="text-sm text-white/70 mt-1">Récapitulatif de présence</p>
+                </div>
+                <div class="bg-card px-6 py-5">
+                    <div class="grid grid-cols-3 gap-3 mb-5">
+                        <div class="rounded-2xl p-4 text-center bg-gradient-to-br from-green-50 to-green-100 border border-green-200">
+                            <p class="text-3xl font-black text-green-700" id="final-present">0</p>
+                            <p class="text-xs font-bold text-green-700/70 mt-1 uppercase tracking-wide">Présents</p>
+                        </div>
+                        <div class="rounded-2xl p-4 text-center bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200">
+                            <p class="text-3xl font-black text-amber-700" id="final-late">0</p>
+                            <p class="text-xs font-bold text-amber-700/70 mt-1 uppercase tracking-wide">En retard</p>
+                        </div>
+                        <div class="rounded-2xl p-4 text-center bg-gradient-to-br from-red-50 to-red-100 border border-red-200">
+                            <p class="text-3xl font-black text-red-600" id="final-absent">0</p>
+                            <p class="text-xs font-bold text-red-600/70 mt-1 uppercase tracking-wide">Absents</p>
+                        </div>
+                    </div>
+                    <div id="final-warning" class="mb-4 items-center gap-2.5 px-3.5 py-2.5 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-400/20 rounded-xl" style="display:none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-amber-600 shrink-0">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <p class="text-xs font-semibold text-amber-700 dark:text-amber-400" id="final-warning-msg"></p>
+                    </div>
+                    <div class="bg-muted rounded-2xl p-4 mb-5">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-muted-foreground-2 uppercase tracking-wide">Taux de présence</span>
+                            <span class="text-sm font-black text-layer-foreground" id="final-rate">—</span>
+                        </div>
+                        <div class="h-3 bg-layer rounded-full overflow-hidden border border-card-line">
+                            <div id="final-rate-bar" class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-purple-600 to-purple-400 w-0"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" onclick="HSOverlay.close('#modal-end-session')"
+                                class="py-3 text-sm font-semibold rounded-2xl bg-muted text-layer-foreground hover:bg-muted/80 transition-colors">Annuler</button>
+                        <button type="button" onclick="confirmEnd()"
+                                class="py-3 text-sm font-bold rounded-2xl text-white active:scale-95 transition-all bg-gradient-to-br from-green-500 to-green-700 shadow-[0_4px_12px_rgba(22,163,74,0.3)]">
+                            Confirmer &amp; Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backdrop mobile -->
+    <div id="class-drawer-backdrop" onclick="closeClassDrawer()" class="hidden fixed inset-0 bg-black/50 z-[109]"></div>
+    <div id="presence-toast-container"></div>
+
+    <!-- Variables Thymeleaf → seance.js (réutilisation intégrale du module teacher) -->
+    <script th:inline="javascript">
+        window.SEANCE_ID        = /*[[${seance != null ? seance.id : null}]]*/ null;
+        window.ENSEIGNANT_ID    = /*[[${surveillantId}]]*/ null;
+        window.CLASSE_ID        = /*[[${classeId}]]*/ null;
+        window.COURS_ID         = /*[[${coursId}]]*/ null;
+        window.HEURE_DEBUT_STR  = /*[[${seance != null ? #temporals.format(seance.heureDebut,'HH:mm') : '08:00'}]]*/ '08:00';
+        window.HEURE_FIN_STR    = /*[[${seance != null ? #temporals.format(seance.heureFin,'HH:mm') : '12:00'}]]*/ '12:00';
+        window.TOTAL_STUDENTS   = 0;
+        window.PRESENCE_LIST_ID = /*[[${presenceListId}]]*/ null;
+    </script>
+
+    <script th:src="@{/js/preline.js}"></script>
+    <script th:src="@{/js/qrcode.min.js}"></script>
+    <script th:src="@{/webjars/sockjs-client/1.5.1/sockjs.min.js}"></script>
+    <script th:src="@{/webjars/stomp-websocket/2.3.4/stomp.min.js}"></script>
+    <!-- Réutilisation directe de seance.js (aucun fork, mêmes API calls) -->
+    <script th:src="@{/js/TeacherInterface/seance.js}"></script>
+    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+</body>
+</html>
