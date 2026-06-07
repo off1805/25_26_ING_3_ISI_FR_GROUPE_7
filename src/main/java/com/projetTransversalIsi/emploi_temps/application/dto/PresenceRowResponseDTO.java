@@ -6,12 +6,11 @@ public record PresenceRowResponseDTO(
         Long id,
         Long presenceListId,
         Long etudiantId,
-        Boolean present,
-        boolean retard
+        Boolean present
 ) {
     public static PresenceRowResponseDTO fromDomain(PresenceRow r) {
         return new PresenceRowResponseDTO(
-                r.getId(), r.getPresenceListId(), r.getEtudiantId(), r.getPresent(), r.isRetard()
+                r.getId(), r.getPresenceListId(), r.getEtudiantId(), r.getPresent()
         );
     }
 }

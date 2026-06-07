@@ -38,14 +38,14 @@ public class SurveillantController {
     private final SpringDataNiveauRepository       niveauRepository;
 
     // ─────────────────────────────────────────────────────────────
-    //  Dashboard : statistiques
+    //  Dashboard
     // ─────────────────────────────────────────────────────────────
     @GetMapping("/dashboard")
     public String dashboard(@AuthenticationPrincipal UserPrincipal principal, Model model) {
         LocalDate today   = LocalDate.now();
         LocalTime nowTime = LocalTime.now();
 
-        // ── Séances du jour ─────────────────────────────────────
+        // Seances du jour
         List<JpaEmploiTempsEntity> todayEmplois = emploiTempsRepository.findByPeriode(today);
         List<SeanceDuJourViewModel> seancesToday = new ArrayList<>();
 
@@ -70,40 +70,35 @@ public class SurveillantController {
         }
         seancesToday.sort(Comparator.comparing(SeanceDuJourViewModel::heureDebut));
 
-        // ── Listes de présence du jour ───────────────────────────
+        // Stats presence du jour
         List<Long> todayPresenceListIds = presenceListRepository.findByDeletedFalse()
                 .stream()
                 .filter(p -> today.equals(p.getDate()))
                 .map(JpaPresenceListEntity::getId)
                 .collect(Collectors.toList());
 
-        long totalPresents = 0, totalAbsents = 0, totalRetards = 0;
+        long totalPresents = 0, totalAbsents = 0;
         if (!todayPresenceListIds.isEmpty()) {
             var todayRows = todayPresenceListIds.stream()
                     .flatMap(id -> presenceRowRepository.findByPresenceListId(id).stream())
                     .collect(Collectors.toList());
-            totalPresents = todayRows.stream().filter(r -> Boolean.TRUE.equals(r.getPresent()) && !r.isRetard()).count();
+            totalPresents = todayRows.stream().filter(r -> Boolean.TRUE.equals(r.getPresent())).count();
             totalAbsents  = todayRows.stream().filter(r -> Boolean.FALSE.equals(r.getPresent())).count();
-            totalRetards  = todayRows.stream().filter(r -> Boolean.TRUE.equals(r.getPresent()) && r.isRetard()).count();
         }
 
-        // ── KPIs ─────────────────────────────────────────────────
-        long totalClasses      = classeRepository.count();
+        long totalMarques      = totalPresents + totalAbsents;
         long seancesEnCours    = seancesToday.stream().filter(s -> "EN_COURS".equals(s.status())).count();
         long seancesAujourdhui = seancesToday.size();
         long appelsDuJour      = seancesToday.stream().filter(SeanceDuJourViewModel::hasAppel).count();
-        long totalMarques      = totalPresents + totalAbsents + totalRetards;
         int tauxPresence       = totalMarques > 0
                 ? (int) Math.round((totalPresents * 100.0) / totalMarques)
                 : 0;
 
-        model.addAttribute("totalClasses",      totalClasses);
         model.addAttribute("seancesEnCours",    seancesEnCours);
         model.addAttribute("seancesAujourdhui", seancesAujourdhui);
         model.addAttribute("appelsDuJour",      appelsDuJour);
         model.addAttribute("totalPresents",     totalPresents);
         model.addAttribute("totalAbsents",      totalAbsents);
-        model.addAttribute("totalRetards",      totalRetards);
         model.addAttribute("totalMarques",      totalMarques);
         model.addAttribute("tauxPresence",      tauxPresence);
         model.addAttribute("seancesToday",      seancesToday);
@@ -112,7 +107,7 @@ public class SurveillantController {
     }
 
     // ─────────────────────────────────────────────────────────────
-    //  Classes : liste des classes avec filtres filière / niveau
+    //  Classes
     // ─────────────────────────────────────────────────────────────
     @GetMapping("/classes")
     public String classesList(@AuthenticationPrincipal UserPrincipal principal, Model model) {
@@ -155,7 +150,7 @@ public class SurveillantController {
     }
 
     // ─────────────────────────────────────────────────────────────
-    //  Appel : page d'appel pour une classe (réutilise seance.js)
+    //  Appel
     // ─────────────────────────────────────────────────────────────
     @GetMapping("/classes/{classeId}/appel")
     public String appelView(@PathVariable Long classeId,
@@ -215,46 +210,26 @@ public class SurveillantController {
         return "SurveillantInterface/SurveillantAppel";
     }
 
-    // ─── Records ────────────────────────────────────────────────
+    // ─── Records ─────────────────────────────────────────────────
 
     public record SeanceDuJourViewModel(
-            Long id,
-            String classeCode,
-            Long classeId,
-            String libelle,
-            String salle,
-            LocalTime heureDebut,
-            LocalTime heureFin,
-            String status,    // "EN_COURS" | "A_VENIR" | "TERMINE"
-            boolean hasAppel
-    ) {}
+            Long id, String classeCode, Long classeId,
+            String libelle, String salle,
+            LocalTime heureDebut, LocalTime heureFin,
+            String status, boolean hasAppel) {}
 
     public record ClasseWithFilterViewModel(
-            Long id,
-            String code,
-            String description,
-            Long filiereId,
-            String filiereCode,
-            String filiereNom,
-            Long niveauId,
-            int niveauOrdre,
-            SeanceInfo activeSeance
-    ) {}
+            Long id, String code, String description,
+            Long filiereId, String filiereCode, String filiereNom,
+            Long niveauId, int niveauOrdre,
+            SeanceInfo activeSeance) {}
 
     public record SeanceInfo(
-            String libelle,
-            String salle,
-            LocalTime heureDebut,
-            LocalTime heureFin
-    ) {}
+            String libelle, String salle,
+            LocalTime heureDebut, LocalTime heureFin) {}
 
     public record SeanceViewModel(
-            Long id,
-            String libelle,
-            String salle,
-            LocalDate dateSeance,
-            LocalTime heureDebut,
-            LocalTime heureFin,
-            Long coursId
-    ) {}
+            Long id, String libelle, String salle,
+            LocalDate dateSeance, LocalTime heureDebut, LocalTime heureFin,
+            Long coursId) {}
 }

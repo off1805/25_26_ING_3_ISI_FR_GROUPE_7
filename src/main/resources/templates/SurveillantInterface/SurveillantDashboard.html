@@ -146,7 +146,7 @@
                             </div>
                             <span class="text-[10px] font-semibold text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded-full">Retards</span>
                         </div>
-                        <p class="text-3xl font-black text-layer-foreground" th:text="${totalRetards}">0</p>
+                        <p class="text-3xl font-black text-layer-foreground" th:text="0">0</p>
                         <p class="text-xs text-muted-foreground-2 mt-1">Étudiants en retard</p>
                     </div>
 
@@ -194,7 +194,7 @@
                                     <span class="size-2 rounded-full bg-orange-500"></span>
                                     <span class="text-[10px] text-muted-foreground-2">Retards</span>
                                 </div>
-                                <p class="text-base font-black text-orange-500" th:text="${totalRetards}">0</p>
+                                <p class="text-base font-black text-orange-500" th:text="0">0</p>
                             </div>
                             <div class="text-center">
                                 <div class="flex items-center justify-center gap-1 mb-1">
@@ -294,7 +294,7 @@
                              th:style="${'width:' + (totalMarques > 0 ? (totalPresents * 100 / totalMarques) : 0) + '%'}"></div>
                         <!-- Retards -->
                         <div class="bg-orange-400 h-full transition-all"
-                             th:style="${'width:' + (totalMarques > 0 ? (totalRetards * 100 / totalMarques) : 0) + '%'}"></div>
+                             th:style="'width:0%'"></div>
                         <!-- Absents -->
                         <div class="bg-red-400 h-full transition-all"
                              th:style="${'width:' + (totalMarques > 0 ? (totalAbsents * 100 / totalMarques) : 0) + '%'}"></div>
@@ -306,7 +306,7 @@
                         </span>
                         <span class="flex items-center gap-1.5">
                             <span class="size-2.5 rounded-full bg-orange-400"></span>
-                            Retards <strong th:text="${totalRetards}" class="text-layer-foreground">0</strong>
+                            Retards <strong th:text="0" class="text-layer-foreground">0</strong>
                         </span>
                         <span class="flex items-center gap-1.5">
                             <span class="size-2.5 rounded-full bg-red-400"></span>
@@ -345,7 +345,7 @@
 
     // ── Radial chart présence ──────────────────────────────────
     const presents = /*[[${totalPresents}]]*/ 0;
-    const retards  = /*[[${totalRetards}]]*/ 0;
+    const retards  = 0;
     const absents  = /*[[${totalAbsents}]]*/ 0;
     const taux     = /*[[${tauxPresence}]]*/ 0;
     const total    = presents + retards + absents;

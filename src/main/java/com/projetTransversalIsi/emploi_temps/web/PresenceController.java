@@ -23,7 +23,6 @@ public class PresenceController {
     private final DeletePresenceListUC deletePresenceListUC;
     private final AddPresenceRowUC addPresenceRowUC;
     private final UpdatePresenceRowUC updatePresenceRowUC;
-    private final MarkRetardUC markRetardUC;
     private final MarkStudentPresentUC markStudentPresentUC;
     private final GetAbsencesEtudiantUC getAbsencesEtudiantUC;
     private final GetMatieresStatsEtudiantUC getMatieresStatsEtudiantUC;
@@ -128,15 +127,5 @@ public class PresenceController {
     @PutMapping("/rows")
     public ResponseEntity<PresenceRowResponseDTO> updateRow(@RequestBody UpdatePresenceRowDTO dto) {
         return ResponseEntity.ok(updatePresenceRowUC.execute(dto));
-    }
-
-    // PATCH /api/presences/rows/{id}/retard -- le surveillant marque un etudiant en retard.
-    // Logique isolee : ne touche QUE le champ retard (et force present=true si retard=true).
-    // N ecrase pas une absence existante si retard=false.
-    @PatchMapping("/rows/{id}/retard")
-    public ResponseEntity<PresenceRowResponseDTO> toggleRetard(
-            @PathVariable Long id,
-            @RequestParam boolean retard) {
-        return ResponseEntity.ok(markRetardUC.execute(id, retard));
     }
 }
