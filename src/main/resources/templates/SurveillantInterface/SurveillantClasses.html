@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Classes</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+</head>
+
+<body class="h-screen bg-background-1">
+<section class="flex flex-row h-full">
+
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
+
+    <section class="flex-1 flex flex-col overflow-hidden">
+
+        <!-- NAVBAR -->
+        <header class="flex-none flex justify-between items-center px-5 sm:px-7 py-3 bg-navbar border-b border-navbar-line">
+            <div class="flex items-center gap-3">
+                <button type="button"
+                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
+                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-xs text-muted-foreground">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>
+                    </svg>
+                    <span>Surveillant</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 6l6 6l-6 6"/>
+                    </svg>
+                    <span class="font-semibold text-layer-foreground">Classes</span>
+                </nav>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" data-theme-toggle
+                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/>
+                    </svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- CONTENU -->
+        <div class="flex-1 overflow-y-auto px-5 sm:px-7 py-6">
+
+            <!-- En-tête + filtres -->
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+                <div>
+                    <h1 class="text-xl font-bold text-layer-foreground">Classes</h1>
+                    <p class="text-sm text-muted-foreground-2 mt-1">
+                        Sélectionnez une classe pour gérer l'appel.
+                        <span class="inline-flex items-center gap-1 ml-2 text-green-600 font-semibold">
+                            <span class="size-1.5 rounded-full bg-green-500 animate-pulse inline-block"></span>
+                            Séance en cours
+                        </span>
+                        indique une séance active.
+                    </p>
+                </div>
+
+                <!-- Filtres -->
+                <div class="flex flex-wrap gap-2 shrink-0">
+
+                    <!-- Filtre filière -->
+                    <div class="relative">
+                        <select id="filter-filiere"
+                                class="appearance-none pl-3 pr-8 py-2 text-xs rounded-xl border border-layer-line bg-layer text-layer-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer">
+                            <option value="">Toutes les filières</option>
+                            <option th:each="f : ${filieres}"
+                                    th:value="${f.id}"
+                                    th:text="${f.code + ' — ' + f.nom}">ISI — Info Systèmes</option>
+                        </select>
+                        <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+
+                    <!-- Filtre niveau -->
+                    <div class="relative">
+                        <select id="filter-niveau"
+                                class="appearance-none pl-3 pr-8 py-2 text-xs rounded-xl border border-layer-line bg-layer text-layer-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer">
+                            <option value="">Tous les niveaux</option>
+                            <option th:each="n : ${niveaux}"
+                                    th:value="${n.id}"
+                                    th:text="${'Niveau ' + n.ordre}">Niveau 3</option>
+                        </select>
+                        <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground-2" xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+
+                    <!-- Bouton reset -->
+                    <button id="filter-reset" type="button"
+                            class="px-3 py-2 text-xs rounded-xl border border-layer-line bg-layer text-muted-foreground-2 hover:bg-muted transition-colors">
+                        Réinitialiser
+                    </button>
+                </div>
+            </div>
+
+            <!-- Compteur résultats -->
+            <p class="text-xs text-muted-foreground-2 mb-4">
+                <span id="results-count">0</span> classe(s) affichée(s)
+            </p>
+
+            <!-- Grille des classes -->
+            <div id="classes-grid"
+                 th:if="${classes != null and !#lists.isEmpty(classes)}"
+                 class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+                <a th:each="classe : ${classes}"
+                   th:href="@{/surveillant/classes/{id}/appel(id=${classe.id})}"
+                   th:attr="data-filiere-id=${classe.filiereId}, data-niveau-id=${classe.niveauId}"
+                   class="classe-card group relative flex flex-col gap-3 rounded-2xl border bg-layer border-layer-line
+                          hover:border-primary/40 hover:shadow-md transition-all p-5 cursor-pointer">
+
+                    <!-- Badge séance en cours -->
+                    <div th:if="${classe.activeSeance != null}"
+                         class="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full
+                                bg-green-500/10 border border-green-500/20 text-green-600 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="size-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        En cours
+                    </div>
+
+                    <!-- Icône classe -->
+                    <div class="size-10 rounded-xl flex items-center justify-center shrink-0 transition-colors"
+                         th:classappend="${classe.activeSeance != null} ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground-2'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+
+                    <!-- Nom et filière/niveau -->
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-base text-layer-foreground truncate group-hover:text-primary transition-colors"
+                            th:text="${classe.code}">ISI-3-A</h3>
+                        <p class="text-xs text-muted-foreground-2 mt-0.5 truncate"
+                           th:text="${classe.filiereCode + ' · Niveau ' + classe.niveauOrdre}">ISI · Niveau 3</p>
+                        <p th:if="${classe.description != null and !#strings.isEmpty(classe.description)}"
+                           class="text-xs text-muted-foreground-2 mt-0.5 truncate"
+                           th:text="${classe.description}">Description</p>
+                    </div>
+
+                    <!-- Info séance si active -->
+                    <div th:if="${classe.activeSeance != null}"
+                         class="mt-auto pt-3 border-t border-layer-line text-xs text-muted-foreground-2 flex flex-col gap-1">
+                        <p class="font-semibold text-layer-foreground truncate" th:text="${classe.activeSeance.libelle}">Cours</p>
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                            </svg>
+                            <span th:text="${#temporals.format(classe.activeSeance.heureDebut,'HH:mm')} + ' → ' + ${#temporals.format(classe.activeSeance.heureFin,'HH:mm')}">08:00 → 10:00</span>
+                            <span th:if="${classe.activeSeance.salle != null}">·</span>
+                            <span th:if="${classe.activeSeance.salle != null}" th:text="${classe.activeSeance.salle}">Salle B04</span>
+                        </div>
+                    </div>
+
+                    <!-- Aucune séance -->
+                    <div th:if="${classe.activeSeance == null}"
+                         class="mt-auto pt-3 border-t border-layer-line">
+                        <p class="text-xs text-muted-foreground-2 italic">Aucune séance en cours</p>
+                    </div>
+
+                    <!-- Flèche hover -->
+                    <svg class="absolute bottom-4 right-4 size-4 text-muted-foreground-2 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5"
+                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+
+                </a>
+            </div>
+
+            <!-- Message aucun résultat après filtre -->
+            <div id="no-results" class="hidden flex flex-col items-center justify-center min-h-[40vh] gap-4 text-center">
+                <div class="size-16 rounded-2xl bg-muted flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" class="text-muted-foreground-2">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-semibold text-layer-foreground">Aucune classe ne correspond aux filtres</p>
+                    <p class="text-xs text-muted-foreground-2 mt-1">Essayez de modifier ou réinitialiser les filtres.</p>
+                </div>
+            </div>
+
+            <!-- État vide (aucune classe en base) -->
+            <div th:if="${classes == null or #lists.isEmpty(classes)}"
+                 class="flex flex-col items-center justify-center min-h-[60vh] gap-5 text-center">
+                <div class="size-20 rounded-3xl bg-muted flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" class="text-muted-foreground-2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-xl font-bold text-layer-foreground">Aucune classe disponible</p>
+                    <p class="text-sm text-muted-foreground-2 mt-1.5">Les classes apparaîtront ici une fois configurées.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+</section>
+
+<script th:src="@{/js/preline.js}"></script>
+<script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+<script>
+(function () {
+    const filterFiliere = document.getElementById('filter-filiere');
+    const filterNiveau  = document.getElementById('filter-niveau');
+    const resetBtn      = document.getElementById('filter-reset');
+    const cards         = document.querySelectorAll('.classe-card');
+    const noResults     = document.getElementById('no-results');
+    const counter       = document.getElementById('results-count');
+
+    function applyFilters() {
+        const filiereVal = filterFiliere ? filterFiliere.value : '';
+        const niveauVal  = filterNiveau  ? filterNiveau.value  : '';
+
+        let visible = 0;
+        cards.forEach(card => {
+            const matchFiliere = !filiereVal || card.dataset.filiereId === filiereVal;
+            const matchNiveau  = !niveauVal  || card.dataset.niveauId  === niveauVal;
+            const show = matchFiliere && matchNiveau;
+            card.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+
+        if (counter) counter.textContent = visible;
+        if (noResults) noResults.classList.toggle('hidden', visible > 0);
+    }
+
+    if (filterFiliere) filterFiliere.addEventListener('change', applyFilters);
+    if (filterNiveau)  filterNiveau.addEventListener('change', applyFilters);
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (filterFiliere) filterFiliere.value = '';
+            if (filterNiveau)  filterNiveau.value  = '';
+            applyFilters();
+        });
+    }
+
+    // Initialiser le compteur
+    applyFilters();
+})();
+</script>
+</body>
+</html>

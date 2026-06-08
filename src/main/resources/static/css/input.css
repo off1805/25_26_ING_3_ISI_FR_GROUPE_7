@@ -70,3 +70,29 @@
   scrollbar-width: none;     /* Firefox */
 }
 
+/* ── Toast de présence temps réel (seance.js) ── */
+@keyframes presence-rise {
+  0%   { transform: translateY(0);     opacity: 1; }
+  70%  { transform: translateY(-75vh); opacity: 0.85; }
+  100% { transform: translateY(-95vh); opacity: 0; }
+}
+
+#presence-toast-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 420px;
+  max-width: 95vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 200;
+  overflow: hidden;
+}
+
+.presence-toast {
+  position: absolute;
+  bottom: 0;
+  animation: presence-rise 4.5s ease-out forwards;
+  max-width: 300px;
+}
+
