@@ -47,23 +47,71 @@ public class TeacherController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboardView(Model model) {
+    public String dashboardView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
         UserDetailsResponseDTO teacher = getFakeTeacher();
-        List<DashboardSeanceViewModel> seancesJour = getFakeDashboardSeancesJour();
+        Long enseignantProfileId = null;
+
+        if (principal != null) {
+            var user = userRepository.findById(principal.userId()).orElse(null);
+            if (user != null && user.getProfile() != null) {
+                enseignantProfileId = user.getProfile().getId();
+                teacher = new UserDetailsResponseDTO(
+                        user.getId(), user.getStatus(), user.getEmail(), "TEACHER",
+                        ProfileResponseDTO.builder()
+                                .id(user.getProfile().getId())
+                                .nom(user.getProfile().getNom())
+                                .prenom(user.getProfile().getPrenom())
+                                .build());
+            }
+        }
+
+        final Long finalId = enseignantProfileId;
+        LocalDate today = LocalDate.now();
+        LocalTime now   = LocalTime.now();
+
+        List<DashboardSeanceViewModel> seancesJour = (finalId == null)
+                ? getFakeDashboardSeancesJour()
+                : seanceRepository.findByEnseignantId(finalId).stream()
+                        .filter(s -> !s.isDeleted() && s.getDateSeance().equals(today))
+                        .map(s -> {
+                            DashboardSeanceStatus status;
+                            if (s.getHeureFin().isBefore(now))       status = DashboardSeanceStatus.TERMINE;
+                            else if (s.getHeureDebut().isAfter(now)) status = DashboardSeanceStatus.A_VENIR;
+                            else                                      status = DashboardSeanceStatus.EN_COURS;
+                            return new DashboardSeanceViewModel(s.getId(), s.getLibelle(), s.getSalle(),
+                                    s.getHeureDebut(), s.getHeureFin(), status);
+                        })
+                        .sorted(java.util.Comparator.comparing(DashboardSeanceViewModel::heureDebut))
+                        .collect(java.util.stream.Collectors.toList());
 
         DashboardNextCourseViewModel nextCourse = seancesJour.stream()
-                .filter(seance -> seance.status() == DashboardSeanceStatus.EN_COURS
-                        || seance.status() == DashboardSeanceStatus.A_VENIR)
+                .filter(s -> s.status() == DashboardSeanceStatus.EN_COURS || s.status() == DashboardSeanceStatus.A_VENIR)
                 .findFirst()
-                .map(seance -> new DashboardNextCourseViewModel(
-                        seance.heureDebut(),
-                        seance.libelle()
-                ))
+                .map(s -> new DashboardNextCourseViewModel(s.heureDebut(), s.libelle()))
                 .orElse(null);
 
-        model.addAttribute("teacher", teacher);
-        model.addAttribute("seancesJour", seancesJour);
-        model.addAttribute("nextCourse", nextCourse);
+        long enCours   = seancesJour.stream().filter(s -> s.status() == DashboardSeanceStatus.EN_COURS).count();
+        long aVenir    = seancesJour.stream().filter(s -> s.status() == DashboardSeanceStatus.A_VENIR).count();
+        long terminees = seancesJour.stream().filter(s -> s.status() == DashboardSeanceStatus.TERMINE).count();
+        int  progressPct = seancesJour.isEmpty() ? 0 : (int) Math.round((terminees * 100.0) / seancesJour.size());
+
+        String teacherInitials = "TE";
+        if (teacher != null && teacher.profile() != null) {
+            String p = teacher.profile().getPrenom() != null ? teacher.profile().getPrenom() : "";
+            String n = teacher.profile().getNom()    != null ? teacher.profile().getNom()    : "";
+            teacherInitials = (p.isEmpty() ? "?" : p.substring(0,1).toUpperCase())
+                            + (n.isEmpty() ? "?" : n.substring(0,1).toUpperCase());
+        }
+
+        model.addAttribute("teacher",         teacher);
+        model.addAttribute("teacherInitials", teacherInitials);
+        model.addAttribute("seancesJour",     seancesJour);
+        model.addAttribute("nextCourse",      nextCourse);
+        model.addAttribute("seancesEnCours",  enCours);
+        model.addAttribute("seancesAVenir",   aVenir);
+        model.addAttribute("seancesTerminees",terminees);
+        model.addAttribute("seancesTotal",    (long) seancesJour.size());
+        model.addAttribute("progressPct",     progressPct);
 
         return "TeacherInterface/TeacherDashboard";
     }
