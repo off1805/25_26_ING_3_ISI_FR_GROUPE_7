@@ -103,6 +103,20 @@ public class SurveillantController {
         model.addAttribute("tauxPresence",      tauxPresence);
         model.addAttribute("seancesToday",      seancesToday);
 
+        // Initiales Surveillant
+        String survInitials = "SU";
+        if (principal != null) {
+            var user = userRepository.findById(principal.userId()).orElse(null);
+            if (user != null && user.getProfile() != null) {
+                String p = user.getProfile().getPrenom() != null ? user.getProfile().getPrenom() : "";
+                String n = user.getProfile().getNom()    != null ? user.getProfile().getNom()    : "";
+                survInitials = (p.isEmpty() ? "S" : p.substring(0,1).toUpperCase())
+                             + (n.isEmpty() ? "U" : n.substring(0,1).toUpperCase());
+                model.addAttribute("sidebarFullName", (p + " " + n).trim());
+            }
+        }
+        model.addAttribute("survInitials", survInitials);
+
         return "SurveillantInterface/SurveillantDashboard";
     }
 

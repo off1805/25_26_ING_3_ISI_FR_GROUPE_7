@@ -168,10 +168,27 @@ public class APController {
             );
         }
 
+        // Initiales AP
+        String apInitials = "AP";
+        if (principal != null) {
+            var apProfile = apProfileRepository.findByUserId(principal.userId()).orElse(null);
+            if (apProfile != null) {
+                String p = apProfile.getPrenom() != null ? apProfile.getPrenom() : "";
+                String n = apProfile.getNom()    != null ? apProfile.getNom()    : "";
+                apInitials = (p.isEmpty() ? "A" : p.substring(0,1).toUpperCase())
+                           + (n.isEmpty() ? "P" : n.substring(0,1).toUpperCase());
+                model.addAttribute("apName", (p + " " + n).trim());
+            } else {
+                model.addAttribute("apName", "AP");
+            }
+        } else {
+            model.addAttribute("apName", "AP");
+        }
+
+        model.addAttribute("apInitials", apInitials);
         model.addAttribute("dashboard", dashboard);
         model.addAttribute("filiere", filiere);
         model.addAttribute("activePage", "dashboard");
-        model.addAttribute("apName", "AP Name");
         return "APInterface/APDashboard";
     }
 
