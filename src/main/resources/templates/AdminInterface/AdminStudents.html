@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>KemOSchool — Gestion des étudiants</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}"/>
+</head>
+<body class="h-screen bg-background-1">
+<section class="flex flex-row h-full">
+
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
+    <section class="flex-1 flex flex-col overflow-hidden">
+
+        <header class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
+            <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
+                <span>Admin</span>
+                <span class="font-semibold text-layer-foreground">› Étudiants</span>
+            </nav>
+            <button type="button" data-theme-toggle class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/></svg>
+                <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            </button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 max-w-2xl mx-auto w-full">
+            <h1 class="text-2xl font-bold text-layer-foreground mb-6">Inscrire un étudiant</h1>
+
+            <!-- SECTION ANNÉE SCOLAIRE -->
+            <div class="bg-card border border-card-line rounded-2xl p-6 space-y-4 mb-6">
+                <h2 class="text-sm font-bold text-layer-foreground">1. Créer et activer une année scolaire</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Année début</label>
+                        <input id="anneeDebut" type="number" value="2025" class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Année fin</label>
+                        <input id="anneeFin" type="number" value="2026" class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    </div>
+                </div>
+                <button id="btn-annee" type="button" class="w-full py-2.5 text-sm font-bold rounded-xl bg-green-600 text-white hover:bg-green-700 active:scale-95 transition-all">
+                    Créer et activer l'année scolaire
+                </button>
+                <div id="feedback-annee" class="hidden rounded-xl px-4 py-3 text-sm font-semibold"></div>
+            </div>
+
+            <!-- SECTION ÉTUDIANT -->
+            <h2 class="text-sm font-bold text-layer-foreground mb-3">2. Inscrire un étudiant</h2>
+            <div id="feedback" class="hidden rounded-xl px-4 py-3 text-sm font-semibold mb-4"></div>
+
+            <div class="bg-card border border-card-line rounded-2xl p-6 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Prénom *</label>
+                        <input id="prenom" type="text" class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Nom *</label>
+                        <input id="nom" type="text" class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Email *</label>
+                    <input id="email" type="email" class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Matricule *</label>
+                        <input id="matricule" type="text" class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Téléphone</label>
+                        <input id="telephone" type="text" class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-muted-foreground-2 uppercase tracking-widest mb-1.5">ID Classe *</label>
+                    <input id="classeId" type="number" placeholder="ex: 1" class="w-full px-3.5 py-2.5 rounded-xl border border-card-line bg-background-1 text-layer-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                </div>
+                <button id="btn-inscrire" type="button" class="w-full py-2.5 text-sm font-bold rounded-xl bg-primary text-white hover:bg-primary/90 active:scale-95 transition-all">
+                    Inscrire l'étudiant
+                </button>
+            </div>
+        </div>
+    </section>
+</section>
+
+<script th:src="@{/js/preline.js}"></script>
+<script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+<script type="module">
+    import api from '/js/common/ClientHttp.js';
+
+    // ── Année scolaire ────────────────────────────────────────────────────────
+    document.getElementById('btn-annee').addEventListener('click', async () => {
+        const btn = document.getElementById('btn-annee');
+        btn.disabled = true;
+        btn.textContent = 'Création…';
+        try {
+            const res = await api.post('/api/annee-scolaire', {
+                anneeDebut: parseInt(document.getElementById('anneeDebut').value),
+                anneeFin: parseInt(document.getElementById('anneeFin').value)
+            });
+            // Activer l'année créée
+            await api._request('PATCH', `/api/annee-scolaire/${res.id}/activate`);
+            showFeedbackAnnee(`✓ Année ${res.anneeDebut}-${res.anneeFin} créée et activée (id: ${res.id})`, 'success');
+        } catch (e) {
+            showFeedbackAnnee('Erreur : ' + (e.message || 'Échec'), 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Créer et activer l'année scolaire";
+        }
+    });
+
+    function showFeedbackAnnee(msg, type) {
+        const box = document.getElementById('feedback-annee');
+        box.textContent = msg;
+        box.className = `rounded-xl px-4 py-3 text-sm font-semibold ${
+            type === 'success' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-red-50 border border-red-200 text-red-700'
+        }`;
+        box.classList.remove('hidden');
+    }
+
+    // ── Étudiant ──────────────────────────────────────────────────────────────
+
+    document.getElementById('btn-inscrire').addEventListener('click', async () => {
+        const btn = document.getElementById('btn-inscrire');
+        btn.disabled = true;
+        btn.textContent = 'Inscription…';
+
+        const data = {
+            email: document.getElementById('email').value.trim(),
+            nom: document.getElementById('nom').value.trim(),
+            prenom: document.getElementById('prenom').value.trim(),
+            matricule: document.getElementById('matricule').value.trim(),
+            numeroTelephone: document.getElementById('telephone').value.trim(),
+            classeId: parseInt(document.getElementById('classeId').value)
+        };
+
+        try {
+            const res = await api.post('/api/students/enroll', data);
+            showFeedback(`✓ Étudiant inscrit — profileId: ${res.profileId}, email: ${res.email}`, 'success');
+            document.querySelectorAll('input').forEach(i => i.value = '');
+        } catch (e) {
+            showFeedback('Erreur : ' + (e.message || 'Inscription échouée'), 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Inscrire l'étudiant";
+        }
+    });
+
+    function showFeedback(msg, type) {
+        const box = document.getElementById('feedback');
+        box.textContent = msg;
+        box.className = `rounded-xl px-4 py-3 text-sm font-semibold mb-4 ${
+            type === 'success' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-red-50 border border-red-200 text-red-700'
+        }`;
+        box.classList.remove('hidden');
+    }
+</script>
+</body>
+</html>
