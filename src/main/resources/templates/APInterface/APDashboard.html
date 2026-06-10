@@ -1,224 +1,238 @@
 <!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KemOSchool — Tableau de bord AP</title>
+    <title>KemOSchool - Dashboard AP</title>
     <link rel="stylesheet" th:href="@{/css/output.css}" />
-    <link rel="stylesheet" th:href="@{/css/apexcharts.css}" />
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
+<body class="h-screen bg-background-1 overflow-hidden">
+<section class="flex h-full">
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
+    <section class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
-<body class="h-screen bg-background-1">
-    <section class="flex flex-row h-full">
+        <!-- NAVBAR -->
+        <header class="flex-none flex justify-between items-center px-5 py-3 bg-navbar border-b border-navbar-line">
+            <nav class="hidden lg:flex items-center gap-x-1.5 text-xs text-muted-foreground">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+                <span>AP Panel</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6l-6 6"/></svg>
+                <span class="font-semibold text-layer-foreground">Tableau de bord</span>
+            </nav>
+            <button type="button" class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground" data-hs-overlay="#hs-app-sidebar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <div class="flex items-center gap-2">
+                <button type="button" data-theme-toggle class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/></svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                </button>
+                <div class="size-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold" th:text="${apInitials}">AP</div>
+            </div>
+        </header>
 
-        <section th:replace="~{common/SidebarFragment :: content}"></section>
+        <!-- CONTENT (no scroll) -->
+        <main class="flex-1 overflow-hidden flex flex-col gap-3 p-4">
 
-        <section class="flex-1 flex flex-col overflow-hidden">
+            <!-- ══ HERO CARD ══ -->
+            <div class="flex-none rounded-2xl bg-layer border border-layer-line p-4 flex items-center gap-4 relative overflow-hidden">
+                <!-- decorative orbits right -->
+                <div class="absolute -top-8 -right-8 size-44 rounded-full bg-primary/10 pointer-events-none"></div>
+                <div class="absolute -bottom-6 right-16 size-28 rounded-full bg-primary/8 pointer-events-none"></div>
+                <div class="absolute top-2 right-32 size-10 rounded-full bg-primary/15 pointer-events-none"></div>
+                <!-- decorative orbits left -->
+                <div class="absolute -top-6 -left-6 size-32 rounded-full bg-primary/8 pointer-events-none"></div>
+                <div class="absolute -bottom-4 -left-4 size-16 rounded-full bg-primary/12 pointer-events-none"></div>
 
-            <!-- NAVBAR -->
-            <header
-                class="flex-none flex justify-between items-center px-5 sm:px-7 py-3 bg-navbar border-b border-navbar-line">
-                <div class="flex items-center gap-3">
-                    <button type="button"
-                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
-                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <line x1="3" y1="12" x2="21" y2="12" />
-                            <line x1="3" y1="18" x2="21" y2="18" />
-                        </svg>
-                    </button>
-                    <nav class="hidden lg:flex items-center gap-x-1.5 text-xs text-muted-foreground">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.5">
-                            <path d="M5 12l-2 0l9-9l9 9l-2 0" />
-                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
-                        </svg>
-                        <span>AP Panel</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M9 6l6 6l-6 6" />
-                        </svg>
-                        <span class="font-semibold text-layer-foreground">Tableau de bord</span>
-                    </nav>
+                <div class="size-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.75">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" data-theme-toggle
-                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
-                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
-                        </svg>
-                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="15"
-                            height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                            <circle cx="12" cy="12" r="4" />
-                            <path
-                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-                        </svg>
-                    </button>
-                    <div th:text="${sidebarFullName != null ? #strings.toUpperCase(#strings.substring(sidebarFullName, 0, 1)) : 'A'}"
-                        class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm">
-                        A</div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Espace AP</p>
+                    <h1 class="text-base font-bold text-layer-foreground leading-tight truncate" th:text="${apName}">AP</h1>
+                    <p class="text-xs text-muted-foreground mt-0.5"
+                       th:if="${filiere != null}" th:text="${'Filiere : ' + filiere.nom()}">Filiere</p>
+                    <p class="text-xs text-muted-foreground mt-0.5" th:if="${filiere == null}">Gestionnaire des absences</p>
                 </div>
-            </header>
-
-            <!-- PAGE CONTENT -->
-            <div class="flex-1 overflow-y-auto">
-                <div class="px-4 sm:px-6 lg:px-8 py-7 max-w-7xl mx-auto  h-full">
-                    <div class="flex flex-col bg-card border border-card-line rounded-xl divide-y-1 h-full">
-                        <!-- ══ KPI CARDS (3) ══ -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 divide-x-1">
-
-                            <!-- Étudiants -->
-                            <div class=" p-5">
-                                <div class="flex items-center justify-between mb-3">
-                                    <p class="text-xs font-medium text-muted-foreground-2">Total étudiants</p>
-                                    <div class="size-8 rounded-xl bg-primary/10 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
-                                            class="text-primary">
-                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                            <circle cx="9" cy="7" r="4" />
-                                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-3xl font-black text-layer-foreground"
-                                    th:text="${dashboard.totalEtudiants}">0</p>
-                                <p class="text-xs text-muted-foreground-2 mt-1"
-                                    th:text="${filiere != null ? filiere.nom() : 'filière'}">filière</p>
-                            </div>
-
-                            <!-- Séances semaine -->
-                            <div class="  p-5">
-                                <div class="flex items-center justify-between mb-3">
-                                    <p class="text-xs font-medium text-muted-foreground-2">Séances cette semaine</p>
-                                    <div class="size-8 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
-                                            class="text-blue-500">
-                                            <rect x="3" y="4" width="18" height="18" rx="2" />
-                                            <path d="M16 2v4" />
-                                            <path d="M8 2v4" />
-                                            <path d="M3 10h18" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-3xl font-black text-layer-foreground"
-                                    th:text="${dashboard.seancesSemaine}">0</p>
-                                <p class="text-xs text-muted-foreground-2 mt-1">planifiées</p>
-                            </div>
-
-                            <!-- Taux de présence -->
-                            <div class="  p-5">
-                                <div class="flex items-center justify-between mb-3">
-                                    <p class="text-xs font-medium text-muted-foreground-2">Taux de présence</p>
-                                    <div class="size-8 rounded-xl bg-green-500/10 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
-                                            class="text-green-500">
-                                            <polyline points="20 6 9 17 4 12" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-3xl font-black text-green-500"
-                                    th:text="${#numbers.formatDecimal(dashboard.tauxPresenceGlobal, 1, 1) + ' %'}">100 %
-                                </p>
-                                <p class="text-xs text-muted-foreground-2 mt-1">global filière</p>
-                            </div>
-
-                        </div>
-
-                        <!-- ══ GRAPHE ABSENCES (pleine largeur + filtres) ══ -->
-                        <div class="bg-card  p-5">
-
-                            <!-- En-tête avec filtres -->
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                                <div>
-                                    <h2 class="text-sm font-bold text-layer-foreground" id="chart-title">Absences par
-                                        classe</h2>
-                                    <p class="text-xs text-muted-foreground-2 mt-0.5" id="chart-subtitle">Total des
-                                        absences enregistrées par classe</p>
-                                </div>
-
-                                <div class="flex flex-wrap items-center gap-2">
-
-                                    <!-- Toggle vue -->
-                                    <div class="flex items-center bg-muted rounded-xl p-1 gap-0.5" id="view-toggle">
-                                        <button type="button" data-view="bar"
-                                            class="view-btn active flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-card text-primary shadow-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <rect x="3" y="12" width="4" height="9" />
-                                                <rect x="10" y="7" width="4" height="14" />
-                                                <rect x="17" y="3" width="4" height="18" />
-                                            </svg>
-                                            Par classe
-                                        </button>
-                                        <button type="button" data-view="line"
-                                            class="view-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-muted-foreground-2 hover:text-layer-foreground">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                                            </svg>
-                                            Évolution
-                                        </button>
-                                    </div>
-
-                                    <!-- Filtre classe -->
-                                    <select id="classe-filter"
-                                        class="text-xs px-3 py-2 rounded-xl bg-muted border-0 text-layer-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer">
-                                        <option value="all">Toutes les classes</option>
-                                    </select>
-
-                                    <!-- Filtre période (visible uniquement en vue Évolution) -->
-                                    <select id="period-filter"
-                                        class="hidden text-xs px-3 py-2 rounded-xl bg-muted border-0 text-layer-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer">
-                                        <option value="30">30 derniers jours</option>
-                                        <option value="60">60 derniers jours</option>
-                                        <option value="90" selected>90 derniers jours</option>
-                                        <option value="0">Tout l'historique</option>
-                                    </select>
-
-                                </div>
-                            </div>
-
-                            <!-- Zone graphique -->
-                            <div id="chart-absences" class="min-h-[320px] flex items-center justify-center">
-                                <p th:if="${#lists.isEmpty(dashboard.absencesParClasseLabels) and #lists.isEmpty(dashboard.absencesEvolution)}"
-                                    class="text-sm text-muted-foreground-2">Aucune absence enregistrée</p>
-                            </div>
-
-                        </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <a th:href="@{/ap/absences}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Absences
+                    </a>
+                    <a th:href="@{/ap/justificatifs}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background-1 border border-layer-line text-layer-foreground text-xs font-medium hover:bg-layer-hover transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        Justificatifs
+                        <span th:if="${dashboard.justificatifsEnAttente() > 0}"
+                              class="inline-flex items-center justify-center size-4 rounded-full bg-amber-500 text-white text-[10px] font-bold"
+                              th:text="${dashboard.justificatifsEnAttente()}">0</span>
+                    </a>
+                </div>
+                <div class="w-px self-stretch bg-layer-line mx-1"></div>
+                <div class="flex-shrink-0 text-right min-w-[160px]">
+                    <p class="text-[11px] text-muted-foreground" id="live-date">Lundi 01 Janvier</p>
+                    <p class="text-2xl font-bold tabular-nums text-layer-foreground" id="live-time">--:--:--</p>
+                    <div class="flex items-center justify-end gap-2 mt-1">
+                        <span class="text-[11px] text-muted-foreground" th:text="${dashboard.totalEtudiants() + ' etudiants'}">0 etudiants</span>
                     </div>
-
-
-
                 </div>
             </div>
 
-        </section>
+            <!-- ══ KPI ROW ══ -->
+            <div class="flex-none grid grid-cols-4 gap-3">
+                <div class="rounded-xl bg-layer border border-layer-line p-3 flex items-center gap-3">
+                    <div class="size-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-xl font-bold text-layer-foreground" th:text="${dashboard.totalEtudiants()}">0</p>
+                        <p class="text-[11px] text-muted-foreground">Etudiants</p>
+                    </div>
+                </div>
+                <div class="rounded-xl bg-layer border border-layer-line p-3 flex items-center gap-3">
+                    <div class="size-9 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-blue-500"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-xl font-bold text-blue-600" th:text="${dashboard.seancesSemaine()}">0</p>
+                        <p class="text-[11px] text-muted-foreground">Seances / semaine</p>
+                    </div>
+                </div>
+                <div class="rounded-xl bg-layer border border-layer-line p-3 flex items-center gap-3">
+                    <div class="size-9 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-green-500"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-xl font-bold text-green-600"><span th:text="${dashboard.tauxPresenceGlobal()}">0</span>%</p>
+                        <div class="w-full h-1 rounded-full bg-muted overflow-hidden mt-1">
+                            <div class="h-1 rounded-full bg-green-500 transition-all" th:style="'width: ' + ${dashboard.tauxPresenceGlobal()} + '%'"></div>
+                        </div>
+                        <p class="text-[11px] text-muted-foreground mt-0.5">Taux presence</p>
+                    </div>
+                </div>
+                <div class="rounded-xl bg-layer border border-layer-line p-3 flex items-center gap-3">
+                    <div class="size-9 rounded-lg bg-amber-500/10 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-amber-500"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-xl font-bold text-amber-600" th:text="${dashboard.justificatifsEnAttente()}">0</p>
+                        <p class="text-[11px] text-muted-foreground">Justificatifs en attente</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ BOTTOM ══ -->
+            <div class="flex-1 min-h-0 grid grid-cols-3 gap-3">
+
+                <!-- Chart absences (2/3) -->
+                <div class="col-span-2 rounded-2xl bg-layer border border-layer-line flex flex-col overflow-hidden">
+                    <div class="flex-none flex items-center justify-between px-4 py-3 border-b border-layer-line">
+                        <h3 class="text-sm font-semibold text-layer-foreground">Absences par classe</h3>
+                        <div class="flex items-center gap-2">
+                            <button id="btn-bar" onclick="toggleChartType('bar')"
+                                class="px-2.5 py-1 rounded-lg text-xs font-medium bg-primary text-primary-foreground transition-colors">Barres</button>
+                            <button id="btn-line" onclick="toggleChartType('line')"
+                                class="px-2.5 py-1 rounded-lg text-xs font-medium bg-background-1 border border-layer-line text-layer-foreground transition-colors">Courbe</button>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-h-0 p-3">
+                        <div id="chart-absences" class="h-full"></div>
+                    </div>
+                </div>
+
+                <!-- Justificatifs breakdown (1/3) -->
+                <div class="rounded-2xl bg-layer border border-layer-line flex flex-col overflow-hidden">
+                    <div class="flex-none px-4 py-3 border-b border-layer-line">
+                        <h3 class="text-sm font-semibold text-layer-foreground">Justificatifs</h3>
+                    </div>
+                    <div class="flex-1 overflow-y-auto no-scrollbar p-4 flex flex-col gap-4">
+                        <!-- Pending -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="size-2.5 rounded-full bg-amber-400 flex-shrink-0"></span>
+                                <span class="text-sm text-muted-foreground">En attente</span>
+                            </div>
+                            <span class="text-sm font-semibold text-layer-foreground" th:text="${dashboard.justificatifsPending()}">0</span>
+                        </div>
+                        <!-- Approved -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="size-2.5 rounded-full bg-green-500 flex-shrink-0"></span>
+                                <span class="text-sm text-muted-foreground">Approuves</span>
+                            </div>
+                            <span class="text-sm font-semibold text-layer-foreground" th:text="${dashboard.justificatifsApproved()}">0</span>
+                        </div>
+                        <!-- Rejected -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="size-2.5 rounded-full bg-red-500 flex-shrink-0"></span>
+                                <span class="text-sm text-muted-foreground">Rejetes</span>
+                            </div>
+                            <span class="text-sm font-semibold text-layer-foreground" th:text="${dashboard.justificatifsRejected()}">0</span>
+                        </div>
+                        <!-- Répartition bar -->
+                        <div th:with="total=${dashboard.justificatifsPending() + dashboard.justificatifsApproved() + dashboard.justificatifsRejected()}">
+                            <p class="text-xs text-muted-foreground mb-1.5">Repartition</p>
+                            <div class="w-full h-2.5 rounded-full bg-muted overflow-hidden flex">
+                                <div th:if="${total > 0}" class="bg-amber-400 h-full transition-all"
+                                     th:style="'width: ' + ${dashboard.justificatifsPending() * 100 / total} + '%'"></div>
+                                <div th:if="${total > 0}" class="bg-green-500 h-full transition-all"
+                                     th:style="'width: ' + ${dashboard.justificatifsApproved() * 100 / total} + '%'"></div>
+                                <div th:if="${total > 0}" class="bg-red-500 h-full transition-all"
+                                     th:style="'width: ' + ${dashboard.justificatifsRejected() * 100 / total} + '%'"></div>
+                                <div th:if="${total == 0}" class="bg-muted-foreground/20 h-full w-full"></div>
+                            </div>
+                        </div>
+                        <!-- Quick links -->
+                        <div class="mt-auto pt-3 border-t border-layer-line flex flex-col gap-1.5">
+                            <a th:href="@{/ap/absences}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-background-1 transition-colors text-xs text-layer-foreground">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Gerer les absences
+                            </a>
+                            <a th:href="@{/ap/classes}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-background-1 transition-colors text-xs text-layer-foreground">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                Voir les classes
+                            </a>
+                            <a th:href="@{/ap/schedule}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-background-1 transition-colors text-xs text-layer-foreground">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                Planning
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
     </section>
+</section>
 
-    <!-- Données JSON injectées -->
-    <script th:inline="javascript">
-        window.dashboardData = {
-            absences: {
-                labels: /*[[${dashboard.absencesParClasseLabels}]]*/[],
-                data:   /*[[${dashboard.absencesParClasseData}]]*/[]
-            },
-            evolution: /*[[${dashboard.absencesEvolution}]]*/[]
-        };
-    </script>
+<script th:src="@{/js/preline.js}"></script>
+<script th:src="@{/js/common/theme.js}"></script>
+<script th:src="@{/js/common/SidebarAdvice.js}"></script>
+<script>SidebarAdvice.deriveActivePage(window.location.pathname);</script>
+<script th:src="@{/js/APjs/apDashboard.js}" type="module"></script>
 
-    <script th:src="@{/js/apexcharts.min.js}"></script>
-    <script th:src="@{/js/preline.js}"></script>
-    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
-    <script th:src="@{/js/main.js}" type="module"></script>
-    <script th:src="@{/js/APInterface/apDashboard.js}" type="module"></script>
+<script th:inline="javascript">
+    window.dashboardData = {
+        absences: {
+            labels: /*[[${dashboard.absencesParClasseLabels}]]*/ [],
+            data:   /*[[${dashboard.absencesParClasseData}]]*/ []
+        },
+        evolution: /*[[${dashboard.absencesEvolution}]]*/ []
+    };
+</script>
+
+<script>
+    const JOURS=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    const MOIS=['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
+    function updateClock(){const now=new Date();const d=document.getElementById('live-date');const t=document.getElementById('live-time');if(d)d.textContent=JOURS[now.getDay()]+' '+String(now.getDate()).padStart(2,'0')+' '+MOIS[now.getMonth()];if(t)t.textContent=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');}
+    updateClock();setInterval(updateClock,1000);
+    function toggleChartType(type){const bar=document.getElementById('btn-bar');const line=document.getElementById('btn-line');if(bar&&line){bar.className=type==='bar'?'px-2.5 py-1 rounded-lg text-xs font-medium bg-primary text-primary-foreground transition-colors':'px-2.5 py-1 rounded-lg text-xs font-medium bg-background-1 border border-layer-line text-layer-foreground transition-colors';line.className=type==='line'?'px-2.5 py-1 rounded-lg text-xs font-medium bg-primary text-primary-foreground transition-colors':'px-2.5 py-1 rounded-lg text-xs font-medium bg-background-1 border border-layer-line text-layer-foreground transition-colors';}if(window.apChartInstance){window.apChartInstance.updateOptions({chart:{type:type}});}}
+</script>
 </body>
-
 </html>

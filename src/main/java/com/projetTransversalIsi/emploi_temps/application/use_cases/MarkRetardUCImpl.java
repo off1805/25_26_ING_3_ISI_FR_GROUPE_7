@@ -21,5 +21,4 @@ public class MarkRetardUCImpl implements MarkRetardUC {
         row.markRetard(retard);
         return PresenceRowResponseDTO.fromDomain(presenceRowRepo.save(row));
     }
-}
-*/
+}*/
