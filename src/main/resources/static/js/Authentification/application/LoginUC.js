@@ -44,8 +44,10 @@ export class LoginUC {
 
             return response;
         } catch (e) {
-            GlobalErrorHandler.handle(e);
-            throw new Error(e.message || "Erreur lors de la connexion.");
+            // Re-throw en préservant le statut HTTP pour que AuthController puisse l'interpréter
+            const enrichedError = new Error(e.message || "Erreur lors de la connexion.");
+            enrichedError.status = e.status;
+            throw enrichedError;
         }
     }
 

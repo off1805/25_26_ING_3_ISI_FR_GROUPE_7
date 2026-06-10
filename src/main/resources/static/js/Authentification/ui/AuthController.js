@@ -33,10 +33,13 @@ export class AuthController {
             }
 
         } catch (e) {
-            alert(e);
-
-            GlobalErrorHandler.handle(e);
             console.log("Erreur de connexion.", e.message);
+            if (e.status === 400 || e.message?.includes("400") || e.message?.includes("HTTP 400")) {
+                const { customErrorAlert } = await import("../../common/CustomErrorAlert.js");
+                customErrorAlert("Erreur de connexion", "Mot de passe ou email incorrect.");
+            } else {
+                GlobalErrorHandler.handle(e);
+            }
         }
     }
 }
