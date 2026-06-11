@@ -1,16 +1,24 @@
 package com.projetTransversalIsi.web_application.surveillant;
 
+import com.projetTransversalIsi.emploi_temps.application.dto.RetardListResponseDTO;
+import com.projetTransversalIsi.emploi_temps.application.use_cases.GetOrCreateRetardListUC;
 import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.entity.JpaEmploiTempsEntity;
+import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.entity.JpaInfoRetardRowEntity;
 import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.entity.JpaPresenceListEntity;
+import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.entity.JpaRetardRowEntity;
 import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository.SpringDataEmploiTempsRepository;
+import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository.SpringDataInfoRetardRowRepository;
 import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository.SpringDataPresenceListRepository;
 import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository.SpringDataPresenceRowRepository;
+import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.repository.SpringDataRetardRowRepository;
 import com.projetTransversalIsi.security.domain.UserPrincipal;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.entity.JpaClasseEntity;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataClasseRepository;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataFiliereRepository;
 import com.projetTransversalIsi.structure_academique.infrastructure.persistence.repository.SpringDataNiveauRepository;
 import com.projetTransversalIsi.user.domain.UserRepository;
+import com.projetTransversalIsi.user.profil.infrastructure.JpaStudentProfileEntity;
+import com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -18,9 +26,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,13 +41,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SurveillantController {
 
-    private final UserRepository                   userRepository;
-    private final SpringDataClasseRepository       classeRepository;
-    private final SpringDataEmploiTempsRepository  emploiTempsRepository;
-    private final SpringDataPresenceListRepository presenceListRepository;
-    private final SpringDataPresenceRowRepository  presenceRowRepository;
-    private final SpringDataFiliereRepository      filiereRepository;
-    private final SpringDataNiveauRepository       niveauRepository;
+    private final UserRepository                     userRepository;
+    private final SpringDataClasseRepository         classeRepository;
+    private final SpringDataEmploiTempsRepository    emploiTempsRepository;
+    private final SpringDataPresenceListRepository   presenceListRepository;
+    private final SpringDataPresenceRowRepository    presenceRowRepository;
+    private final SpringDataFiliereRepository        filiereRepository;
+    private final SpringDataNiveauRepository         niveauRepository;
+    private final SpringDataStudentProfileRepository studentProfileRepository;
+    private final SpringDataRetardRowRepository      retardRowRepository;
+    private final SpringDataInfoRetardRowRepository  infoRetardRowRepository;
+    private final GetOrCreateRetardListUC            getOrCreateRetardListUC;
 
     // ─────────────────────────────────────────────────────────────
     //  Dashboard
@@ -224,6 +240,83 @@ public class SurveillantController {
         return "SurveillantInterface/SurveillantAppel";
     }
 
+    // ─────────────────────────────────────────────────────────────
+    //  Retards
+    // ─────────────────────────────────────────────────────────────
+    @GetMapping("/retards")
+    public String retardsView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        return retards(null, principal, model);
+    }
+
+    @GetMapping("/retards/{classeId}")
+    public String retardsClasseView(@PathVariable Long classeId,
+                                    @AuthenticationPrincipal UserPrincipal principal,
+                                    Model model) {
+        return retards(classeId, principal, model);
+    }
+
+    // Chargement JSON du tableau hebdomadaire d'une classe (sans rendu Thymeleaf, sans rechargement de page).
+    @GetMapping("/retards/{classeId}/data")
+    @ResponseBody
+    public RetardSemaineViewModel retardsData(@PathVariable Long classeId) {
+        return buildSemaineViewModel(classeId);
+    }
+
+    private String retards(Long classeId, UserPrincipal principal, Model model) {
+        List<RetardClasseViewModel> classes = classeRepository.findAll().stream()
+                .map(c -> new RetardClasseViewModel(c.getId(), c.getCode(), c.getDescription()))
+                .sorted(Comparator.comparing(RetardClasseViewModel::code))
+                .collect(Collectors.toList());
+
+        model.addAttribute("classes",  classes);
+        model.addAttribute("classeId", classeId);
+        model.addAttribute("semaine",  classeId != null ? buildSemaineViewModel(classeId) : null);
+
+        return "SurveillantInterface/SurveillantRetards";
+    }
+
+    private RetardSemaineViewModel buildSemaineViewModel(Long classeId) {
+        LocalDate semaineDebut = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        RetardListResponseDTO retardList = getOrCreateRetardListUC.execute(classeId, semaineDebut);
+
+        List<JpaRetardRowEntity> rows = retardRowRepository.findByRetardListId(retardList.id());
+        List<Long> rowIds = rows.stream().map(JpaRetardRowEntity::getId).collect(Collectors.toList());
+        Map<Long, List<JpaInfoRetardRowEntity>> infoByRow = infoRetardRowRepository.findByRetardRowIdIn(rowIds)
+                .stream()
+                .collect(Collectors.groupingBy(JpaInfoRetardRowEntity::getRetardRowId));
+
+        List<String> jours = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            jours.add(capitalize(semaineDebut.plusDays(i).getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.FRENCH)));
+        }
+
+        List<RetardEtudiantViewModel> etudiants = new ArrayList<>();
+        for (JpaRetardRowEntity row : rows) {
+            JpaStudentProfileEntity profile = studentProfileRepository.findById(row.getEtudiantId()).orElse(null);
+            String nom = profile != null ? profile.getNom() : "?";
+            String prenom = profile != null ? profile.getPrenom() : "";
+
+            List<RetardCelluleViewModel> cellules = infoByRow.getOrDefault(row.getId(), List.of()).stream()
+                    .sorted(Comparator.comparingInt(JpaInfoRetardRowEntity::getJourSemaine))
+                    .map(info -> new RetardCelluleViewModel(info.getId(), info.getJourSemaine(), info.getDate(), info.isEnRetard()))
+                    .collect(Collectors.toList());
+
+            etudiants.add(new RetardEtudiantViewModel(row.getEtudiantId(), nom, prenom, cellules));
+        }
+        etudiants.sort(Comparator.comparing(RetardEtudiantViewModel::nom).thenComparing(RetardEtudiantViewModel::prenom));
+
+        var classe = classeRepository.findById(classeId).orElse(null);
+        String classeCode = classe != null ? classe.getCode() : "Classe " + classeId;
+
+        return new RetardSemaineViewModel(
+                classeCode, semaineDebut, semaineDebut.plusDays(5), jours, etudiants);
+    }
+
+    private static String capitalize(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
     // ─── Records ─────────────────────────────────────────────────
 
     public record SeanceDuJourViewModel(
@@ -246,4 +339,18 @@ public class SurveillantController {
             Long id, String libelle, String salle,
             LocalDate dateSeance, LocalTime heureDebut, LocalTime heureFin,
             Long coursId) {}
+
+    // ─── Retards : view models ───────────────────────────────────
+
+    public record RetardClasseViewModel(Long id, String code, String description) {}
+
+    public record RetardCelluleViewModel(Long id, int jourSemaine, LocalDate date, boolean enRetard) {}
+
+    public record RetardEtudiantViewModel(
+            Long etudiantId, String nom, String prenom,
+            List<RetardCelluleViewModel> cellules) {}
+
+    public record RetardSemaineViewModel(
+            String classeCode, LocalDate semaineDebut, LocalDate semaineFin,
+            List<String> jours, List<RetardEtudiantViewModel> etudiants) {}
 }

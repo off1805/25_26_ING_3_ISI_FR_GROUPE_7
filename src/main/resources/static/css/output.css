@@ -1323,6 +1323,9 @@
   .min-w-\[52px\] {
     min-width: 52px;
   }
+  .min-w-\[88px\] {
+    min-width: 88px;
+  }
   .min-w-\[160px\] {
     min-width: 160px;
   }
@@ -3312,6 +3315,10 @@
   .font-medium {
     --tw-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
+  }
+  .font-normal {
+    --tw-font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-normal);
   }
   .font-semibold {
     --tw-font-weight: var(--font-weight-semibold);
