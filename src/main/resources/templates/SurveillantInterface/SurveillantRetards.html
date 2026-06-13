@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Retards</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+</head>
+
+<body class="h-screen bg-background-1 flex flex-row overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <section th:replace="~{common/SidebarFragment :: content}"></section>
+
+    <!-- MAIN -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+
+        <!-- NAVBAR -->
+        <header class="flex-none flex flex-row justify-between lg:justify-start py-2 lg:py-1 bg-navbar relative w-full lg:items-center px-4 md:px-6 lg:px-8 border-b border-navbar-line">
+            <div class="flex items-center gap-3">
+                <button type="button"
+                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
+                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 12l-2 0l9-9l9 9l-2 0"/>
+                        <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>
+                    </svg>
+                    <span>Surveillant</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 6l6 6l-6 6"/>
+                    </svg>
+                    <span class="font-semibold text-layer-foreground">Retards</span>
+                </nav>
+            </div>
+            <div class="flex items-center gap-2 ms-auto">
+                <button type="button" data-theme-toggle
+                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                    <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z"/>
+                    </svg>
+                    <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="flex-1 overflow-y-auto bg-background-1 flex">
+
+            <!-- Panneau gauche — liste des classes -->
+            <div class="w-full max-w-xs bg-sidebar border-r border-layer-line flex-shrink-0 flex flex-col overflow-hidden"
+                 th:with="avatarColors=${ {'bg-primary/10 text-primary','bg-blue-500/10 text-blue-500','bg-green-500/10 text-green-600','bg-orange-500/10 text-orange-500','bg-indigo-500/10 text-indigo-500','bg-teal-500/10 text-teal-600'} }">
+
+                <!-- En-tête + recherche (fixe, ne défile pas) -->
+                <div class="flex flex-col gap-3 px-5 pt-4 pb-3 border-b border-layer-line">
+                    <div>
+                        <h3 class="font-semibold text-layer-foreground">Classes</h3>
+                        <p class="text-muted-foreground-2 mt-0.5">
+                            <span th:text="${#lists.size(classes)}">0</span> classe(s)
+                        </p>
+                    </div>
+                    <div class="relative">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground-2 pointer-events-none"
+                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.34-4.34"/>
+                        </svg>
+                        <input type="text" id="classe-search" placeholder="Rechercher une classe…"
+                               class="pl-9 pr-4 py-2 w-full text-sm bg-background-1 border border-layer-line rounded-xl
+                                      text-layer-foreground placeholder:text-muted-foreground-2
+                                      focus:outline-none focus:ring-1 focus:ring-primary transition-all"/>
+                    </div>
+                </div>
+
+                <!-- Liste des classes (défilante) -->
+                <div class="flex-1 overflow-y-auto px-3 py-2" id="classe-list">
+                    <a th:each="c, iter : ${classes}"
+                       th:href="@{/surveillant/retards/{id}(id=${c.id})}"
+                       th:classappend="${classeId != null and classeId == c.id} ? 'bg-primary/10' : ''"
+                       th:attr="data-name=${#strings.toLowerCase(c.code + ' ' + (c.description != null ? c.description : ''))},data-classe-id=${c.id}"
+                       class="retard-classe-row flex justify-between items-center gap-3 py-3 px-2 rounded-xl hover:bg-muted/10 transition-colors cursor-pointer">
+                        <div class="flex gap-2 items-center min-w-0">
+                            <div class="size-9 rounded-xl flex items-center justify-center text-xs font-bold shrink-0"
+                                 th:classappend="${avatarColors[iter.index % avatarColors.size()]}"
+                                 th:text="${#strings.substring(c.code,0,1)}">A</div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-layer-foreground truncate" th:text="${c.code}">ISI-3-A</p>
+                                <p class="text-xs text-muted-foreground-2 truncate" th:text="${c.description}">Description</p>
+                            </div>
+                        </div>
+                    </a>
+
+                    <div th:if="${#lists.isEmpty(classes)}" class="flex flex-col items-center justify-center gap-2 py-10 text-muted-foreground-2 text-center">
+                        <p class="text-xs">Aucune classe disponible</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone droite — tableau hebdomadaire -->
+            <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="max-w-5xl mx-auto flex flex-col gap-4" id="retard-right-panel">
+
+                    <!-- ─── Tableau de la classe sélectionnée ───────────── -->
+                    <div th:if="${semaine != null}" class="flex flex-col gap-4" id="retard-semaine-block">
+
+                        <div class="bg-card border border-card-line rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <h2 class="text-lg font-bold text-layer-foreground" th:text="'Retards — ' + ${semaine.classeCode}">Retards — Classe</h2>
+                                <p class="text-sm text-muted-foreground-2 mt-0.5">
+                                    Semaine du
+                                    <strong th:text="${#temporals.format(semaine.semaineDebut,'dd/MM/yyyy')}">01/01/2026</strong>
+                                    au
+                                    <strong th:text="${#temporals.format(semaine.semaineFin,'dd/MM/yyyy')}">06/01/2026</strong>
+                                </p>
+                            </div>
+                            <p class="text-xs text-muted-foreground-2 italic">Cliquez sur une case pour marquer / annuler un retard — sauvegarde immédiate</p>
+                        </div>
+
+                        <div class="bg-card border border-card-line rounded-2xl overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm" id="retard-table">
+                                    <thead>
+                                        <tr class="border-b border-layer-line bg-muted/40">
+                                            <th class="text-left font-semibold text-layer-foreground px-4 py-3 sticky left-0 bg-muted/40">Étudiant</th>
+                                            <th th:each="jour, iter : ${semaine.jours}"
+                                                class="text-center font-semibold text-layer-foreground px-3 py-3 min-w-[88px]">
+                                                <div th:text="${jour}">Lun</div>
+                                                <div class="text-[10px] font-normal text-muted-foreground-2 mt-0.5"
+                                                     th:text="${#temporals.format(semaine.semaineDebut.plusDays(iter.index), 'dd/MM')}">01/01</div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-layer-line">
+                                        <tr th:each="etu : ${semaine.etudiants}">
+                                            <td class="px-4 py-3 sticky left-0 bg-card">
+                                                <p class="font-semibold text-layer-foreground truncate" th:text="${etu.prenom + ' ' + etu.nom}">Prénom Nom</p>
+                                            </td>
+                                            <td th:each="cell : ${etu.cellules}" class="px-3 py-3 text-center">
+                                                <button type="button"
+                                                        class="retard-cell inline-flex items-center justify-center size-8 rounded-xl border-2 transition-all"
+                                                        th:classappend="${cell.enRetard} ?
+                                                            'bg-orange-500/15 border-orange-500 text-orange-500' :
+                                                            'bg-muted border-layer-line text-muted-foreground-2 hover:border-primary/40'"
+                                                        th:attr="data-info-id=${cell.id}"
+                                                        th:title="${cell.enRetard} ? 'En retard — cliquer pour annuler' : 'À l\'heure — cliquer pour marquer un retard'">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                        <circle cx="12" cy="12" r="10"/>
+                                                        <path d="M12 6v6l3 3"/>
+                                                    </svg>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div th:if="${#lists.isEmpty(semaine.etudiants)}" class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+                                <div class="size-12 rounded-xl bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" class="text-muted-foreground-2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-semibold text-layer-foreground">Aucun étudiant inscrit dans cette classe</p>
+                            </div>
+
+                            <div class="flex items-center gap-5 px-4 py-3 border-t border-layer-line text-xs text-muted-foreground-2">
+                                <span class="flex items-center gap-1.5">
+                                    <span class="size-3 rounded-md bg-muted border-2 border-layer-line inline-block"></span>
+                                    À l'heure
+                                </span>
+                                <span class="flex items-center gap-1.5">
+                                    <span class="size-3 rounded-md bg-orange-500/15 border-2 border-orange-500 inline-block"></span>
+                                    En retard
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ─── Aucune classe sélectionnée ──────────────────── -->
+                    <div th:if="${semaine == null}" id="retard-empty-block" class="flex flex-col items-center justify-center min-h-[60vh] text-center gap-6">
+                        <div class="size-20 rounded-3xl bg-muted flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" class="text-muted-foreground-2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xl font-bold text-layer-foreground">Sélectionnez une classe</p>
+                            <p class="text-sm text-muted-foreground-2 mt-1.5">
+                                Choisissez une classe à gauche pour afficher et marquer les retards de la semaine en cours.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/preline.js}"></script>
+    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script type="module" th:src="@{/js/SurveillantInterface/ui/RetardController.js}"></script>
+</body>
+</html>

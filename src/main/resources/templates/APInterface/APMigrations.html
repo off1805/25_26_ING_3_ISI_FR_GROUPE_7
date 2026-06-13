@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Migrations</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/toastify.css}" />
+</head>
+
+<body class="h-screen" th:attr="data-filiere-id=${filiereId}">
+    <section class="flex flex-row bg-sidebar-nav-hover h-full">
+
+        <!-- SIDEBAR -->
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
+        <section class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- NAVBAR -->
+            <header
+                class="flex-none flex justify-between items-center px-4 sm:px-6 py-2 bg-navbar border-b border-navbar-line">
+                <div class="flex items-center gap-3">
+                    <button type="button"
+                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
+                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    </button>
+                    <nav class="hidden lg:flex items-center gap-x-1.5 text-sm text-muted-foreground">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12l-2 0l9-9l9 9l-2 0" />
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+                        </svg>
+                        <span>AP Panel</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M9 6l6 6l-6 6" />
+                        </svg>
+                        <span class="font-semibold text-layer-foreground">Migrations</span>
+                    </nav>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" data-theme-toggle
+                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted">
+                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                        </svg>
+                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="17"
+                            height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <circle cx="12" cy="12" r="4" />
+                            <path
+                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                        </svg>
+                    </button>
+                    <button type="button"
+                        class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.75">
+                            <path
+                                d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6" />
+                            <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                        </svg>
+                        <span
+                            class="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-navbar"></span>
+                    </button>
+                    <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm"
+                        th:text="${ap != null and ap.profile != null and ap.profile.nom != null ? #strings.toUpperCase(#strings.substring(ap.profile.nom, 0, 1)) : 'A'}">
+                        A</div>
+                </div>
+            </header>
+
+            <!-- PAGE -->
+            <div class="flex-1 overflow-y-auto bg-background p-6 lg:p-10">
+                <div class="mx-auto pb-6">
+
+                    <!-- HERO -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-7">
+                        <div>
+                            <h2 class="text-2xl font-bold text-layer-foreground">Migrations</h2>
+                            <p class="text-sm text-muted-foreground-2 mt-0.5">
+                                Étudiants en attente de migration vers leur classe de destination à
+                                l'activation de la prochaine année scolaire.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Recherche -->
+                    <div class="flex justify-end mb-4">
+                        <div class="relative w-full sm:w-64">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground-2"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <path d="m21 21-4.34-4.34" />
+                            </svg>
+                            <input type="text" id="migration-search" placeholder="Rechercher un étudiant…"
+                                class="pl-9 pr-4 py-2 w-full text-sm bg-layer border border-layer-line rounded-xl text-layer-foreground placeholder:text-muted-foreground-2 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors" />
+                        </div>
+                    </div>
+
+                    <!-- PANEL : MIGRATIONS -->
+                    <div class="bg-card rounded-xl border border-card-line overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="border-b border-card-line bg-surface">
+                                        <th class="px-4 py-2 text-xs font-medium text-muted-foreground-2/60 tracking-widest">
+                                            Étudiant</th>
+                                        <th class="px-4 py-2 text-xs font-medium text-muted-foreground-2/60 tracking-widest hidden lg:table-cell">
+                                            Matricule</th>
+                                        <th class="px-4 py-2 text-xs font-medium text-muted-foreground-2/60 tracking-widest">
+                                            Classe actuelle</th>
+                                        <th class="px-4 py-2 text-xs font-medium text-muted-foreground-2/60 tracking-widest">
+                                            Classe de destination</th>
+                                        <th class="pr-4 sm:pr-5 pl-2 py-2 text-right text-xs font-medium text-muted-foreground-2/60 tracking-widest">
+                                            Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="migrations-table" class="divide-y divide-card-line">
+                                    <tr class="empty-row">
+                                        <td colspan="5" class="px-6 py-16 text-center">
+                                            <p class="text-sm text-muted-foreground-2 italic">Chargement…</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /PANEL : MIGRATIONS -->
+
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- ═══ MODAL MIGRATION : CHOIX DE LA CLASSE DE DESTINATION ═══ -->
+    <div id="modal-choose-destination"
+        class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
+        role="dialog" tabindex="-1">
+        <div
+            class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all max-w-sm sm:w-full m-3 mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
+            <div
+                class="pointer-events-auto w-full bg-card border border-card-line rounded-2xl shadow-2xl">
+                <div class="p-6">
+                    <div class="size-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" class="text-primary">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="m17 11 3 3-3 3M14 14h6" />
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-layer-foreground text-center" id="destination-modal-title">
+                        Modifier la migration</h3>
+                    <p class="text-sm text-muted-foreground-2 text-center mt-2 leading-relaxed"
+                        id="destination-modal-msg">
+                        Choisissez la nouvelle classe de destination pour cette migration.
+                    </p>
+
+                    <div class="mt-4 space-y-1.5 text-left">
+                        <label class="text-xs font-semibold text-layer-foreground">Classe de destination <span
+                                class="text-red-500">*</span></label>
+                        <select id="destination-classe-select" name="classeDestinationId" data-hs-select='{
+                              "placeholder": "Sélectionner une classe",
+                              "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                              "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2.5 ps-3 pe-9 flex text-nowrap w-full cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-xl text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                              "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                              "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                              "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                              "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                            }' class="hidden" required>
+                            <option value="" disabled selected>Chargement...</option>
+                        </select>
+                    </div>
+
+                    <p id="destination-error" class="hidden text-xs text-red-500 mt-2"></p>
+
+                    <div class="flex gap-3 mt-5">
+                        <button type="button"
+                            class="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-muted text-layer-foreground hover:bg-muted/80"
+                            data-hs-overlay="#modal-choose-destination">Annuler</button>
+                        <button type="button" id="confirm-destination-btn"
+                            class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-primary text-white hover:bg-primary/90 active:scale-95 transition-all">
+                            Confirmer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/other/toastify.js}"></script>
+    <script th:src="@{/js/preline.js}"></script>
+    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script type="module" th:src="@{/js/migration/ui/MigrationsPageController.js}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+        });
+
+        window.addEventListener('load', () => {
+            if (typeof HSStaticMethods !== 'undefined') HSStaticMethods.autoInit();
+        });
+    </script>
+</body>
+
+</html>

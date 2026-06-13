@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Séances</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+</head>
+
+<body class="h-screen bg-background-1">
+    <section class="flex flex-row h-full">
+
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
+
+        <section class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- NAVBAR -->
+            <header
+                class="flex-none flex justify-between items-center px-5 sm:px-7 py-3 bg-navbar border-b border-navbar-line">
+                <div class="flex items-center gap-3">
+                    <button type="button"
+                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
+                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    </button>
+                    <nav class="hidden lg:flex items-center gap-x-1.5 text-xs text-muted-foreground">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12l-2 0l9-9l9 9l-2 0" />
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+                        </svg>
+                        <span>AP Panel</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M9 6l6 6l-6 6" />
+                        </svg>
+                        <span class="font-semibold text-layer-foreground">Séances</span>
+                    </nav>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" data-theme-toggle
+                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                        </svg>
+                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="15"
+                            height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <circle cx="12" cy="12" r="4" />
+                            <path
+                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                        </svg>
+                    </button>
+                    <div th:text="${sidebarFullName != null ? #strings.toUpperCase(#strings.substring(sidebarFullName, 0, 1)) : 'A'}"
+                        class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm">
+                        A</div>
+                </div>
+            </header>
+
+            <!-- PAGE -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="px-4 sm:px-6 lg:px-8 py-7 max-w-7xl mx-auto space-y-6">
+
+                    <!-- HERO -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-2xl font-black text-layer-foreground">Séances</h1>
+                            <p class="text-sm text-muted-foreground-2 mt-1.5"
+                                th:text="${filiere != null ? 'Suivi des séances — ' + filiere.nom() : 'Suivi des séances de la semaine et historique'}">
+                                Suivi des séances de la semaine et historique
+                            </p>
+                        </div>
+                        <!-- Stats card -->
+                        <div
+                            class="bg-card border border-card-line rounded-xl grid grid-cols-3 divide-x divide-card-line shrink-0">
+                            <div class="px-5 py-3 text-center">
+                                <p class="text-xs font-medium text-muted-foreground-2 mb-1">Cette semaine</p>
+                                <p class="text-2xl font-black text-layer-foreground" id="kpi-total">—</p>
+                            </div>
+                            <div class="px-5 py-3 text-center">
+                                <p class="text-xs font-medium text-muted-foreground-2 mb-1">En cours</p>
+                                <p class="text-2xl font-black text-green-500" id="kpi-en-cours">—</p>
+                            </div>
+                            <div class="px-5 py-3 text-center">
+                                <p class="text-xs font-medium text-muted-foreground-2 mb-1">Présence moy.</p>
+                                <p class="text-2xl font-black text-layer-foreground" id="kpi-presence">—</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABS -->
+                    <div class="border-b border-card-line">
+                        <nav class="flex gap-2" role="tablist" aria-label="Tabs">
+                            <button type="button" id="tab-semaine" data-hs-tab="#panel-semaine" role="tab"
+                                aria-controls="panel-semaine" aria-selected="true"
+                                class="hs-tab-active:border-primary hs-tab-active:text-primary active border-b-2 border-primary text-primary -mb-px py-2.5 px-4 text-sm font-semibold focus:outline-none transition-colors">
+                                Semaine en cours
+                            </button>
+                            <button type="button" id="tab-historique" data-hs-tab="#panel-historique" role="tab"
+                                aria-controls="panel-historique" aria-selected="false"
+                                class="hs-tab-active:border-primary hs-tab-active:text-primary border-b-2 border-transparent text-muted-foreground-2 hover:text-layer-foreground -mb-px py-2.5 px-4 text-sm font-semibold focus:outline-none transition-colors">
+                                Anciennes séances
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- PANEL SEMAINE -->
+                    <div id="panel-semaine" role="tabpanel" aria-labelledby="tab-semaine" class="space-y-4">
+
+                        <!-- Navigation semaine -->
+                        <div class="flex items-center justify-between gap-2">
+                            <button type="button" id="btn-prev-week"
+                                class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="m15 18-6-6 6-6" />
+                                </svg>
+                            </button>
+                            <p class="text-sm font-semibold text-layer-foreground" id="week-range">Semaine du — au —
+                            </p>
+                            <button type="button" id="btn-next-week"
+                                class="size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Tableau semaine -->
+                        <div class="bg-card rounded-xl border border-card-line overflow-hidden pb-2">
+                            <div id="semaine-table-wrap" class="hidden overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-card-line bg-surface">
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">jour</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">Horaire</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">Matière</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden sm:table-cell">Classe</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden md:table-cell">Enseignant</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden lg:table-cell">Salle</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest text-center">Présence</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="semaine-table-body" class="divide-y divide-card-line"></tbody>
+                                </table>
+                            </div>
+
+                            <div id="semaine-loading" class="flex flex-col items-center justify-center py-16 gap-3">
+                                <div class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin">
+                                </div>
+                                <p class="text-sm text-muted-foreground-2">Chargement des séances…</p>
+                            </div>
+
+                            <div id="semaine-empty"
+                                class="hidden flex-col items-center justify-center py-16 gap-3 text-center">
+                                <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.25"
+                                        class="text-muted-foreground-2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-layer-foreground">Aucune séance</p>
+                                    <p class="text-xs text-muted-foreground-2 mt-1">Aucune séance prévue pour cette
+                                        semaine.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PANEL HISTORIQUE -->
+                    <div id="panel-historique" class="hidden space-y-4" role="tabpanel" aria-labelledby="tab-historique">
+
+                        <!-- Filtre classe -->
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="relative w-56">
+                                <select id="filter-classe-historique"
+                                    class="w-full text-sm px-3 py-2 rounded-xl bg-layer border border-layer-line text-layer-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer">
+                                    <option value="">Toutes les classes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Tableau historique -->
+                        <div class="bg-card rounded-xl border border-card-line overflow-hidden pb-2">
+                            <div id="historique-table-wrap" class="hidden overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-card-line bg-surface">
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">date</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">horaire</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">matière</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden sm:table-cell">classe</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden md:table-cell">enseignant</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden lg:table-cell">salle</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest text-center">présence</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historique-table-body" class="divide-y divide-card-line"></tbody>
+                                </table>
+                            </div>
+
+                            <div id="historique-loading" class="flex flex-col items-center justify-center py-16 gap-3">
+                                <div class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin">
+                                </div>
+                                <p class="text-sm text-muted-foreground-2">Chargement de l'historique…</p>
+                            </div>
+
+                            <div id="historique-empty"
+                                class="hidden flex-col items-center justify-center py-16 gap-3 text-center">
+                                <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.25"
+                                        class="text-muted-foreground-2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-layer-foreground">Aucune séance</p>
+                                    <p class="text-xs text-muted-foreground-2 mt-1">Aucune ancienne séance trouvée.</p>
+                                </div>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div id="historique-pagination"
+                                class="hidden flex items-center justify-between border-t border-card-line px-4 py-3 mt-0">
+                                <p class="text-xs text-muted-foreground-2" id="historique-count"></p>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" id="btn-prev-page"
+                                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Précédent</button>
+                                    <span class="text-xs text-muted-foreground-2" id="historique-page-info"></span>
+                                    <button type="button" id="btn-next-page"
+                                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Suivant</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    </section>
+
+    <script th:src="@{/js/preline.js}"></script>
+    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script th:src="@{/js/main.js}" type="module"></script>
+    <script th:src="@{/js/APInterface/apSeances.js}" type="module"></script>
+</body>
+
+</html>
