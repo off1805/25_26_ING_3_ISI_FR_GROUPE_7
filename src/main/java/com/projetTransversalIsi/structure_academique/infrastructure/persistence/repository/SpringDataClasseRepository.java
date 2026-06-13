@@ -11,4 +11,8 @@ public interface SpringDataClasseRepository extends JpaRepository<JpaClasseEntit
     Optional<JpaClasseEntity> findByCode(String code);
     List<JpaClasseEntity> findBySpecialiteId(Long specialiteId);
     boolean existsByCode(String code);
+    List<JpaClasseEntity> findBySpecialite_Niveau_Filiere_Id(Long filiereId);
+    List<JpaClasseEntity> findBySpecialite_Niveau_Filiere_Cycle_Id(Long cycleId);
+    List<JpaClasseEntity> findBySpecialite_Niveau_Filiere_IdAndSpecialite_Niveau_Ordre(Long filiereId, int ordre);
+    List<JpaClasseEntity> findBySpecialite_Niveau_Filiere_Cycle_IdAndSpecialite_Niveau_Ordre(Long cycleId, int ordre);
 }

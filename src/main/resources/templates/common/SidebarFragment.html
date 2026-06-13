@@ -231,6 +231,27 @@
                     </a>
                 </li>
 
+                <!-- Migrations AP -->
+                <li th:if="${sidebarRole == 'AP'}">
+                    <a th:href="@{/ap/migrations}"
+                       th:classappend="${activePage == 'migrations'} ?
+                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary ' :
+                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground '"
+                       class="flex items-center gap-3 py-1.5 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
+                              hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
+                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 ">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="1.75">
+                                <path d="m16 3 4 4-4 4"/>
+                                <path d="M20 7H4"/>
+                                <path d="m8 21-4-4 4-4"/>
+                                <path d="M4 17h16"/>
+                            </svg>
+                        </div>
+                        <span class="hs-overlay-minified:hidden truncate">Migrations</span>
+                    </a>
+                </li>
+
                 <!-- Justificatifs AP -->
                 <li th:if="${sidebarRole == 'AP'}">
                     <a th:href="@{/ap/justificatifs}"
