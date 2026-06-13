@@ -34,7 +34,15 @@ export class AuthController {
 
         } catch (e) {
             console.log("Erreur de connexion.", e.message);
-            if (e.status === 400 || e.message?.includes("400") || e.message?.includes("HTTP 400")) {
+
+            // Lire le message métier envoyé par le backend (présent dans e.payload.message)
+            const backendMessage = e.payload?.message;
+
+            if (backendMessage) {
+                // Afficher directement le message métier du backend
+                const { customErrorAlert } = await import("../../common/CustomErrorAlert.js");
+                customErrorAlert("Erreur de connexion", backendMessage);
+            } else if (e.status === 400 || e.message?.includes("400")) {
                 const { customErrorAlert } = await import("../../common/CustomErrorAlert.js");
                 customErrorAlert("Erreur de connexion", "Mot de passe ou email incorrect.");
             } else {

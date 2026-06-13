@@ -30,6 +30,7 @@ public class UserController {
     private final DeleteUserUC deleteUserUC;
     private final FindUserByIdUC findUserByIdUC;
     private final ModifyUserStatusUC modifyUserStatusUC;
+    private final UpdateUserUC updateUserUC;
 
     @PostMapping("")
     public ResponseEntity<UserDetailsResponseDTO> createUser(@Valid @RequestBody CreateUserRequestDTO request) {
@@ -62,6 +63,15 @@ public class UserController {
 
         User user = findUserByIdUC.execute(id);
 
+        return ResponseEntity.ok(UserDetailsResponseDTO.fromDomain(user));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDetailsResponseDTO> updateUser(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid UpdateUserRequestDTO request) {
+        log.info("Requête de mise à jour utilisateur ID : {}", id);
+        User user = updateUserUC.execute(id, request);
         return ResponseEntity.ok(UserDetailsResponseDTO.fromDomain(user));
     }
 

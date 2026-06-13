@@ -19,6 +19,7 @@ public class UpdateCycleUC {
         Cycle cycle = cycleRepository.findById(id)
                 .orElseThrow(() -> new CycleNotFoundException(id));
         cycle.setName(request.name());
+        cycle.setCode(request.code()); // ← BUGFIX #2 : mise à jour du code en base
         cycle.setDurationYears(request.durationYears());
         cycle.setDescription(request.description());
         return cycleRepository.save(cycle);
