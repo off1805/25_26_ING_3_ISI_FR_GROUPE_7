@@ -291,6 +291,12 @@ export class CycleController {
                 if (!id) return;
                 console.log(id);
                 const data = Object.fromEntries(new FormData(updateFiliereForm).entries());
+
+                // ← BUGFIX #3 : injecter le cycleId depuis les détails de l'entité courante
+                if (this._currentEntityDetails?.cycleId) {
+                    data.cycleId = this._currentEntityDetails.cycleId;
+                }
+
                 try {
                     await this.filiereApi.updateFiliere(id, data);
                     GlobalEventNotifier.eventWellDone('Filière mise à jour avec succès');
@@ -315,6 +321,12 @@ export class CycleController {
                 if (!id) return;
                 const data = Object.fromEntries(new FormData(updateNiveauForm).entries());
                 if (data.ordre) data.ordre = Number(data.ordre);
+
+                // ← BUGFIX #4 : injecter le filiereId depuis les détails de l'entité courante
+                if (this._currentEntityDetails?.filiereId) {
+                    data.filiereId = this._currentEntityDetails.filiereId;
+                }
+
                 try {
                     await this.niveauApi.update(id, data);
                     GlobalEventNotifier.eventWellDone('Niveau mis à jour avec succès');
@@ -333,6 +345,12 @@ export class CycleController {
                 const id = updateSpecialiteForm.dataset.editId;
                 if (!id) return;
                 const data = Object.fromEntries(new FormData(updateSpecialiteForm).entries());
+
+                // ← BUGFIX #5 : injecter le niveauId depuis les détails de l'entité courante
+                if (this._currentEntityDetails?.niveauId) {
+                    data.niveauId = this._currentEntityDetails.niveauId;
+                }
+
                 try {
                     await this.specialiteApi.update(id, data);
                     GlobalEventNotifier.eventWellDone('Spécialité mise à jour avec succès');

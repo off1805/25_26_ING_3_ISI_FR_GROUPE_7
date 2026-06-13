@@ -47,6 +47,7 @@ export class LoginUC {
             // Re-throw en préservant le statut HTTP pour que AuthController puisse l'interpréter
             const enrichedError = new Error(e.message || "Erreur lors de la connexion.");
             enrichedError.status = e.status;
+            enrichedError.payload = e.payload; // ← BUGFIX #1 : transférer le payload du backend
             throw enrichedError;
         }
     }

@@ -387,6 +387,13 @@ export class UserController {
             HSSelect.getInstance(statusSelect)?.setValue(userStatus);
         }
 
+        // Forcer la synchronisation des composants Preline custom
+        window.HSStaticMethods?.autoInit();
+
+        // Déclencher un événement change pour que Preline rafraîchisse l'affichage
+        roleSelect?.dispatchEvent(new Event('change'));
+        statusSelect?.dispatchEvent(new Event('change'));
+
         // Ouvrir le modal
         HSOverlay.open('#hs-modal-edit-user');
     }
