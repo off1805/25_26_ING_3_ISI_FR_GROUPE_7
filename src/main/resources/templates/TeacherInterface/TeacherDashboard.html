@@ -10,10 +10,10 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="h-screen bg-background-1 overflow-hidden">
-<section class="flex h-full">
+<body class="min-h-screen lg:h-screen bg-background-1 overflow-y-auto lg:overflow-hidden">
+<section class="flex min-h-screen lg:h-full">
     <section th:replace="~{common/SidebarFragment :: content}"></section>
-    <section class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <section class="flex-1 flex flex-col min-w-0 overflow-y-auto lg:overflow-hidden">
 
         <!-- NAVBAR -->
         <header class="flex-none flex justify-between items-center px-5 py-3 bg-navbar border-b border-navbar-line">
@@ -35,95 +35,107 @@
             </div>
         </header>
 
-        <!-- CONTENT (no scroll) -->
-        <main class="flex-1 overflow-hidden flex flex-col gap-3 p-4">
+        <!-- CONTENT -->
+        <main class="flex flex-col gap-3 p-3 lg:p-4 lg:flex-1 lg:overflow-hidden">
 
-            <!-- ══ HERO CARD (greeting + clock dans un seul card) ══ -->
-            <div class="flex-none rounded-2xl bg-layer border border-layer-line p-4 flex items-center gap-4 relative overflow-hidden">
-                <!-- decorative orbits right -->
+            <!-- ══ HERO CARD ══ -->
+            <div class="flex-none rounded-2xl bg-layer border border-layer-line p-4 relative overflow-hidden">
+                <!-- orbits right -->
                 <div class="absolute -top-8 -right-8 size-44 rounded-full bg-primary/10 pointer-events-none"></div>
                 <div class="absolute -bottom-6 right-16 size-28 rounded-full bg-primary/8 pointer-events-none"></div>
                 <div class="absolute top-2 right-32 size-10 rounded-full bg-primary/15 pointer-events-none"></div>
-                <!-- decorative orbits left -->
+                <!-- orbits left -->
                 <div class="absolute -top-6 -left-6 size-32 rounded-full bg-primary/8 pointer-events-none"></div>
                 <div class="absolute -bottom-4 -left-4 size-16 rounded-full bg-primary/12 pointer-events-none"></div>
 
-                <div class="size-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.75">
-                        <path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
-                    </svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Espace Enseignant</p>
-                    <h1 class="text-base font-bold text-layer-foreground leading-tight truncate"
-                        th:if="${teacher != null and teacher.profile() != null}"
-                        th:text="${teacher.profile().getPrenom() + ' ' + teacher.profile().getNom()}">Enseignant</h1>
-                    <h1 class="text-base font-bold text-layer-foreground" th:if="${teacher == null or teacher.profile() == null}">Enseignant</h1>
-                    <p class="text-xs text-muted-foreground mt-0.5">Gerez vos seances et la presence de vos etudiants.</p>
-                </div>
-                <div class="flex items-center gap-2 flex-shrink-0">
-                    <a th:href="@{/teacher/seance}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/></svg>
-                        Faire l'appel
-                    </a>
-                    <a th:href="@{/teacher/schedule}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background-1 border border-layer-line text-layer-foreground text-xs font-medium hover:bg-layer-hover transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        Planning
-                    </a>
-                </div>
-                <div class="w-px self-stretch bg-layer-line mx-1"></div>
-                <div class="flex-shrink-0 text-right min-w-[160px]">
-                    <p class="text-[11px] text-muted-foreground" id="live-date">Lundi 01 Janvier</p>
-                    <p class="text-2xl font-bold tabular-nums text-layer-foreground" id="live-time">--:--:--</p>
-                    <p th:if="${nextCourse != null}" class="text-[11px] text-primary font-medium mt-0.5 truncate"
-                       th:text="${nextCourse.heureDebut() + ' - ' + nextCourse.libelle()}">Prochaine</p>
-                    <p th:if="${nextCourse == null}" class="text-[11px] text-muted-foreground mt-0.5">Aucune seance a venir</p>
+                <!-- Top row -->
+                <div class="flex items-center gap-3 lg:gap-4">
+                    <div class="size-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.75">
+                            <path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Espace Enseignant</p>
+                        <h1 class="text-base font-bold text-layer-foreground leading-tight truncate"
+                            th:if="${teacher != null and teacher.profile() != null}"
+                            th:text="${teacher.profile().getPrenom() + ' ' + teacher.profile().getNom()}">Enseignant</h1>
+                        <h1 class="text-base font-bold text-layer-foreground" th:if="${teacher == null or teacher.profile() == null}">Enseignant</h1>
+                        <p class="text-xs text-muted-foreground mt-0.5 hidden lg:block">Gerez vos seances et la presence de vos etudiants.</p>
+                    </div>
+                    <!-- Desktop buttons -->
+                    <div class="hidden lg:flex items-center gap-2 flex-shrink-0">
+                        <a th:href="@{/teacher/seance}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/></svg>
+                            Faire l'appel
+                        </a>
+                        <a th:href="@{/teacher/schedule}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background-1 border border-layer-line text-layer-foreground text-xs font-medium hover:bg-layer-hover transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Planning
+                        </a>
+                    </div>
+                    <!-- Mobile: quick action button -->
+                    <div class="flex lg:hidden flex-shrink-0">
+                        <a th:href="@{/teacher/seance}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 shadow-sm active:scale-95 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/></svg>
+                            Faire l'appel
+                        </a>
+                    </div>
+                    <!-- Desktop divider + clock -->
+                    <div class="hidden lg:block w-px self-stretch bg-layer-line mx-1"></div>
+                    <div class="hidden lg:block flex-shrink-0 text-right min-w-[160px]">
+                        <p class="text-[11px] text-muted-foreground" id="live-date">Lundi 01 Janvier</p>
+                        <p class="text-2xl font-bold tabular-nums text-layer-foreground" id="live-time">--:--:--</p>
+                        <p th:if="${nextCourse != null}" class="text-[11px] text-primary font-medium mt-0.5 truncate"
+                           th:text="${nextCourse.heureDebut() + ' - ' + nextCourse.libelle()}">Prochaine</p>
+                        <p th:if="${nextCourse == null}" class="text-[11px] text-muted-foreground mt-0.5">Aucune seance a venir</p>
+                    </div>
                 </div>
             </div>
 
             <!-- ══ KPI ROW ══ -->
-            <div class="flex-none grid grid-cols-3 gap-3">
-                <div class="rounded-xl bg-layer border border-layer-line p-3 flex items-center gap-3">
-                    <div class="size-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <div class="flex-none grid grid-cols-3 gap-2 lg:gap-3">
+                <div class="rounded-xl bg-layer border border-layer-line p-2.5 lg:p-3 flex items-center gap-2 lg:gap-3">
+                    <div class="size-8 lg:size-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-primary"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     </div>
                     <div>
-                        <p class="text-xl font-bold text-layer-foreground" th:text="${seancesTotal}">0</p>
-                        <p class="text-[11px] text-muted-foreground">Seances du jour</p>
+                        <p class="text-lg lg:text-xl font-bold text-layer-foreground" th:text="${seancesTotal}">0</p>
+                        <p class="text-[10px] lg:text-[11px] text-muted-foreground">Seances</p>
                     </div>
                 </div>
-                <div class="rounded-xl bg-layer border border-layer-line p-3 flex items-center gap-3">
-                    <div class="size-9 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                <div class="rounded-xl bg-layer border border-layer-line p-2.5 lg:p-3 flex items-center gap-2 lg:gap-3">
+                    <div class="size-8 lg:size-9 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
                         <span class="relative flex size-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full size-2.5 bg-green-500"></span></span>
                     </div>
                     <div>
-                        <p class="text-xl font-bold text-green-500" th:text="${seancesEnCours}">0</p>
-                        <p class="text-[11px] text-muted-foreground">En cours</p>
+                        <p class="text-lg lg:text-xl font-bold text-green-500" th:text="${seancesEnCours}">0</p>
+                        <p class="text-[10px] lg:text-[11px] text-muted-foreground">En cours</p>
                     </div>
                 </div>
-                <div class="rounded-xl bg-layer border border-layer-line p-3 flex items-center gap-3">
-                    <div class="size-9 rounded-lg bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-yellow-500"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <div class="rounded-xl bg-layer border border-layer-line p-2.5 lg:p-3 flex items-center gap-2 lg:gap-3">
+                    <div class="size-8 lg:size-9 rounded-lg bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-yellow-500"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
                     <div>
-                        <p class="text-xl font-bold text-yellow-500" th:text="${seancesAVenir}">0</p>
-                        <p class="text-[11px] text-muted-foreground">A venir</p>
+                        <p class="text-lg lg:text-xl font-bold text-yellow-500" th:text="${seancesAVenir}">0</p>
+                        <p class="text-[10px] lg:text-[11px] text-muted-foreground">A venir</p>
                     </div>
                 </div>
             </div>
 
-            <!-- ══ BOTTOM (flex-1, no outer scroll) ══ -->
-            <div class="flex-1 min-h-0 grid grid-cols-3 gap-3">
+            <!-- ══ BOTTOM ══ -->
+            <div class="flex flex-col gap-3 lg:flex-1 lg:min-h-0 lg:grid lg:grid-cols-3">
 
-                <!-- Seances du jour (2/3) -->
-                <div class="col-span-2 rounded-2xl bg-layer border border-layer-line flex flex-col overflow-hidden">
+                <!-- Seances du jour (2/3 desktop) -->
+                <div class="lg:col-span-2 rounded-2xl bg-layer border border-layer-line flex flex-col overflow-hidden">
                     <div class="flex-none flex items-center justify-between px-4 py-3 border-b border-layer-line">
                         <h3 class="text-sm font-semibold text-layer-foreground">Seances du jour</h3>
                         <a th:href="@{/teacher/schedule}" class="text-xs text-primary hover:underline">Voir planning</a>
                     </div>
-                    <div class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-2">
+                    <div class="p-3 space-y-2 lg:flex-1 lg:overflow-y-auto lg:no-scrollbar">
                         <div th:if="${seancesJour == null or seancesJour.isEmpty()}"
-                             class="h-full flex flex-col items-center justify-center text-center py-6">
+                             class="flex flex-col items-center justify-center text-center py-6">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-muted-foreground/30 mb-2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>
                             <p class="text-sm text-muted-foreground">Aucune seance aujourd'hui</p>
                         </div>
@@ -138,31 +150,31 @@
                                 <p class="text-sm font-medium text-layer-foreground truncate" th:text="${s.libelle()}">Matiere</p>
                                 <p class="text-xs text-muted-foreground" th:text="${s.salle()}">Salle</p>
                             </div>
-                            <p class="text-xs tabular-nums text-muted-foreground flex-shrink-0" th:text="${s.heureDebut() + ' - ' + s.heureFin()}">00:00</p>
+                            <p class="hidden sm:block text-xs tabular-nums text-muted-foreground flex-shrink-0" th:text="${s.heureDebut() + ' - ' + s.heureFin()}">00:00</p>
                             <span th:if="${s.status().name() == 'EN_COURS'}" class="text-xs font-semibold text-green-500 flex-shrink-0">En cours</span>
                             <span th:if="${s.status().name() == 'A_VENIR'}" class="text-xs font-semibold text-yellow-500 flex-shrink-0">A venir</span>
                             <span th:if="${s.status().name() == 'TERMINE'}" class="text-xs text-muted-foreground/50 flex-shrink-0">Terminee</span>
                             <a th:if="${s.status().name() != 'TERMINE'}" th:href="@{/teacher/seance}"
-                               class="flex-shrink-0 px-2.5 py-1 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90">Appel</a>
+                               class="flex-shrink-0 px-2.5 py-1 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 active:scale-95 transition-all">Appel</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Resume (1/3) -->
+                <!-- Resume (1/3 desktop) -->
                 <div class="rounded-2xl bg-layer border border-layer-line flex flex-col overflow-hidden">
                     <div class="flex-none px-4 py-3 border-b border-layer-line">
                         <h3 class="text-sm font-semibold text-layer-foreground">Resume</h3>
                     </div>
-                    <div class="flex-1 overflow-y-auto no-scrollbar p-4 flex flex-col gap-3">
-                        <div class="flex items-center justify-between text-sm">
+                    <div class="p-4 flex flex-col gap-3 lg:flex-1 lg:overflow-y-auto lg:no-scrollbar">
+                        <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2"><span class="inline-block size-2.5 rounded-full bg-muted-foreground/25"></span><span class="text-muted-foreground text-xs">Terminees</span></div>
                             <span class="font-semibold text-layer-foreground text-sm" th:text="${seancesTerminees}">0</span>
                         </div>
-                        <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2"><span class="inline-block size-2.5 rounded-full bg-green-500"></span><span class="text-muted-foreground text-xs">En cours</span></div>
                             <span class="font-semibold text-layer-foreground text-sm" th:text="${seancesEnCours}">0</span>
                         </div>
-                        <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2"><span class="inline-block size-2.5 rounded-full bg-yellow-400"></span><span class="text-muted-foreground text-xs">A venir</span></div>
                             <span class="font-semibold text-layer-foreground text-sm" th:text="${seancesAVenir}">0</span>
                         </div>
@@ -176,7 +188,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex-none p-3 border-t border-layer-line flex flex-col gap-1.5">
+                    <div class="flex-none p-3 border-t border-layer-line flex flex-col gap-1">
                         <a th:href="@{/teacher/seance}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-background-1 transition-colors text-xs text-layer-foreground">
                             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary flex-shrink-0"><path d="M9 11l3 3L22 4"/></svg>
                             Faire l'appel
@@ -191,8 +203,8 @@
                         </a>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </main>
     </section>
 </section>
