@@ -449,6 +449,16 @@ public class APController {
         return "APInterface/APSeances";
     }
 
+    @GetMapping("/archives")
+    public String archivesView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        Long filiereId = resolveApFiliereId(principal);
+        FiliereResponseDTO filiere = filiereId != null ? filiereService.getFiliereById(filiereId) : null;
+        model.addAttribute("filiere", filiere);
+        model.addAttribute("activePage", "archives");
+        model.addAttribute("apName", "AP Name");
+        return "APInterface/APArchives";
+    }
+
     @GetMapping("/seances/{seanceId}/presence")
     public String seancePresenceView(@PathVariable("seanceId") Long seanceId, Model model) {
         model.addAttribute("seanceId", seanceId);

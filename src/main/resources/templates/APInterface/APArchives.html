@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme="theme-kemoschool">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KemOSchool — Archives</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+</head>
+
+<body class="h-screen bg-background-1">
+    <section class="flex flex-row h-full">
+
+        <section th:replace="~{common/SidebarFragment :: content}"></section>
+
+        <section class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- NAVBAR -->
+            <header
+                class="flex-none flex justify-between items-center px-5 sm:px-7 py-3 bg-navbar border-b border-navbar-line">
+                <div class="flex items-center gap-3">
+                    <button type="button"
+                        class="lg:hidden size-9 flex items-center justify-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover transition-colors"
+                        data-hs-overlay="#hs-app-sidebar" aria-controls="hs-app-sidebar" aria-label="Ouvrir menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    </button>
+                    <nav class="hidden lg:flex items-center gap-x-1.5 text-xs text-muted-foreground">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12l-2 0l9-9l9 9l-2 0" />
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+                        </svg>
+                        <span>AP Panel</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M9 6l6 6l-6 6" />
+                        </svg>
+                        <span class="font-semibold text-layer-foreground">Archives</span>
+                    </nav>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" data-theme-toggle
+                        class="size-9 flex justify-center items-center rounded-xl bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors">
+                        <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 8.607 9.426a9 9 0 1 1 -9 -9.426z" />
+                        </svg>
+                        <svg data-theme-icon="sun" class="hidden" xmlns="http://www.w3.org/2000/svg" width="15"
+                            height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <circle cx="12" cy="12" r="4" />
+                            <path
+                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                        </svg>
+                    </button>
+                    <div th:text="${sidebarFullName != null ? #strings.toUpperCase(#strings.substring(sidebarFullName, 0, 1)) : 'A'}"
+                        class="size-9 rounded-xl bg-primary flex items-center justify-center text-sm font-bold text-white cursor-pointer shadow-sm">
+                        A</div>
+                </div>
+            </header>
+
+            <!-- PAGE -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="px-4 sm:px-6 lg:px-8 py-7 max-w-7xl mx-auto space-y-6">
+
+                    <!-- HERO -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-2xl font-black text-layer-foreground">Archives</h1>
+                            <p class="text-sm text-muted-foreground-2 mt-1.5"
+                                th:text="${filiere != null ? 'Données des années scolaires antérieures — ' + filiere.nom() : 'Données des années scolaires antérieures'}">
+                                Données des années scolaires antérieures
+                            </p>
+                        </div>
+                        <!-- Sélecteur Année scolaire -->
+                        <div class="flex items-center gap-2 shrink-0">
+                            <label for="filter-annee" class="text-xs font-medium text-muted-foreground-2">Année
+                                scolaire</label>
+                            <select id="filter-annee"
+                                class="text-sm px-3 py-2 rounded-xl bg-layer border border-layer-line text-layer-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer">
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- TABS -->
+                    <div class="flex">
+                        <div class="flex bg-surface rounded-lg transition p-1 overflow-x-auto">
+                            <nav class="flex gap-x-1" role="tablist" aria-label="Tabs" aria-orientation="horizontal">
+                                <button type="button" id="tab-seances" data-hs-tab="#panel-seances" role="tab"
+                                    aria-controls="panel-seances" aria-selected="true"
+                                    class="hs-tab-active:bg-surface-active hs-tab-active:text-layer-foreground active py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap">
+                                    Séances
+                                </button>
+                                <button type="button" id="tab-absences" data-hs-tab="#panel-absences" role="tab"
+                                    aria-controls="panel-absences" aria-selected="false"
+                                    class="hs-tab-active:bg-surface-active hs-tab-active:text-layer-foreground py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap">
+                                    Absences
+                                </button>
+                                <button type="button" id="tab-justificatifs" data-hs-tab="#panel-justificatifs" role="tab"
+                                    aria-controls="panel-justificatifs" aria-selected="false"
+                                    class="hs-tab-active:bg-surface-active hs-tab-active:text-layer-foreground py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap">
+                                    Justificatifs
+                                </button>
+                                <button type="button" id="tab-historique-classes" data-hs-tab="#panel-historique-classes" role="tab"
+                                    aria-controls="panel-historique-classes" aria-selected="false"
+                                    class="hs-tab-active:bg-surface-active hs-tab-active:text-layer-foreground py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap">
+                                    Historique des classes
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- ═══ PANEL SÉANCES ═══ -->
+                    <div id="panel-seances" role="tabpanel" aria-labelledby="tab-seances" class="space-y-4">
+
+                        <!-- Filtres -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select id="filter-seances-classe" data-hs-select='{
+                                  "optionAllowEmptyOption": true,
+                                  "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2 ps-3 pe-9 flex text-nowrap w-52 cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-full text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                  "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden">
+                                <option value="">Toutes les classes</option>
+                            </select>
+                            <select id="filter-seances-type" data-hs-select='{
+                                  "optionAllowEmptyOption": true,
+                                  "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2 ps-3 pe-9 flex text-nowrap w-52 cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-full text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                  "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden">
+                                <option value="">Tous les types</option>
+                                <option value="SEANCE">Séance</option>
+                                <option value="EVENEMENT">Événement</option>
+                            </select>
+                            <input type="date" id="filter-seances-date-debut"
+                                class="text-sm px-3 py-2 rounded-xl bg-layer border border-layer-line text-layer-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                            <input type="date" id="filter-seances-date-fin"
+                                class="text-sm px-3 py-2 rounded-xl bg-layer border border-layer-line text-layer-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                        </div>
+
+                        <!-- Tableau -->
+                        <div class="bg-card rounded-xl border border-card-line overflow-hidden pb-2">
+                            <div id="seances-table-wrap" class="hidden overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-card-line bg-surface">
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">date</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">horaire</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">matière</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden sm:table-cell">classe</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden md:table-cell">enseignant</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden lg:table-cell">salle</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden lg:table-cell">type</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest text-center">présence</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="seances-table-body" class="divide-y divide-card-line"></tbody>
+                                </table>
+                            </div>
+
+                            <div id="seances-loading" class="flex flex-col items-center justify-center py-16 gap-3">
+                                <div class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+                                <p class="text-sm text-muted-foreground-2">Chargement des séances…</p>
+                            </div>
+
+                            <div id="seances-empty" class="hidden flex-col items-center justify-center py-16 gap-3 text-center">
+                                <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.25"
+                                        class="text-muted-foreground-2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-layer-foreground">Aucune séance</p>
+                                    <p class="text-xs text-muted-foreground-2 mt-1">Aucune séance ne correspond aux filtres sélectionnés.</p>
+                                </div>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div id="seances-pagination" class="hidden flex items-center justify-between border-t border-card-line px-4 py-3 mt-0">
+                                <p class="text-xs text-muted-foreground-2" id="seances-count"></p>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" id="seances-prev-page"
+                                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Précédent</button>
+                                    <span class="text-xs text-muted-foreground-2" id="seances-page-info"></span>
+                                    <button type="button" id="seances-next-page"
+                                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Suivant</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ═══ PANEL ABSENCES ═══ -->
+                    <div id="panel-absences" class="hidden space-y-4" role="tabpanel" aria-labelledby="tab-absences">
+
+                        <!-- Filtres -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select id="filter-absences-classe" data-hs-select='{
+                                  "optionAllowEmptyOption": true,
+                                  "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2 ps-3 pe-9 flex text-nowrap w-52 cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-full text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                  "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden">
+                                <option value="">Toutes les classes</option>
+                            </select>
+                            <select id="filter-absences-ue" data-hs-select='{
+                                  "optionAllowEmptyOption": true,
+                                  "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2 ps-3 pe-9 flex text-nowrap w-52 cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-full text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                  "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden">
+                                <option value="">Toutes les matières</option>
+                            </select>
+                            <input type="date" id="filter-absences-date-debut"
+                                class="text-sm px-3 py-2 rounded-xl bg-layer border border-layer-line text-layer-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                            <input type="date" id="filter-absences-date-fin"
+                                class="text-sm px-3 py-2 rounded-xl bg-layer border border-layer-line text-layer-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                        </div>
+
+                        <!-- Tableau -->
+                        <div class="bg-card rounded-xl border border-card-line overflow-hidden pb-2">
+                            <div id="absences-table-wrap" class="hidden overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-card-line bg-surface">
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">étudiant</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden sm:table-cell">matricule</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden sm:table-cell">classe</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest text-center">séances</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest text-center">absences</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest text-center hidden md:table-cell">justifiées</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest text-center hidden md:table-cell">en attente</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="absences-table-body" class="divide-y divide-card-line"></tbody>
+                                </table>
+                            </div>
+
+                            <div id="absences-loading" class="flex flex-col items-center justify-center py-16 gap-3">
+                                <div class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+                                <p class="text-sm text-muted-foreground-2">Chargement des absences…</p>
+                            </div>
+
+                            <div id="absences-empty" class="hidden flex-col items-center justify-center py-16 gap-3 text-center">
+                                <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.25"
+                                        class="text-muted-foreground-2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                        <circle cx="9" cy="7" r="4" />
+                                        <line x1="23" y1="11" x2="17" y2="11" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-layer-foreground">Aucune absence</p>
+                                    <p class="text-xs text-muted-foreground-2 mt-1">Aucune absence ne correspond aux filtres sélectionnés.</p>
+                                </div>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div id="absences-pagination" class="hidden flex items-center justify-between border-t border-card-line px-4 py-3 mt-0">
+                                <p class="text-xs text-muted-foreground-2" id="absences-count"></p>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" id="absences-prev-page"
+                                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Précédent</button>
+                                    <span class="text-xs text-muted-foreground-2" id="absences-page-info"></span>
+                                    <button type="button" id="absences-next-page"
+                                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Suivant</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ═══ PANEL JUSTIFICATIFS ═══ -->
+                    <div id="panel-justificatifs" class="hidden space-y-4" role="tabpanel" aria-labelledby="tab-justificatifs">
+
+                        <!-- Filtres -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select id="filter-justificatifs-classe" data-hs-select='{
+                                  "optionAllowEmptyOption": true,
+                                  "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2 ps-3 pe-9 flex text-nowrap w-52 cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-full text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                  "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden">
+                                <option value="">Toutes les classes</option>
+                            </select>
+                            <select id="filter-justificatifs-statut" data-hs-select='{
+                                  "optionAllowEmptyOption": true,
+                                  "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2 ps-3 pe-9 flex text-nowrap w-52 cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-full text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                  "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden">
+                                <option value="">Tous les statuts</option>
+                                <option value="PENDING">En attente</option>
+                                <option value="APPROVED">Approuvé</option>
+                                <option value="REJECTED">Rejeté</option>
+                            </select>
+                        </div>
+
+                        <!-- Tableau -->
+                        <div class="bg-card rounded-xl border border-card-line overflow-hidden pb-2">
+                            <div id="justificatifs-table-wrap" class="hidden overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-card-line bg-surface">
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">étudiant</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">date absence</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden md:table-cell">motif</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">statut</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden lg:table-cell">déposé le</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="justificatifs-table-body" class="divide-y divide-card-line"></tbody>
+                                </table>
+                            </div>
+
+                            <div id="justificatifs-loading" class="flex flex-col items-center justify-center py-16 gap-3">
+                                <div class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+                                <p class="text-sm text-muted-foreground-2">Chargement des justificatifs…</p>
+                            </div>
+
+                            <div id="justificatifs-empty" class="hidden flex-col items-center justify-center py-16 gap-3 text-center">
+                                <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.25"
+                                        class="text-muted-foreground-2">
+                                        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+                                        <rect x="9" y="3" width="6" height="4" rx="1.5" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-layer-foreground">Aucun justificatif</p>
+                                    <p class="text-xs text-muted-foreground-2 mt-1">Aucun justificatif ne correspond aux filtres sélectionnés.</p>
+                                </div>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div id="justificatifs-pagination" class="hidden flex items-center justify-between border-t border-card-line px-4 py-3 mt-0">
+                                <p class="text-xs text-muted-foreground-2" id="justificatifs-count"></p>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" id="justificatifs-prev-page"
+                                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Précédent</button>
+                                    <span class="text-xs text-muted-foreground-2" id="justificatifs-page-info"></span>
+                                    <button type="button" id="justificatifs-next-page"
+                                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Suivant</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ═══ PANEL HISTORIQUE DES CLASSES ═══ -->
+                    <div id="panel-historique-classes" class="hidden space-y-4" role="tabpanel" aria-labelledby="tab-historique-classes">
+
+                        <!-- Filtres -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select id="filter-histo-classe" data-hs-select='{
+                                  "optionAllowEmptyOption": true,
+                                  "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2 ps-3 pe-9 flex text-nowrap w-52 cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-full text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                  "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden">
+                                <option value="">Toutes les classes</option>
+                            </select>
+                        </div>
+
+                        <!-- Tableau -->
+                        <div class="bg-card rounded-xl border border-card-line overflow-hidden pb-2">
+                            <div id="histo-table-wrap" class="hidden overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-card-line bg-surface">
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">étudiant</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest hidden sm:table-cell">matricule</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">classe</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">date début</th>
+                                            <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest">date fin</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="histo-table-body" class="divide-y divide-card-line"></tbody>
+                                </table>
+                            </div>
+
+                            <div id="histo-loading" class="flex flex-col items-center justify-center py-16 gap-3">
+                                <div class="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+                                <p class="text-sm text-muted-foreground-2">Chargement de l'historique…</p>
+                            </div>
+
+                            <div id="histo-empty" class="hidden flex-col items-center justify-center py-16 gap-3 text-center">
+                                <div class="size-14 rounded-2xl bg-muted flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.25"
+                                        class="text-muted-foreground-2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-layer-foreground">Aucun historique</p>
+                                    <p class="text-xs text-muted-foreground-2 mt-1">Aucun changement de classe ne correspond aux filtres sélectionnés.</p>
+                                </div>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div id="histo-pagination" class="hidden flex items-center justify-between border-t border-card-line px-4 py-3 mt-0">
+                                <p class="text-xs text-muted-foreground-2" id="histo-count"></p>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" id="histo-prev-page"
+                                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Précédent</button>
+                                    <span class="text-xs text-muted-foreground-2" id="histo-page-info"></span>
+                                    <button type="button" id="histo-next-page"
+                                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Suivant</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    </section>
+
+    <!-- ═══ DRAWER PRELINE — DÉTAIL JUSTIFICATIF ═══ -->
+    <div id="hs-drawer-justificatif" class="hs-overlay hidden fixed inset-y-0 end-0 z-[80] w-full sm:max-w-lg
+            translate-x-full transition-all duration-300 ease-in-out
+            bg-card border-s border-card-line shadow-2xl flex flex-col
+            pointer-events-none hs-overlay-open:translate-x-0 hs-overlay-open:pointer-events-auto" role="dialog"
+        tabindex="-1" aria-label="Détail du justificatif">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between px-5 py-4 border-b border-card-line shrink-0">
+            <div>
+                <p class="text-xs font-medium text-muted-foreground-2 uppercase tracking-widest mb-0.5">Justificatif</p>
+                <h2 class="text-base font-black text-layer-foreground" id="jd-student-name">—</h2>
+                <p class="text-xs text-muted-foreground-2 mt-0.5" id="jd-student-meta"></p>
+            </div>
+            <button type="button"
+                class="size-8 flex items-center justify-center rounded-xl text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors"
+                data-hs-overlay="#hs-drawer-justificatif">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+
+            <div>
+                <p class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide mb-2">Absences concernées</p>
+                <div id="jd-seances" class="space-y-2"></div>
+            </div>
+
+            <div>
+                <p class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide mb-2">Motif</p>
+                <div class="px-3.5 py-3 rounded-xl border border-card-line bg-layer">
+                    <p class="text-sm text-layer-foreground" id="jd-motif">—</p>
+                </div>
+            </div>
+
+            <div id="jd-message-wrap" class="hidden">
+                <p class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide mb-2">Message de l'étudiant</p>
+                <div class="px-3.5 py-3 rounded-xl border border-card-line bg-layer">
+                    <p class="text-sm text-layer-foreground leading-relaxed" id="jd-message"></p>
+                </div>
+            </div>
+
+            <div id="jd-fichiers-wrap" class="hidden">
+                <p class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide mb-2">Pièces jointes</p>
+                <div id="jd-fichiers" class="space-y-2"></div>
+            </div>
+
+            <div id="jd-commentaire-wrap" class="hidden">
+                <p class="text-xs font-semibold text-muted-foreground-2 uppercase tracking-wide mb-2">Commentaire AP</p>
+                <div class="px-3.5 py-3 rounded-xl border border-card-line bg-layer">
+                    <p class="text-sm text-layer-foreground" id="jd-commentaire"></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Backdrop drawer -->
+    <div id="drawer-backdrop-justificatif" class="hidden fixed inset-0 z-[75] bg-black/40 backdrop-blur-sm"></div>
+
+    <script th:src="@{/js/preline.js}"></script>
+    <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
+    <script th:src="@{/js/main.js}" type="module"></script>
+    <script th:src="@{/js/APInterface/apArchives.js}" type="module"></script>
+</body>
+
+</html>

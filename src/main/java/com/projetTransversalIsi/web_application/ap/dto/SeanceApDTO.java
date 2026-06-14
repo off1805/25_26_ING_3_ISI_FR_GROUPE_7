@@ -12,6 +12,7 @@ public record SeanceApDTO(
         LocalTime heureFin,
         Long classeId,
         String classeCode,
+        String type,
         String enseignantNom,
         String enseignantPrenom,
         String statut,

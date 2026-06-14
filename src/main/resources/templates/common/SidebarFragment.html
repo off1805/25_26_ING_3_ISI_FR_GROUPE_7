@@ -313,6 +313,26 @@
                     </a>
                 </li>
 
+                <!-- Archives AP -->
+                <li th:if="${sidebarRole == 'AP'}">
+                    <a th:href="@{/ap/archives}"
+                       th:classappend="${activePage == 'archives'} ?
+                           'bg-sidebar-nav-active text-primary font-semibold [&>div]:text-primary ' :
+                           'text-muted-foreground-2 hover:bg-sidebar-nav-hover hover:text-layer-foreground '"
+                       class="flex items-center gap-3 py-1.5 px-2.5 text-sm font-medium rounded-xl focus:outline-none transition-all
+                              hs-overlay-minified:justify-center hs-overlay-minified:px-2 hs-overlay-minified:w-10 hs-overlay-minified:mx-auto">
+                        <div class="size-7 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="1.75">
+                                <rect x="3" y="3" width="18" height="5" rx="1"/>
+                                <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/>
+                                <line x1="10" y1="12" x2="14" y2="12"/>
+                            </svg>
+                        </div>
+                        <span class="hs-overlay-minified:hidden truncate">Archives</span>
+                    </a>
+                </li>
+
                 <!-- Config AP -->
                 <li th:if="${sidebarRole == 'AP'}">
                     <a th:href="@{/ap/config}"

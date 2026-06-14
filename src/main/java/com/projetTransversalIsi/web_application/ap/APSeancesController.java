@@ -6,6 +6,7 @@ import com.projetTransversalIsi.user.profil.infrastructure.JpaAPProfileEntity;
 import com.projetTransversalIsi.user.profil.infrastructure.SpringDataAPProfileRepository;
 import com.projetTransversalIsi.web_application.ap.dto.ClasseOptionDTO;
 import com.projetTransversalIsi.web_application.ap.dto.SeanceApDTO;
+import com.projetTransversalIsi.web_application.ap.dto.SeanceApMapper;
 import com.projetTransversalIsi.web_application.ap.dto.SeancePresenceDetailDTO;
 import com.projetTransversalIsi.web_application.ap.dto.SeancePresenceEtudiantDTO;
 import com.projetTransversalIsi.web_application.ap.dto.SeancesSemaineDTO;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class APSeancesController {
 
         List<SeanceApDTO> seances = seancesRepo.findSeancesSemaine(filiereId, lundi, dimanche)
                 .stream()
-                .map(this::toDto)
+                .map(SeanceApMapper::toDto)
                 .toList();
 
         return ResponseEntity.ok(new SeancesSemaineDTO(lundi, dimanche, seances));
@@ -67,7 +67,7 @@ public class APSeancesController {
 
         Page<SeanceApDTO> result = seancesRepo
                 .findSeancesHistorique(filiereId, lundi, classeId, pageable)
-                .map(this::toDto);
+                .map(SeanceApMapper::toDto);
 
         return ResponseEntity.ok(result);
     }
@@ -93,7 +93,7 @@ public class APSeancesController {
 
         List<String> creneaux = HeureSlotHelper.computeCreneaux(row.getHeureDebut(), row.getHeureFin());
 
-        return ResponseEntity.ok(new SeancePresenceDetailDTO(toDto(row), row.getPresenceListId(), creneaux, etudiants));
+        return ResponseEntity.ok(new SeancePresenceDetailDTO(SeanceApMapper.toDto(row), row.getPresenceListId(), creneaux, etudiants));
     }
 
     @GetMapping("/{seanceId}/presence/export")
@@ -115,7 +115,7 @@ public class APSeancesController {
                         .toList()
                 : List.of();
 
-        byte[] xlsx = presenceExportService.buildExcel(toDto(row), etudiants);
+        byte[] xlsx = presenceExportService.buildExcel(SeanceApMapper.toDto(row), etudiants);
 
         String filename = "presence_" + (row.getClasseCode() != null ? row.getClasseCode() : "seance")
                 + "_" + row.getDateSeance() + ".xlsx";
@@ -141,36 +141,6 @@ public class APSeancesController {
                 .toList();
 
         return ResponseEntity.ok(result);
-    }
-
-    private SeanceApDTO toDto(SeanceApRow row) {
-        return new SeanceApDTO(
-                row.getSeanceId(),
-                row.getLibelle(),
-                row.getSalle(),
-                row.getDateSeance(),
-                row.getHeureDebut(),
-                row.getHeureFin(),
-                row.getClasseId(),
-                row.getClasseCode(),
-                row.getEnseignantNom(),
-                row.getEnseignantPrenom(),
-                computeStatut(row.getDateSeance(), row.getHeureDebut(), row.getHeureFin()),
-                row.getPresenceListId(),
-                row.getNbPresents(),
-                row.getNbAbsents(),
-                row.getNbTotal());
-    }
-
-    private String computeStatut(LocalDate dateSeance, LocalTime heureDebut, LocalTime heureFin) {
-        LocalDate today = LocalDate.now();
-        if (dateSeance.isBefore(today)) return "TERMINE";
-        if (dateSeance.isAfter(today)) return "A_VENIR";
-
-        LocalTime now = LocalTime.now();
-        if (heureFin.isBefore(now))      return "TERMINE";
-        if (heureDebut.isAfter(now))     return "A_VENIR";
-        return "EN_COURS";
     }
 
     private Long resolveApFiliereId(UserPrincipal principal) {

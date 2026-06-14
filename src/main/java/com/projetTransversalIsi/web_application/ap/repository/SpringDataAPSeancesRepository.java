@@ -18,7 +18,7 @@ public interface SpringDataAPSeancesRepository extends JpaRepository<JpaSeanceEn
     String SEANCE_ROW_SELECT =
         "SELECT s.id AS seanceId, s.libelle AS libelle, s.salle AS salle," +
         " s.date_seance AS dateSeance, s.heure_debut AS heureDebut, s.heure_fin AS heureFin," +
-        " et.classe_id AS classeId, c.code AS classeCode," +
+        " et.classe_id AS classeId, c.code AS classeCode, s.type AS type," +
         " pe.nom AS enseignantNom, pe.prenom AS enseignantPrenom," +
         " (SELECT pl2.id FROM presence_list pl2 WHERE pl2.seance_id = s.id AND pl2.deleted = false ORDER BY pl2.id LIMIT 1) AS presenceListId," +
         " CAST(COALESCE((SELECT COUNT(*) FROM presence_row pr INNER JOIN presence_list pl3 ON pl3.id = pr.presence_list_id" +
@@ -82,6 +82,35 @@ public interface SpringDataAPSeancesRepository extends JpaRepository<JpaSeanceEn
     Optional<SeanceApRow> findSeanceById(
             @Param("seanceId") Long seanceId,
             @Param("filiereId") Long filiereId);
+
+    @Query(value = SEANCE_ROW_SELECT +
+        " WHERE s.deleted = false" +
+        " AND s.annee_scolaire_id = :anneeScolaireId" +
+        " AND " + FILIERE_CLASSES_CONDITION +
+        " AND (:classeId IS NULL OR et.classe_id = :classeId)" +
+        " AND (:type IS NULL OR s.type = :type)" +
+        " AND (:dateDebut IS NULL OR s.date_seance >= :dateDebut)" +
+        " AND (:dateFin IS NULL OR s.date_seance <= :dateFin)" +
+        " ORDER BY s.date_seance DESC, s.heure_debut DESC",
+        countQuery =
+        "SELECT COUNT(*) FROM seance s" +
+        " INNER JOIN emploi_temps et ON et.id = s.emploi_temps_id AND et.deleted = false" +
+        " WHERE s.deleted = false" +
+        " AND s.annee_scolaire_id = :anneeScolaireId" +
+        " AND " + FILIERE_CLASSES_CONDITION +
+        " AND (:classeId IS NULL OR et.classe_id = :classeId)" +
+        " AND (:type IS NULL OR s.type = :type)" +
+        " AND (:dateDebut IS NULL OR s.date_seance >= :dateDebut)" +
+        " AND (:dateFin IS NULL OR s.date_seance <= :dateFin)",
+        nativeQuery = true)
+    Page<SeanceApRow> findSeancesArchive(
+            @Param("filiereId") Long filiereId,
+            @Param("anneeScolaireId") Long anneeScolaireId,
+            @Param("classeId") Long classeId,
+            @Param("type") String type,
+            @Param("dateDebut") LocalDate dateDebut,
+            @Param("dateFin") LocalDate dateFin,
+            Pageable pageable);
 
     @Query(value =
         "SELECT sp.id AS etudiantId, p.nom AS nom, p.prenom AS prenom, p.matricule AS matricule, pr.present AS present" +
