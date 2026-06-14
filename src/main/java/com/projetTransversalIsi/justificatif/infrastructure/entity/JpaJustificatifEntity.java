@@ -21,6 +21,9 @@ public class JpaJustificatifEntity {
     @Column(name = "etudiant_id", nullable = false)
     private Long etudiantId;
 
+    @Column(name = "annee_scolaire_id")
+    private Long anneeScolaireId;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "justificatif_seance",
             joinColumns = @JoinColumn(name = "justificatif_id"))

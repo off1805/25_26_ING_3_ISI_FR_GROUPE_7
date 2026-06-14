@@ -7,6 +7,8 @@ import com.projetTransversalIsi.emploi_temps.domain.model.RetardRow;
 import com.projetTransversalIsi.emploi_temps.domain.repository.InfoRetardRowRepository;
 import com.projetTransversalIsi.emploi_temps.domain.repository.RetardListRepository;
 import com.projetTransversalIsi.emploi_temps.domain.repository.RetardRowRepository;
+import com.projetTransversalIsi.pedagogie.domain.AnneeScolaireRepository;
+import com.projetTransversalIsi.pedagogie.domain.model.AnneeScolaire;
 import com.projetTransversalIsi.user.profil.infrastructure.JpaStudentProfileEntity;
 import com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class GetOrCreateRetardListUCImpl implements GetOrCreateRetardListUC {
     private final RetardRowRepository retardRowRepo;
     private final InfoRetardRowRepository infoRetardRowRepo;
     private final SpringDataStudentProfileRepository studentProfileRepo;
+    private final AnneeScolaireRepository anneeScolaireRepository;
 
     @Override
     public RetardListResponseDTO execute(Long classeId, LocalDate semaineDebut) {
@@ -36,7 +39,10 @@ public class GetOrCreateRetardListUCImpl implements GetOrCreateRetardListUC {
     }
 
     private RetardListResponseDTO creer(Long classeId, LocalDate semaineDebut) {
-        RetardList retardList = retardListRepo.save(new RetardList(classeId, semaineDebut));
+        RetardList nouveau = new RetardList(classeId, semaineDebut);
+        anneeScolaireRepository.findActive().map(AnneeScolaire::getId)
+                .ifPresent(nouveau::setAnneeScolaireId);
+        RetardList retardList = retardListRepo.save(nouveau);
 
         for (JpaStudentProfileEntity profile : studentProfileRepo.findByClasseId(classeId)) {
             RetardRow row = retardRowRepo.save(new RetardRow(retardList.getId(), profile.getId()));

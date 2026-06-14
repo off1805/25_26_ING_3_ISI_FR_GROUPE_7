@@ -18,6 +18,7 @@ public class Justificatif {
 
     private Long id;
     private Long etudiantId;
+    private Long anneeScolaireId;
 
     private List<Long> seanceIds = new ArrayList<>();
 

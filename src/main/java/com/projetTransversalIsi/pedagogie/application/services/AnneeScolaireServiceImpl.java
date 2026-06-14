@@ -1,7 +1,10 @@
 package com.projetTransversalIsi.pedagogie.application.services;
 
 import com.projetTransversalIsi.migration.application.use_cases.ExecuteMigrationsUC;
+import com.projetTransversalIsi.pedagogie.application.dto.ActivateAnneeScolaireResultDTO;
 import com.projetTransversalIsi.pedagogie.application.dto.CreateAnneeScolaireRequestDTO;
+import com.projetTransversalIsi.pedagogie.application.dto.CreateOffreUesForNewYearResponseDTO;
+import com.projetTransversalIsi.pedagogie.application.use_cases.CreateOffreUesForNewYearUC;
 import com.projetTransversalIsi.pedagogie.domain.AnneeScolaireRepository;
 import com.projetTransversalIsi.pedagogie.domain.model.AnneeScolaire;
 import com.projetTransversalIsi.pedagogie.infrastructure.AnneeScolaireMapper;
@@ -24,6 +27,7 @@ public class AnneeScolaireServiceImpl implements AnneeScolaireService {
     final private SpringDataNiveauRepository niveauRepository;
     final private SpringDataSemestreRepository semestreRepository;
     final private ExecuteMigrationsUC executeMigrationsUC;
+    final private CreateOffreUesForNewYearUC createOffreUesForNewYearUC;
 
     @Override
     @Transactional
@@ -66,17 +70,19 @@ public class AnneeScolaireServiceImpl implements AnneeScolaireService {
 
     @Override
     @Transactional
-    public AnneeScolaire activate(Long id) {
+    public ActivateAnneeScolaireResultDTO activate(Long id) {
         AnneeScolaire target = jpaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Année scolaire introuvable : " + id));
 
         Optional<AnneeScolaire> currentOpt = jpaRepo.findActive();
+        Long previousId = null;
         if (currentOpt.isPresent()) {
             AnneeScolaire current = currentOpt.get();
             if (target.getAnneeDebut() < current.getAnneeDebut()) {
                 throw new IllegalStateException("Cette année scolaire est déjà terminée et ne peut pas être réactivée.");
             }
             if (!current.getId().equals(target.getId())) {
+                previousId = current.getId();
                 current.setActive(false);
                 jpaRepo.save(current);
             }
@@ -87,7 +93,9 @@ public class AnneeScolaireServiceImpl implements AnneeScolaireService {
 
         executeMigrationsUC.execute();
 
-        return saved;
+        CreateOffreUesForNewYearResponseDTO offresResult = createOffreUesForNewYearUC.execute(saved.getId(), previousId);
+
+        return new ActivateAnneeScolaireResultDTO(saved, offresResult.offresCreees(), offresResult.offresExistantes());
     }
 
     @Override

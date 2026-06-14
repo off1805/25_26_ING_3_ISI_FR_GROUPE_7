@@ -5,6 +5,8 @@ import com.projetTransversalIsi.emploi_temps.domain.model.Seance;
 import com.projetTransversalIsi.emploi_temps.domain.repository.SeanceRepository;
 import com.projetTransversalIsi.emploi_temps.domain.exceptions.SeanceConflictException;
 import com.projetTransversalIsi.emploi_temps.domain.exceptions.SeanceNotFoundException;
+import com.projetTransversalIsi.pedagogie.domain.AnneeScolaireRepository;
+import com.projetTransversalIsi.pedagogie.domain.model.AnneeScolaire;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class SeanceService {
 
     private final SeanceRepository seanceRepo;
+    private final AnneeScolaireRepository anneeScolaireRepository;
 
     // Crée une séance de cours autonome (hors flux createEmploiTempsWithSeances).
     // Vérifie le conflit horaire de l'enseignant avant insertion.
@@ -53,6 +56,7 @@ public class SeanceService {
                 request.coursId(),
                 request.enseignantId()
         );
+        seance.setAnneeScolaireId(activeAnneeScolaireId());
 
         return SeanceResponseDTO.fromDomain(seanceRepo.save(seance));
     }
@@ -139,5 +143,9 @@ public class SeanceService {
         }
 
         return result;
+    }
+
+    private Long activeAnneeScolaireId() {
+        return anneeScolaireRepository.findActive().map(AnneeScolaire::getId).orElse(null);
     }
 }

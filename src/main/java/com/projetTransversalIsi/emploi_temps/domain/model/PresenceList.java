@@ -21,6 +21,7 @@ public class PresenceList {
     private Long classeId;
     private Long ueId;
     private Long enseignantId;
+    private Long anneeScolaireId;
     // date de la séance, dupliquée ici pour faciliter les requêtes de reporting sans jointure.
     private LocalDate date;
     private LocalDateTime createdAt;

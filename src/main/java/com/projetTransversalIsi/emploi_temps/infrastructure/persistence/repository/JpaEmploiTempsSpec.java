@@ -42,4 +42,8 @@ public class JpaEmploiTempsSpec {
         return (root,criteriaQuery,criteriaBuilder)-> deleted==null ?criteriaBuilder.equal(root.get("deleted"),false): criteriaBuilder.equal(root.get("deleted"),deleted);
     }
 
+    public static Specification<JpaEmploiTempsEntity> hasAnneeScolaireId(Long id){
+        return (root,criteriaQuery,criteriaBuilder)->id==null?null: criteriaBuilder.equal(root.get("anneeScolaireId"),id);
+    }
+
 }

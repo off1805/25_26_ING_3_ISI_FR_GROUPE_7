@@ -5,6 +5,8 @@ import com.projetTransversalIsi.emploi_temps.domain.model.EmploiTemps;
 import com.projetTransversalIsi.emploi_temps.domain.repository.EmploiTempsRepository;
 import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.entity.JpaEmploiTempsEntity;
 import com.projetTransversalIsi.emploi_temps.infrastructure.persistence.mapper.EmploiTempsMapper;
+import com.projetTransversalIsi.pedagogie.domain.AnneeScolaireRepository;
+import com.projetTransversalIsi.pedagogie.domain.model.AnneeScolaire;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,7 @@ public class JpaEmploiTempsRepository implements EmploiTempsRepository {
 
     private final SpringDataEmploiTempsRepository jpaRepo;
     private final EmploiTempsMapper mapper;
+    private final AnneeScolaireRepository anneeScolaireRepository;
 
     @Override
     public EmploiTemps save(EmploiTemps emploiTemps) {
@@ -44,6 +47,7 @@ public class JpaEmploiTempsRepository implements EmploiTempsRepository {
     // les prédicats null retournés par JpaEmploiTempsSpec sont ignorés par Specification.and().
     @Override
     public Page<EmploiTemps> findAll(SearchEmploiTempsRequestDTO comand, Pageable page){
+        Long activeAnneeId = anneeScolaireRepository.findActive().map(AnneeScolaire::getId).orElse(null);
         Specification<JpaEmploiTempsEntity> spec= Specification
                 .where(JpaEmploiTempsSpec.hasStatus(comand.status()))
                 .and(JpaEmploiTempsSpec.isForClasse(comand.classeId()))
@@ -51,7 +55,8 @@ public class JpaEmploiTempsRepository implements EmploiTempsRepository {
                 .and(JpaEmploiTempsSpec.startDateAfter(comand.startDateAfter()))
                 .and(JpaEmploiTempsSpec.endDateBefore(comand.endDateBefore()))
                 .and(JpaEmploiTempsSpec.startDateBeforeOrEqual(comand.startDateBefore()))
-                .and(JpaEmploiTempsSpec.endDateAfterOrEqual(comand.endDateAfter()));
+                .and(JpaEmploiTempsSpec.endDateAfterOrEqual(comand.endDateAfter()))
+                .and(JpaEmploiTempsSpec.hasAnneeScolaireId(activeAnneeId));
         return jpaRepo.findAll(spec,page).map(mapper::toDomain);
     }
 

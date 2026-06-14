@@ -42,6 +42,7 @@ public interface SpringDataAPSeancesRepository extends JpaRepository<JpaSeanceEn
 
     @Query(value = SEANCE_ROW_SELECT +
         " WHERE s.deleted = false AND s.type = 'SEANCE'" +
+        " AND s.annee_scolaire_id = (SELECT id FROM annee_scolaire WHERE active = true)" +
         " AND " + FILIERE_CLASSES_CONDITION +
         " AND s.date_seance BETWEEN :dateDebut AND :dateFin" +
         " ORDER BY s.date_seance ASC, s.heure_debut ASC",
@@ -53,6 +54,7 @@ public interface SpringDataAPSeancesRepository extends JpaRepository<JpaSeanceEn
 
     @Query(value = SEANCE_ROW_SELECT +
         " WHERE s.deleted = false AND s.type = 'SEANCE'" +
+        " AND s.annee_scolaire_id = (SELECT id FROM annee_scolaire WHERE active = true)" +
         " AND " + FILIERE_CLASSES_CONDITION +
         " AND s.date_seance < :avantDate" +
         " AND (:classeId IS NULL OR et.classe_id = :classeId)" +
@@ -61,6 +63,7 @@ public interface SpringDataAPSeancesRepository extends JpaRepository<JpaSeanceEn
         "SELECT COUNT(*) FROM seance s" +
         " INNER JOIN emploi_temps et ON et.id = s.emploi_temps_id AND et.deleted = false" +
         " WHERE s.deleted = false AND s.type = 'SEANCE'" +
+        " AND s.annee_scolaire_id = (SELECT id FROM annee_scolaire WHERE active = true)" +
         " AND " + FILIERE_CLASSES_CONDITION +
         " AND s.date_seance < :avantDate" +
         " AND (:classeId IS NULL OR et.classe_id = :classeId)",
@@ -73,6 +76,7 @@ public interface SpringDataAPSeancesRepository extends JpaRepository<JpaSeanceEn
 
     @Query(value = SEANCE_ROW_SELECT +
         " WHERE s.id = :seanceId AND s.deleted = false" +
+        " AND s.annee_scolaire_id = (SELECT id FROM annee_scolaire WHERE active = true)" +
         " AND " + FILIERE_CLASSES_CONDITION,
         nativeQuery = true)
     Optional<SeanceApRow> findSeanceById(
