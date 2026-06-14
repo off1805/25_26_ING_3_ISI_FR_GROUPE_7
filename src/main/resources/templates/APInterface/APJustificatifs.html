@@ -148,75 +148,93 @@
                 <!-- Détail d'un justificatif (injecté par JS) -->
                 <div id="detail-content" class="hidden flex-1 flex-col">
 
-                    <!-- Header étudiant -->
-                    <div class="flex-none px-6 py-5 border-b border-layer-line bg-card">
-                        <div class="flex items-center gap-4">
-                            <div id="detail-avatar"
-                                 class="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-base font-bold text-primary shrink-0 overflow-hidden">E</div>
-                            <div class="min-w-0 flex-1">
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <h2 class="font-bold text-layer-foreground truncate" id="detail-name">—</h2>
-                                    <span id="detail-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0"></span>
-                                </div>
-                                <p class="text-xs text-muted-foreground-2 mt-0.5" id="detail-matricule">—</p>
-                            </div>
-                            <!-- Bouton retour mobile -->
-                            <button type="button" onclick="clearDetail()"
-                                    class="md:hidden size-8 flex items-center justify-center rounded-xl bg-muted text-muted-foreground-2 hover:bg-muted/80 shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M15 18l-6-6 6-6"/>
-                                </svg>
-                            </button>
-                        </div>
+                    <!-- Bouton retour mobile -->
+                    <div class="md:hidden flex-none px-4 py-2 border-b border-layer-line bg-card">
+                        <button type="button" onclick="clearDetail()"
+                                class="size-8 flex items-center justify-center rounded-xl bg-muted text-muted-foreground-2 hover:bg-muted/80">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                        </button>
                     </div>
 
                     <!-- Corps du détail -->
-                    <div class="flex-1 overflow-y-auto px-6 py-6 space-y-6 max-w-2xl w-full mx-auto">
+                    <div class="flex-1 overflow-y-auto px-6 py-6">
+                    <div class="max-w-2xl w-full mx-auto rounded-2xl border border-card-line bg-card divide-y divide-card-line overflow-hidden">
+
+                        <!-- En-tête étudiant -->
+                        <div class="px-5 py-4">
+                            <div class="flex items-center gap-4">
+                                <div id="detail-avatar"
+                                     class="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-base font-bold text-primary shrink-0 overflow-hidden">E</div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <h2 class="font-bold text-layer-foreground truncate" id="detail-name">—</h2>
+                                        <span id="detail-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0"></span>
+                                    </div>
+                                    <p class="text-xs text-muted-foreground-2 mt-0.5">
+                                        <span id="detail-matricule">—</span>
+                                        <span class="mx-1.5 text-muted-foreground-2/60">·</span>
+                                        <span>Soumis le <span id="detail-created-at">—</span></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Absences concernées -->
-                        <div>
-                            <p class="text-[10px] font-semibold text-muted-foreground-2 uppercase tracking-widest mb-3">Absences concernées</p>
+                        <div class="px-5 py-4">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+                                <p class="text-xs font-semibold text-muted-foreground-1 uppercase tracking-wide">Absences concernées</p>
+                                <span id="detail-seances-count" class="text-[10px] font-bold text-muted-foreground-2 bg-muted px-1.5 py-0.5 rounded-full"></span>
+                            </div>
                             <div id="detail-seances" class="space-y-2"></div>
                         </div>
 
                         <!-- Motif -->
-                        <div>
-                            <p class="text-[10px] font-semibold text-muted-foreground-2 uppercase tracking-widest mb-2">Motif</p>
-                            <div class="flex items-start gap-3 px-4 py-3 rounded-xl border border-card-line bg-layer">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2 shrink-0 mt-0.5">
-                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                                </svg>
+                        <div class="px-5 py-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                <p class="text-xs font-semibold text-muted-foreground-1 uppercase tracking-wide">Motif</p>
+                            </div>
+                            <div class="px-3.5 py-3 rounded-xl border border-card-line bg-layer">
                                 <p class="text-sm text-layer-foreground" id="detail-motif">—</p>
                             </div>
                         </div>
 
                         <!-- Message étudiant -->
-                        <div id="detail-message-wrap" class="hidden">
-                            <p class="text-[10px] font-semibold text-muted-foreground-2 uppercase tracking-widest mb-2">Message de l'étudiant</p>
-                            <div class="flex gap-3 px-4 py-3 rounded-xl border border-card-line bg-layer">
-                                <div class="w-0.5 rounded-full bg-primary/30 shrink-0"></div>
+                        <div id="detail-message-wrap" class="hidden px-5 py-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                <p class="text-xs font-semibold text-muted-foreground-1 uppercase tracking-wide">Message de l'étudiant</p>
+                            </div>
+                            <div class="px-3.5 py-3 rounded-xl border border-card-line bg-layer">
                                 <p class="text-sm text-layer-foreground leading-relaxed" id="detail-message"></p>
                             </div>
                         </div>
 
                         <!-- Pièces jointes -->
-                        <div id="detail-fichiers-wrap" class="hidden">
-                            <p class="text-[10px] font-semibold text-muted-foreground-2 uppercase tracking-widest mb-3">Pièces jointes</p>
-                            <div id="detail-fichiers" class="space-y-2"></div>
-                        </div>
-
-                        <!-- Soumis le -->
-                        <div>
-                            <p class="text-[10px] font-semibold text-muted-foreground-2 uppercase tracking-widest mb-1.5">Soumis le</p>
-                            <p class="text-sm text-muted-foreground-1" id="detail-created-at">—</p>
+                        <div id="detail-fichiers-wrap" class="hidden px-5 py-4">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                                <p class="text-xs font-semibold text-muted-foreground-1 uppercase tracking-wide">Pièces jointes</p>
+                                <span id="detail-fichiers-count" class="text-[10px] font-bold text-muted-foreground-2 bg-muted px-1.5 py-0.5 rounded-full"></span>
+                            </div>
+                            <div id="detail-fichiers" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
                         </div>
 
                         <!-- Commentaire AP (si déjà traité) -->
-                        <div id="detail-commentaire-wrap" class="hidden">
-                            <p class="text-[10px] font-semibold text-muted-foreground-2 uppercase tracking-widest mb-2">Commentaire AP</p>
-                            <p class="text-sm text-layer-foreground px-4 py-3 rounded-xl border border-card-line bg-muted/30" id="detail-commentaire"></p>
+                        <div id="detail-commentaire-wrap" class="hidden px-5 py-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted-foreground-2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                <p class="text-xs font-semibold text-muted-foreground-1 uppercase tracking-wide">Commentaire AP</p>
+                            </div>
+                            <div class="px-3.5 py-3 rounded-xl border border-card-line bg-layer">
+                                <p class="text-sm text-layer-foreground" id="detail-commentaire"></p>
+                            </div>
                         </div>
 
+                    </div>
                     </div>
 
                     <!-- Zone de décision (PENDING uniquement) -->
@@ -254,6 +272,24 @@
         </div>
 
     </div><!-- /MAIN -->
+
+    <!-- ══ Lightbox — aperçu plein écran d'une pièce jointe ══ -->
+    <div id="lightbox" class="hidden fixed inset-0 z-50 bg-black/80 items-center justify-center p-4 sm:p-8" onclick="closeLightbox()">
+        <div class="relative w-full h-full flex items-center justify-center" onclick="event.stopPropagation()">
+            <img id="lightbox-img" src="" alt="" class="hidden max-w-full max-h-full rounded-lg object-contain">
+            <iframe id="lightbox-pdf" src="" class="hidden w-full h-full bg-white rounded-lg"></iframe>
+        </div>
+        <button type="button" onclick="closeLightbox()"
+                class="absolute top-4 right-4 size-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <a id="lightbox-download" href="#" download
+           class="absolute bottom-4 right-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-layer-foreground text-sm font-semibold hover:bg-white/90 transition-colors"
+           onclick="event.stopPropagation()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Télécharger
+        </a>
+    </div>
 
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
@@ -429,6 +465,46 @@
         return `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-muted-foreground-2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
     }
 
+    // ─── Lightbox pièces jointes ──────────────────────────────────────────────────
+    function openLightbox(url, type, name, downloadUrl) {
+        if (type !== 'image' && type !== 'pdf') {
+            window.location.href = downloadUrl;
+            return;
+        }
+        const lb  = document.getElementById('lightbox');
+        const img = document.getElementById('lightbox-img');
+        const pdf = document.getElementById('lightbox-pdf');
+
+        if (type === 'image') {
+            img.src = url;
+            img.alt = name;
+            img.classList.remove('hidden');
+            pdf.classList.add('hidden');
+            pdf.src = '';
+        } else {
+            pdf.src = url;
+            pdf.classList.remove('hidden');
+            img.classList.add('hidden');
+            img.src = '';
+        }
+
+        document.getElementById('lightbox-download').href = downloadUrl;
+        lb.classList.remove('hidden');
+        lb.classList.add('flex');
+    }
+
+    function closeLightbox() {
+        const lb = document.getElementById('lightbox');
+        lb.classList.add('hidden');
+        lb.classList.remove('flex');
+        document.getElementById('lightbox-img').src = '';
+        document.getElementById('lightbox-pdf').src = '';
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeLightbox();
+    });
+
     // ─── Affichage du détail (panneau droit) ─────────────────────────────────────
     function openDetail(id) {
         const j = JUSTIFS.find(x => x.id === id);
@@ -463,6 +539,7 @@
 
         // Séances
         const seancesEl = document.getElementById('detail-seances');
+        document.getElementById('detail-seances-count').textContent = (j.seances || []).length;
         seancesEl.innerHTML = (j.seances && j.seances.length > 0)
             ? j.seances.map(s => `
                 <div class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-card-line bg-layer">
@@ -490,27 +567,36 @@
         const fichiersEl   = document.getElementById('detail-fichiers');
         if (j.fichiers && j.fichiers.length > 0) {
             fichiersWrap.classList.remove('hidden');
-            fichiersEl.innerHTML = j.fichiers.map(f => {
-                const ext = (f.nomOriginal || f.url || '').split('.').pop().toUpperCase();
+            document.getElementById('detail-fichiers-count').textContent = j.fichiers.length;
+            fichiersEl.innerHTML = j.fichiers.map((f, idx) => {
+                const ext         = (f.nomOriginal || f.url || '').split('.').pop().toUpperCase();
+                const isImage     = ['PNG','JPG','JPEG','GIF','WEBP','SVG','AVIF'].includes(ext);
+                const isPdf       = ext === 'PDF';
+                const type        = isImage ? 'image' : (isPdf ? 'pdf' : 'other');
+                const name        = f.nomOriginal || 'fichier';
+                const downloadUrl = `/api/ap/justificatifs/${j.id}/fichiers/${idx}/download`;
+                const preview = isImage
+                    ? `<img src="${escHtml(f.url)}" alt="${escHtml(name)}" class="w-full h-full object-cover">`
+                    : `<div class="w-full h-full flex items-center justify-center ${isPdf ? 'bg-red-500/10' : 'bg-muted'} [&>svg]:w-8 [&>svg]:h-8">${fileIcon(ext)}</div>`;
+
                 return `
-                <div class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-card-line bg-layer hover:border-primary/30 transition-colors">
-                    <div class="size-8 rounded-lg bg-muted flex items-center justify-center shrink-0">${fileIcon(ext)}</div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-medium text-layer-foreground truncate">${escHtml(f.nomOriginal || f.url)}</p>
-                        <p class="text-[10px] text-muted-foreground-2 mt-0.5 uppercase">${escHtml(ext)}</p>
+                <div class="group relative rounded-xl border border-card-line bg-layer overflow-hidden">
+                    <button type="button" class="lightbox-trigger block w-full aspect-square"
+                            data-url="${escHtml(f.url)}" data-type="${type}" data-name="${escHtml(name)}" data-download="${escHtml(downloadUrl)}">
+                        ${preview}
+                    </button>
+                    <div class="px-2 py-1.5 border-t border-card-line">
+                        <p class="text-[10px] font-medium text-layer-foreground truncate" title="${escHtml(name)}">${escHtml(name)}</p>
                     </div>
-                    <div class="flex items-center gap-1 shrink-0">
-                        <a href="${escHtml(f.url)}" target="_blank" rel="noopener"
-                           class="size-7 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors" title="Voir">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                        </a>
-                        <a href="${escHtml(f.url)}" download="${escHtml(f.nomOriginal || 'fichier')}"
-                           class="size-7 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-muted hover:text-layer-foreground transition-colors" title="Télécharger">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        </a>
-                    </div>
+                    <a href="${escHtml(downloadUrl)}" download
+                       class="absolute top-1.5 right-1.5 size-6 flex items-center justify-center rounded-lg bg-black/45 text-white opacity-0 group-hover:opacity-100 transition-opacity" title="Télécharger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </a>
                 </div>`;
             }).join('');
+            fichiersEl.querySelectorAll('.lightbox-trigger').forEach(btn => {
+                btn.addEventListener('click', () => openLightbox(btn.dataset.url, btn.dataset.type, btn.dataset.name, btn.dataset.download));
+            });
         } else {
             fichiersWrap.classList.add('hidden');
         }

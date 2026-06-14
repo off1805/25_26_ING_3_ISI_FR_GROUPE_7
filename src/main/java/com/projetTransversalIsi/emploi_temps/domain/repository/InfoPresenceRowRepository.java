@@ -11,8 +11,6 @@ public interface InfoPresenceRowRepository {
     List<InfoPresenceRow> findByPresenceRowId(Long presenceRowId);
     List<InfoPresenceRow> findByPresenceRowIdIn(List<Long> presenceRowIds);
     List<InfoPresenceRow> findByAppelId(Long appelId);
-    // Recherche par appel + étudiant (pour upsert lors du marquage).
-    Optional<InfoPresenceRow> findByAppelIdAndEtudiantId(Long appelId, Long etudiantId);
     // Étudiants non encore déterminés pour un appel donné (isPresent = null).
     List<InfoPresenceRow> findByAppelIdAndIsPresentIsNull(Long appelId);
     // Identifiants distincts des appels ayant encore des lignes en attente (isPresent = null).

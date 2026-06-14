@@ -30,6 +30,9 @@ public class JpaFiliereEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "tronc_commun", nullable = false)
+    private boolean troncCommun;
+
     @ManyToOne
     @JoinColumn(name = "cycle_id", nullable = false)
     private JpaCycleEntity cycle;

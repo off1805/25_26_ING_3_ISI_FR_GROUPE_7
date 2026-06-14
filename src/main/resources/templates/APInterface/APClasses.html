@@ -196,35 +196,6 @@
                             </div>
                         </div>
 
-                        <!-- Barre de sélection bulk -->
-                        <div id="bulk-actions-bar" class="hidden mb-4">
-                            <div
-                                class="inline-flex items-center gap-3 px-4 py-2.5 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl">
-                                <span class="text-xs font-bold text-red-600 dark:text-red-400" id="selected-count">0
-                                    sélectionné(s)</span>
-                                <div class="w-px h-4 bg-red-200 dark:bg-red-500/30"></div>
-                                <button type="button" onclick="removeSelected()"
-                                    class="flex items-center gap-1.5 text-xs font-bold text-red-600 dark:text-red-400 hover:text-red-700 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                        <circle cx="9" cy="7" r="4" />
-                                        <line x1="17" y1="8" x2="23" y2="14" />
-                                        <line x1="23" y1="8" x2="17" y2="14" />
-                                    </svg>
-                                    Retirer de la classe
-                                </button>
-                                <button type="button" onclick="clearSelection()"
-                                    class="text-red-400 hover:text-red-600 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <path d="M18 6 6 18" />
-                                        <path d="m6 6 12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
                         <!-- Panels -->
                         <div>
                             <div>
@@ -285,35 +256,6 @@
                                                             </button>
                                                             <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-48 bg-card border border-card-line shadow-lg rounded-xl z-20 p-1 [--placement:bottom-end]"
                                                                 role="menu">
-                                                                <div class="px-3 py-1.5 mb-1 border-b border-card-line">
-                                                                    <p
-                                                                        class="text-xs font-bold text-muted-foreground-2 uppercase tracking-wide">
-                                                                        Actions groupées</p>
-                                                                </div>
-                                                                <button type="button"
-                                                                    th:attr="data-panel=${'panel-classe-' + classe.id}"
-                                                                    onclick="selectAllInPanel(this)"
-                                                                    class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14"
-                                                                        height="14" viewBox="0 0 24 24" fill="none"
-                                                                        stroke="currentColor" stroke-width="2">
-                                                                        <path d="M9 11l3 3L22 4" />
-                                                                        <path
-                                                                            d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                                                                    </svg>
-                                                                    Tout sélectionner
-                                                                </button>
-                                                                <button type="button" onclick="clearSelection()"
-                                                                    class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14"
-                                                                        height="14" viewBox="0 0 24 24" fill="none"
-                                                                        stroke="currentColor" stroke-width="2">
-                                                                        <path d="M18 6 6 18" />
-                                                                        <path d="m6 6 12 12" />
-                                                                    </svg>
-                                                                    Tout désélectionner
-                                                                </button>
-                                                                <div class="h-px bg-card-line my-1"></div>
                                                                 <button id="remove-all" type="button"
                                                                     class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="14"
@@ -456,6 +398,18 @@
                                                                     <line x1="23" y1="8" x2="17" y2="14" />
                                                                 </svg>
                                                             </button>
+                                                            <button type="button"
+                                                                class="archive-btn hidden size-8 items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-blue-50 hover:text-blue-500 dark:hover:bg-blue-500/10 transition-colors"
+                                                                th:attr="data-user-id=${student.userId}, data-classe-id=${classe.id}"
+                                                                onclick="archiveStudent(this)"
+                                                                title="Archiver (fin de cursus)">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="15"
+                                                                    height="15" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2">
+                                                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                                                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                                                                </svg>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -477,6 +431,63 @@
         </section>
     </section>
 
+
+    <!-- ═══ MODAL MIGRATION : CHOIX DE LA CLASSE DE DESTINATION ═══ -->
+    <div id="modal-choose-destination"
+        class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none"
+        role="dialog" tabindex="-1">
+        <div
+            class="hs-overlay-open:opacity-100 hs-overlay-open:duration-300 opacity-0 transition-all max-w-sm sm:w-full m-3 mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
+            <div
+                class="pointer-events-auto w-full bg-card border border-card-line rounded-2xl shadow-2xl">
+                <div class="p-6">
+                    <div class="size-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" class="text-primary">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="m17 11 3 3-3 3M14 14h6" />
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-layer-foreground text-center" id="destination-modal-title">
+                        Retirer de la classe</h3>
+                    <p class="text-sm text-muted-foreground-2 text-center mt-2 leading-relaxed"
+                        id="destination-modal-msg">
+                        L'étudiant restera dans la classe jusqu'à la fin de l'année. Choisissez la classe vers
+                        laquelle il migrera à l'activation de la prochaine année scolaire.
+                    </p>
+
+                    <div class="mt-4 space-y-1.5 text-left">
+                        <label class="text-xs font-semibold text-layer-foreground">Classe de destination <span
+                                class="text-red-500">*</span></label>
+                        <select id="destination-classe-select" name="classeDestinationId" data-hs-select='{
+                              "placeholder": "Sélectionner une classe",
+                              "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                              "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2.5 ps-3 pe-9 flex text-nowrap w-full cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-xl text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                              "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                              "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                              "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                              "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                            }' class="hidden" required>
+                            <option value="" disabled selected>Chargement...</option>
+                        </select>
+                    </div>
+
+                    <p id="destination-error" class="hidden text-xs text-red-500 mt-2"></p>
+
+                    <div class="flex gap-3 mt-5">
+                        <button type="button"
+                            class="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-muted text-layer-foreground hover:bg-muted/80"
+                            data-hs-overlay="#modal-choose-destination">Annuler</button>
+                        <button type="button" id="confirm-destination-btn"
+                            class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-primary text-white hover:bg-primary/90 active:scale-95 transition-all">
+                            Confirmer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ═══ MODAL CONFIRMER RETRAIT ═══ -->
     <div id="modal-confirm-remove"
@@ -907,6 +918,7 @@
     <script th:src="@{/js/preline.js}"></script>
     <script type="module" th:src="@{/js/common/themeToggle.js}"></script>
     <script type="module" th:src="@{/js/StudentJs/ui/StudentController.js}"></script>
+    <script type="module" th:src="@{/js/migration/ui/MigrationController.js}"></script>
 
     <!-- Recherche côté client dans les tableaux -->
     <script>

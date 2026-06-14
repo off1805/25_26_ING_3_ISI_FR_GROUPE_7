@@ -46,11 +46,6 @@ public class JpaInfoPresenceRowRepository implements InfoPresenceRowRepository {
     }
 
     @Override
-    public Optional<InfoPresenceRow> findByAppelIdAndEtudiantId(Long appelId, Long etudiantId) {
-        return springData.findByAppelIdAndEtudiantId(appelId, etudiantId).map(mapper::toDomain);
-    }
-
-    @Override
     public List<InfoPresenceRow> findByAppelIdAndIsPresentIsNull(Long appelId) {
         return springData.findByAppelIdAndIsPresentIsNull(appelId).stream()
                 .map(mapper::toDomain).collect(Collectors.toList());

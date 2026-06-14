@@ -533,7 +533,16 @@ function initBlockInteraction() {
         HSOverlay.open('#modal-end-session');
     }
 
-    function confirmEnd() {
+    // Fin de séance : clôture tous les appels encore en attente (isPresent=null) pour
+    // que plus aucun créneau ne reste indéterminé, même ceux liés à des appels jamais
+    // explicitement clôturés.
+    async function confirmEnd() {
+        if (_presenceListId) {
+            try {
+                const { default: api } = await import('../common/ClientHttp.js');
+                await api.post(`/api/appels/presence-list/${_presenceListId}/close-all`);
+            } catch (e) { console.error('Erreur clôture des appels en attente:', e); }
+        }
         HSOverlay.close('#modal-end-session');
     }
 

@@ -35,5 +35,8 @@ public class OffreUe {
     private Long specialiteId;
     private Set<Long> enseignantIds = new HashSet<>();
 
+    // Affectations fines (enseignant -> classe) pour cette offre.
+    private Set<OffreUeAssignment> enseignantAssignments = new HashSet<>();
+
     private LocalDateTime createdAt;
 }

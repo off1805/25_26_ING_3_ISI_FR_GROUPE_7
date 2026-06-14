@@ -6,6 +6,7 @@ import com.projetTransversalIsi.justificatif.application.dto.JustificatifRespons
 import com.projetTransversalIsi.justificatif.application.use_cases.ApprouverJustificatifUC;
 import com.projetTransversalIsi.justificatif.application.use_cases.RejeterJustificatifUC;
 import com.projetTransversalIsi.justificatif.domain.model.Justificatif;
+import com.projetTransversalIsi.justificatif.domain.model.JustificatifFichier;
 import com.projetTransversalIsi.justificatif.domain.repository.JustificatifRepository;
 import com.projetTransversalIsi.emploi_temps.domain.model.Seance;
 import com.projetTransversalIsi.emploi_temps.domain.repository.SeanceRepository;
@@ -21,10 +22,18 @@ import com.projetTransversalIsi.user.profil.infrastructure.JpaStudentProfileEnti
 import com.projetTransversalIsi.user.profil.infrastructure.SpringDataAPProfileRepository;
 import com.projetTransversalIsi.user.profil.infrastructure.SpringDataStudentProfileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,6 +51,9 @@ public class APJustificatifsController {
     private final ClasseService classeService;
     private final ApprouverJustificatifUC approuverUC;
     private final RejeterJustificatifUC rejeterUC;
+
+    @Value("${app.upload.dir.justificatifs:uploads/justificatifs}")
+    private String uploadDir;
 
     @GetMapping("/justificatifs")
     public ResponseEntity<List<JustificatifAPViewDTO>> getJustificatifsFiliere(
@@ -79,6 +91,41 @@ public class APJustificatifsController {
     @PatchMapping("/justificatifs/rejeter")
     public ResponseEntity<JustificatifResponseDTO> rejeter(@RequestBody DecisionJustificatifDTO dto) {
         return ResponseEntity.ok(rejeterUC.execute(dto));
+    }
+
+    @GetMapping("/justificatifs/{id}/fichiers/{index}/download")
+    public ResponseEntity<Resource> downloadFichier(@PathVariable Long id, @PathVariable int index) {
+        Justificatif justificatif = justificatifRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Justificatif introuvable"));
+
+        List<JustificatifFichier> fichiers = justificatif.getFichiers();
+        if (index < 0 || index >= fichiers.size()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        JustificatifFichier fichier = fichiers.get(index);
+        String storedName = Paths.get(fichier.getFichierUrl()).getFileName().toString();
+        Path filePath = Paths.get(uploadDir).resolve(storedName).normalize();
+
+        try {
+            Resource resource = new UrlResource(filePath.toUri());
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String downloadName = fichier.getNomOriginal() != null ? fichier.getNomOriginal() : storedName;
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + sanitizeFilename(downloadName) + "\"")
+                    .body(resource);
+        } catch (MalformedURLException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    private String sanitizeFilename(String filename) {
+        return filename.replaceAll("[\\r\\n\"]", "_");
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

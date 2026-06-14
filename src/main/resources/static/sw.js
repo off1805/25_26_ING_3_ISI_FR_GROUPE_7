@@ -1,7 +1,7 @@
 const CACHE_NAME= 'v1_cache';
 const ASSETS_TO_CACHE= [
     '/',
-    '/css/bootstrap.min.css',
+    '/css/output.css',
     '/js/common/application/TokenService.js',
     '/images/icon-512.png'
 ]

@@ -4,11 +4,13 @@ import { CreateUeUC } from "../Ue/application/CreateUeUC.js";
 import { GlobalErrorHandler } from "../common/GlobalErrorHandler.js";
 import { GlobalEventNotifier } from "../common/GlobalEventNotifier.js";
 import { SpecialiteApi } from "../academicStructure/infrastructure/SpecialiteApi.js";
+import { ClasseApi } from "../academicStructure/infrastructure/ClasseApi.js";
 import { UserApi } from "../User/infrastructure/UserApi.js";
 
 const ueApi = new UeApi();
 const offreUeApi = new OffreUeApi();
 const userApi = new UserApi();
+const classeApi = new ClasseApi();
 const createUeUC = new CreateUeUC(ueApi);
 
 let allNiveaux = [];
@@ -24,6 +26,8 @@ let currentFiltre = { semestre: null, libelle: '' };
 let searchDebounceTimer = null;
 let currentViewOffre = null;
 let cachedEnseignants = null;
+let cachedClasses = null;
+let cachedClassesSpecId = null;
 
 export const APSubjectsController = {
     init: () => {
@@ -239,6 +243,7 @@ function renderPaginationControls() {
 function openEditModal(e) {
     const btn = e.currentTarget;
     document.getElementById('edit-offre-id').value = btn.dataset.offreId;
+    document.getElementById('edit-offre-specialite-id').value = btn.dataset.specialiteId;
     document.getElementById('edit-offre-libelle').value = btn.dataset.libelle;
     document.getElementById('edit-offre-code').value = btn.dataset.code;
     document.getElementById('edit-offre-credit').value = btn.dataset.credit;
@@ -275,7 +280,7 @@ function initEditFormHandler() {
             description: fd.get('description'),
             couleur: fd.get('couleur'),
             semestre: parseInt(fd.get('semestre')),
-            specialiteId: currentSpecialtyId,
+            specialiteId: parseInt(fd.get('specialiteId')),
             enseignantIds: []
         };
 
@@ -447,6 +452,8 @@ function openViewModal(offreId) {
 
     currentViewOffre = offre;
     cachedEnseignants = null;
+    cachedClasses = null;
+    cachedClassesSpecId = null;
 
     const icon = document.getElementById('view-ue-icon');
     if (icon) {
@@ -482,6 +489,7 @@ function buildFakeEditBtn(offre) {
     return {
         dataset: {
             offreId: String(offre.id),
+            specialiteId: String(offre.specialiteId),
             libelle: offre.libelle,
             code: offre.code,
             credit: String(offre.credit),
@@ -677,16 +685,36 @@ async function renderProfsTab(offre) {
     // Enrichir les cards assignées avec les vrais noms
     if (assignedIds.size > 0) {
         try {
-            const all = await getAllEnseignants();
+            const [all, classes] = await Promise.all([getAllEnseignants(), getClassesForOffre(offre)]);
+            const assignmentsByEnseignant = buildAssignmentsMap(offre);
             const assigned = container.querySelector('#enseignants-assigned');
             if (!assigned) return;
             assigned.innerHTML = [...assignedIds].map(id => {
                 const u = all.find(u => String(u.id) === String(id));
-                return enseignantCard(u || { id }, true);
+                const assignedClasseIds = assignmentsByEnseignant.get(Number(id)) || new Set();
+                return enseignantCard(u || { id }, true, classes, assignedClasseIds);
             }).join('') || `<p class="text-sm text-muted-foreground-2 text-center py-4 italic">Aucun enseignant assigné.</p>`;
             wireRemoveButtons();
+            wireClasseChips();
         } catch (_) { /* on garde le skeleton */ }
     }
+}
+
+async function getClassesForOffre(offre) {
+    if (!offre.specialiteId) return [];
+    if (cachedClasses && cachedClassesSpecId === offre.specialiteId) return cachedClasses;
+    cachedClasses = (await classeApi.getBySpecialiteId(offre.specialiteId)) || [];
+    cachedClassesSpecId = offre.specialiteId;
+    return cachedClasses;
+}
+
+function buildAssignmentsMap(offre) {
+    const map = new Map();
+    (offre.enseignantAssignments || []).forEach(a => {
+        if (!map.has(a.enseignantId)) map.set(a.enseignantId, new Set());
+        map.get(a.enseignantId).add(a.classeId);
+    });
+    return map;
 }
 
 async function getAllEnseignants() {
@@ -742,26 +770,47 @@ function enseignantSkeletonCard(id) {
     </div>`;
 }
 
-function enseignantCard(user, isAssigned) {
+function enseignantCard(user, isAssigned, classes = [], assignedClasseIds = new Set()) {
     const nom = user.profile ? `${user.profile.prenom || ''} ${user.profile.nom || ''}`.trim() : `Enseignant #${user.id}`;
     const sub = user.profile?.titre ? `${user.profile.titre}${user.profile.specialite ? ' · ' + user.profile.specialite : ''}` : (user.email || `ID: ${user.id}`);
     const initiale = (user.profile?.nom || 'E').charAt(0).toUpperCase();
 
-    return `<div class="flex items-center gap-3 px-4 py-3 bg-surface rounded-xl" data-enseignant-id="${user.id}">
-        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">${initiale}</div>
-        <div class="flex-1 min-w-0">
-            <p class="text-xs font-semibold text-layer-foreground truncate">${escapeHtml(nom)}</p>
-            <p class="text-xs text-muted-foreground-2 truncate">${escapeHtml(sub)}</p>
+    return `<div class="bg-surface rounded-xl px-4 py-3" data-enseignant-id="${user.id}">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">${initiale}</div>
+            <div class="flex-1 min-w-0">
+                <p class="text-xs font-semibold text-layer-foreground truncate">${escapeHtml(nom)}</p>
+                <p class="text-xs text-muted-foreground-2 truncate">${escapeHtml(sub)}</p>
+            </div>
+            ${isAssigned
+                ? `<button type="button" class="btn-remove-enseignant size-6 inline-flex items-center justify-center rounded-md text-muted-foreground-2 hover:bg-red-500/10 hover:text-red-500 transition-all shrink-0"
+                        data-id="${user.id}" title="Retirer">
+                    <i class="bi bi-x text-sm"></i>
+                  </button>`
+                : `<button type="button" class="btn-add-enseignant size-6 inline-flex items-center justify-center rounded-md text-muted-foreground-2 hover:bg-primary/10 hover:text-primary transition-all shrink-0"
+                        data-id="${user.id}" title="Ajouter">
+                    <i class="bi bi-plus text-sm"></i>
+                  </button>`}
         </div>
-        ${isAssigned
-            ? `<button type="button" class="btn-remove-enseignant size-6 inline-flex items-center justify-center rounded-md text-muted-foreground-2 hover:bg-red-500/10 hover:text-red-500 transition-all shrink-0"
-                    data-id="${user.id}" title="Retirer">
-                <i class="bi bi-x text-sm"></i>
-              </button>`
-            : `<button type="button" class="btn-add-enseignant size-6 inline-flex items-center justify-center rounded-md text-muted-foreground-2 hover:bg-primary/10 hover:text-primary transition-all shrink-0"
-                    data-id="${user.id}" title="Ajouter">
-                <i class="bi bi-plus text-sm"></i>
-              </button>`}
+        ${isAssigned ? renderClasseChips(user.id, classes, assignedClasseIds) : ''}
+    </div>`;
+}
+
+function renderClasseChips(enseignantId, classes, assignedClasseIds) {
+    if (!classes || classes.length === 0) {
+        return `<p class="mt-2 pl-11 text-[10px] text-muted-foreground-2 italic">Aucune classe disponible pour cette spécialité.</p>`;
+    }
+    return `<div class="mt-2 pl-11 flex flex-wrap gap-1.5">
+        ${classes.map(c => {
+            const active = assignedClasseIds.has(c.id);
+            return `<button type="button" class="classe-chip text-[10px] font-medium px-2 py-0.5 rounded-full border transition-all ${active
+                    ? 'bg-primary text-white border-primary'
+                    : 'bg-layer border-layer-line text-muted-foreground-2 hover:border-primary hover:text-primary'}"
+                data-enseignant-id="${enseignantId}" data-classe-id="${c.id}" data-active="${active}"
+                title="${active ? 'Cliquer pour retirer cette classe' : 'Cliquer pour assigner cette classe'}">
+                ${escapeHtml(c.code)}
+            </button>`;
+        }).join('')}
     </div>`;
 }
 
@@ -775,6 +824,39 @@ function wireAddButtons() {
     document.querySelectorAll('.btn-add-enseignant').forEach(btn => {
         btn.addEventListener('click', () => updateOffreEnseignants(Number(btn.dataset.id), 'add'));
     });
+}
+
+function wireClasseChips() {
+    document.querySelectorAll('.classe-chip').forEach(btn => {
+        btn.addEventListener('click', () => toggleClasseAssignment(
+            Number(btn.dataset.enseignantId),
+            Number(btn.dataset.classeId),
+            btn.dataset.active === 'true',
+        ));
+    });
+}
+
+async function toggleClasseAssignment(enseignantId, classeId, isActive) {
+    if (!currentViewOffre) return;
+
+    try {
+        const updated = isActive
+            ? await offreUeApi.removeEnseignantClasse(currentViewOffre.id, enseignantId, classeId)
+            : await offreUeApi.assignEnseignantClasses(currentViewOffre.id, enseignantId, [classeId]);
+
+        currentViewOffre = {
+            ...currentViewOffre,
+            enseignantAssignments: updated.enseignantAssignments ?? currentViewOffre.enseignantAssignments,
+            enseignantIds: updated.enseignantIds ?? currentViewOffre.enseignantIds,
+        };
+
+        const idx = currentSubjects.findIndex(s => s.id === currentViewOffre.id);
+        if (idx !== -1) currentSubjects[idx] = currentViewOffre;
+
+        renderProfsTab(currentViewOffre);
+    } catch (err) {
+        GlobalErrorHandler.handle(err);
+    }
 }
 
 async function updateOffreEnseignants(enseignantId, action) {

@@ -402,6 +402,15 @@ public class APController {
         return "APInterface/APClasses";
     }
 
+    @GetMapping("/migrations")
+    public String migrationsView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        Long filiereId = resolveApFiliereId(principal);
+        model.addAttribute("filiereId", filiereId);
+        model.addAttribute("activePage", "migrations");
+        model.addAttribute("apName", "AP Name");
+        return "APInterface/APMigrations";
+    }
+
     @GetMapping("/absences")
     public String absencesView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
         Long filiereId = resolveApFiliereId(principal);
@@ -431,6 +440,20 @@ public class APController {
         model.addAttribute("apName", "AP Name"); // Stub string used in template rendering
 
         return "APInterface/APConfig";
+    }
+
+    @GetMapping("/seances")
+    public String seancesView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        model.addAttribute("activePage", "seances");
+        model.addAttribute("apName", "AP Name");
+        return "APInterface/APSeances";
+    }
+
+    @GetMapping("/seances/{seanceId}/presence")
+    public String seancePresenceView(@PathVariable("seanceId") Long seanceId, Model model) {
+        model.addAttribute("seanceId", seanceId);
+        model.addAttribute("activePage", "seances");
+        return "APInterface/APSeancePresence";
     }
 
     @PostMapping("/config/niveau/{id}/semestre")

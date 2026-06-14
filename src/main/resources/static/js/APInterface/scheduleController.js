@@ -219,8 +219,8 @@ export class EditScheduleController {
         const specialiteId = classe?.specialiteId;
         if (!specialiteId) { this.SUBJECTS = []; return; }
 
-        const [uePage, teachersPage] = await Promise.all([
-            api.get(`/api/ue?specialiteId=${encodeURIComponent(specialiteId)}&deleted=false&size=200`),
+        const [offrePage, teachersPage] = await Promise.all([
+            api.get(`/api/offre-ue/active?specialiteId=${encodeURIComponent(specialiteId)}&size=200`),
             api.get('/api/users?role=TEACHER&size=200'),
         ]);
 
@@ -232,12 +232,16 @@ export class EditScheduleController {
             teacherMap.set(t.profile.id, { id: t.profile.id, name, initials });
         });
 
-        this.SUBJECTS = (uePage?.content || []).map(ue => ({
-            id:           ue.id,
-            name:         ue.libelle,
-            code:         ue.code,
-            defaultColor: (typeof ue.couleur === 'string' && ue.couleur.startsWith('#') && ue.couleur.length === 7) ? ue.couleur : '#3b82f6',
-            teachers:     (ue.enseignantIds || []).map(id => teacherMap.get(id)).filter(Boolean),
+        // Seuls les enseignants affectés à cette UE pour CETTE classe doivent apparaître.
+        this.SUBJECTS = (offrePage?.content || []).map((/** @type {any} */ offre) => ({
+            id:           offre.ueId,
+            name:         offre.libelle,
+            code:         offre.code,
+            defaultColor: (typeof offre.couleur === 'string' && offre.couleur.startsWith('#') && offre.couleur.length === 7) ? offre.couleur : '#3b82f6',
+            teachers:     (offre.enseignantAssignments || [])
+                .filter((/** @type {any} */ a) => a.classeId === classId)
+                .map((/** @type {any} */ a) => teacherMap.get(a.enseignantId))
+                .filter(Boolean),
         }));
     }
 

@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -75,28 +77,67 @@ public class CreateAppelUCImpl implements CreateAppelUC {
         String baseUrl = "https://" + serverDomain + "/api/presences/scan?code=";
         Appel savedAppel = appelRepo.save(appel);
 
-        // Pour chaque étudiant fourni : upsert PresenceRow (absent), puis InfoPresenceRow (null).
-        // presenceRowId est toujours renseigné — la PresenceRow est créée en premier.
+        // Pour chaque étudiant fourni : upsert PresenceRow (null), puis InfoPresenceRow.
+        // Le nombre d'InfoPresenceRow par PresenceRow doit toujours égaler le nombre
+        // d'heures de la séance : on les crée donc UNE SEULE FOIS (au premier appel),
+        // un par créneau horaire. Les appels suivants ne créent rien : ils "réclament"
+        // (appel_id) les créneaux encore en attente qu'ils couvrent.
         if (dto.etudiantIds() != null && !dto.etudiantIds().isEmpty()) {
             List<PresenceRow> existingRows = presenceRowRepo.findByPresenceListId(dto.presenceListId());
             Map<Long, PresenceRow> byEtudiant = existingRows.stream()
                     .collect(Collectors.toMap(PresenceRow::getEtudiantId, r -> r));
+
+            List<LocalTime[]> hourSlots = hourSlots(seance.getHeureDebut(), seance.getHeureFin());
 
             for (Long etudiantId : dto.etudiantIds()) {
                 // PresenceRow créée avec present=null : statut non encore déterminé.
                 PresenceRow presenceRow = byEtudiant.computeIfAbsent(etudiantId,
                         id -> presenceRowRepo.save(new PresenceRow(dto.presenceListId(), id, null)));
 
-                infoPresenceRowRepo.save(new InfoPresenceRow(
-                        etudiantId, presenceRow.getId(), savedAppel.getId(),
-                        dto.heureDebut(), dto.heureFin()
-                ));
+                List<InfoPresenceRow> existingInfo = infoPresenceRowRepo.findByPresenceRowId(presenceRow.getId());
+
+                if (existingInfo.isEmpty()) {
+                    // Premier appel pour cet étudiant sur cette séance : un créneau par
+                    // heure de cours, couvrant la séance entière.
+                    for (LocalTime[] slot : hourSlots) {
+                        infoPresenceRowRepo.save(new InfoPresenceRow(
+                                etudiantId, presenceRow.getId(), savedAppel.getId(),
+                                slot[0], slot[1]
+                        ));
+                    }
+                } else {
+                    // Appels suivants : on réclame les créneaux encore en attente que
+                    // ce nouvel appel couvre, sans en créer de nouveaux.
+                    for (InfoPresenceRow info : existingInfo) {
+                        if (info.getIsPresent() == null
+                                && Appel.overlaps(info.getHeureDebut(), info.getHeureFin(),
+                                                   dto.heureDebut(), dto.heureFin())) {
+                            info.setAppelId(savedAppel.getId());
+                            infoPresenceRowRepo.save(info);
+                        }
+                    }
+                }
             }
         }
 
         expirationScheduler.scheduleClose(savedAppel);
 
         return AppelResponseDTO.fromDomain(savedAppel, baseUrl);
+    }
+
+    // Découpe [debut, fin) en créneaux d'une heure (le dernier créneau peut être plus court).
+    private List<LocalTime[]> hourSlots(LocalTime debut, LocalTime fin) {
+        List<LocalTime[]> slots = new ArrayList<>();
+        LocalTime cursor = debut;
+        while (cursor.isBefore(fin)) {
+            LocalTime next = cursor.plusHours(1);
+            if (next.isAfter(fin)) {
+                next = fin;
+            }
+            slots.add(new LocalTime[]{cursor, next});
+            cursor = next;
+        }
+        return slots;
     }
 
     private String generateValeur(AttendanceCode.CodeType type) {
