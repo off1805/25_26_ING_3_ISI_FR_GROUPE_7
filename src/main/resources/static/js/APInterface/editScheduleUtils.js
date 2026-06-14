@@ -145,9 +145,9 @@ async function _loadLogoImage(url) {
 /**
  * Génère un PDF A4 paysage de la grille de planning avec un en-tête.
  *
- * @param {string}   elementId   ID du conteneur racine (ex: "main-page")
- * @param {Function} showToastFn Callback d’affichage des notifications
- * @param {object}   pdfMeta     Métadonnées du header PDF :
+ * @param {string} elementId   ID du conteneur racine (ex: "main-page")
+ * @param {(message: string, type?: 'success'|'error') => void} showToastFn Callback d’affichage des notifications
+ * @param {object} pdfMeta     Métadonnées du header PDF :
  *   - logoUrl          {string}         URL du logo (ex: "/images/logo.png")
  *   - anneeAcademique  {string}         "2025/2026"
  *   - semestre         {number|string}  1 ou 2
@@ -160,19 +160,19 @@ export async function generatePDF(elementId, showToastFn, pdfMeta = {}) {
     if (!root) return;
 
     if (typeof html2canvas === "undefined") {
-        showToastFn?.("html2canvas non chargé");
+        showToastFn?.("html2canvas non chargé", "error");
         return;
     }
 
     const jsPDFCtor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
     if (!jsPDFCtor) {
-        showToastFn?.("jsPDF non chargé");
+        showToastFn?.("jsPDF non chargé", "error");
         return;
     }
 
     const wrapper = root.querySelector("#page-content");
     if (!wrapper) {
-        showToastFn?.("PDF: zone planning introuvable");
+        showToastFn?.("PDF: zone planning introuvable", "error");
         return;
     }
 
@@ -215,7 +215,7 @@ export async function generatePDF(elementId, showToastFn, pdfMeta = {}) {
     const wrapStyle = wrapper.style.cssText;
 
     try {
-        showToastFn?.("Génération du PDF…");
+        showToastFn?.("Génération du PDF…", "success");
 
         // ── Capture de la grille ──────────────────────────────────────────
         const canvas = await html2canvas(wrapper, {
@@ -296,10 +296,10 @@ export async function generatePDF(elementId, showToastFn, pdfMeta = {}) {
         pdf.addImage(imgData, "PNG", imgX, yPos, imgPrintW, imgPrintH);
 
         pdf.save("Emploi_du_temps.pdf");
-        showToastFn?.("PDF exporté ✓");
+        showToastFn?.("PDF exporté ✓", "success");
     } catch (error) {
         console.error("Erreur lors de la génération du PDF:", error);
-        showToastFn?.(`Erreur export PDF: ${error?.message || error}`);
+        showToastFn?.(`Erreur export PDF: ${error?.message || error}`, "error");
     } finally {
         root.style.cssText = rootStyle;
         wrapper.style.cssText = wrapStyle;
