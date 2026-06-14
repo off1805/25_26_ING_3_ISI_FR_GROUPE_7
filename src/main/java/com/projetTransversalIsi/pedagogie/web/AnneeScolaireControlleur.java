@@ -34,8 +34,12 @@ public class AnneeScolaireControlleur {
     }
 
     @PatchMapping("/{id}/activate")
-    ResponseEntity<CreateAnneeScolaireResponseDTO> activateAnnee(@PathVariable Long id) {
-        AnneeScolaire updated = anneeScolaireService.activate(id);
-        return ResponseEntity.ok(anneeMapper.toResponseDto(updated));
+    ResponseEntity<?> activateAnnee(@PathVariable Long id) {
+        try {
+            AnneeScolaire updated = anneeScolaireService.activate(id);
+            return ResponseEntity.ok(anneeMapper.toResponseDto(updated));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
