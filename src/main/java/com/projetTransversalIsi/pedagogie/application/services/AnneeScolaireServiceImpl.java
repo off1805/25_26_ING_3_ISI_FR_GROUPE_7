@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.pedagogie.application.services;
 
+import com.projetTransversalIsi.migration.application.use_cases.ExecuteMigrationsUC;
 import com.projetTransversalIsi.pedagogie.application.dto.CreateAnneeScolaireRequestDTO;
 import com.projetTransversalIsi.pedagogie.domain.AnneeScolaireRepository;
 import com.projetTransversalIsi.pedagogie.domain.model.AnneeScolaire;
@@ -22,6 +23,7 @@ public class AnneeScolaireServiceImpl implements AnneeScolaireService {
     final private AnneeScolaireMapper mapper;
     final private SpringDataNiveauRepository niveauRepository;
     final private SpringDataSemestreRepository semestreRepository;
+    final private ExecuteMigrationsUC executeMigrationsUC;
 
     @Override
     @Transactional
@@ -54,20 +56,38 @@ public class AnneeScolaireServiceImpl implements AnneeScolaireService {
 
     @Override
     public List<AnneeScolaire> getAll() {
-        return jpaRepo.findAll();
+        List<AnneeScolaire> all = jpaRepo.findAll();
+        return jpaRepo.findActive()
+                .map(active -> all.stream()
+                        .filter(a -> a.getAnneeDebut() >= active.getAnneeDebut())
+                        .toList())
+                .orElse(all);
     }
 
     @Override
     @Transactional
     public AnneeScolaire activate(Long id) {
-        jpaRepo.findActive().ifPresent(current -> {
-            current.setActive(false);
-            jpaRepo.save(current);
-        });
         AnneeScolaire target = jpaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Année scolaire introuvable : " + id));
+
+        Optional<AnneeScolaire> currentOpt = jpaRepo.findActive();
+        if (currentOpt.isPresent()) {
+            AnneeScolaire current = currentOpt.get();
+            if (target.getAnneeDebut() < current.getAnneeDebut()) {
+                throw new IllegalStateException("Cette année scolaire est déjà terminée et ne peut pas être réactivée.");
+            }
+            if (!current.getId().equals(target.getId())) {
+                current.setActive(false);
+                jpaRepo.save(current);
+            }
+        }
+
         target.setActive(true);
-        return jpaRepo.save(target);
+        AnneeScolaire saved = jpaRepo.save(target);
+
+        executeMigrationsUC.execute();
+
+        return saved;
     }
 
     @Override

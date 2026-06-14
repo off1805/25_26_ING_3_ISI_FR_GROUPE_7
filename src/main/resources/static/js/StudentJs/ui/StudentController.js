@@ -17,7 +17,6 @@ import { SpecialiteApi } from '../../academicStructure/infrastructure/Specialite
 import { enrollStudentUC } from '../application/EnrollStudentUC.js';
 import { EtudiantExcelParser } from '../../ExcelJs/application/infrastructure/Lecture.js';
 import { GlobalEventNotifier } from '../../common/GlobalEventNotifier.js';
-import { customAlert } from '../../common/CustomAlert.js';
 import api from '../../common/ClientHttp.js';
 import { StudentApi } from '../infrastructure/StudentApi.js';
 
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function getActiveClasseId() {
+export function getActiveClasseId() {
     // Dans APClasses.html, l'onglet actif a la classe "active" (ajoutée par Thymeleaf ou Preline)
     const activeTab = document.querySelector('#classes-tablist button.active');
     if (!activeTab) return null;
@@ -54,35 +53,6 @@ function attacherEvenements() {
     // Dropdown → Ajouter manuellement
 
     onMainCheckboxChange();
-
-    document.getElementById("remove-all").addEventListener("click", async () => {
-        const checkboxes = document.querySelectorAll('.checkebox-student');
-        const userIds = Array.from(checkboxes)
-            .filter(cb => cb.checked)
-            .map(cb => cb.getAttribute('data-user-id'));
-
-        if (userIds.length === 0) {
-            GlobalEventNotifier.eventError('Aucun étudiant sélectionné.');
-            return;
-        }
-
-        const confirmed = await customAlert(
-            "Retirer des étudiants",
-            `Confirmer le retrait de ${userIds.length} étudiant(s) de la classe ? Cette action est irréversible.`,
-            "Retirer",
-            "Annuler"
-        );
-        if (!confirmed) return;
-
-        for (const userId of userIds) {
-            try {
-                await StudentApi.removeFromClass(userId, getActiveClasseId());
-            } catch (err) {
-                GlobalEventNotifier.eventError(`Échec retrait ID ${userId} : ${err.message}`);
-            }
-        }
-        await handleClasseChange(getActiveClasseId());
-    });
 
     document.getElementById("level-tabs").addEventListener('click', (e) => {
         const btn = e.target.closest(".level-filter-btn");
@@ -388,10 +358,6 @@ function onMainCheckboxChange() {
     });
 }
 
-function removeFromClass(userId) {
-    StudentApi.removeFromClass(userId, getActiveClasseId());
-}
-
 async function handleNiveauChange(levelId) {
     const container = document.getElementById("classes-tablist");
     if (!container) {
@@ -470,7 +436,7 @@ async function handleNiveauChange(levelId) {
 
 }
 
- async function handleClasseChange(classeId, page = 0) {
+export async function handleClasseChange(classeId, page = 0) {
         currentStudentPage = page;
         const container = document.getElementById("student-table");
         const response = await StudentApi.getStudentOfClass(classeId, page, studentPageSize);
@@ -559,12 +525,20 @@ async function handleNiveauChange(levelId) {
                                                             <button type="button"
                                                                 class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10 transition-colors"
                                                                 data-user-id="${student.id}"
-                                                                onclick="removeSingle(this)" title="Retirer de la classe">
+                                                                onclick="removeSingle(this)" title="Migrer vers une autre classe">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                                                                     <circle cx="9" cy="7" r="4" />
-                                                                    <line x1="17" y1="8" x2="23" y2="14" />
-                                                                    <line x1="23" y1="8" x2="17" y2="14" />
+                                                                    <path d="m17 11 3 3-3 3M14 14h6" />
+                                                                </svg>
+                                                            </button>
+                                                            <button type="button"
+                                                                class="size-8 flex items-center justify-center rounded-lg text-muted-foreground-2 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 transition-colors"
+                                                                data-user-id="${student.id}"
+                                                                onclick="expelStudent(this)" title="Exclure (renvoi)">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                    <circle cx="12" cy="12" r="10"/>
+                                                                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
                                                                 </svg>
                                                             </button>
                                                         </div>

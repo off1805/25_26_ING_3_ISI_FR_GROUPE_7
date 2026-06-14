@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     wireExpelModal();
     wireRemoveAll();
+    wireExcludeAll();
     wireGraduationEligibility();
 });
 
@@ -36,6 +37,12 @@ window.clearSelection = function () {
 function wireRemoveAll() {
     document.getElementById('remove-all')?.addEventListener('click', () => {
         window.removeSelected();
+    });
+}
+
+function wireExcludeAll() {
+    document.getElementById('exclude-all')?.addEventListener('click', () => {
+        window.excludeSelected();
     });
 }
 
@@ -85,11 +92,18 @@ window.archiveStudent = async function (btn) {
 
 // ── Renvoi (expulsion) ────────────────────────────────────────────────────────
 
-window.expelStudent = function (btn) {
-    expelContext = {
-        userId: btn.getAttribute('data-user-id'),
-        classeId: btn.getAttribute('data-classe-id') || getActiveClasseId(),
-    };
+function openExpelModal(context) {
+    expelContext = context;
+
+    const titleEl = document.getElementById('expel-modal-title');
+    const msgEl = document.getElementById('expel-modal-msg');
+    if (context.userIds.length > 1) {
+        titleEl.textContent = 'Exclure les étudiants';
+        msgEl.textContent = "Les étudiants seront définitivement renvoyés de l'établissement. Cette action est irréversible.";
+    } else {
+        titleEl.textContent = "Exclure l'étudiant";
+        msgEl.textContent = "L'étudiant sera définitivement renvoyé de l'établissement. Cette action est irréversible.";
+    }
 
     document.getElementById('form-expel')?.reset();
     document.getElementById('expel-error')?.classList.add('hidden');
@@ -97,6 +111,24 @@ window.expelStudent = function (btn) {
     if (typeof HSOverlay !== 'undefined') {
         HSOverlay.open(document.getElementById('modal-expel-student'));
     }
+}
+
+window.expelStudent = function (btn) {
+    const userId = btn.getAttribute('data-user-id');
+    const classeId = btn.getAttribute('data-classe-id') || getActiveClasseId();
+    if (!userId) return;
+
+    openExpelModal({ userIds: [userId], classeId });
+};
+
+window.excludeSelected = function () {
+    const userIds = getCheckedUserIds();
+    if (userIds.length === 0) {
+        GlobalEventNotifier.eventError('Aucun étudiant sélectionné.');
+        return;
+    }
+
+    openExpelModal({ userIds, classeId: getActiveClasseId() });
 };
 
 function wireExpelModal() {
@@ -117,9 +149,23 @@ function wireExpelModal() {
         btn.disabled = true;
 
         try {
-            await migrationApi.expelStudent(expelContext.userId, motif, file);
-            GlobalEventNotifier.eventWellDone('Étudiant renvoyé.');
+            let success = 0;
+            for (const userId of expelContext.userIds) {
+                try {
+                    await migrationApi.expelStudent(userId, motif, file);
+                    success++;
+                } catch (err) {
+                    GlobalEventNotifier.eventError(`Échec pour l'étudiant ${userId} : ${err.payload || err.message}`);
+                }
+            }
+            if (success === 0) {
+                btn.disabled = false;
+                return;
+            }
+
+            GlobalEventNotifier.eventWellDone(success > 1 ? `${success} étudiant(s) renvoyé(s).` : 'Étudiant renvoyé.');
             HSOverlay.close(document.getElementById('modal-expel-student'));
+            if (expelContext.userIds.length > 1) window.clearSelection();
             if (expelContext.classeId) await handleClasseChange(expelContext.classeId);
         } catch (err) {
             errorEl.textContent = err.payload || err.message || 'Une erreur est survenue.';

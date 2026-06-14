@@ -114,7 +114,8 @@ async function activateAnnee(id) {
         showFeedback("Année scolaire activée avec succès.", "success");
         await loadAnnees();
     } catch (error) {
-        showFeedback(error.message || "Impossible d'activer cette année.", "error");
+        const backendMessage = typeof error.payload === 'string' ? error.payload : error.payload?.message;
+        showFeedback(backendMessage || error.message || "Impossible d'activer cette année.", "error");
     }
 }
 

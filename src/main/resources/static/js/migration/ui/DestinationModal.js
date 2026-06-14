@@ -24,7 +24,7 @@ export async function openDestinationModal(context) {
         titleEl.textContent = 'Modifier la migration';
         msgEl.textContent = 'Choisissez la nouvelle classe de destination pour cette migration.';
     } else {
-        titleEl.textContent = context.count > 1 ? 'Retirer les étudiants de la classe' : 'Retirer de la classe';
+        titleEl.textContent = context.count > 1 ? 'Migrer les étudiants vers une autre classe' : 'Migrer vers une autre classe';
         msgEl.textContent = (context.count > 1
             ? "Les étudiants resteront dans la classe jusqu'à la fin de l'année. Choisissez la classe vers laquelle ils migreront"
             : "L'étudiant restera dans la classe jusqu'à la fin de l'année. Choisissez la classe vers laquelle il migrera")
