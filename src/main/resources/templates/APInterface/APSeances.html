@@ -95,19 +95,21 @@
                     </div>
 
                     <!-- TABS -->
-                    <div class="border-b border-card-line">
-                        <nav class="flex gap-2" role="tablist" aria-label="Tabs">
-                            <button type="button" id="tab-semaine" data-hs-tab="#panel-semaine" role="tab"
-                                aria-controls="panel-semaine" aria-selected="true"
-                                class="hs-tab-active:border-primary hs-tab-active:text-primary active border-b-2 border-primary text-primary -mb-px py-2.5 px-4 text-sm font-semibold focus:outline-none transition-colors">
-                                Semaine en cours
-                            </button>
-                            <button type="button" id="tab-historique" data-hs-tab="#panel-historique" role="tab"
-                                aria-controls="panel-historique" aria-selected="false"
-                                class="hs-tab-active:border-primary hs-tab-active:text-primary border-b-2 border-transparent text-muted-foreground-2 hover:text-layer-foreground -mb-px py-2.5 px-4 text-sm font-semibold focus:outline-none transition-colors">
-                                Anciennes séances
-                            </button>
-                        </nav>
+                    <div class="flex">
+                        <div class="flex bg-surface rounded-lg transition p-1">
+                            <nav class="flex gap-x-1" role="tablist" aria-label="Tabs" aria-orientation="horizontal">
+                                <button type="button" id="tab-semaine" data-hs-tab="#panel-semaine" role="tab"
+                                    aria-controls="panel-semaine" aria-selected="true"
+                                    class="hs-tab-active:bg-surface-active hs-tab-active:text-layer-foreground active py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap">
+                                    Semaine en cours
+                                </button>
+                                <button type="button" id="tab-historique" data-hs-tab="#panel-historique" role="tab"
+                                    aria-controls="panel-historique" aria-selected="false"
+                                    class="hs-tab-active:bg-surface-active hs-tab-active:text-layer-foreground py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs text-muted-foreground-1 font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap">
+                                    Anciennes séances
+                                </button>
+                            </nav>
+                        </div>
                     </div>
 
                     <!-- PANEL SEMAINE -->
@@ -184,13 +186,18 @@
                     <div id="panel-historique" class="hidden space-y-4" role="tabpanel" aria-labelledby="tab-historique">
 
                         <!-- Filtre classe -->
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="relative w-56">
-                                <select id="filter-classe-historique"
-                                    class="w-full text-sm px-3 py-2 rounded-xl bg-layer border border-layer-line text-layer-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer">
-                                    <option value="">Toutes les classes</option>
-                                </select>
-                            </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select id="filter-classe-historique" data-hs-select='{
+                                  "optionAllowEmptyOption": true,
+                                  "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-2 ps-3 pe-9 flex text-nowrap w-52 cursor-pointer bg-layer border border-layer-line text-layer-foreground rounded-full text-start text-sm hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus",
+                                  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-select border border-select-line rounded-lg shadow-xl overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb",
+                                  "optionClasses": "hs-selected:bg-select-item-active py-2 px-4 w-full text-sm text-select-item-foreground cursor-pointer hover:bg-select-item-hover rounded-lg focus:outline-hidden focus:bg-select-item-focus hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
+                                  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-muted-foreground-1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                }' class="hidden">
+                                <option value="">Toutes les classes</option>
+                            </select>
                         </div>
 
                         <!-- Tableau historique -->

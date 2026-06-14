@@ -1,6 +1,9 @@
 package com.projetTransversalIsi.justificatif.infrastructure.repository;
 
+import com.projetTransversalIsi.justificatif.domain.model.Justificatif;
 import com.projetTransversalIsi.justificatif.infrastructure.entity.JpaJustificatifEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +22,14 @@ public interface SpringDataJustificatifRepository extends JpaRepository<JpaJusti
     List<JpaJustificatifEntity> findByEtudiantIdAndSeanceId(
             @Param("etudiantId") Long etudiantId,
             @Param("seanceId") Long seanceId);
+
+    @Query("SELECT j FROM JpaJustificatifEntity j WHERE j.anneeScolaireId = :anneeScolaireId" +
+           " AND j.etudiantId IN :etudiantIds" +
+           " AND (:statut IS NULL OR j.statut = :statut)" +
+           " ORDER BY j.createdAt DESC")
+    Page<JpaJustificatifEntity> findArchive(
+            @Param("anneeScolaireId") Long anneeScolaireId,
+            @Param("etudiantIds") List<Long> etudiantIds,
+            @Param("statut") Justificatif.Statut statut,
+            Pageable pageable);
 }

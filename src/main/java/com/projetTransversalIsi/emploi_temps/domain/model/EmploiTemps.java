@@ -23,6 +23,7 @@ public class EmploiTemps {
     private LocalDate dateFin;
     private Integer semaine;
     private Long classeId;
+    private Long anneeScolaireId;
     // Set pour éviter les doublons de séances sans logique d'ordre ; hashCode/equals sur id JPA.
     private Set<Seance> seances = new HashSet<>();
     private boolean deleted = false;

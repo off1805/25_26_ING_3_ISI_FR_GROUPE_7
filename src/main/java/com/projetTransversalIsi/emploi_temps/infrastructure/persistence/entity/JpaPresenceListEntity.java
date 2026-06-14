@@ -27,6 +27,9 @@ public class JpaPresenceListEntity {
     @Column(name = "enseignant_id", nullable = false)
     private Long enseignantId;
 
+    @Column(name = "annee_scolaire_id")
+    private Long anneeScolaireId;
+
     @Column(name = "date", nullable = false)
     private LocalDate date;
 

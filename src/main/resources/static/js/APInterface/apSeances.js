@@ -89,13 +89,18 @@ async function loadClasses() {
     try {
         const classes = await api.get('/api/ap/seances/classes');
         const sel = document.getElementById('filter-classe-historique');
-        if (!sel) return;
-        classes.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c.classeId;
-            opt.textContent = c.code;
-            sel.appendChild(opt);
-        });
+        if (sel) {
+            classes.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.classeId;
+                opt.textContent = c.code;
+                sel.appendChild(opt);
+            });
+            if (window.HSSelect) {
+                window.HSSelect.getInstance(sel)?.destroy();
+                new window.HSSelect(sel);
+            }
+        }
     } catch (e) {
         console.error('Erreur chargement des classes', e);
     }

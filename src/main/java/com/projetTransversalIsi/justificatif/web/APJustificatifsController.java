@@ -10,6 +10,8 @@ import com.projetTransversalIsi.justificatif.domain.model.JustificatifFichier;
 import com.projetTransversalIsi.justificatif.domain.repository.JustificatifRepository;
 import com.projetTransversalIsi.emploi_temps.domain.model.Seance;
 import com.projetTransversalIsi.emploi_temps.domain.repository.SeanceRepository;
+import com.projetTransversalIsi.pedagogie.domain.AnneeScolaireRepository;
+import com.projetTransversalIsi.pedagogie.domain.model.AnneeScolaire;
 import com.projetTransversalIsi.security.domain.UserPrincipal;
 import com.projetTransversalIsi.structure_academique.application.dto.ClasseResponseDTO;
 import com.projetTransversalIsi.structure_academique.application.dto.NiveauResponseDTO;
@@ -51,6 +53,7 @@ public class APJustificatifsController {
     private final ClasseService classeService;
     private final ApprouverJustificatifUC approuverUC;
     private final RejeterJustificatifUC rejeterUC;
+    private final AnneeScolaireRepository anneeScolaireRepository;
 
     @Value("${app.upload.dir.justificatifs:uploads/justificatifs}")
     private String uploadDir;
@@ -66,6 +69,8 @@ public class APJustificatifsController {
         Map<Long, JpaStudentProfileEntity> profileMap = buildProfileMap(filiereId);
         if (profileMap.isEmpty()) return ResponseEntity.ok(List.of());
 
+        Long activeAnneeId = anneeScolaireRepository.findActive().map(AnneeScolaire::getId).orElse(null);
+
         // Tous les justificatifs des étudiants de la filière, enrichis
         List<JustificatifAPViewDTO> result = new ArrayList<>();
         for (Map.Entry<Long, JpaStudentProfileEntity> entry : profileMap.entrySet()) {
@@ -73,6 +78,7 @@ public class APJustificatifsController {
             JpaStudentProfileEntity profile = entry.getValue();
 
             for (Justificatif j : justificatifRepo.findByEtudiantId(etudiantId)) {
+                if (!Objects.equals(j.getAnneeScolaireId(), activeAnneeId)) continue;
                 result.add(toView(j, profile));
             }
         }

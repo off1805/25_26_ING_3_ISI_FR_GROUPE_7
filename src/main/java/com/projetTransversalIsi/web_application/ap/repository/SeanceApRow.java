@@ -12,6 +12,7 @@ public interface SeanceApRow {
     LocalTime getHeureFin();
     Long getClasseId();
     String getClasseCode();
+    String getType();
     String getEnseignantNom();
     String getEnseignantPrenom();
     Long getPresenceListId();

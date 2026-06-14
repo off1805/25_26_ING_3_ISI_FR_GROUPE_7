@@ -15,12 +15,19 @@ import java.util.Optional;
 public interface SpringDataEmploiTempsRepository extends JpaRepository<JpaEmploiTempsEntity, Long>, JpaSpecificationExecutor<JpaEmploiTempsEntity> {
 
 
-    List<JpaEmploiTempsEntity> findByClasseId(Long classeId);
+    // Filtré sur l'année scolaire active : les emplois du temps des années précédentes
+    // ne doivent plus apparaître dans les vues "courantes" (dashboard surveillant, étudiant).
+    @Query("SELECT e FROM JpaEmploiTempsEntity e WHERE e.classeId = :classeId " +
+            "AND e.anneeScolaireId = (SELECT a.id FROM JpaAnneeScolaireEntity a WHERE a.active = true)")
+    List<JpaEmploiTempsEntity> findByClasseId(@Param("classeId") Long classeId);
+
     List<JpaEmploiTempsEntity> findBySemaine(Integer semaine);
 
-    // Retourne les emplois dont la fenêtre [dateDebut, dateFin] englobe la date donnée.
+    // Retourne les emplois dont la fenêtre [dateDebut, dateFin] englobe la date donnée,
+    // limités à l'année scolaire active.
     @Query("SELECT e FROM JpaEmploiTempsEntity e WHERE " +
-            ":date BETWEEN e.dateDebut AND e.dateFin")
+            ":date BETWEEN e.dateDebut AND e.dateFin " +
+            "AND e.anneeScolaireId = (SELECT a.id FROM JpaAnneeScolaireEntity a WHERE a.active = true)")
     List<JpaEmploiTempsEntity> findByPeriode(@Param("date") LocalDate date);
 
     Optional<JpaEmploiTempsEntity> findByIdAndDeletedFalse(Long id);

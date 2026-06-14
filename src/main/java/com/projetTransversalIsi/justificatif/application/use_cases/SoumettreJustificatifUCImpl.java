@@ -5,6 +5,8 @@ import com.projetTransversalIsi.justificatif.application.dto.SoumettreJustificat
 import com.projetTransversalIsi.justificatif.domain.model.Justificatif;
 import com.projetTransversalIsi.justificatif.domain.model.JustificatifFichier;
 import com.projetTransversalIsi.justificatif.domain.repository.JustificatifRepository;
+import com.projetTransversalIsi.pedagogie.domain.AnneeScolaireRepository;
+import com.projetTransversalIsi.pedagogie.domain.model.AnneeScolaire;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class SoumettreJustificatifUCImpl implements SoumettreJustificatifUC {
 
     private final JustificatifRepository justificatifRepo;
+    private final AnneeScolaireRepository anneeScolaireRepository;
 
     @Value("${app.upload.dir.justificatifs:uploads/justificatifs}")
     private String uploadDir;
@@ -69,6 +72,8 @@ public class SoumettreJustificatifUCImpl implements SoumettreJustificatifUC {
         Justificatif justificatif = new Justificatif(
                 dto.etudiantId(), dto.seanceIds(), dto.motif(),
                 dto.message(), justifFichiers, dto.dateAbsence());
+        anneeScolaireRepository.findActive().map(AnneeScolaire::getId)
+                .ifPresent(justificatif::setAnneeScolaireId);
 
         return JustificatifResponseDTO.fromDomain(justificatifRepo.save(justificatif));
     }

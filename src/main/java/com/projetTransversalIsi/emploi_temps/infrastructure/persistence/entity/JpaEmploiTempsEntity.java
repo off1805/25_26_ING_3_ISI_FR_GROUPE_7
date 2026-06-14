@@ -27,6 +27,9 @@ public class   JpaEmploiTempsEntity {
     @Column(name = "classe_id", nullable = false)
     private Long classeId;
 
+    @Column(name = "annee_scolaire_id")
+    private Long anneeScolaireId;
+
     // Relation unidirectionnelle : la FK emploi_temps_id est dans la table seance.
     // LAZY pour éviter de charger toutes les séances lors d'une liste d'emplois du temps.
     // Cascade MERGE uniquement : la création de séances passe par seanceRepo.save() avant addSeance().
