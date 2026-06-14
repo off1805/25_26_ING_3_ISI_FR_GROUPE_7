@@ -25,7 +25,7 @@ public class SoumettreJustificatifUCImpl implements SoumettreJustificatifUC {
 
     private final JustificatifRepository justificatifRepo;
 
-    @Value("${app.upload.dir:uploads/justificatifs}")
+    @Value("${app.upload.dir.justificatifs:uploads/justificatifs}")
     private String uploadDir;
 
     @Override

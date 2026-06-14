@@ -70,4 +70,9 @@ public class Appel {
             );
         }
     }
+
+    // Vrai si les plages [aDebut, aFin) et [bDebut, bFin) se chevauchent.
+    public static boolean overlaps(LocalTime aDebut, LocalTime aFin, LocalTime bDebut, LocalTime bFin) {
+        return aDebut.isBefore(bFin) && bDebut.isBefore(aFin);
+    }
 }

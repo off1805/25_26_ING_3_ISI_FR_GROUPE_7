@@ -225,13 +225,13 @@ async function soumettreFormManuel(e) {
         const msg = res.created
             ? `✓ ${res.nom} ${res.prenom} créé(e) et inscrit(e).`
             : `✓ ${res.nom} ${res.prenom} inscrit(e) dans la classe.`;
-        GlobalEventNotifier.eventWellDone(msg, 'success');
+        GlobalEventNotifier.eventWellDone(msg);
         form.reset();
         fermerModal('modal-manual');
         // Refresh to see the new student in the table
         setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
-        GlobalEventNotifier.eventWellDone(err.message, 'error');
+        GlobalEventNotifier.eventError(err.message);
     } finally {
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'Inscrire';

@@ -57,21 +57,32 @@ public class MarkStudentPresentUCImpl implements MarkStudentPresentUC {
         }
         row = presenceRowRepo.save(row);
 
-        // Upsert de l'InfoPresenceRow : met à jour la ligne null créée à l'ouverture de l'appel
-        // ou en crée une nouvelle si elle n'existe pas (ex. QR scan sans liste pré-créée).
-        InfoPresenceRow info = infoPresenceRowRepo
-                .findByAppelIdAndEtudiantId(appel.getId(), command.idStudent())
-                .orElse(null);
-        if (info != null) {
-            info.setPresenceRowId(row.getId());
-            info.setIsPresent(true);
-        } else {
-            info = new InfoPresenceRow(
+        // Marque présent tous les créneaux horaires (InfoPresenceRow) de cet étudiant qui
+        // chevauchent la plage de cet appel — y compris ceux déjà clôturés en "absent" par
+        // un appel antérieur (un scan tardif corrige une absence déjà enregistrée). Les
+        // créneaux déjà "présent" ne sont pas réécrits.
+        List<InfoPresenceRow> overlapping = infoPresenceRowRepo.findByPresenceRowId(row.getId())
+                .stream()
+                .filter(info -> Appel.overlaps(info.getHeureDebut(), info.getHeureFin(),
+                                                 appel.getHeureDebut(), appel.getHeureFin()))
+                .toList();
+
+        if (overlapping.isEmpty()) {
+            // Cas de repli (ex. QR scan sans créneaux pré-créés) : on crée un créneau
+            // couvrant la plage de l'appel.
+            infoPresenceRowRepo.save(new InfoPresenceRow(
                     command.idStudent(), row.getId(), appel.getId(),
                     appel.getHeureDebut(), appel.getHeureFin(), true
-            );
+            ));
+        } else {
+            for (InfoPresenceRow info : overlapping) {
+                if (!Boolean.TRUE.equals(info.getIsPresent())) {
+                    info.setIsPresent(true);
+                    info.setAppelId(appel.getId());
+                    infoPresenceRowRepo.save(info);
+                }
+            }
         }
-        infoPresenceRowRepo.save(info);
 
         // Recalcule present depuis l'ensemble des InfoPresenceRow liées à cette PresenceRow.
         row.recalculatePresent(infoPresenceRowRepo.findByPresenceRowId(row.getId()));

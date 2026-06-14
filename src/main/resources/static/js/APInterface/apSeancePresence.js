@@ -63,15 +63,16 @@ function renderInfoList(s, stats) {
         ['Date', formatDate(s.dateSeance)],
         ['Horaire', `${formatTime(s.heureDebut)} – ${formatTime(s.heureFin)}`],
         ['Salle', s.salle ?? '—'],
-        
+        ['Présents', stats.presents, 'text-green-600'],
+        ['Absents', stats.absents, 'text-red-500'],
         ['Total étudiants', stats.total],
-        
+        ['Présence', stats.taux]
     ];
 
     container.innerHTML = items.map(([label, value, colorClass]) => `
-        <div class="flex gap-3">
-            <p class="text-sm font-medium text-muted-foreground-2  tracking-wide">${escHtml(label)} :</p>
-            <p class="text-sm font-bold ${colorClass ?? 'text-layer-foreground'}">${escHtml(value)}</p>
+        <div>
+            <p class="text-[11px] font-medium text-muted-foreground-2 uppercase tracking-wide">${escHtml(label)}</p>
+            <p class="text-sm font-bold ${colorClass ?? 'text-layer-foreground'} mt-0.5">${escHtml(value)}</p>
         </div>`).join('');
 }
 
@@ -81,12 +82,12 @@ function renderTableHead(nbCreneaux) {
     if (!head) return;
 
     let html = `
-        <th class="px-3 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest text-center whitespace-nowrap">N°</th>
-        <th class="px-3 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest text-center whitespace-nowrap">Matricule</th>
-        <th class="px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest w-full whitespace-nowrap">Nom et Prénom</th>`;
+        <th class="border border-card-line px-3 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest text-center whitespace-nowrap">N°</th>
+        <th class="border border-card-line px-3 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest text-center whitespace-nowrap">Matricule</th>
+        <th class="border border-card-line px-4 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest w-full">Nom et Prénom</th>`;
 
     for (let i = 1; i <= nbCreneaux; i++) {
-        html += `<th class="min-w-12 py-3 text-sm font-medium text-muted-foreground-2/60 tracking-widest text-center whitespace-nowrap">${i}</th>`;
+        html += `<th class="border border-card-line px-2 py-3 text-xs font-medium text-muted-foreground-2/60 tracking-widest text-center whitespace-nowrap">${i}</th>`;
     }
     head.innerHTML = html;
 }
@@ -94,17 +95,17 @@ function renderTableHead(nbCreneaux) {
 function etudiantRowHtml(e, numero, nbCols) {
     const present = e.present === true;
     const label = present ? 'P' : 'A';
-    const colorClass = present ? 'text-green-600' : 'text-red-600';
+    const colorClass = present ? 'text-green-600' : 'text-red-500';
 
     let cells = '';
     for (let i = 0; i < nbCols; i++) {
-        cells += `<td class="min-w-12 py-2.5 text-center text-sm font-medium ${colorClass}">${label}</td>`;
+        cells += `<td class="border border-card-line px-2 py-2.5 text-center text-sm font-bold ${colorClass}">${label}</td>`;
     }
 
-    return `<tr class="hover:bg-muted/10 transition-colors divide-x divide-card-line">
-        <td class="px-3 py-2.5 text-center text-sm text-muted-foreground-2">${numero}</td>
-        <td class="px-3 py-2.5 text-center text-sm text-muted-foreground-2 whitespace-nowrap">${escHtml(e.matricule ?? '—')}</td>
-        <td class="px-4 py-2.5 text-sm font-semibold text-layer-foreground whitespace-nowrap">${escHtml(e.prenom)} ${escHtml(e.nom)}</td>
+    return `<tr class="hover:bg-muted/10 transition-colors">
+        <td class="border border-card-line px-3 py-2.5 text-center text-sm text-muted-foreground-2">${numero}</td>
+        <td class="border border-card-line px-3 py-2.5 text-center text-sm text-muted-foreground-2 whitespace-nowrap">${escHtml(e.matricule ?? '—')}</td>
+        <td class="border border-card-line px-4 py-2.5 text-sm font-semibold text-layer-foreground">${escHtml(e.prenom)} ${escHtml(e.nom)}</td>
         ${cells}
     </tr>`;
 }

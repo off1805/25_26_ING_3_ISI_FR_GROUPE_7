@@ -15,4 +15,16 @@ export class OffreUeApi {
     async updateOffreUe(id, payload) {
         return api.put(`/api/offre-ue/${id}`, payload);
     }
+
+    async assignEnseignantClasses(offreId, enseignantId, classeIds) {
+        return api.post(`/api/offre-ue/${offreId}/enseignants`, { enseignantId, classeIds });
+    }
+
+    async removeEnseignantClasse(offreId, enseignantId, classeId) {
+        return api.delete(`/api/offre-ue/${offreId}/enseignants/${enseignantId}/classes/${classeId}`);
+    }
+
+    async removeEnseignant(offreId, enseignantId) {
+        return api.delete(`/api/offre-ue/${offreId}/enseignants/${enseignantId}`);
+    }
 }

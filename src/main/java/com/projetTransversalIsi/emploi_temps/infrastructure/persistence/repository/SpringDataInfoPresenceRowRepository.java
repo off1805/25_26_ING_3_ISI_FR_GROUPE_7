@@ -13,6 +13,5 @@ public interface SpringDataInfoPresenceRowRepository extends JpaRepository<JpaIn
     List<JpaInfoPresenceRowEntity> findByPresenceRowId(Long presenceRowId);
     List<JpaInfoPresenceRowEntity> findByPresenceRowIdIn(java.util.List<Long> presenceRowIds);
     List<JpaInfoPresenceRowEntity> findByAppelId(Long appelId);
-    java.util.Optional<JpaInfoPresenceRowEntity> findByAppelIdAndEtudiantId(Long appelId, Long etudiantId);
     List<JpaInfoPresenceRowEntity> findByAppelIdAndIsPresentIsNull(Long appelId);
 }

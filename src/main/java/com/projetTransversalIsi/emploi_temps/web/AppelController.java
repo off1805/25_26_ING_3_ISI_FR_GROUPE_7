@@ -3,6 +3,7 @@ package com.projetTransversalIsi.emploi_temps.web;
 import com.projetTransversalIsi.emploi_temps.application.dto.AppelResponseDTO;
 import com.projetTransversalIsi.emploi_temps.application.dto.CreateAppelDTO;
 import com.projetTransversalIsi.emploi_temps.application.dto.PresenceRowResponseDTO;
+import com.projetTransversalIsi.emploi_temps.application.use_cases.CloseAllPendingAppelsUC;
 import com.projetTransversalIsi.emploi_temps.application.use_cases.CloseAppelUC;
 import com.projetTransversalIsi.emploi_temps.application.use_cases.CreateAppelUC;
 import com.projetTransversalIsi.emploi_temps.application.use_cases.DeleteAppelUC;
@@ -27,6 +28,7 @@ public class AppelController {
     private final DeleteAppelUC deleteAppelUC;
     private final MarkStudentPresentUC markStudentPresentUC;
     private final CloseAppelUC closeAppelUC;
+    private final CloseAllPendingAppelsUC closeAllPendingAppelsUC;
 
     // POST /api/appels — l'enseignant démarre un appel (MANUEL, PIN ou QR) pour une liste de présence.
     // Pour QR/PIN, un AttendanceCode est créé en interne ; la réponse contient scanUrl (QR) ou valeur (PIN).
@@ -68,6 +70,15 @@ public class AppelController {
     @PostMapping("/{id}/close")
     public ResponseEntity<Map<String, Integer>> close(@PathVariable Long id) {
         int absentCount = closeAppelUC.execute(id);
+        return ResponseEntity.ok(Map.of("absentCount", absentCount));
+    }
+
+    // POST /api/appels/presence-list/{presenceListId}/close-all — fin de séance :
+    // clôture tous les appels encore en attente pour cette liste de présence, pour
+    // qu'aucun créneau ne reste isPresent=null indéfiniment.
+    @PostMapping("/presence-list/{presenceListId}/close-all")
+    public ResponseEntity<Map<String, Integer>> closeAll(@PathVariable Long presenceListId) {
+        int absentCount = closeAllPendingAppelsUC.execute(presenceListId);
         return ResponseEntity.ok(Map.of("absentCount", absentCount));
     }
 }

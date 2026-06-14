@@ -1,5 +1,6 @@
 package com.projetTransversalIsi.pedagogie.web;
 
+import com.projetTransversalIsi.pedagogie.application.dto.AssignEnseignantClassesDTO;
 import com.projetTransversalIsi.pedagogie.application.dto.CreateOffreUeRequestDTO;
 import com.projetTransversalIsi.pedagogie.application.dto.OffreUeFiltreDto;
 import com.projetTransversalIsi.pedagogie.application.dto.OffreUeResponseDTO;
@@ -28,6 +29,7 @@ public class OffreUeController {
     private final DeleteOffreUeUC deleteOffreUeUC;
     private final SearchOffreUeUC searchOffreUeUC;
     private final UpdateOffreUeUC updateOffreUeUC;
+    private final ManageOffreUeEnseignantUCImpl manageOffreUeEnseignantUC;
     private final OffreUeMapper offreUeMapper;
 
     @PostMapping
@@ -61,6 +63,32 @@ public class OffreUeController {
         log.info("Mise à jour de l'offre UE id={}", id);
         OffreUe offreUe = updateOffreUeUC.execute(id, request);
         return ResponseEntity.ok(offreUeMapper.toResponseDTO(offreUe));
+    }
+
+    @PostMapping("/{id}/enseignants")
+    public ResponseEntity<OffreUeResponseDTO> assignEnseignantClasses(
+            @PathVariable Long id,
+            @Valid @RequestBody AssignEnseignantClassesDTO request) {
+        log.info("Affectation de l'enseignant {} aux classes {} pour l'offre {}",
+                request.enseignantId(), request.classeIds(), id);
+        return ResponseEntity.ok(manageOffreUeEnseignantUC.assignClasses(id, request));
+    }
+
+    @DeleteMapping("/{id}/enseignants/{enseignantId}/classes/{classeId}")
+    public ResponseEntity<OffreUeResponseDTO> removeEnseignantClasse(
+            @PathVariable Long id,
+            @PathVariable Long enseignantId,
+            @PathVariable Long classeId) {
+        log.info("Retrait de la classe {} pour l'enseignant {} sur l'offre {}", classeId, enseignantId, id);
+        return ResponseEntity.ok(manageOffreUeEnseignantUC.removeClasse(id, enseignantId, classeId));
+    }
+
+    @DeleteMapping("/{id}/enseignants/{enseignantId}")
+    public ResponseEntity<OffreUeResponseDTO> removeEnseignant(
+            @PathVariable Long id,
+            @PathVariable Long enseignantId) {
+        log.info("Retrait de toutes les affectations de l'enseignant {} sur l'offre {}", enseignantId, id);
+        return ResponseEntity.ok(manageOffreUeEnseignantUC.removeEnseignant(id, enseignantId));
     }
 
     @GetMapping("/active")

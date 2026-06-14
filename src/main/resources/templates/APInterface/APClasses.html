@@ -196,35 +196,6 @@
                             </div>
                         </div>
 
-                        <!-- Barre de sélection bulk -->
-                        <div id="bulk-actions-bar" class="hidden mb-4">
-                            <div
-                                class="inline-flex items-center gap-3 px-4 py-2.5 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl">
-                                <span class="text-xs font-bold text-red-600 dark:text-red-400" id="selected-count">0
-                                    sélectionné(s)</span>
-                                <div class="w-px h-4 bg-red-200 dark:bg-red-500/30"></div>
-                                <button type="button" onclick="removeSelected()"
-                                    class="flex items-center gap-1.5 text-xs font-bold text-red-600 dark:text-red-400 hover:text-red-700 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                        <circle cx="9" cy="7" r="4" />
-                                        <line x1="17" y1="8" x2="23" y2="14" />
-                                        <line x1="23" y1="8" x2="17" y2="14" />
-                                    </svg>
-                                    Retirer de la classe
-                                </button>
-                                <button type="button" onclick="clearSelection()"
-                                    class="text-red-400 hover:text-red-600 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <path d="M18 6 6 18" />
-                                        <path d="m6 6 12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
                         <!-- Panels -->
                         <div>
                             <div>
@@ -285,35 +256,6 @@
                                                             </button>
                                                             <div class="hs-dropdown-menu transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-48 bg-card border border-card-line shadow-lg rounded-xl z-20 p-1 [--placement:bottom-end]"
                                                                 role="menu">
-                                                                <div class="px-3 py-1.5 mb-1 border-b border-card-line">
-                                                                    <p
-                                                                        class="text-xs font-bold text-muted-foreground-2 uppercase tracking-wide">
-                                                                        Actions groupées</p>
-                                                                </div>
-                                                                <button type="button"
-                                                                    th:attr="data-panel=${'panel-classe-' + classe.id}"
-                                                                    onclick="selectAllInPanel(this)"
-                                                                    class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14"
-                                                                        height="14" viewBox="0 0 24 24" fill="none"
-                                                                        stroke="currentColor" stroke-width="2">
-                                                                        <path d="M9 11l3 3L22 4" />
-                                                                        <path
-                                                                            d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                                                                    </svg>
-                                                                    Tout sélectionner
-                                                                </button>
-                                                                <button type="button" onclick="clearSelection()"
-                                                                    class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-layer-foreground hover:bg-muted rounded-lg">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14"
-                                                                        height="14" viewBox="0 0 24 24" fill="none"
-                                                                        stroke="currentColor" stroke-width="2">
-                                                                        <path d="M18 6 6 18" />
-                                                                        <path d="m6 6 12 12" />
-                                                                    </svg>
-                                                                    Tout désélectionner
-                                                                </button>
-                                                                <div class="h-px bg-card-line my-1"></div>
                                                                 <button id="remove-all" type="button"
                                                                     class="flex items-center gap-2.5 w-full py-2 px-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="14"

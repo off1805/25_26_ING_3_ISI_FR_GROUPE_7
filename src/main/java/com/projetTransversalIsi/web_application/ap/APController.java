@@ -442,6 +442,20 @@ public class APController {
         return "APInterface/APConfig";
     }
 
+    @GetMapping("/seances")
+    public String seancesView(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        model.addAttribute("activePage", "seances");
+        model.addAttribute("apName", "AP Name");
+        return "APInterface/APSeances";
+    }
+
+    @GetMapping("/seances/{seanceId}/presence")
+    public String seancePresenceView(@PathVariable("seanceId") Long seanceId, Model model) {
+        model.addAttribute("seanceId", seanceId);
+        model.addAttribute("activePage", "seances");
+        return "APInterface/APSeancePresence";
+    }
+
     @PostMapping("/config/niveau/{id}/semestre")
     public org.springframework.http.ResponseEntity<?> updateSemestre(
             @PathVariable("id") Long id,
