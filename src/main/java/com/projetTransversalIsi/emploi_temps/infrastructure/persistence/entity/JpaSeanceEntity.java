@@ -22,6 +22,9 @@ public class JpaSeanceEntity {
     @Column(name = "salle")
     private String salle;
 
+    @Column(name = "annee_scolaire_id")
+    private Long anneeScolaireId;
+
     @Column(name = "date_seance", nullable = false)
     private LocalDate dateSeance;
 

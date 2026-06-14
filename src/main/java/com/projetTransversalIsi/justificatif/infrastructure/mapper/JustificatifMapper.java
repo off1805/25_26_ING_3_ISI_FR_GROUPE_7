@@ -17,6 +17,7 @@ public class JustificatifMapper {
         JpaJustificatifEntity entity = new JpaJustificatifEntity();
         entity.setId(domain.getId());
         entity.setEtudiantId(domain.getEtudiantId());
+        entity.setAnneeScolaireId(domain.getAnneeScolaireId());
         entity.setSeanceIds(new ArrayList<>(domain.getSeanceIds()));
         entity.setMotif(domain.getMotif());
         entity.setMessage(domain.getMessage());
@@ -34,6 +35,7 @@ public class JustificatifMapper {
         Justificatif domain = new Justificatif();
         domain.setId(entity.getId());
         domain.setEtudiantId(entity.getEtudiantId());
+        domain.setAnneeScolaireId(entity.getAnneeScolaireId());
         domain.setSeanceIds(new ArrayList<>(entity.getSeanceIds()));
         domain.setMotif(entity.getMotif());
         domain.setMessage(entity.getMessage());

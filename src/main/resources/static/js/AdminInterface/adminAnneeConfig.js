@@ -110,8 +110,9 @@ async function loadAnnees() {
 
 async function activateAnnee(id) {
     try {
-        await apiRequest(`/api/annee-scolaire/${id}/activate`, { method: "PATCH" });
-        showFeedback("Année scolaire activée avec succès.", "success");
+        const result = await apiRequest(`/api/annee-scolaire/${id}/activate`, { method: "PATCH" });
+        const offresCreees = result?.offresCreees ?? 0;
+        showFeedback(`Année scolaire activée avec succès — ${offresCreees} offre(s) UE créée(s).`, "success");
         await loadAnnees();
     } catch (error) {
         const backendMessage = typeof error.payload === 'string' ? error.payload : error.payload?.message;

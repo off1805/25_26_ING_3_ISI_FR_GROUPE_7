@@ -11,6 +11,8 @@ import com.projetTransversalIsi.emploi_temps.domain.repository.PresenceRowReposi
 import com.projetTransversalIsi.emploi_temps.domain.repository.SeanceRepository;
 import com.projetTransversalIsi.justificatif.domain.model.Justificatif;
 import com.projetTransversalIsi.justificatif.domain.repository.JustificatifRepository;
+import com.projetTransversalIsi.pedagogie.domain.AnneeScolaireRepository;
+import com.projetTransversalIsi.pedagogie.domain.model.AnneeScolaire;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,7 @@ public class GetAbsencesEtudiantUCImpl implements GetAbsencesEtudiantUC {
     private final InfoPresenceRowRepository infoPresenceRowRepo;
     private final SeanceRepository seanceRepo;
     private final JustificatifRepository justificatifRepo;
+    private final AnneeScolaireRepository anneeScolaireRepository;
 
     @Override
     public List<AbsenceEtudiantDTO> execute(Long etudiantId) {
@@ -40,11 +43,14 @@ public class GetAbsencesEtudiantUCImpl implements GetAbsencesEtudiantUC {
 
         if (absentRows.isEmpty()) return List.of();
 
-        // Charge les PresenceLists référencées (non supprimées)
+        // Charge les PresenceLists référencées (non supprimées, année scolaire active uniquement)
+        Long activeAnneeId = anneeScolaireRepository.findActive().map(AnneeScolaire::getId).orElse(null);
         Map<Long, PresenceList> presenceListMap = new HashMap<>();
         for (PresenceRow row : absentRows) {
             presenceListRepo.findById(row.getPresenceListId()).ifPresent(pl -> {
-                if (!pl.isDeleted()) presenceListMap.put(pl.getId(), pl);
+                if (!pl.isDeleted() && Objects.equals(pl.getAnneeScolaireId(), activeAnneeId)) {
+                    presenceListMap.put(pl.getId(), pl);
+                }
             });
         }
 

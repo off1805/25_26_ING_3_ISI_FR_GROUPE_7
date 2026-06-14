@@ -34,6 +34,7 @@ public interface SpringDataAPDashboardRepository extends JpaRepository<JpaPresen
         " )" +
         " AND s.deleted = false" +
         " AND et.deleted = false" +
+        " AND s.annee_scolaire_id = (SELECT id FROM annee_scolaire WHERE active = true)" +
         " AND s.date_seance >= :startOfWeek" +
         " AND s.date_seance <= :endOfWeek"
     )
@@ -45,6 +46,7 @@ public interface SpringDataAPDashboardRepository extends JpaRepository<JpaPresen
     @Query(nativeQuery = true, value =
         "SELECT COUNT(j.id) FROM justificatif j" +
         " WHERE j.statut = 'PENDING'" +
+        " AND j.annee_scolaire_id = (SELECT id FROM annee_scolaire WHERE active = true)" +
         " AND j.etudiant_id IN (" +
         "   SELECT sp.id FROM student_profile sp" +
         "   WHERE sp.classe_id IN (" +
@@ -64,6 +66,7 @@ public interface SpringDataAPDashboardRepository extends JpaRepository<JpaPresen
         " FROM presence_row pr" +
         " INNER JOIN presence_list pl ON pl.id = pr.presence_list_id" +
         " WHERE pl.deleted = false" +
+        " AND pl.annee_scolaire_id = (SELECT id FROM annee_scolaire WHERE active = true)" +
         " AND pl.classe_id IN (" +
         "   SELECT c.id FROM classe c" +
         "   INNER JOIN specialite s ON s.id = c.specialite_id" +
@@ -80,6 +83,7 @@ public interface SpringDataAPDashboardRepository extends JpaRepository<JpaPresen
         " INNER JOIN classe c ON c.id = pl.classe_id" +
         " WHERE pl.deleted = false" +
         " AND (pr.present IS NULL OR pr.present = false)" +
+        " AND pl.annee_scolaire_id = (SELECT id FROM annee_scolaire WHERE active = true)" +
         " AND pl.classe_id IN (" +
         "   SELECT c2.id FROM classe c2" +
         "   INNER JOIN specialite s ON s.id = c2.specialite_id" +
@@ -94,7 +98,8 @@ public interface SpringDataAPDashboardRepository extends JpaRepository<JpaPresen
     @Query(nativeQuery = true, value =
         "SELECT j.statut AS statut, COUNT(j.id) AS cnt" +
         " FROM justificatif j" +
-        " WHERE j.etudiant_id IN (" +
+        " WHERE j.annee_scolaire_id = (SELECT id FROM annee_scolaire WHERE active = true)" +
+        " AND j.etudiant_id IN (" +
         "   SELECT sp.id FROM student_profile sp" +
         "   WHERE sp.classe_id IN (" +
         "     SELECT c.id FROM classe c" +
@@ -114,6 +119,7 @@ public interface SpringDataAPDashboardRepository extends JpaRepository<JpaPresen
         " INNER JOIN classe c ON c.id = pl.classe_id" +
         " WHERE pl.deleted = false" +
         " AND (pr.present IS NULL OR pr.present = false)" +
+        " AND pl.annee_scolaire_id = (SELECT id FROM annee_scolaire WHERE active = true)" +
         " AND pl.classe_id IN (" +
         "   SELECT c2.id FROM classe c2" +
         "   INNER JOIN specialite s ON s.id = c2.specialite_id" +

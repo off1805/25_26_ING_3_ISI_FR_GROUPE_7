@@ -10,6 +10,8 @@ import com.projetTransversalIsi.emploi_temps.domain.exceptions.EmploiTempsConfli
 import com.projetTransversalIsi.emploi_temps.domain.exceptions.EmploiTempsNotFoundException;
 import com.projetTransversalIsi.emploi_temps.domain.exceptions.SeanceConflictException;
 import com.projetTransversalIsi.emploi_temps.domain.exceptions.SeanceNotFoundException;
+import com.projetTransversalIsi.pedagogie.domain.AnneeScolaireRepository;
+import com.projetTransversalIsi.pedagogie.domain.model.AnneeScolaire;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,6 +30,7 @@ public class EmploiTempsService {
 
     private final EmploiTempsRepository emploiTempsRepo;
     private final SeanceRepository seanceRepo;
+    private final AnneeScolaireRepository anneeScolaireRepository;
 
     // Crée un emploi du temps vide (sans séances) pour une classe.
     // Double garde : pas de chevauchement de période ET pas de date passée.
@@ -48,6 +51,7 @@ public class EmploiTempsService {
                 .dateFin(request.dateFin())
                 .semaine(request.semaine())
                 .classeId(request.classeId())
+                .anneeScolaireId(activeAnneeScolaireId())
                 .status(EmploiStatus.UPCOMING)
                 .build();
         return EmploiTempsResponseDTO.fromDomain(emploiTempsRepo.save(emploiTemps));
@@ -114,6 +118,7 @@ public class EmploiTempsService {
                 command.semaine(),
                 command.classeId()
         );
+        emploiTemps.setAnneeScolaireId(activeAnneeScolaireId());
 
         command.seances().forEach(seanceDTO -> {
             Seance.TypeSeance type = seanceDTO.resolvedType();
@@ -153,6 +158,7 @@ public class EmploiTempsService {
                 );
                 seance.setCouleur(seanceDTO.couleur());
             }
+            seance.setAnneeScolaireId(activeAnneeScolaireId());
 
             // Persiste d'abord la séance pour obtenir son id, puis l'ajoute à l'agrégat.
             emploiTemps.addSeance(seanceRepo.save(seance));
@@ -210,11 +216,16 @@ public class EmploiTempsService {
                 );
                 seance.setCouleur(seanceDTO.couleur());
             }
+            seance.setAnneeScolaireId(activeAnneeScolaireId());
 
             emploi.addSeance(seanceRepo.save(seance));
         });
 
         return EmploiTempsResponseDTO.fromDomain(emploiTempsRepo.save(emploi));
+    }
+
+    private Long activeAnneeScolaireId() {
+        return anneeScolaireRepository.findActive().map(AnneeScolaire::getId).orElse(null);
     }
 
     // Lie une séance déjà existante (créée séparément) à un emploi du temps.

@@ -18,6 +18,9 @@ public class JpaRetardListEntity {
     @Column(name = "classe_id", nullable = false)
     private Long classeId;
 
+    @Column(name = "annee_scolaire_id")
+    private Long anneeScolaireId;
+
     @Column(name = "semaine_debut", nullable = false)
     private LocalDate semaineDebut;
 

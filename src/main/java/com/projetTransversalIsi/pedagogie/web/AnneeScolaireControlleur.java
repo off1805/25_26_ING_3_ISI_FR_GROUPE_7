@@ -1,5 +1,7 @@
 package com.projetTransversalIsi.pedagogie.web;
 
+import com.projetTransversalIsi.pedagogie.application.dto.ActivateAnneeScolaireResponseDTO;
+import com.projetTransversalIsi.pedagogie.application.dto.ActivateAnneeScolaireResultDTO;
 import com.projetTransversalIsi.pedagogie.application.dto.CreateAnneeScolaireRequestDTO;
 import com.projetTransversalIsi.pedagogie.application.dto.CreateAnneeScolaireResponseDTO;
 import com.projetTransversalIsi.pedagogie.application.services.AnneeScolaireService;
@@ -36,8 +38,13 @@ public class AnneeScolaireControlleur {
     @PatchMapping("/{id}/activate")
     ResponseEntity<?> activateAnnee(@PathVariable Long id) {
         try {
-            AnneeScolaire updated = anneeScolaireService.activate(id);
-            return ResponseEntity.ok(anneeMapper.toResponseDto(updated));
+            ActivateAnneeScolaireResultDTO result = anneeScolaireService.activate(id);
+            ActivateAnneeScolaireResponseDTO response = new ActivateAnneeScolaireResponseDTO(
+                    anneeMapper.toResponseDto(result.annee()),
+                    result.offresCreees(),
+                    result.offresExistantes()
+            );
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

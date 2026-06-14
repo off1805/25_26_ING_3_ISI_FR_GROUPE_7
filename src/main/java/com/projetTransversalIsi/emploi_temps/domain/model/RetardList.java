@@ -16,6 +16,7 @@ public class RetardList {
 
     private Long id;
     private Long classeId;
+    private Long anneeScolaireId;
     private LocalDate semaineDebut;
     private LocalDateTime createdAt;
     private boolean deleted = false;

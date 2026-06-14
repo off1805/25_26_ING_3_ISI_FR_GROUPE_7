@@ -23,6 +23,7 @@ public class Seance {
     private Long id;
     private String libelle;
     private String salle;
+    private Long anneeScolaireId;
     private LocalDate dateSeance;
     private LocalTime heureDebut;
     private LocalTime heureFin;
