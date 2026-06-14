@@ -448,7 +448,10 @@ function initBlockInteraction() {
     }
     
     window.copyVAL = (val) => {
-        navigator.clipboard?.writeText(val).then(() => alert('Copié : ' + val));
+        navigator.clipboard?.writeText(val).then(async () => {
+            const { GlobalEventNotifier } = await import('../common/GlobalEventNotifier.js');
+            GlobalEventNotifier.eventWellDone('Copié : ' + val);
+        });
     };
 
     function closeSidePanel() {
@@ -546,7 +549,10 @@ function initBlockInteraction() {
         HSOverlay.close('#modal-end-session');
     }
 
-    function exportFiche() { alert('Fiche d\'appel exportée !'); }
+    async function exportFiche() {
+        const { GlobalEventNotifier } = await import('../common/GlobalEventNotifier.js');
+        GlobalEventNotifier.eventWellDone('Fiche d\'appel exportée !');
+    }
 
     // ── Search (ancien) ───────────────────────────────────────────────
     function initSearch() {

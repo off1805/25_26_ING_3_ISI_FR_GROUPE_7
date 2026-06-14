@@ -1,5 +1,6 @@
 import api from '/js/common/ClientHttp.js'
 import { TokenService } from '/js/common/application/TokenService.js'
+import { GlobalEventNotifier } from '/js/common/GlobalEventNotifier.js'
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 async function init() {
@@ -136,7 +137,7 @@ async function exportExcel(seanceId) {
         URL.revokeObjectURL(blobUrl);
     } catch (e) {
         console.error('Erreur export Excel', e);
-        alert('Erreur export : ' + e.message);
+        GlobalEventNotifier.eventError('Erreur export : ' + e.message);
     }
 }
 

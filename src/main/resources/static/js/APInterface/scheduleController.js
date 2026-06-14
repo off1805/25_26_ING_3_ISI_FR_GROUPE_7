@@ -16,6 +16,7 @@ import {
 } from './editScheduleUtils.js';
 import api from '../common/ClientHttp.js';
 import { GlobalErrorHandler } from '../common/GlobalErrorHandler.js';
+import { GlobalEventNotifier } from '../common/GlobalEventNotifier.js';
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
@@ -411,7 +412,7 @@ export class EditScheduleController {
             this.selectedColors[`s${subjectId}`] = colorId;
             this._refreshSubjectCard(subjectId, colorId);
         }
-        this.showToast('Séance mise à jour ✓');
+        GlobalEventNotifier.eventWellDone('Séance mise à jour ✓');
     }
 
     _refreshSubjectCard(subjectId, colorId) {
@@ -442,7 +443,7 @@ export class EditScheduleController {
         this.selectedColors[id] = 'violet';
         this.hideModal('modal-event');
         this.renderPanel();
-        this.showToast('Évènement ajouté');
+        GlobalEventNotifier.eventWellDone('Évènement ajouté');
     }
 
     showModal(modalId) {
@@ -748,7 +749,7 @@ export class EditScheduleController {
         const rs = this.activeDragData.rowSpan || 1;
         const blockEl = this.activeDragData.fromBlock ? this.activeDragData.blockEl : null;
         if (!isWithinBounds(hi, di, rs, 1) || isAreaOccupied(hi, di, rs, 1, blockEl) || !this._isRangeActive(hi, di, rs)) {
-            this.showToast('Emplacement invalide ou hors période');
+            GlobalEventNotifier.eventError('Emplacement invalide ou hors période');
             this.activeDragData = null; return;
         }
         if (this.activeDragData.fromBlock) {
@@ -858,7 +859,7 @@ export class EditScheduleController {
                 blockEl.remove();
                 this.undoStack = this.undoStack.filter(b => b !== blockEl);
                 this._renderSubjects();
-                this.showToast('Séance retirée du planning');
+                GlobalEventNotifier.eventWellDone('Séance retirée du planning');
             });
 
             blockEl.setAttribute('draggable', 'true');
@@ -1052,7 +1053,7 @@ export class EditScheduleController {
             if (!list.length) {
                 console.warn('Aucun emploi du temps trouvé pour cette semaine.');
                 console.groupEnd();
-                this.showToast('Aucun emploi du temps pour cette semaine');
+                GlobalEventNotifier.eventError('Aucun emploi du temps pour cette semaine');
                 return;
             }
 
@@ -1113,11 +1114,11 @@ export class EditScheduleController {
 
             this._renderMobileView(gridStart);
             if (placedCount === 0) {
-                this.showToast('Aucune séance pour cette semaine');
+                GlobalEventNotifier.eventError('Aucune séance pour cette semaine');
             }
         } catch (e) {
             console.error('[Schedule] Erreur lors du chargement :', e);
-            this.showToast('Erreur de chargement du planning');
+            GlobalEventNotifier.eventError('Erreur de chargement du planning');
         } finally {
             console.groupEnd();
         }
@@ -1215,9 +1216,9 @@ export class EditScheduleController {
     async saveSchedule() {
         const dateDebut = this.fixedStartDate || getDatePickerValue('date-start');
         const dateFin   = this.fixedEndDate   || getDatePickerValue('date-end');
-        if (!this.classId || !dateDebut || !dateFin) { this.showToast('Classe ou dates manquantes'); return; }
+        if (!this.classId || !dateDebut || !dateFin) { GlobalEventNotifier.eventError('Classe ou dates manquantes'); return; }
         const seances = this._buildSeances();
-        if (!seances.length) { this.showToast('Ajoutez au moins une séance dans la grille'); return; }
+        if (!seances.length) { GlobalEventNotifier.eventError('Ajoutez au moins une séance dans la grille'); return; }
         const payload = {
             id: this.emploiId || undefined, dateDebut, dateFin,
             semaine: this.semaine || this._computeWeekNumber(dateDebut),
@@ -1226,14 +1227,14 @@ export class EditScheduleController {
         try {
             if (this.emploiId) {
                 await api.put(`/api/emplois-temps/${this.emploiId}/with-seances`, payload);
-                this.showToast('Emploi du temps mis à jour ✓');
+                GlobalEventNotifier.eventWellDone('Emploi du temps mis à jour ✓');
             } else {
                 await api.post('/api/emplois-temps/with-seances', payload);
-                this.showToast('Emploi du temps sauvegardé ✓');
+                GlobalEventNotifier.eventWellDone('Emploi du temps sauvegardé ✓');
             }
         } catch (error) {
             GlobalErrorHandler.handle(error);
-            this.showToast(error?.response?.data || 'Erreur lors de la sauvegarde');
+            GlobalEventNotifier.eventError(error?.response?.data || 'Erreur lors de la sauvegarde');
         }
     }
 
@@ -1351,7 +1352,10 @@ export class EditScheduleController {
             semaine: config.semaine || this.semaine || '',
         };
 
-        await generatePDF('main-page', msg => this.showToast(msg), pdfMeta);
+        await generatePDF('main-page', (msg, type) => {
+            if (type === 'error') GlobalEventNotifier.eventError(msg);
+            else GlobalEventNotifier.eventWellDone(msg);
+        }, pdfMeta);
     }
 
     // ── Vue mobile (lecture seule uniquement) ──────────────────────────────
@@ -1490,16 +1494,6 @@ export class EditScheduleController {
                 </div>
             </div>`;
         }).join('');
-    }
-
-    showToast(message) {
-        const t  = document.getElementById('toast');
-        const tm = document.getElementById('toast-msg');
-        if (!t || !tm) return;
-        tm.textContent = message;
-        t.classList.remove('hidden');
-        if (this.toastTimer) clearTimeout(this.toastTimer);
-        this.toastTimer = setTimeout(() => t.classList.add('hidden'), 2800);
     }
 }
 

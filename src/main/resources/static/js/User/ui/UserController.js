@@ -242,14 +242,14 @@ export class UserController {
         };
 
         if (!userData.idPermissions || userData.idPermissions.length === 0) {
-            alert("Veuillez sélectionner au moins une permission.");
+            GlobalEventNotifier.eventError("Veuillez sélectionner au moins une permission.");
             return;
         }
 
         if (userData.idRole === 'AP') {
             const filiereId = document.getElementById('user-filiere')?.value;
             if (!filiereId) {
-                alert("Veuillez sélectionner une filière pour l'assistant pédagogique.");
+                GlobalEventNotifier.eventError("Veuillez sélectionner une filière pour l'assistant pédagogique.");
                 return;
             }
             userData.filiereId = parseInt(filiereId, 10);
@@ -348,7 +348,7 @@ export class UserController {
         
 
         if (!userId) {
-            alert("Erreur: ID utilisateur introuvable.");
+            GlobalEventNotifier.eventError("Erreur: ID utilisateur introuvable.");
             return;
         }
 
@@ -455,12 +455,13 @@ export class UserController {
 
     // ── BLOQUER ──────────────────────────────────────────────────────────────
     async handleBlockUser(event) {
-        if (!confirm("Voulez-vous vraiment bloquer/débloquer cet utilisateur ?")) return;
+        const reponse = await customAlert("Bloquer / débloquer", "Voulez-vous vraiment bloquer/débloquer cet utilisateur ?", "Oui", "Annuler");
+        if (!reponse) return;
 
         const button = event.currentTarget;
         const userId = button.dataset.userId;
 
-        if (!userId) { alert("Erreur: ID utilisateur introuvable."); return; }
+        if (!userId) { GlobalEventNotifier.eventError("Erreur: ID utilisateur introuvable."); return; }
 
         try {
             await this.modifyUserStatusUC.execute(userId, "BLOCKED");
