@@ -15,6 +15,7 @@ public class PresenceRow {
     private Long presenceListId;
     private Long etudiantId;
     private Boolean present;
+    private Boolean retard = false;
 
     public PresenceRow(Long presenceListId, Long etudiantId, Boolean present) {
         this.presenceListId = presenceListId;
@@ -33,5 +34,10 @@ public class PresenceRow {
 
     public void update(boolean present) {
         this.present = present;
+    }
+
+    public void markRetard(boolean retard) {
+        this.retard = retard;
+        if (retard) this.present = true;
     }
 }

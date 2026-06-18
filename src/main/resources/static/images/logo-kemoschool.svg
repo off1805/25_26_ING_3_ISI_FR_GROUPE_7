@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Fond violet -->
+  <rect width="512" height="512" rx="100" fill="#7C3AED"/>
+
+  <!-- Chapeau de diplomation blanc -->
+  <!-- Plateau du chapeau (mortarboard top) -->
+  <polygon points="256,140 420,210 256,280 92,210" fill="white"/>
+
+  <!-- Corps du chapeau -->
+  <rect x="226" y="272" width="60" height="70" rx="6" fill="white"/>
+
+  <!-- Base arrondie -->
+  <ellipse cx="256" cy="342" rx="60" ry="16" fill="white"/>
+
+  <!-- Cordon pendant -->
+  <line x1="420" y1="210" x2="420" y2="290" stroke="white" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="420" cy="300" r="14" fill="white"/>
+</svg>

@@ -20,4 +20,7 @@ public class JpaPresenceRowEntity {
 
     @Column(name = "present")
     private Boolean present;
+
+    @Column(name = "retard", nullable = false)
+    private Boolean retard = false;
 }

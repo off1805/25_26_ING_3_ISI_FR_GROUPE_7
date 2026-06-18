@@ -1,9 +1,9 @@
-const CACHE_NAME= 'v1_cache';
+const CACHE_NAME= 'v2_cache';
 const ASSETS_TO_CACHE= [
     '/',
     '/css/output.css',
     '/js/common/application/TokenService.js',
-    '/images/icon-512.png'
+    '/images/logo-kemoschool.svg'
 ]
 
 self.addEventListener('install',(event)=>{
